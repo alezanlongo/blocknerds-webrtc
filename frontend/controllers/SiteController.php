@@ -74,6 +74,11 @@ class SiteController extends Controller
         return $this->render('videoRoom');
     }
 
+    public function actionScreenSharing()
+    {
+        return $this->render('screenSharing');
+    }
+
     /**
      * Displays homepage.
      *
