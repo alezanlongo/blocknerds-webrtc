@@ -19,12 +19,227 @@ $(document).ready(function () {
     bootbox.alert("No WebRTC support... ");
     return;
   }
+
+  const REQUEST_SETUP = "setup";
+  const PLUGIN_TEXT_ROOM = "janus.plugin.textroom";
+  const REQUEST_ACK = "ack";
+  const ACTION_JOIN = "join";
+  const ACTION_MESSAGE = "message";
+  const ACTION_LEAVE = "leave";
+  const ACTION_KICKED = "kicked";
+  const ACTION_DESTROYED = "destroyed";
+
+  const handleIceState = (state) => {
+    Janus.log("ICE state changed to " + state);
+  };
+
+  const handleOnMessage = (message, jsep) => {
+    // Janus.debug(" ::: Got a message :::", msg);
+    if (message["error"]) {
+      bootbox.alert(message["error"]);
+    }
+    if (jsep) {
+      // Answer
+      textroom.createAnswer({
+        jsep,
+        media: { audio: false, video: false, data: true }, // We only use datachannels
+        success: function (jsep) {
+          textroom.send({ message: { request: REQUEST_ACK }, jsep });
+        },
+        error: function (error) {
+          Janus.error("WebRTC error:", error);
+          bootbox.alert("WebRTC error... " + error.message);
+        },
+      });
+    }
+  };
+
   Janus.init({
     debug: "all",
     callback: function () {
       janus = new Janus({
         server,
-        success,
+        success: function () {
+          janus.attach({
+            plugin: PLUGIN_TEXT_ROOM,
+            opaqueId: opaqueId,
+            success: function (pluginHandle) {
+              // init text room
+              textroom = pluginHandle;
+              textroom.send({ message: { request: REQUEST_SETUP } });
+            },
+            error: function (error) {
+              console.error("  -- Error attaching plugin...", error);
+              bootbox.alert("Error attaching plugin... " + error);
+            },
+            iceState: function (state) {
+              handleIceState(state);
+            },
+            mediaState: function (medium, on) {
+              Janus.log(
+                "Janus " +
+                  (on ? "started" : "stopped") +
+                  " receiving our " +
+                  medium
+              );
+            },
+            webrtcState: function (on) {
+              Janus.log(
+                "Janus says our WebRTC PeerConnection is " +
+                  (on ? "up" : "down") +
+                  " now"
+              );
+            },
+            onmessage: function (msg, jsep) {
+              handleOnMessage(msg, jsep);
+            },
+            ondataopen: function (data) {
+              Janus.log("The DataChannel is available!");
+              joinUser(); // to register user
+            },
+            ondata: function (data) {
+              const json = JSON.parse(data);
+              const transaction = json["transaction"];
+              if (transactions[transaction]) {
+                // Someone was waiting for this
+                transactions[transaction](json);
+                delete transactions[transaction];
+                return;
+              }
+              const what = json["textroom"];
+
+              if (what === ACTION_MESSAGE) {
+                // Incoming message: public or private?
+                let msg = json["text"];
+                msg = msg.replace(new RegExp("<", "g"), "&lt");
+                msg = msg.replace(new RegExp(">", "g"), "&gt");
+                const from = json["from"];
+                const dateString = getDateString(json["date"]);
+                const whisper = json["whisper"];
+
+                if (whisper) {
+                  // Private message
+                  $("#chatroom").append(
+                    '<p style="color: purple;">[' +
+                      dateString +
+                      "] <b>[whisper from " +
+                      participants[from] +
+                      "]</b> " +
+                      msg
+                  );
+                  $("#chatroom").get(0).scrollTop =
+                    $("#chatroom").get(0).scrollHeight;
+                } else {
+                  // Public message
+                  $("#chatroom").append(
+                    "<p>[" +
+                      dateString +
+                      "] <b>" +
+                      participants[from] +
+                      ":</b> " +
+                      msg
+                  );
+                  $("#chatroom").get(0).scrollTop =
+                    $("#chatroom").get(0).scrollHeight;
+                }
+              } else if (what === "announcement") {
+                // Room announcement
+                var msg = json["text"];
+                msg = msg.replace(new RegExp("<", "g"), "&lt");
+                msg = msg.replace(new RegExp(">", "g"), "&gt");
+                var dateString = getDateString(json["date"]);
+                $("#chatroom").append(
+                  '<p style="color: purple;">[' +
+                    dateString +
+                    "] <i>" +
+                    msg +
+                    "</i>"
+                );
+                $("#chatroom").get(0).scrollTop =
+                  $("#chatroom").get(0).scrollHeight;
+              } else if (what === ACTION_JOIN) {
+                // Somebody joined
+                var username = json["username"];
+                var display = json["display"];
+                participants[username] = display ? display : username;
+                if (username !== myid && $("#rp" + username).length === 0) {
+                  // Add to the participants list
+                  $("#list").append(
+                    '<li id="rp' +
+                      username +
+                      '" class="list-group-item">' +
+                      participants[username] +
+                      "</li>"
+                  );
+                  $("#rp" + username)
+                    .css("cursor", "pointer")
+                    .click(function () {
+                      var username = $(this).attr("id").split("rp")[1];
+                      sendPrivateMsg(username);
+                    });
+                }
+                $("#chatroom").append(
+                  '<p style="color: green;">[' +
+                    getDateString() +
+                    "] <i>" +
+                    participants[username] +
+                    " joined</i></p>"
+                );
+                $("#chatroom").get(0).scrollTop =
+                  $("#chatroom").get(0).scrollHeight;
+              } else if (what === ACTION_LEAVE) {
+                // Somebody left
+                var username = json["username"];
+                var when = new Date();
+                $("#rp" + username).remove();
+                $("#chatroom").append(
+                  '<p style="color: green;">[' +
+                    getDateString() +
+                    "] <i>" +
+                    participants[username] +
+                    " left</i></p>"
+                );
+                $("#chatroom").get(0).scrollTop =
+                  $("#chatroom").get(0).scrollHeight;
+                delete participants[username];
+              } else if (what === ACTION_KICKED) {
+                // Somebody was kicked
+                var username = json["username"];
+                var when = new Date();
+                $("#rp" + username).remove();
+                $("#chatroom").append(
+                  '<p style="color: green;">[' +
+                    getDateString() +
+                    "] <i>" +
+                    participants[username] +
+                    " was kicked from the room</i></p>"
+                );
+                $("#chatroom").get(0).scrollTop =
+                  $("#chatroom").get(0).scrollHeight;
+                delete participants[username];
+                if (username === myid) {
+                  bootbox.alert(
+                    "You have been kicked from the room",
+                    function () {
+                      window.location.reload();
+                    }
+                  );
+                }
+              } else if (what === ACTION_DESTROYED) {
+                if (json["room"] !== myroom) return;
+                // Room was destroyed, goodbye!
+                Janus.warn("The room has been destroyed!");
+                bootbox.alert("The room has been destroyed", function () {
+                  window.location.reload();
+                });
+              }
+            },
+            oncleanup: function () {
+              Janus.log(" ::: Got a cleanup notification :::");
+              $("#datasend").attr("disabled", true);
+            },
+          });
+        },
         error: function (error) {
           Janus.error(error);
           bootbox.alert(error, function () {
@@ -37,206 +252,6 @@ $(document).ready(function () {
       });
     },
   });
-
-  function success() {
-    janus.attach({
-      plugin: "janus.plugin.textroom",
-      opaqueId: opaqueId,
-      success: function (pluginHandle) {
-        textroom = pluginHandle;
-
-        // Setup the DataChannel
-        var body = { request: "setup" };
-        Janus.debug("Sending message:", body);
-        textroom.send({ message: body });
-        $("#start")
-          .removeAttr("disabled")
-          .html("Stop")
-          .click(function () {
-            $(this).attr("disabled", true);
-            janus.destroy();
-          });
-      },
-      error: function (error) {
-        console.error("  -- Error attaching plugin...", error);
-        bootbox.alert("Error attaching plugin... " + error);
-      },
-      iceState: function (state) {
-        Janus.log("ICE state changed to " + state);
-      },
-      mediaState: function (medium, on) {
-        Janus.log(
-          "Janus " + (on ? "started" : "stopped") + " receiving our " + medium
-        );
-      },
-      webrtcState: function (on) {
-        Janus.log(
-          "Janus says our WebRTC PeerConnection is " +
-            (on ? "up" : "down") +
-            " now"
-        );
-      },
-      onmessage: function (msg, jsep) {
-        Janus.debug(" ::: Got a message :::", msg);
-        if (msg["error"]) {
-          bootbox.alert(msg["error"]);
-        }
-        if (jsep) {
-          // Answer
-          textroom.createAnswer({
-            jsep: jsep,
-            media: { audio: false, video: false, data: true }, // We only use datachannels
-            success: function (jsep) {
-              Janus.debug("Got SDP!", jsep);
-              var body = { request: "ack" };
-              textroom.send({ message: body, jsep: jsep });
-            },
-            error: function (error) {
-              Janus.error("WebRTC error:", error);
-              bootbox.alert("WebRTC error... " + error.message);
-            },
-          });
-        }
-      },
-      ondataopen: function (data) {
-        Janus.log("The DataChannel is available!");
-        joinUser(); // to register user
-      },
-      ondata: function (data) {
-        // Janus.debug("We got data from the DataChannel!", data);
-        // console.log(data)
-        //~ $('#datarecv').val(data);
-        const json = JSON.parse(data);
-        const transaction = json["transaction"];
-        if (transactions[transaction]) {
-          // Someone was waiting for this
-          transactions[transaction](json);
-          delete transactions[transaction];
-          return;
-        }
-        const what = json["textroom"];
-
-        if (what === "message") {
-          // Incoming message: public or private?
-          let msg = json["text"];
-          msg = msg.replace(new RegExp("<", "g"), "&lt");
-          msg = msg.replace(new RegExp(">", "g"), "&gt");
-          const from = json["from"];
-          const dateString = getDateString(json["date"]);
-          const whisper = json["whisper"];
-
-          if (whisper) {
-            // Private message
-            $("#chatroom").append(
-              '<p style="color: purple;">[' +
-                dateString +
-                "] <b>[whisper from " +
-                participants[from] +
-                "]</b> " +
-                msg
-            );
-            $("#chatroom").get(0).scrollTop =
-              $("#chatroom").get(0).scrollHeight;
-          } else {
-            // Public message
-            $("#chatroom").append(
-              "<p>[" +
-                dateString +
-                "] <b>" +
-                participants[from] +
-                ":</b> " +
-                msg
-            );
-            $("#chatroom").get(0).scrollTop =
-              $("#chatroom").get(0).scrollHeight;
-          }
-        } else if (what === "announcement") {
-          // Room announcement
-          var msg = json["text"];
-          msg = msg.replace(new RegExp("<", "g"), "&lt");
-          msg = msg.replace(new RegExp(">", "g"), "&gt");
-          var dateString = getDateString(json["date"]);
-          $("#chatroom").append(
-            '<p style="color: purple;">[' + dateString + "] <i>" + msg + "</i>"
-          );
-          $("#chatroom").get(0).scrollTop = $("#chatroom").get(0).scrollHeight;
-        } else if (what === "join") {
-          // Somebody joined
-          var username = json["username"];
-          var display = json["display"];
-          participants[username] = display ? display : username;
-          if (username !== myid && $("#rp" + username).length === 0) {
-            // Add to the participants list
-            $("#list").append(
-              '<li id="rp' +
-                username +
-                '" class="list-group-item">' +
-                participants[username] +
-                "</li>"
-            );
-            $("#rp" + username)
-              .css("cursor", "pointer")
-              .click(function () {
-                var username = $(this).attr("id").split("rp")[1];
-                sendPrivateMsg(username);
-              });
-          }
-          $("#chatroom").append(
-            '<p style="color: green;">[' +
-              getDateString() +
-              "] <i>" +
-              participants[username] +
-              " joined</i></p>"
-          );
-          $("#chatroom").get(0).scrollTop = $("#chatroom").get(0).scrollHeight;
-        } else if (what === "leave") {
-          // Somebody left
-          var username = json["username"];
-          var when = new Date();
-          $("#rp" + username).remove();
-          $("#chatroom").append(
-            '<p style="color: green;">[' +
-              getDateString() +
-              "] <i>" +
-              participants[username] +
-              " left</i></p>"
-          );
-          $("#chatroom").get(0).scrollTop = $("#chatroom").get(0).scrollHeight;
-          delete participants[username];
-        } else if (what === "kicked") {
-          // Somebody was kicked
-          var username = json["username"];
-          var when = new Date();
-          $("#rp" + username).remove();
-          $("#chatroom").append(
-            '<p style="color: green;">[' +
-              getDateString() +
-              "] <i>" +
-              participants[username] +
-              " was kicked from the room</i></p>"
-          );
-          $("#chatroom").get(0).scrollTop = $("#chatroom").get(0).scrollHeight;
-          delete participants[username];
-          if (username === myid) {
-            bootbox.alert("You have been kicked from the room", function () {
-              window.location.reload();
-            });
-          }
-        } else if (what === "destroyed") {
-          if (json["room"] !== myroom) return;
-          // Room was destroyed, goodbye!
-          Janus.warn("The room has been destroyed!");
-          bootbox.alert("The room has been destroyed", function () {
-            window.location.reload();
-          });
-        }
-      },
-      oncleanup: function () {
-        Janus.log(" ::: Got a cleanup notification :::");
-        $("#datasend").attr("disabled", true);
-      },
-    });
-  }
 });
 
 function checkEnter(field, event) {
@@ -286,7 +301,6 @@ function joinUser() {
       return;
     }
     // We're in
-    $("#roomjoin").hide();
     $("#room").removeClass("hide").show();
     $("#participant").removeClass("hide").html(myUsername).show();
     $("#chatroom").css("height", $(window).height() - 420 + "px");

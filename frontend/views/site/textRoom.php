@@ -24,7 +24,7 @@ $this->registerJsFile(
     ]
 );
 $this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/textroom2.js',
+    Yii::$app->request->BaseUrl . '/js/textroom.js',
     [
         'depends' => "yii\web\JqueryAsset",
         'position' => View::POS_END
@@ -38,11 +38,9 @@ $this->registerJsFile(
     <div class="col-md-12">
         <div class="page-header">
             <h1>Text chat
-                <!-- <button class="btn btn-default" autocomplete="off" id="start">Start</button> -->
             </h1>
         </div>
 
-     
         <div class="container hide" id="room" style="display: none;">
             <div class="row">
                 <div class="col-md-4">
