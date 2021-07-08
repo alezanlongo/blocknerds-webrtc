@@ -1,6 +1,7 @@
 <?php
 
 use frontend\assets\Janus\JanusAsset;
+use frontend\assets\Janus\JanusTextRoom;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\web\View;
@@ -8,6 +9,8 @@ use yii\web\View;
 /* @var $this View */
 
 JanusAsset::register($this);
+JanusTextRoom::register($this);
+
 $this->registerJsVar('myUsername', Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsFile(
     "https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js",
@@ -18,13 +21,6 @@ $this->registerJsFile(
 );
 $this->registerJsFile(
     "https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/8.0.0/adapter.min.js",
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/textroom.js',
     [
         'depends' => "yii\web\JqueryAsset",
         'position' => View::POS_END
