@@ -73,6 +73,11 @@ class SiteController extends Controller
         return $this->render('textRoom');
     }
 
+    public function actionTest()
+    {
+        return $this->render('testRoom');
+    }
+
     /**
      * Displays homepage.
      *
