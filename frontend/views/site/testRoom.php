@@ -2,6 +2,7 @@
 
 use frontend\assets\Janus\JanusAsset;
 use frontend\assets\Janus\JanusTextRoom;
+use rmrevin\yii\fontawesome\FAS;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\web\View;
@@ -72,9 +73,9 @@ $this->registerJsFile(
                                 <span class="input-group-addon"><i class="fa fa-cloud-upload fa-fw"></i></span>
                                 <div class="d-flex">
                                     <input class="form-control" type="text" placeholder="Write a chatroom message" autocomplete="off" id="datasend" onkeypress="return checkEnter(this, event);" />
-                                    <!-- <input class="form-control" type="file" placeholder="Write a chatroom message" autocomplete="off" id="datafile" onkeypress="return checkEnter(this, event);"  /> -->
                                     <input type="file" id="inputUpload" style="display:none" onchange="return sendData(true);" />
-                                    <button id="btnUpload"><i class="far fa-file"></i></button>
+                                    <button id="btnUpload" class="btn btn-default" ><?= FAS::i('fas fa-paperclip') ?></button>
+                                    <button id="btnUpload" class="btn btn-default" onclick="return sendData();"><?= FAS::i('fas fa-paper-plane') ?></button>
                                 </div>
                             </div>
                         </div>

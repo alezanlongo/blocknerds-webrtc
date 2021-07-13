@@ -57,21 +57,21 @@ $(document).ready(function () {
     }
   };
 
-  // const buildMessage = (from, message, dateString, isWhisper = false) => {
-  //   const component = $("#chatroom");
-  //   let tagP = document.createElement("p");
+  const buildMessage = (from, message, dateString, isWhisper = false) => {
+    const component = $("#chatroom");
+    let tagP = document.createElement("p");
 
-  //   if (isWhisper) {
-  //     tagP.setAttribute("style", "color: purple");
-  //   }
+    if (isWhisper) {
+      tagP.setAttribute("style", "color: purple");
+    }
 
-  //   tagP.appendChild(
-  //     document.createTextNode(`[${dateString}] ${from}: ${message}`)
-  //   );
-  //   component.append(tagP);
+    tagP.appendChild(
+      document.createTextNode(`[${dateString}] ${from}: ${message}`)
+    );
+    component.append(tagP);
 
-  //   component.get(0).scrollTop = component.get(0).scrollHeight;
-  // };
+    component.get(0).scrollTop = component.get(0).scrollHeight;
+  };
 
   const isFile = (strMessage) => {
     return strMessage.includes(";base64,");
@@ -161,7 +161,6 @@ $(document).ready(function () {
                     $("#chatroom").get(0).scrollHeight;
                 } else {
                   // Public message
-                  // console.log(file);
                   $("#chatroom").append(
                     "<p>[" +
                       dateString +

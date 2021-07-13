@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb4883465a5aa986185706184c70e807",
+    "content-hash": "f4c4c845f2ee5728ccd2500c2339781c",
     "packages": [
         {
             "name": "bower-asset/inputmask",
@@ -32,7 +32,7 @@
             "version": "3.6.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jquery/jquery-dist.git",
+                "url": "git@github.com:jquery/jquery-dist.git",
                 "reference": "e786e3d9707ffd9b0dd330ca135b66344dcef85a"
             },
             "dist": {
@@ -355,6 +355,66 @@
             "license": [
                 "MIT"
             ]
+        },
+        {
+            "name": "rmrevin/yii2-fontawesome",
+            "version": "3.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmrevin/yii2-fontawesome.git",
+                "reference": "a1b448cef7e03a0b5a6286276bef004efa83f323"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmrevin/yii2-fontawesome/zipball/a1b448cef7e03a0b5a6286276bef004efa83f323",
+                "reference": "a1b448cef7e03a0b5a6286276bef004efa83f323",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "yiisoft/yii2": "^2.0.0"
+            },
+            "require-dev": {
+                "doctrine/instantiator": "1.0.*",
+                "phpdocumentor/reflection-docblock": "~3.1.0",
+                "phpunit/phpunit": "^4.8"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "asset-installer-paths": {
+                    "npm-asset-library": "vendor/npm",
+                    "bower-asset-library": "vendor/bower"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "rmrevin\\yii\\fontawesome\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Revin Roman",
+                    "email": "roman@rmrevin.com",
+                    "homepage": "https://rmrevin.com/"
+                }
+            ],
+            "description": "Asset Bundle for Yii2 with Font Awesome",
+            "keywords": [
+                "asset",
+                "awesome",
+                "bundle",
+                "font",
+                "yii"
+            ],
+            "support": {
+                "issues": "https://github.com/rmrevin/yii2-fontawesome/issues",
+                "source": "https://github.com/rmrevin/yii2-fontawesome"
+            },
+            "time": "2018-04-01T12:51:52+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -850,12 +910,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "ec5bd564172409f6be9dccb837cc5719dcccb7f2"
+                "reference": "20437152d66e9d263d94d5c7fdbdd69edb0358c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/ec5bd564172409f6be9dccb837cc5719dcccb7f2",
-                "reference": "ec5bd564172409f6be9dccb837cc5719dcccb7f2",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/20437152d66e9d263d94d5c7fdbdd69edb0358c4",
+                "reference": "20437152d66e9d263d94d5c7fdbdd69edb0358c4",
                 "shasum": ""
             },
             "require": {
@@ -964,7 +1024,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-04T09:03:19+00:00"
+            "time": "2021-07-08T07:30:32+00:00"
         },
         {
             "name": "yiisoft/yii2-bootstrap4",
@@ -1868,12 +1928,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FakerPHP/Faker.git",
-                "reference": "f58e342ba5048ce2cc50b9676832347d2198fb94"
+                "reference": "d47664f69971d1c8aa1a3378eb9a5c44daf7606f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/f58e342ba5048ce2cc50b9676832347d2198fb94",
-                "reference": "f58e342ba5048ce2cc50b9676832347d2198fb94",
+                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/d47664f69971d1c8aa1a3378eb9a5c44daf7606f",
+                "reference": "d47664f69971d1c8aa1a3378eb9a5c44daf7606f",
                 "shasum": ""
             },
             "require": {
@@ -1926,7 +1986,7 @@
                 "issues": "https://github.com/FakerPHP/Faker/issues",
                 "source": "https://github.com/FakerPHP/Faker/tree/main"
             },
-            "time": "2021-07-02T06:35:52+00:00"
+            "time": "2021-07-09T08:35:50+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -3968,12 +4028,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "a9e63c9dc07b39d0f3104fa13d53b054ad33654a"
+                "reference": "3f1271fb58a5fe088a21c44bace07a59582c92c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/a9e63c9dc07b39d0f3104fa13d53b054ad33654a",
-                "reference": "a9e63c9dc07b39d0f3104fa13d53b054ad33654a",
+                "url": "https://api.github.com/repos/symfony/console/zipball/3f1271fb58a5fe088a21c44bace07a59582c92c3",
+                "reference": "3f1271fb58a5fe088a21c44bace07a59582c92c3",
                 "shasum": ""
             },
             "require": {
@@ -4058,7 +4118,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-05T13:29:30+00:00"
+            "time": "2021-07-13T10:07:36+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -4199,12 +4259,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "41d15bb6d6b95d2be763c514bb2494215d9c5eef"
+                "reference": "59735ed6e9853658e238c68a1dd0cc178a9ef9e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/41d15bb6d6b95d2be763c514bb2494215d9c5eef",
-                "reference": "41d15bb6d6b95d2be763c514bb2494215d9c5eef",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/59735ed6e9853658e238c68a1dd0cc178a9ef9e4",
+                "reference": "59735ed6e9853658e238c68a1dd0cc178a9ef9e4",
                 "shasum": ""
             },
             "require": {
@@ -4264,7 +4324,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-26T11:20:16+00:00"
+            "time": "2021-07-07T15:41:18+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -5072,12 +5132,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "8e4d606ce655fa00c1a920e2b534d0b00f7491fe"
+                "reference": "86f6be863fc6de6a3b366261a0ba8b712a611323"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/8e4d606ce655fa00c1a920e2b534d0b00f7491fe",
-                "reference": "8e4d606ce655fa00c1a920e2b534d0b00f7491fe",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/86f6be863fc6de6a3b366261a0ba8b712a611323",
+                "reference": "86f6be863fc6de6a3b366261a0ba8b712a611323",
                 "shasum": ""
             },
             "require": {
@@ -5140,7 +5200,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-30T13:58:03+00:00"
+            "time": "2021-07-13T10:07:36+00:00"
         },
         {
             "name": "theseer/tokenizer",
