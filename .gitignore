@@ -2,6 +2,7 @@
 /yii
 /yii_test
 /yii_test.bat
+composer.lock
 
 # phpstorm project files
 .idea

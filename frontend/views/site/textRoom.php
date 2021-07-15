@@ -1,7 +1,7 @@
 <?php
 
 use frontend\assets\Janus\JanusAsset;
-use frontend\assets\Janus\JanusTextRoom;
+use frontend\assets\Janus\JanusTextRoomAsset;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\web\View;
@@ -9,7 +9,7 @@ use yii\web\View;
 /* @var $this View */
 
 JanusAsset::register($this);
-JanusTextRoom::register($this);
+JanusTextRoomAsset::register($this);
 
 $this->registerJsVar('myUsername', Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsFile(

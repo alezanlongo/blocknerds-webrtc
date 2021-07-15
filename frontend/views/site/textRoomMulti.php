@@ -1,17 +1,17 @@
 <?php
 
 use frontend\assets\Janus\JanusAsset;
-use frontend\assets\Janus\JanusTextRoom;
-use rmrevin\yii\fontawesome\FAS;
+use frontend\assets\Janus\JanusTextRoomMultiAsset;
+use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
-use yii\helpers\VarDumper;
 use yii\web\View;
 
 /* @var $this View */
 
 JanusAsset::register($this);
+$this->registerJsVar('userLogged', Yii::$app->getUser()->getIdentity()->username, View::POS_END);
+JanusTextRoomMultiAsset::register($this);
 
-$this->registerJsVar('myUsername', Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsFile(
     "https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js",
     [
@@ -21,14 +21,6 @@ $this->registerJsFile(
 );
 $this->registerJsFile(
     "https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/8.0.0/adapter.min.js",
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-
-$this->registerJsFile(
-    "js/janustest.js",
     [
         'depends' => "yii\web\JqueryAsset",
         'position' => View::POS_END
@@ -51,7 +43,6 @@ $this->registerJsFile(
                         <div class="panel-heading">
                             <h3 class="panel-title"> Participants
                                 <span class="label label-info hide" id="participant">
-
                                 </span>
                             </h3>
                         </div>
@@ -61,7 +52,7 @@ $this->registerJsFile(
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-7 ml-3">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title">Public Chatroom</h3>
@@ -71,12 +62,15 @@ $this->registerJsFile(
                         <div class="panel-footer">
                             <div class="input-group margin-bottom-sm">
                                 <span class="input-group-addon"><i class="fa fa-cloud-upload fa-fw"></i></span>
+                           
+                                <?php $form = ActiveForm::begin(['id' => 'form-chat', 'options' => ['enctype' => 'multipart/form-data']]) ?>
                                 <div class="d-flex">
-                                    <input class="form-control" type="text" placeholder="Write a chatroom message" autocomplete="off" id="datasend" onkeypress="return checkEnter(this, event);" />
-                                    <input type="file" id="inputUpload" style="display:none" onchange="return sendData(true);" />
-                                    <button id="btnUpload" class="btn btn-default" ><?= FAS::i('fas fa-paperclip') ?></button>
-                                    <button id="btnUpload" class="btn btn-default" onclick="return sendData();"><?= FAS::i('fas fa-paper-plane') ?></button>
+                                    <?= $form->field($model, 'text')->hint('Write a chatroom message') ?>
+                                    <?= $form->field($model, 'imageFile')->fileInput() ?>
+
+                                    <?= Html::submitButton('Submit', ['class' => 'btn btn-primary']); ?>
                                 </div>
+                                <?php ActiveForm::end() ?>
                             </div>
                         </div>
                     </div>

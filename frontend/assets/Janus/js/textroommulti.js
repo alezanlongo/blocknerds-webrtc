@@ -5,13 +5,13 @@ $("#btnUpload").on("click", function () {
 
 let janus = null;
 let textroom = null;
-const opaqueId = "textroomtest-" + Janus.randomString(12);
+const opaqueId = "textroommulti-" + Janus.randomString(12);
 
 let myroom = 1234; // Demo room
 if (getQueryStringValue("room") !== "") {
   myroom = parseInt(getQueryStringValue("room"));
 }
-let myusername = null;
+
 let myid = null;
 let participants = {};
 let transactions = {};
@@ -57,25 +57,21 @@ $(document).ready(function () {
     }
   };
 
-  const buildMessage = (from, message, dateString, isWhisper = false) => {
-    const component = $("#chatroom");
-    let tagP = document.createElement("p");
+  // const buildMessage = (from, message, dateString, isWhisper = false) => {
+  //   const component = $("#chatroom");
+  //   let tagP = document.createElement("p");
 
-    if (isWhisper) {
-      tagP.setAttribute("style", "color: purple");
-    }
+  //   if (isWhisper) {
+  //     tagP.setAttribute("style", "color: purple");
+  //   }
 
-    tagP.appendChild(
-      document.createTextNode(`[${dateString}] ${from}: ${message}`)
-    );
-    component.append(tagP);
+  //   tagP.appendChild(
+  //     document.createTextNode(`[${dateString}] ${from}: ${message}`)
+  //   );
+  //   component.append(tagP);
 
-    component.get(0).scrollTop = component.get(0).scrollHeight;
-  };
-
-  const isFile = (strMessage) => {
-    return strMessage.includes(";base64,");
-  };
+  //   component.get(0).scrollTop = component.get(0).scrollHeight;
+  // };
 
   Janus.init({
     debug: "all",
@@ -135,14 +131,13 @@ $(document).ready(function () {
               if (what === ACTION_MESSAGE) {
                 // Incoming message: public or private?
                 let msg = json["text"];
-                console.log("asdasdads", msg, json);
 
-                if (isFile(msg)) {
-                  const file = dataURLtoFile(msg, "file");
-                  msg = `<a download=${file.name} href="${msg}" >${file.name}<a>`;
-                }
-                // msg = msg.replace(new RegExp("<", "g"), "&lt");
-                // msg = msg.replace(new RegExp(">", "g"), "&gt");
+                // if (isFile(msg)) {
+                //   const file = dataURLtoFile(msg, "file");
+                //   msg = `<a download=${file.name} href="${msg}" >${file.name}<a>`;
+                // }
+                msg = msg.replace(new RegExp("<", "g"), "&lt");
+                msg = msg.replace(new RegExp(">", "g"), "&gt");
                 const from = json["from"];
                 const dateString = getDateString(json["date"]);
                 const whisper = json["whisper"];
@@ -292,21 +287,21 @@ function checkEnter(field, event) {
     ? event.which
     : event.charCode;
   if (theCode == 13) {
-    sendData();
+    // sendData();
     return false;
   }
   return true;
 }
 
 function joinUser() {
-  myid = randomString(12);
+  myid = userLogged; //randomString(12);
   const transaction = randomString(12);
   const register = {
     textroom: "join",
     transaction: transaction,
     room: myroom,
     username: myid,
-    display: myUsername,
+    display: userLogged,
   };
   console.log("transactions", transactions);
   transactions[transaction] = function (response) {
@@ -333,7 +328,7 @@ function joinUser() {
     }
     // We're in
     $("#room").removeClass("hide").show();
-    $("#participant").removeClass("hide").html(myUsername).show();
+    $("#participant").removeClass("hide").html(userLogged).show();
     $("#chatroom").css("height", $(window).height() - 420 + "px");
     $("#datasend").removeAttr("disabled");
     // Any participants already in?
@@ -411,50 +406,27 @@ function sendPrivateMsg(username) {
   return;
 }
 
-function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
+$("#form-chat button").on("click", function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  const form = document.getElementById("form-chat");
+
+  $.ajax({
+    url: "/site/text-room-multi",
+    type: "POST",
+    data: new FormData(form),
+    processData: false,
+    contentType: false,
+    success: (resp) => {
+      const data =
+        resp.data.text || `${window.location.origin}/${resp.data.url}`;
+      sendData(data);
+      form.reset();
+    },
   });
-}
+});
 
-function getExtension(mime) {
-  const UNKNOWN_MIME = "application/octet-stream";
-  const TXT_MIME = "text/plain";
-
-  switch (mime) {
-    case UNKNOWN_MIME:
-      return "";
-    case TXT_MIME:
-      return ".txt";
-    default:
-      return `.${mime.split("/")[1]}`;
-  }
-}
-
-function dataURLtoFile(dataurl, filename = "file") {
-  const arr = dataurl.split(",");
-  const mime = arr[0].match(/:(.*?);/)[1];
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  let u8arr = new Uint8Array(n);
-
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-
-  return new File([u8arr], `${filename}${getExtension(mime)}`, { type: mime });
-}
-
-async function sendData(isFile = false) {
-  let data = $("#datasend").val();
-
-  if (isFile) {
-    data = await getBase64(document.getElementById("inputUpload").files[0]);
-  }
-
+async function sendData(data = "") {
   if (data === "") {
     bootbox.alert("Insert a message to send on the DataChannel");
     return;
@@ -464,7 +436,6 @@ async function sendData(isFile = false) {
     transaction: randomString(12),
     room: myroom,
     text: data,
-    some: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   };
   // Note: messages are always acknowledged by default. This means that you'll
   // always receive a confirmation back that the message has been received by the

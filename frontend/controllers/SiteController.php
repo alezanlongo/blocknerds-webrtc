@@ -2,20 +2,24 @@
 
 namespace frontend\controllers;
 
+use common\models\ChatForm;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
 use common\models\LoginForm;
+use common\models\User;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use yii\filters\AccessControl;
+use yii\helpers\BaseFileHelper;
 use yii\helpers\VarDumper;
+use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * Site controller
@@ -67,16 +71,46 @@ class SiteController extends Controller
     {
         return $this->render('screenSharing');
     }
-    
+
     public function actionTextRoom()
     {
         return $this->render('textRoom');
     }
 
-    public function actionTest()
+    public function actionTextRoomMulti()
     {
-        return $this->render('testRoom');
+        $users = User::find()->all();
+        $model = new ChatForm();
+
+        if (Yii::$app->request->isPost) {
+            $userId = Yii::$app->getUser()->getId();
+            // $model->load(Yii::$app->request->post());
+            $model->text = Yii::$app->request->post('ChatForm')['text'];
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+            
+            if($model->imageFile){
+                $path = 'uploads' . DIRECTORY_SEPARATOR . $userId;
+                BaseFileHelper::createDirectory($path);
+                $filename = $path . DIRECTORY_SEPARATOR . $model->imageFile->baseName . '.' . $model->imageFile->extension;
+                $model->imageFile->saveAs($filename);
+            }
+            
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return ["data" => [
+                'url' => $filename ?? "",
+                'text' => $model->text,
+            ]];
+        }
+
+        return $this->render(
+            'textRoomMulti',
+            [
+                'users' => $users,
+                'model' => $model,
+            ]
+        );
     }
+
 
     /**
      * Displays homepage.
