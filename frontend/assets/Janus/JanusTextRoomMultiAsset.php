@@ -2,7 +2,7 @@
 
 namespace frontend\assets\Janus;
 
-class JanusTextRoom extends \yii\web\AssetBundle
+class JanusTextRoomMultiAsset extends \yii\web\AssetBundle
 {
 
     public $sourcePath = '@frontend/assets/Janus';
@@ -10,12 +10,12 @@ class JanusTextRoom extends \yii\web\AssetBundle
         'css/demo.css'
     ];
     public $js = [
-        'js/textroom.js'
+        'js/textroommulti.js'
     ];
     public $depends = [
         'yii\web\JqueryAsset'
     ];
     public $publishOptions = [
-        'forceCopy' => true,
+        'forceCopy' => false,
     ];
 }
