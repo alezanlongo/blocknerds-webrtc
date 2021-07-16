@@ -88,6 +88,8 @@ class SiteController extends Controller
             $model->text = Yii::$app->request->post('ChatForm')['text'];
             $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
             
+            $filename = "";
+
             if($model->imageFile){
                 $path = 'uploads' . DIRECTORY_SEPARATOR . $userId;
                 BaseFileHelper::createDirectory($path);
@@ -96,8 +98,9 @@ class SiteController extends Controller
             }
             
             Yii::$app->response->format = Response::FORMAT_JSON;
+            
             return ["data" => [
-                'url' => $filename ?? "",
+                'url' => $filename,
                 'text' => $model->text,
             ]];
         }
