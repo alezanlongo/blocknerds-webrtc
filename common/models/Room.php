@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "room".
@@ -27,17 +28,25 @@ class Room extends \yii\db\ActiveRecord
         return 'room';
     }
 
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['uuid'], 'string'],
-            [['owner_id', 'scheduled_at', 'created_at', 'updated_at'], 'required'],
-            [['owner_id', 'scheduled_at', 'created_at', 'updated_at'], 'default', 'value' => null],
+            ['uuid', 'string', 'max' => 36],
+            ['uuid', 'unique'],
+            ['uuid', 'thamtech\uuid\validators\UuidValidator'],
+            [['owner_id', 'scheduled_at'], 'required'],
             [['owner_id', 'scheduled_at', 'created_at', 'updated_at'], 'integer'],
-            [['uuid'], 'unique'],
+            ['owner_id', 'exist', 'targetClass' => User::class, 'targetAttribute' => ['owner_id' => 'id']],
         ];
     }
 
@@ -63,7 +72,7 @@ class Room extends \yii\db\ActiveRecord
      */
     public function getMembers()
     {
-        return $this->hasMany(Member::className(), ['room_id' => 'id']);
+        return $this->hasMany(Member::class, ['room_id' => 'id']);
     }
 
     /**
@@ -73,6 +82,15 @@ class Room extends \yii\db\ActiveRecord
      */
     public function getUsers()
     {
-        return $this->hasMany(User::className(), ['id' => 'user_id'])->viaTable('member', ['room_id' => 'id']);
+        return $this->hasMany(User::class, ['id' => 'user_id'])->viaTable('member', ['room_id' => 'id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->uuid = \thamtech\uuid\helpers\UuidHelper::uuid();
+        }
+
+        return parent::beforeSave($insert);
     }
 }

@@ -30,11 +30,10 @@ class Member extends \yii\db\ActiveRecord
     {
         return [
             [['room_id', 'user_id'], 'required'],
-            [['room_id', 'user_id'], 'default', 'value' => null],
             [['room_id', 'user_id'], 'integer'],
             [['room_id', 'user_id'], 'unique', 'targetAttribute' => ['room_id', 'user_id']],
-            [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::className(), 'targetAttribute' => ['room_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::class, 'targetAttribute' => ['room_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -56,7 +55,7 @@ class Member extends \yii\db\ActiveRecord
      */
     public function getRoom()
     {
-        return $this->hasOne(Room::className(), ['id' => 'room_id']);
+        return $this->hasOne(Room::class, ['id' => 'room_id']);
     }
 
     /**
@@ -66,6 +65,6 @@ class Member extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 }
