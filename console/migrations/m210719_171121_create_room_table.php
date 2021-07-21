@@ -12,6 +12,7 @@ class m210719_171121_create_room_table extends Migration
      */
     public function safeUp()
     {
+        $this->execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
         $this->createTable('{{%room}}', [
             'id' => $this->primaryKey(),
             'uuid' => 'uuid DEFAULT uuid_generate_v4() UNIQUE NOT NULL',
@@ -28,5 +29,6 @@ class m210719_171121_create_room_table extends Migration
     public function safeDown()
     {
         $this->dropTable('{{%room}}');
+        $this->execute('DROP EXTENSION IF EXISTS "uuid-ossp";');
     }
 }
