@@ -9,12 +9,17 @@ use Yii;
  *
  * @property int $room_id
  * @property int $user_id
+ * @property int $status
  *
  * @property Room $room
  * @property User $user
  */
 class Member extends \yii\db\ActiveRecord
 {
+    const STATUS_DENY = 0;
+    const STATUS_ALLOW = 1;
+    const STATUS_PENDING = 2;
+
     /**
      * {@inheritdoc}
      */
@@ -30,7 +35,9 @@ class Member extends \yii\db\ActiveRecord
     {
         return [
             [['room_id', 'user_id'], 'required'],
-            [['room_id', 'user_id'], 'integer'],
+            [['room_id', 'user_id', 'status'], 'integer'],
+            ['status', 'default', 'value' => self::STATUS_PENDING],
+            ['status', 'in', 'range' => [self::STATUS_DENY, self::STATUS_ALLOW, self::STATUS_PENDING]],
             [['room_id', 'user_id'], 'unique', 'targetAttribute' => ['room_id', 'user_id']],
             [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::class, 'targetAttribute' => ['room_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
@@ -45,6 +52,7 @@ class Member extends \yii\db\ActiveRecord
         return [
             'room_id' => 'Room ID',
             'user_id' => 'User ID',
+            'status' => 'Status',
         ];
     }
 

@@ -36,11 +36,11 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
+        // ['label' => 'About', 'url' => ['/site/about']],
         // ['label' => 'Contact', 'url' => ['/site/contact']],
-        ['label' => 'Video room', 'url' => ['/site/video-room']],
-        ['label' => 'Text room', 'url' => ['/site/text-room']],
-        ['label' => 'Screen sharing', 'url' => ['/site/screen-sharing']],
+        ['label' => 'The room', 'url' => ['/room/create']],
+        // ['label' => 'Text room', 'url' => ['/site/text-room']],
+        // ['label' => 'Screen sharing', 'url' => ['/site/screen-sharing']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
