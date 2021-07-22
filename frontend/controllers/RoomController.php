@@ -1,0 +1,191 @@
+<?php
+
+namespace frontend\controllers;
+
+
+use Yii;
+use common\models\Member;
+use common\models\Room;
+use common\models\User;
+use yii\filters\AccessControl;
+use yii\helpers\Json;
+use yii\web\NotFoundHttpException;
+use yii\web\TooManyRequestsHttpException;
+use yii\web\UnprocessableEntityHttpException;
+
+class RoomController extends \yii\web\Controller
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                "class" => AccessControl::class,
+                "only" => ['index'],
+                "rules" => [
+                    [
+                        'allow' => true,
+                        'roles' => ["@"],
+                    ]
+                ],
+            ],
+        ];
+    }
+
+    public function actionIndex($uuid)
+    {
+        $room = Room::find()->where(['uuid' => $uuid])->limit(1)->one();
+
+        if (!$room) {
+            return throw new NotFoundHttpException("Room not found.");
+        }
+
+        $user_id = Yii::$app->user->getId();
+
+        $is_owner = false;
+        $status = null;
+        if ($user_id == $room->owner_id) {
+            $is_owner = true;
+        } else {
+            $member = Member::find()->where(['room_id' => $room->id, 'user_id' => $user_id])->limit(1)->one();
+            $status = $member->status ?? null;
+        }
+
+        $requests = [];
+        if ($is_owner) {
+            $requests = Member::find()->with("user")->where(['room_id' => $room->id, 'status' => 2])->all();
+        }
+
+        return $this->render('index', [
+            'is_owner' => $is_owner,
+            'status' => $status,
+            'user_id' => $user_id,
+            'uuid' => $uuid,
+            'requests' => $requests,
+        ]);
+    }
+
+    public function actionCreate()
+    {
+        if (Yii::$app->request->isPost) {
+
+            $model = new \common\models\Room();
+            $fields['Room']['owner_id'] = Yii::$app->user->identity->getId();
+            $fields['Room']['scheduled_at'] = time();
+
+            if ($model->load($fields) && $model->save()) {
+                return $this->redirect([$model->uuid]);
+            }
+        }
+
+        return $this->render('create');
+    }
+
+    public function actionJoinRequest()
+    {
+        $uuid = $this->request->post('uuid') ?? null;
+        $user_id = $this->request->post('user_id') ?? null;
+
+        $room = $this->joinRequestCheck($uuid, $user_id);
+
+        $member = Member::find()->where([
+            'room_id' => $room->id,
+            'user_id' => $user_id
+        ])->limit(1)->one();
+
+        if ($member) {
+            if ($member->status == 0) {
+                return throw new UnprocessableEntityHttpException("Your request to join the room has been denied.");
+            } else if ($member->status == 2) {
+                return throw new TooManyRequestsHttpException("Your request to join the room is pending.");
+            } else {
+                return throw new TooManyRequestsHttpException("Your request to join the room was already approved.");
+            }
+        }
+
+        $model = new Member();
+        $model->user_id = $user_id;
+        $model->room_id = $room->id;
+        $model->status = 2;
+
+        if ($model->save()) {
+
+            $topic = 'room';
+
+            $response = [
+                // 'type' => 'user request to join',
+                'type' => 'Message Arrived',
+                'member' => $model
+            ];
+
+            Yii::$app->mqtt->sendMessage($topic, $response);
+
+            return Json::encode($model);
+        }
+
+        throw new UnprocessableEntityHttpException("Something went wrong please try again later.");
+    }
+
+    public function actionJoin($action)
+    {
+        $uuid = $this->request->post('uuid') ?? null;
+        $user_id = $this->request->post('user_id') ?? null;
+
+        $room = $this->joinRequestCheck($uuid, $user_id);
+
+        $member = Member::find()->where([
+            'room_id' => $room->id,
+            'user_id' => $user_id
+        ])->limit(1)->one();
+
+        if (!$member) {
+            return throw new UnprocessableEntityHttpException("Request to join the room don't exist.");
+        }
+
+        $member->status = ($action == "allow" ? 1 : 0);
+
+        if ($member->save()) {
+
+            $topic = 'room';
+
+            $response = [
+                // 'type' => 'owner response the join request',
+                'type' => 'Message Arrived',
+                'member' => $member
+            ];
+
+            Yii::$app->mqtt->sendMessage($topic, $response);
+
+            return Json::encode($member);
+        }
+
+        throw new UnprocessableEntityHttpException("Something went wrong please try again later.");
+    }
+
+    private function joinRequestCheck($uuid = null, $user_id = null)
+    {
+        if (!$uuid || !$user_id) {
+            return throw new UnprocessableEntityHttpException("One or more parameters are empty.");
+        }
+
+        $room = Room::find()->where(['uuid' => $uuid])->limit(1)->one();
+
+        if (!$room) {
+            return throw new NotFoundHttpException("Room not found.");
+        }
+
+        $user = User::find()->where(['id' => $user_id])->limit(1)->one();
+
+        if (!$user) {
+            return throw new NotFoundHttpException("User not found.");
+        }
+
+        if ($room->owner_id == $user->id) {
+            return throw new UnprocessableEntityHttpException("Owner is member by default.");
+        }
+
+        return $room;
+    }
+}
