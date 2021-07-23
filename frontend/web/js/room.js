@@ -1,5 +1,6 @@
 $(document).ready(function () {
-  const wsbroker = location.hostname; // mqtt websocket enabled broker
+  // const wsbroker = window.location.hostname; // mqtt websocket enabled broker
+  const wsbroker = "localhost"; // mqtt websocket enabled broker
   const wsport = 15675; // port for above
   const client = new Paho.MQTT.Client(
     wsbroker,
