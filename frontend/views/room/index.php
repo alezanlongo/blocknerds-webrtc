@@ -1,6 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
+use common\models\Member;
 use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
@@ -54,9 +55,9 @@ $this->title = 'The Room';
         if (is_null($status)) {
             echo Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin']);
         } else {
-            if ($status == 0) {
+            if ($status == Member::STATUS_DENY) {
                 echo "<p class='text-danger'>Your join request has been denied.<p>";
-            } else if ($status == 1) {
+            } else if ($status == Member::STATUS_ALLOW) {
                 echo "<p class='text-primary'>Welcome to the room!<p>";
             } else {
                 echo "<p class='text-info'>Your join request is waiting for approval.<p>";

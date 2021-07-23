@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  const wsbroker = "localhost"; // mqtt websocket enabled broker
+  const wsbroker = location.hostname; // mqtt websocket enabled broker
   const wsport = 15675; // port for above
   const client = new Paho.MQTT.Client(
     wsbroker,
@@ -46,10 +46,10 @@ $(document).on("click", "#btnDeny", function (e) {
   joinHandler("deny", $(this).data("user"));
 });
 
-function joinHandler(action, userId) {
+function joinHandler(action, user_id) {
   $.post({
     url: "/room/join/" + action,
-    data: { uuid, user_id: userId },
+    data: { uuid, user_id },
     cache: false,
   });
 }

@@ -55,7 +55,7 @@ class RoomController extends \yii\web\Controller
 
         $requests = [];
         if ($is_owner) {
-            $requests = Member::find()->with("user")->where(['room_id' => $room->id, 'status' => 2])->all();
+            $requests = Member::find()->with("user")->where(['room_id' => $room->id, 'status' => Member::STATUS_PENDING])->all();
         }
 
         return $this->render('index', [
@@ -96,9 +96,9 @@ class RoomController extends \yii\web\Controller
         ])->limit(1)->one();
 
         if ($member) {
-            if ($member->status == 0) {
+            if ($member->status == Member::STATUS_DENY) {
                 return throw new UnprocessableEntityHttpException("Your request to join the room has been denied.");
-            } else if ($member->status == 2) {
+            } else if ($member->status == Member::STATUS_PENDING) {
                 return throw new TooManyRequestsHttpException("Your request to join the room is pending.");
             } else {
                 return throw new TooManyRequestsHttpException("Your request to join the room was already approved.");
@@ -108,14 +108,13 @@ class RoomController extends \yii\web\Controller
         $model = new Member();
         $model->user_id = $user_id;
         $model->room_id = $room->id;
-        $model->status = 2;
+        $model->status = Member::STATUS_PENDING;
 
         if ($model->save()) {
 
             $topic = 'room';
 
             $response = [
-                // 'type' => 'user request to join',
                 'type' => 'Message Arrived',
                 'member' => $model
             ];
@@ -144,14 +143,13 @@ class RoomController extends \yii\web\Controller
             return throw new UnprocessableEntityHttpException("Request to join the room don't exist.");
         }
 
-        $member->status = ($action == "allow" ? 1 : 0);
+        $member->status = ($action == "allow" ? Member::STATUS_ALLOW : Member::STATUS_DENY);
 
         if ($member->save()) {
 
             $topic = 'room';
 
             $response = [
-                // 'type' => 'owner response the join request',
                 'type' => 'Message Arrived',
                 'member' => $member
             ];
