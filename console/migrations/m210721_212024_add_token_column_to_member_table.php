@@ -13,7 +13,7 @@ class m210721_212024_add_token_column_to_member_table extends Migration
      */
     public function safeUp()
     {
-        $this->addColumn('{{%member}}', 'token', $this->string(32)->notNull());
+        $this->addColumn('{{%member}}', 'token', $this->string(32)->defaultValue(null));
         $this->createIndex(
                 '{{%idx-member-token}}',
                 '{{%member}}',

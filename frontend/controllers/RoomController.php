@@ -83,7 +83,6 @@ class RoomController extends \yii\web\Controller
                 $memberOwner = new Member();
                 $memberOwner->room_id = $model->id;
                 $memberOwner->user_id = $userId;
-                $memberOwner->token = $this->randomString();
                 $memberOwner->status = Member::STATUS_ALLOW;
                 $memberOwner->save();
 
@@ -94,18 +93,6 @@ class RoomController extends \yii\web\Controller
         }
 
         return $this->render('create');
-    }
-
-    private function randomString($length = 5) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        
-        return $randomString;
     }
 
     public function actionJoinRequest()
@@ -133,7 +120,6 @@ class RoomController extends \yii\web\Controller
         $model = new Member();
         $model->user_id = $user_id;
         $model->room_id = $room->id;
-        $model->token = $this->randomString();
         $model->status = Member::STATUS_PENDING;
 
         if ($model->save()) {
