@@ -11,7 +11,7 @@ use frontend\assets\pahoMqtt\PahoMqttAsset;
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
-$this->registerJsVar('uuid', $uuid, View::POS_END); //->getUser()->
+$this->registerJsVar('uuid', $uuid, View::POS_END); 
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('user_id', $user_id, View::POS_END);
 $this->registerJsVar('is_owner', $is_owner, View::POS_END);
@@ -87,7 +87,6 @@ $this->title = 'The Room';
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Local Video <span class="label label-primary hide" id="publisher"></span>
-
                         </h3>
                     </div>
                     <div class="panel-body" id="videolocal"></div>

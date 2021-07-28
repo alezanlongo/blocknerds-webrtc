@@ -114,9 +114,7 @@ class RoomController extends \yii\web\Controller
         $model->status = Member::STATUS_PENDING;
 
         if ($model->save()) {
-
             $topic = 'room';
-
             $response = [
                 'type' => 'Message Arrived',
                 'member' => $model

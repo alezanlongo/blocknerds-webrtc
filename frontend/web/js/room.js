@@ -39,7 +39,7 @@ const handleMQTTPaho = () => {
       console.log(msg)
       $.pjax.reload({ container: "#join-room" });
     
-      if(msg.status){
+      if(msg.status && !is_owner){
         window.location.reload();
       }
     }
