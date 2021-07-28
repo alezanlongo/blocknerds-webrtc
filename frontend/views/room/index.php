@@ -7,12 +7,14 @@ use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use frontend\assets\pahoMqtt\PahoMqttAsset;
+use yii\bootstrap4\Button;
+use yii\bootstrap4\Modal;
 
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
-$this->registerJsVar('myroom', $room_id, View::POS_END); 
-$this->registerJsVar('uuid', $uuid, View::POS_END); 
+$this->registerJsVar('myroom', $room_id, View::POS_END);
+$this->registerJsVar('uuid', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('user_id', $user_id, View::POS_END);
 $this->registerJsVar('is_owner', $is_owner, View::POS_END);
@@ -82,7 +84,7 @@ $this->title = 'The Room';
         ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
         fugiat nulla pariatur.</p>
 
-        <? if ($is_owner || $is_allowed) { ?>
+    <? if ($is_owner || $is_allowed) { ?>
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">
@@ -114,25 +116,50 @@ $this->title = 'The Room';
     <? } ?>
 
     <?
-    Pjax::begin(['id' => 'join-room', "options" => []]);
+
+
+    Pjax::begin(['id' => 'room-button', "options" => []]);
+    if ($is_owner && count($requests) > 0) {
+        echo Button::widget([
+            'label' => 'Join requests available!',
+            "options" => ["class" => "btn-lg btn-info mb-3", "onclick" => "(function ( event ) { $('#pendingRequests').modal('show'); })();"],
+        ]);
+    }
+    Pjax::end();
+
+    Modal::begin([
+        'title' => 'Require to join...',
+        'id' => 'pendingRequests',
+    ]);
+
+    Pjax::begin(['id' => 'room-request', "options" => []]);
+
     if ($is_owner) {
-        foreach ($requests as $request) {
+        if (count($requests) > 0) {
+            foreach ($requests as $request) {
     ?>
-            <div class="row">
                 <div class="card mb-3">
-                    <div class="card-header">Require to join...</div>
+                    <div class="card-header"><?= $request->user->username ?> wants to join the room</div>
                     <div class="card-body">
-                        <h5 class="card-title"><?= $request->user->username ?> wants to join the room</h5>
                         <?
                         echo Html::submitButton('Allow to join', ['class' => 'btn btn-success', 'id' => 'btnAllow', 'data-user' => $request->user_id]);
                         echo Html::submitButton('Deny to join', ['class' => 'btn btn-danger', 'id' => 'btnDeny', 'data-user' => $request->user_id]);
                         ?>
                     </div>
                 </div>
-            </div>
     <?
+            }
+        } else {
+            echo "<p class='text-info'>Well done, nothing to do here!.<p>";
         }
-    } else {
+    }
+    Pjax::end();
+
+    Modal::end();
+
+    Pjax::begin(['id' => 'room-member', "options" => []]);
+
+    if (!$is_owner) {
         if (is_null($status)) {
             echo Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin']);
         } else {

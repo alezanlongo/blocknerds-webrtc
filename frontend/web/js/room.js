@@ -37,8 +37,11 @@ const handleMQTTPaho = () => {
     if (objData.type === "Message Arrived") {
       const msg = JSON.parse(message.payloadString) 
       console.log(msg)
-      $.pjax.reload({ container: "#join-room" });
     
+	  $.pjax.reload({ container: "#room-button", async:false });
+	  $.pjax.reload({ container: "#room-request", async:false });
+	  $.pjax.reload({ container: "#room-member", async:false });
+	  
       if(msg.status && !is_owner){
         window.location.reload();
       }
@@ -352,8 +355,10 @@ $(document).ready(function () {
     return;
   }
   if(is_owner || is_allowed){
-    $.pjax.reload({ container: "#join-room" });
-    initJanus();
+	$.pjax.reload({ container: "#room-button", async:false });
+	$.pjax.reload({ container: "#room-request", async:false });
+	$.pjax.reload({ container: "#room-member", async:false });
+	initJanus();
   }
 });
 
