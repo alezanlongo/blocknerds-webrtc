@@ -44,7 +44,7 @@ class JanusApiComponent extends Component
         if (!$res->isOk) {
         }
         $data = $res->getData();
-        \var_dump($data);
+        // var_dump($data);
         if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'created') {
             return true;
         } elseif (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] != 'created') {
@@ -59,7 +59,7 @@ class JanusApiComponent extends Component
     {
         $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'exists', 'room' => $id], 'transaction' => $this->createRandStr()], $this->createSession() . '/' . $this->handleID);
         $data = $res->getData();
-        \var_dump($data);
+        // \var_dump($data);
     }
 
     function attach($plugin)
@@ -99,7 +99,7 @@ class JanusApiComponent extends Component
             };
         } catch (HttpClientException $ex) {
             // Log error
-            throw new Exception('Internal error');
+            throw new Exception('Internal error ' . $ex->getMessage());
         }
     }
 

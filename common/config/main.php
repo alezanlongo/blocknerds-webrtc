@@ -44,7 +44,7 @@ return [
         ],
         'janusApi' => [
             'class' => common\components\JanusApiComponent::class,
-            'url' => 'http://127.0.0.1',
+            'url' => 'http://janus',
             'port' => 8088,
             'uri' => 'janus',
             'password'=>'janusrocks'

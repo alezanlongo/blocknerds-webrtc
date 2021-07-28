@@ -29,7 +29,7 @@ JS,View::POS_END)
             }
 
             Pjax::begin(['id' => 'create-video-room-container']);
-            //var_dump($model->roomMembers);
+            // var_dump($model->roomMembers);
             $form = ActiveForm::begin(['id' => 'create-video-room', 'options' => ['data-pjax' => true, 'onSubmit' => "setSelectedOptions('" . Html::getInputId($model, 'roomMembers') . "')"]]);
             ?>
             <?= $form->field($model, 'addMembers')->textInput(); ?>

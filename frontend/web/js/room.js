@@ -1,6 +1,6 @@
 let janus = null;
 let sfutest = null;
-const myroom = 1234;
+// const myroom = 1234;
 const opaqueId = "videoroomtest-" + Janus.randomString(12);
 const server = "wss://" + window.location.hostname + ":8989/ws";
 

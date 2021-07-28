@@ -11,6 +11,7 @@ use frontend\assets\pahoMqtt\PahoMqttAsset;
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
+$this->registerJsVar('myroom', $room_id, View::POS_END); 
 $this->registerJsVar('uuid', $uuid, View::POS_END); 
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('user_id', $user_id, View::POS_END);
@@ -74,7 +75,7 @@ $this->title = 'The Room';
 ?>
 <div class="room">
 
-    <h1><?= $this->title ?></h1>
+    <h1><?= $this->title . " " . $room_id ?></h1>
 
     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
         dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
@@ -100,6 +101,15 @@ $this->title = 'The Room';
                     <div class="panel-body relative" id="videoremote1"></div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Remote Video #2 <span class="label label-info hide" id="remote2"></span></h3>
+                    </div>
+                    <div class="panel-body relative" id="videoremote2"></div>
+                </div>
+            </div>
+
         </div>
     <? } ?>
 
