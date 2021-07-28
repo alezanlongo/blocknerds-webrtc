@@ -45,12 +45,14 @@ class RoomController extends \yii\web\Controller
         $user_id = Yii::$app->user->getId();
 
         $is_owner = false;
+        $is_allowed = false;
         $status = null;
         if ($user_id == $room->owner_id) {
             $is_owner = true;
         } else {
             $member = Member::find()->where(['room_id' => $room->id, 'user_id' => $user_id])->limit(1)->one();
             $status = $member->status ?? null;
+            $is_allowed = $status === Member::STATUS_ALLOW;
         }
 
         $requests = [];
@@ -60,6 +62,7 @@ class RoomController extends \yii\web\Controller
 
         return $this->render('index', [
             'is_owner' => $is_owner,
+            'is_allowed' => $is_allowed,
             'status' => $status,
             'user_id' => $user_id,
             'uuid' => $uuid,
@@ -151,7 +154,8 @@ class RoomController extends \yii\web\Controller
 
             $response = [
                 'type' => 'Message Arrived',
-                'member' => $member
+                'member' => Json::encode($member),
+                'status' => $member->status
             ];
 
             Yii::$app->mqtt->sendMessage($topic, $response);
