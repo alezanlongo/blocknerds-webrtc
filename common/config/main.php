@@ -8,7 +8,7 @@ return [
     ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
@@ -41,6 +41,13 @@ return [
             'class' => common\components\MqttComponent::class,
             'host' => 'rabbitmq',
             'port' => 1883
+        ],
+        'janusApi' => [
+            'class' => common\components\JanusApiComponent::class,
+            'url' => 'http://127.0.0.1',
+            'port' => 8088,
+            'uri' => 'janus',
+            'password'=>'janusrocks'
         ]
     ],
 ];
