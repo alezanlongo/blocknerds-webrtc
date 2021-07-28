@@ -59,8 +59,17 @@ class RoomController extends \yii\web\Controller
         if ($is_owner) {
             $requests = Member::find()->with("user")->where(['room_id' => $room->id, 'status' => Member::STATUS_PENDING])->all();
         }
+       
+        // $subQuery = Member::find()
+        //     ->where(['not in', 'user_id', Yii::$app->getUser()->getId()])
+        //     ->andWhere(['room_id' => $room->id, 'status' => Member::STATUS_ALLOW])
+        //     ->select('user_id');
+        // $query = User::find()->where(['in', 'id', $subQuery]);
+
+        // $members = $query->all();
 
         return $this->render('index', [
+            // 'members' => $members,
             'room_id' => $room->id,
             'is_owner' => $is_owner,
             'is_allowed' => $is_allowed,
