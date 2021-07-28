@@ -3,23 +3,27 @@
 namespace frontend\controllers;
 
 use common\models\ChatForm;
+use common\models\LoginForm;
+use common\models\User;
+use frontend\models\ContactForm;
+use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResendVerificationEmailForm;
+use frontend\models\ResetPasswordForm;
+use frontend\models\SignupForm;
+use frontend\models\UserRoomRepository;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
-use common\models\LoginForm;
-use common\models\User;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
-use frontend\models\ContactForm;
 use yii\filters\AccessControl;
 use yii\helpers\BaseFileHelper;
 use yii\helpers\VarDumper;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
+use yii\web\HttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
+use const YII_ENV_TEST;
 
 /**
  * Site controller
@@ -35,7 +39,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 "class" => AccessControl::class,
-                "only" => ['logout', 'text-room'],
+                "only" => ['logout', 'text-room', 'video-room-create'],
                 "rules" => [
                     [
                         'allow' => true,
@@ -62,10 +66,29 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionVideoRoom()
+    public function actionCreateVideoRoom()
     {
-        return $this->render('videoRoom');
+        $model = new \frontend\models\CreateVideoRoomForm();
+
+        if ($this->request->getBodyParam('addUser') !== null) {
+            $model->addMembers($this->request->getBodyParam('CreateVideoRoomForm')['addMembers'], $this->request->getBodyParam('CreateVideoRoomForm')['roomMembers']);
+        }
+
+        return $this->render('createVideoRoom', ['model' => $model]);
     }
+
+    public function actionVideoRoom($roomUuid)
+    {
+        $token = UserRoomRepository::getUserTokenByRoom(Yii::$app->getUser()->getId(), $roomUuid);
+        
+        if (null === $token) {
+            throw new NotFoundHttpException();
+        }
+        
+        Yii::$app->janusApi->videoRoomCreate($token->room_id);
+        
+    }
+
 
     public function actionScreenSharing()
     {
@@ -87,18 +110,18 @@ class SiteController extends Controller
             // $model->load(Yii::$app->request->post());
             $model->text = Yii::$app->request->post('ChatForm')['text'];
             $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
-            
+
             $filename = "";
 
-            if($model->imageFile){
+            if ($model->imageFile) {
                 $path = 'uploads' . DIRECTORY_SEPARATOR . $userId;
                 BaseFileHelper::createDirectory($path);
                 $filename = $path . DIRECTORY_SEPARATOR . $model->imageFile->baseName . '.' . $model->imageFile->extension;
                 $model->imageFile->saveAs($filename);
             }
-            
+
             Yii::$app->response->format = Response::FORMAT_JSON;
-            
+
             return ["data" => [
                 'url' => $filename,
                 'text' => $model->text,
@@ -113,7 +136,6 @@ class SiteController extends Controller
             ]
         );
     }
-
 
     /**
      * Displays homepage.
@@ -265,7 +287,7 @@ class SiteController extends Controller
      *
      * @param string $token
      * @throws BadRequestHttpException
-     * @return yii\web\Response
+     * @return Response
      */
     public function actionVerifyEmail($token)
     {
