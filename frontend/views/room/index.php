@@ -20,7 +20,6 @@ $this->registerJsVar('user_id', $user_id, View::POS_END);
 $this->registerJsVar('is_owner', $is_owner, View::POS_END);
 $this->registerJsVar('is_allowed', $is_allowed, View::POS_END);
 
-
 $this->registerJsFile(
     "https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/8.0.0/adapter.min.js",
     [
@@ -89,36 +88,44 @@ $this->title = 'The Room';
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Local Video <span class="label label-primary hide" id="publisher"></span>
+                        <h3 class="panel-title">Local Video </span>
                         </h3>
                     </div>
                     <div class="panel-body" id="videolocal"></div>
                 </div>
             </div>
+            </div>
+            <?php Pjax::begin(['id' => 'room-video', "options" => ["class"=>"row"]]); ?>
+            <?php foreach ($members as $key => $member) { ?>
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Remote Video #1 <span class="label label-info hide" id="remote1"></span></h3>
+                        <h3 class="panel-title">Remote Video #<?= $key+1 ?> </span></h3>
                     </div>
-                    <div class="panel-body relative" id="videoremote1"></div>
+                    <div class="panel-body relative" id="videoremote<?= $key+1 ?>"></div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Remote Video #2 <span class="label label-info hide" id="remote2"></span></h3>
-                    </div>
-                    <div class="panel-body relative" id="videoremote2"></div>
-                </div>
-            </div>
-
-        </div>
+            <?php } ?>
+            <?php Pjax::end(); ?> 
+       
     <? } ?>
+    <!-- <?php Pjax::begin(['id' => 'video-room-section', "options" => []]); ?>
+    <div class="row">
+        <?php foreach ($members as $key => $member) { ?>
+            <div class="col-md-4" id="box-video-<?= $member->id ?>">
+                <div class="panel panel-default">
+                    <div class="panel-heading">   
+                        <h3 class="panel-title">Video #<?= $key + 1 ?> </h3>
+                    </div>
+                    <div class="panel-body relative" id="video-<?= $member->id ?>"></div>
+                </div>
+            </div>
+        <?php } ?>
+    </div>
+    <?php Pjax::end(); ?> -->
 
-    <?
 
-
-    Pjax::begin(['id' => 'room-button', "options" => []]);
+    <? Pjax::begin(['id' => 'room-button', "options" => []]);
     if ($is_owner && count($requests) > 0) {
         echo Button::widget([
             'label' => 'Join requests available!',
