@@ -1,6 +1,7 @@
 function newRemoteFeed(id, display, audio, video) {
   // A new feed has been published, create a new plugin handle and attach to it as a subscriber
   var remoteFeed = null;
+  $('#publish').attr('disabled', true).unbind('click');
   janus.attach({
     plugin: "janus.plugin.videoroom",
     opaqueId: opaqueId,
@@ -232,30 +233,30 @@ function newRemoteFeed(id, display, audio, video) {
           .show();
       }
       if (!addButtons) return;
-      if (
-        Janus.webRTCAdapter.browserDetails.browser === "chrome" ||
-        Janus.webRTCAdapter.browserDetails.browser === "firefox" ||
-        Janus.webRTCAdapter.browserDetails.browser === "safari"
-      ) {
-        $("#curbitrate" + remoteFeed.rfindex)
-          .removeClass("hide")
-          .show();
-        bitrateTimer[remoteFeed.rfindex] = setInterval(function () {
-          // Display updated bitrate, if supported
-          var bitrate = remoteFeed.getBitrate();
-          $("#curbitrate" + remoteFeed.rfindex).text(bitrate);
-          // Check if the resolution changed too
-          var width = $("#remotevideo" + remoteFeed.rfindex).get(0).videoWidth;
-          var height = $("#remotevideo" + remoteFeed.rfindex).get(
-            0
-          ).videoHeight;
-          if (width > 0 && height > 0)
-            $("#curres" + remoteFeed.rfindex)
-              .removeClass("hide")
-              .text(width + "x" + height)
-              .show();
-        }, 1000);
-      }
+      // if (
+      //   Janus.webRTCAdapter.browserDetails.browser === "chrome" ||
+      //   Janus.webRTCAdapter.browserDetails.browser === "firefox" ||
+      //   Janus.webRTCAdapter.browserDetails.browser === "safari"
+      // ) {
+      //   $("#curbitrate" + remoteFeed.rfindex)
+      //     .removeClass("hide")
+      //     .show();
+      //   bitrateTimer[remoteFeed.rfindex] = setInterval(function () {
+      //     // Display updated bitrate, if supported
+      //     var bitrate = remoteFeed.getBitrate();
+      //     $("#curbitrate" + remoteFeed.rfindex).text(bitrate);
+      //     // Check if the resolution changed too
+      //     var width = $("#remotevideo" + remoteFeed.rfindex).get(0).videoWidth;
+      //     var height = $("#remotevideo" + remoteFeed.rfindex).get(
+      //       0
+      //     ).videoHeight;
+      //     if (width > 0 && height > 0)
+      //       $("#curres" + remoteFeed.rfindex)
+      //         .removeClass("hide")
+      //         .text(width + "x" + height)
+      //         .show();
+      //   }, 1000);
+      // }
     },
     oncleanup: function () {
       Janus.log(" ::: Got a cleanup notification (remote feed " + id + ") :::");
@@ -282,28 +283,27 @@ function joinMe() {
     ptype: "publisher",
     display: username,
   };
-  sfutest.send({ message: register });
+  pluginHandler.send({ message: register });
 }
 
 function unpublishOwnFeed() {
   // Unpublish our stream
   $("#unpublish").attr("disabled", true).unbind("click");
   var unpublish = { request: "unpublish" };
-  sfutest.send({ message: unpublish });
+  pluginHandler.send({ message: unpublish });
 }
 function toggleMute() {
-  var muted = sfutest.isAudioMuted();
+  var muted = pluginHandler.isAudioMuted();
   Janus.log((muted ? "Unmuting" : "Muting") + " local stream...");
-  if (muted) sfutest.unmuteAudio();
-  else sfutest.muteAudio();
-  muted = sfutest.isAudioMuted();
+  if (muted) pluginHandler.unmuteAudio();
+  else pluginHandler.muteAudio();
+  muted = pluginHandler.isAudioMuted();
   $("#mute").html(muted ? "Unmute" : "Mute");
 }
 
 function publishOwnFeed(useAudio) {
   // Publish our stream
-  // $('#publish').attr('disabled', true).unbind('click');
-  sfutest.createOffer({
+  pluginHandler.createOffer({
     // Add data:true here if you want to publish datachannels as well
     media: {
       audioRecv: false,
@@ -318,7 +318,7 @@ function publishOwnFeed(useAudio) {
     simulcast2: doSimulcast2,
     success: function (jsep) {
       Janus.debug("Got publisher SDP!", jsep);
-      var publish = { request: "configure", audio: useAudio, video: true };
+      let publish = { request: "configure", audio: useAudio, video: true };
       // You can force a specific codec to use when publishing by using the
       // audiocodec and videocodec properties, for instance:
       // 		publish["audiocodec"] = "opus"
@@ -332,7 +332,7 @@ function publishOwnFeed(useAudio) {
       // We allow people to specify a codec via query string, for demo purposes
       if (acodec) publish["audiocodec"] = acodec;
       if (vcodec) publish["videocodec"] = vcodec;
-      sfutest.send({ message: publish, jsep: jsep });
+      pluginHandler.send({ message: publish, jsep });
     },
     error: function (error) {
       Janus.error("WebRTC error:", error);
