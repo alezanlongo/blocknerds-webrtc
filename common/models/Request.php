@@ -3,25 +3,41 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
- * This is the model class for table "member".
+ * This is the model class for table "request".
  *
  * @property int $room_id
  * @property int $user_id
- * @property int $token
+ * @property int $status
+ * @property int $attempts
+ * @property int $created_at
+ * @property int $updated_at
  *
  * @property Room $room
  * @property User $user
  */
-class Member extends \yii\db\ActiveRecord
+class Request extends \yii\db\ActiveRecord
 {
+    const STATUS_DENY = 0;
+    const STATUS_ALLOW = 1;
+    const STATUS_PENDING = 2;
+    const MAX_ATTEMPTS = 3;
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'member';
+        return 'request';
+    }
+
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+        ];
     }
 
     /**
@@ -31,8 +47,11 @@ class Member extends \yii\db\ActiveRecord
     {
         return [
             [['room_id', 'user_id'], 'required'],
-            [['room_id', 'user_id'], 'integer'],
+            [['room_id', 'user_id', 'status', 'attempts', 'created_at', 'updated_at'], 'integer'],
             [['room_id', 'user_id'], 'unique', 'targetAttribute' => ['room_id', 'user_id']],
+            ['attempts', 'default', 'value' => 0],
+            ['status', 'default', 'value' => self::STATUS_PENDING],
+            ['status', 'in', 'range' => [self::STATUS_DENY, self::STATUS_ALLOW, self::STATUS_PENDING]],
             [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::class, 'targetAttribute' => ['room_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -46,7 +65,10 @@ class Member extends \yii\db\ActiveRecord
         return [
             'room_id' => 'Room ID',
             'user_id' => 'User ID',
-            'token' => 'Token',
+            'status' => 'Status',
+            'attempts' => 'Attempts',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
         ];
     }
 
@@ -68,15 +90,5 @@ class Member extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
-    }
-
-    /**
-     * Gets query for [[Request]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getRequest()
-    {
-        return $this->hasOne(Request::class, ['room_id' => 'room_id', 'user_id' => 'user_id']);
     }
 }
