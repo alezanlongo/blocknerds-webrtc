@@ -13,6 +13,8 @@ let myStream = null;
 let feeds = [];
 let bitrateTimer = [];
 
+
+
 const handleMQTTPaho = () => {
   const wsbroker = "localhost"; // mqtt websocket enabled broker
   const wsport = 15675; // port for above
@@ -59,7 +61,6 @@ const handleMQTTPaho = () => {
     });
   }
 };
-
 const compLocal = $("#videolocal");
 
 const initJanus = () => {
