@@ -64,13 +64,11 @@ class RoomController extends \yii\web\Controller
        
         $subQuery = Member::find()
             ->where(['not in', 'user_id', Yii::$app->getUser()->getId()])
-            ->andWhere(['room_id' => $room->id, 'status' => Member::STATUS_ALLOW])
+            ->andWhere(['room_id' => $room->id])
             ->select('user_id');
         $query = User::find()->where(['in', 'id', $subQuery])->select('id, username');
 
         $members = $query->all();
-        // var_dump($members);
-        // die;
 
         return $this->render('index', [
             'members' => $members,
@@ -144,8 +142,9 @@ class RoomController extends \yii\web\Controller
         if ($request->save()) {
             $topic = 'room';
             $response = [
-                'type' => 'Message Arrived',
-                'request' => $request
+                'type' => 'request_join',
+                'request' => $request,
+                'user_id' => $user_id
             ];
 
             Yii::$app->mqtt->sendMessage($topic, $response);
@@ -191,8 +190,9 @@ class RoomController extends \yii\web\Controller
 
         $topic = 'room';
         $response = [
-            'type' => 'Message Arrived',
-            'request' => $request
+            'type' => 'response_join',
+            'request' => $request,
+            'user_id' => $user_id
         ];
 
         Yii::$app->mqtt->sendMessage($topic, $response);

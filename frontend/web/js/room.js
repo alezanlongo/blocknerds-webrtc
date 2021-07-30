@@ -13,8 +13,6 @@ let myStream = null;
 let feeds = [];
 let bitrateTimer = [];
 
-
-
 const handleMQTTPaho = () => {
   const wsbroker = "localhost"; // mqtt websocket enabled broker
   const wsport = 15675; // port for above
@@ -35,21 +33,21 @@ const handleMQTTPaho = () => {
   client.onMessageArrived = function (message) {
     const objData = JSON.parse(message.payloadString);
 
-    if (objData.type === "Message Arrived") {
-      const msg = JSON.parse(message.payloadString) 
-    
-	  $.pjax.reload({ container: "#room-button", async:false });
-	  $.pjax.reload({ container: "#room-request", async:false });
-	  $.pjax.reload({ container: "#room-member", async:false });
-	  
-	  if(is_owner){
-		$.pjax.reload({ container: "#room-video"});
-	  }
-	  
-      if(msg.status && !is_owner){
-        window.location.reload();
-      }
-    }
+	$.pjax.reload({ container: "#room-button", async:false });
+	$.pjax.reload({ container: "#room-request", async:false });
+	$.pjax.reload({ container: "#room-member", async:false });
+
+    // if (objData.type === "request_join") {
+		if(is_owner){
+			$.pjax.reload({ container: "#room-video"});
+		}
+    // }
+	
+	if (objData.type === "response_join") {
+		if(Number(objData.user_id) === Number(user_id)  && !is_owner){
+			window.location.reload();
+		  }
+	}
   };
 
   function connect() {
