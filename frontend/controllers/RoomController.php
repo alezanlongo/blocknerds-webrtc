@@ -5,6 +5,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\models\Member;
+use common\models\Request;
 use common\models\Room;
 use common\models\User;
 use yii\filters\AccessControl;
@@ -47,17 +48,18 @@ class RoomController extends \yii\web\Controller
         $is_owner = false;
         $is_allowed = false;
         $status = null;
+        $request = null;
         if ($user_id == $room->owner_id) {
             $is_owner = true;
         } else {
-            $member = Member::find()->where(['room_id' => $room->id, 'user_id' => $user_id])->limit(1)->one();
-            $status = $member->status ?? null;
-            $is_allowed = $status === Member::STATUS_ALLOW;
+            $request = Request::find()->where(['room_id' => $room->id, 'user_id' => $user_id])->limit(1)->one();
+            $status = $request->status ?? null;
+            $is_allowed = $status === Request::STATUS_ALLOW;
         }
 
         $requests = [];
         if ($is_owner) {
-            $requests = Member::find()->with("user")->where(['room_id' => $room->id, 'status' => Member::STATUS_PENDING])->all();
+            $requests = Request::find()->with("user")->where(['room_id' => $room->id, 'status' => Request::STATUS_PENDING])->all();
         }
 
         return $this->render('index', [
@@ -67,6 +69,7 @@ class RoomController extends \yii\web\Controller
             'status' => $status,
             'user_id' => $user_id,
             'uuid' => $uuid,
+            'request' => $request,
             'requests' => $requests,
         ]);
     }
@@ -83,11 +86,10 @@ class RoomController extends \yii\web\Controller
                 $memberOwner = new Member();
                 $memberOwner->room_id = $model->id;
                 $memberOwner->user_id = $userId;
-                $memberOwner->status = Member::STATUS_ALLOW;
                 $memberOwner->save();
 
                 Yii::$app->janusApi->videoRoomCreate($model->id);
-                
+
                 return $this->redirect([$model->uuid]);
             }
         }
@@ -102,36 +104,42 @@ class RoomController extends \yii\web\Controller
 
         $room = $this->joinRequestCheck($uuid, $user_id);
 
-        $member = Member::find()->where([
+        $request = Request::find()->where([
             'room_id' => $room->id,
             'user_id' => $user_id
         ])->limit(1)->one();
 
-        if ($member) {
-            if ($member->status == Member::STATUS_DENY) {
-                return throw new UnprocessableEntityHttpException("Your request to join the room has been denied.");
-            } else if ($member->status == Member::STATUS_PENDING) {
-                return throw new TooManyRequestsHttpException("Your request to join the room is pending.");
-            } else {
+        if ($request) {
+            if ($request->status == Request::STATUS_ALLOW) {
                 return throw new TooManyRequestsHttpException("Your request to join the room was already approved.");
+            } else if ($request->status == Request::STATUS_PENDING) {
+                return throw new UnprocessableEntityHttpException("Your request to join the room is pending.");
+            } else {
+                if ($request->attempts == Request::MAX_ATTEMPTS) {
+                    return throw new UnprocessableEntityHttpException("You have reached the max request attempts to join a room.");
+                }
             }
+
+            $request->attempts += 1;
+            $request->status = Request::STATUS_PENDING;
+        } else {
+            $request = new Request();
+            $request->user_id = $user_id;
+            $request->room_id = $room->id;
+            $request->status = Request::STATUS_PENDING;
+            $request->attempts += 1;
         }
 
-        $model = new Member();
-        $model->user_id = $user_id;
-        $model->room_id = $room->id;
-        $model->status = Member::STATUS_PENDING;
-
-        if ($model->save()) {
+        if ($request->save()) {
             $topic = 'room';
             $response = [
                 'type' => 'Message Arrived',
-                'member' => $model
+                'request' => $request
             ];
 
             Yii::$app->mqtt->sendMessage($topic, $response);
 
-            return Json::encode($model);
+            return Json::encode($request);
         }
 
         throw new UnprocessableEntityHttpException("Something went wrong please try again later.");
@@ -144,33 +152,41 @@ class RoomController extends \yii\web\Controller
 
         $room = $this->joinRequestCheck($uuid, $user_id);
 
-        $member = Member::find()->where([
+        $request = Request::find()->where([
             'room_id' => $room->id,
             'user_id' => $user_id
         ])->limit(1)->one();
 
-        if (!$member) {
-            return throw new UnprocessableEntityHttpException("Request to join the room don't exist.");
+        if (!$request)
+            return throw new UnprocessableEntityHttpException("Request to join the room does not exist.");
+
+        if ($request->status != Request::STATUS_PENDING) {
+            $status = strtolower($request->status == 1 ? Request::STATUS_ALLOW : Request::STATUS_DENY);
+            return throw new UnprocessableEntityHttpException("Request to join the room has status $status.");
         }
 
-        $member->status = ($action == "allow" ? Member::STATUS_ALLOW : Member::STATUS_DENY);
+        $request->status = ($action == "allow" ? Request::STATUS_ALLOW : Request::STATUS_DENY);
 
-        if ($member->save()) {
+        Request::getDb()->transaction(function ($db) use ($request) {
+            $request->save();
 
-            $topic = 'room';
+            if ($request->status == Request::STATUS_ALLOW) {
+                $member = new Member();
+                $member->user_id = $request->user_id;
+                $member->room_id = $request->room_id;
+                $member->save();
+            }
+        });
 
-            $response = [
-                'type' => 'Message Arrived',
-                'member' => Json::encode($member),
-                'status' => $member->status
-            ];
+        $topic = 'room';
+        $response = [
+            'type' => 'Message Arrived',
+            'request' => $request
+        ];
 
-            Yii::$app->mqtt->sendMessage($topic, $response);
+        Yii::$app->mqtt->sendMessage($topic, $response);
 
-            return Json::encode($member);
-        }
-
-        throw new UnprocessableEntityHttpException("Something went wrong please try again later.");
+        return Json::encode($request);
     }
 
     private function joinRequestCheck($uuid = null, $user_id = null)

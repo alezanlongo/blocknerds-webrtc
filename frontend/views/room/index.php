@@ -1,7 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
-use common\models\Member;
+use common\models\Request;
 use frontend\assets\Janus\JanusAsset;
 use yii\web\View;
 use yii\helpers\Html;
@@ -150,6 +150,7 @@ $this->title = 'The Room';
     <?
             }
         } else {
+            echo "<script>if (window.jQuery) $('#pendingRequests').modal('hide');</script>";
             echo "<p class='text-info'>Well done, nothing to do here!.<p>";
         }
     }
@@ -160,16 +161,17 @@ $this->title = 'The Room';
     Pjax::begin(['id' => 'room-member', "options" => []]);
 
     if (!$is_owner) {
-        if (is_null($status)) {
-            echo Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin']);
-        } else {
-            if ($status == Member::STATUS_DENY) {
+        if ($request) {
+            if ($request->status == Request::STATUS_DENY) {
                 echo "<p class='text-danger'>Your join request has been denied.<p>";
-            } else if ($status == Member::STATUS_ALLOW) {
+                echo $request->attempts < Request::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null;
+            } else if ($request->status == Request::STATUS_ALLOW) {
                 echo "<p class='text-primary'>Welcome to the room!<p>";
             } else {
                 echo "<p class='text-info'>Your join request is waiting for approval.<p>";
             }
+        } else {
+            echo Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin']);
         }
     }
     Pjax::end();
