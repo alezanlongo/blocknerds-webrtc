@@ -52,8 +52,12 @@ const handleMQTTPaho = () => {
 
   function connect() {
     client.connect({
+		// timeout: 3,
+		// keepAliveInterval: 30,
+		// useSSL: true,
+		// cleanSession : false,
       onSuccess: () => {
-        client.subscribe("room");
+        client.subscribe(window.location.pathname);
         console.log("Connected!");
       },
     });
@@ -350,7 +354,7 @@ $(document).ready(function () {
 	$.pjax.reload({ container: "#room-button", async:false });
 	$.pjax.reload({ container: "#room-request", async:false });
 	$.pjax.reload({ container: "#room-member", async:false });
-	initJanus();
+	initJanus()
   }
 });
 

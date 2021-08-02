@@ -94,36 +94,20 @@ $this->title = 'The Room';
                     <div class="panel-body" id="videolocal"></div>
                 </div>
             </div>
-            </div>
-            <?php Pjax::begin(['id' => 'room-video', "options" => ["class"=>"row"]]); ?>
-            <?php foreach ($members as $key => $member) { ?>
+        </div>
+        <?php Pjax::begin(['id' => 'room-video', "options" => ["class" => "row"]]); ?>
+        <?php foreach ($members as $key => $member) { ?>
             <div class="col-md-4">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Remote Video #<?= $key+1 ?> </span></h3>
+                        <h3 class="panel-title">Video #<?= $member->username ?> </span></h3>
                     </div>
-                    <div class="panel-body relative" id="videoremote<?= $key+1 ?>"></div>
-                </div>
-            </div>
-            <?php } ?>
-            <?php Pjax::end(); ?> 
-       
-    <? } ?>
-    <!-- <?php Pjax::begin(['id' => 'video-room-section', "options" => []]); ?>
-    <div class="row">
-        <?php foreach ($members as $key => $member) { ?>
-            <div class="col-md-4" id="box-video-<?= $member->id ?>">
-                <div class="panel panel-default">
-                    <div class="panel-heading">   
-                        <h3 class="panel-title">Video #<?= $key + 1 ?> </h3>
-                    </div>
-                    <div class="panel-body relative" id="video-<?= $member->id ?>"></div>
+                    <div class="panel-body relative" id="videoremote<?= $key + 1 ?>"></div>
                 </div>
             </div>
         <?php } ?>
-    </div>
-    <?php Pjax::end(); ?> -->
-
+        <?php Pjax::end(); ?>
+    <? } ?>
 
     <? Pjax::begin(['id' => 'room-button', "options" => []]);
     if ($is_owner && count($requests) > 0) {

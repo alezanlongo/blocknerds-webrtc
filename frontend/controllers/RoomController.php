@@ -8,6 +8,8 @@ use common\models\Member;
 use common\models\Request;
 use common\models\Room;
 use common\models\User;
+use Ramsey\Uuid\Rfc4122\UuidV4;
+use thamtech\uuid\helpers\UuidHelper;
 use yii\filters\AccessControl;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
@@ -140,11 +142,11 @@ class RoomController extends \yii\web\Controller
         }
 
         if ($request->save()) {
-            $topic = 'room';
+            $topic = "/room/{$room->uuid}";
             $response = [
                 'type' => 'request_join',
-                'request' => $request,
-                'user_id' => $user_id
+                'status' => $request->status,
+                'user_id' => $user_id,
             ];
 
             Yii::$app->mqtt->sendMessage($topic, $response);
@@ -188,11 +190,11 @@ class RoomController extends \yii\web\Controller
             }
         });
 
-        $topic = 'room';
+        $topic = "/room/{$room->uuid}";
         $response = [
             'type' => 'response_join',
-            'request' => $request,
-            'user_id' => $user_id
+            'status' => $request->status,
+            'user_id' => $user_id,
         ];
 
         Yii::$app->mqtt->sendMessage($topic, $response);
