@@ -373,7 +373,7 @@ $(document).on("click", "#btnDeny", function (e) {
 function joinHandler(action, user_id) {
   $.post({
     url: "/room/join/" + action,
-    data: { uuid, user_id },
+    data: { uuid:myroom, user_id },
     cache: false,
   });
 }

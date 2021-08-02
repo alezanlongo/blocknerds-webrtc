@@ -37,7 +37,7 @@ class JanusApiComponent extends Component
         return $this->lastError;
     }
 
-    public function videoRoomCreate(int $id, string $description = '')
+    public function videoRoomCreate(string $id, string $description = '')
     {
         $this->attach('janus.plugin.videoroom');
         $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'create', 'room' => $id, 'description' => $description], 'transaction' =>  $this->createRandStr()], $this->createSession() . '/' . $this->handleID);

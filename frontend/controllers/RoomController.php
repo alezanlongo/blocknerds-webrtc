@@ -99,7 +99,7 @@ class RoomController extends \yii\web\Controller
                 $memberOwner->user_id = $userId;
                 $memberOwner->save();
 
-                Yii::$app->janusApi->videoRoomCreate($model->id);
+           Yii::$app->janusApi->videoRoomCreate($model->uuid);
 
                 return $this->redirect([$model->uuid]);
             }
