@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $room_id
  * @property int $user_id
- * @property int $token
+ * @property string $token
  *
  * @property Room $room
  * @property User $user
@@ -35,6 +35,9 @@ class Member extends \yii\db\ActiveRecord
             [['room_id', 'user_id'], 'unique', 'targetAttribute' => ['room_id', 'user_id']],
             [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::class, 'targetAttribute' => ['room_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            ['token', 'string', 'max' => 36],
+            ['token', 'unique'],
+            ['token', 'thamtech\uuid\validators\UuidValidator'],
         ];
     }
 
@@ -78,5 +81,14 @@ class Member extends \yii\db\ActiveRecord
     public function getRequest()
     {
         return $this->hasOne(Request::class, ['room_id' => 'room_id', 'user_id' => 'user_id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->token = \thamtech\uuid\helpers\UuidHelper::uuid();
+        }
+
+        return parent::beforeSave($insert);
     }
 }

@@ -40,7 +40,7 @@ class JanusApiComponent extends Component
     public function videoRoomCreate(string $id, string $description = '')
     {
         $this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'create', 'room' => $id, 'description' => $description], 'transaction' =>  $this->createRandStr()], $this->createSession() . '/' . $this->handleID);
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'create', 'room' => $id, 'description' => $description, 'is_private' => true], 'transaction' =>  $this->createRandStr()], $this->createSession() . '/' . $this->handleID);
         if (!$res->isOk) {
         }
         $data = $res->getData();
@@ -55,9 +55,9 @@ class JanusApiComponent extends Component
         }
     }
 
-    public function videoRoomExists(int $id, $handleId = null)
+    public function videoRoomExists(string $uuid, $handleId = null)
     {
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'exists', 'room' => $id], 'transaction' => $this->createRandStr()], $this->createSession() . '/' . $this->handleID);
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'exists', 'room' => $uuid], 'transaction' => $this->createRandStr()], $this->createSession() . '/' . $this->handleID);
         $data = $res->getData();
         // \var_dump($data);
     }
