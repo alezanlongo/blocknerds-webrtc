@@ -78,7 +78,6 @@ class RoomController extends \yii\web\Controller
             'is_owner' => $is_owner,
             'is_allowed' => $is_allowed,
             'status' => $status,
-            'user_id' => $user_id,
             'uuid' => $uuid,
             'request' => $request,
             'requests' => $requests,
