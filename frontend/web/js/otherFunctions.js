@@ -64,11 +64,13 @@ function newRemoteFeed(id, display, audio, video) {
           //     break;
           //   }
           // }
-          console.log("---------------------------------", remoteFeed, display)
-          const id = Number(display)
-          if (!feeds[id]) {
-            feeds[id] = remoteFeed
-            remoteFeed.rfindex = id
+          const splittedString = display.split('_') 
+          const idFeed = Number(splittedString[1])
+          const usernameFeed = splittedString[0]
+          if (!feeds[idFeed]) {
+            remoteFeed.rfindex = idFeed
+            remoteFeed.rflabel = usernameFeed
+            feeds[idFeed] = remoteFeed
           }
           
           remoteFeed.rfid = msg["id"];
@@ -155,11 +157,13 @@ function newRemoteFeed(id, display, audio, video) {
     onremotestream: function (stream) {
       Janus.debug("Remote feed #" + remoteFeed.rfindex + ", stream:", stream);
       let addButtons = false;
+      console.log(remoteFeed,remoteFeed.rfindex, )
       if($('#remotevideo'+remoteFeed.rfindex).length === 0) {
         addButtons = true;
         // No remote video yet
         $('#video-source'+remoteFeed.rfindex).append('<video class="rounded centered" id="waitingvideo' + remoteFeed.rfindex + '" width="100%" height="100%" />');
         $('#video-source'+remoteFeed.rfindex).append('<video class="rounded centered relative hide" id="remotevideo' + remoteFeed.rfindex + '" width="100%" height="100%" autoplay playsinline/>');
+        $('#video-source'+remoteFeed.rfindex).append('<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">'+feeds[remoteFeed.rfindex].rflabel+'</h1>');
       
         // Show the video, hide the spinner and show the resolution when we get a playing event
         $("#remotevideo"+remoteFeed.rfindex).bind("playing", function () {
@@ -238,7 +242,7 @@ function joinMe() {
     request: "join",
     room: myroom,
     ptype: "publisher",
-    display: `${user_id}`,
+    display: `${username}_${user_id}`,
   };
   pluginHandler.send({ message: register });
 }

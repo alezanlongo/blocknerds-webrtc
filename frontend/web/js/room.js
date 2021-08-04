@@ -269,7 +269,7 @@ const initJanus = () => {
               if($('#myvideo').length === 0) {
 				$(`#video-source${user_id}`).append('<video class="rounded centered" id="myvideo" width="100%" height="100%" autoplay playsinline muted="muted"/>');
               	// Add a 'mute' button
-              	// $(`#video-source${user_id}`).append('<button class="btn btn-warning btn-xs" id="mute" style="position: absolute; bottom: 0px; left: 0px; margin: 15px;">Mute</button>');
+              	// $(`#video-source${user_id}`).append('<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">'+remoteFeed.rflabel+'</h1>');
               	// $('#mute').click(toggleMute);
               	// // Add an 'unpublish' button
               	// $(`#video-source${user_id}`).append('<button class="btn btn-warning btn-xs" id="unpublish" style="position: absolute; bottom: 0px; right: 0px; margin: 15px;">Unpublish</button>');

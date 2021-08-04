@@ -82,7 +82,9 @@ $this->title = 'The Room';
                 <div class="box">
                     <div class="card">
                         <div class="card-body">
-                            <div id="video-source<?= $member['id'] ?>"></div>
+                            <div id="video-source<?= $member['id'] ?>">
+                            <h1 class="text-light " id="label<?= $member['id'] ?>" style="position: absolute; top: 0px; left: 0px; margin: 25px;"><?= $member['username'] ?></h1>
+                            </div>
                         </div>
                     </div>
                 </div>
