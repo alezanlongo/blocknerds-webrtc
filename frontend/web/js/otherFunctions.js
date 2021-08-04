@@ -64,9 +64,11 @@ function newRemoteFeed(id, display, audio, video) {
           //     break;
           //   }
           // }
-          if (!feeds[user_id]) {
-            feeds[user_id] = remoteFeed
-            remoteFeed.rfindex = user_id
+          console.log("---------------------------------", remoteFeed, display)
+          const id = Number(display)
+          if (!feeds[id]) {
+            feeds[id] = remoteFeed
+            remoteFeed.rfindex = id
           }
           
           remoteFeed.rfid = msg["id"];
@@ -236,7 +238,7 @@ function joinMe() {
     request: "join",
     room: myroom,
     ptype: "publisher",
-    display: username,
+    display: `${user_id}`,
   };
   pluginHandler.send({ message: register });
 }

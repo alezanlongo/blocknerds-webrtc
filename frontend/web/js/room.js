@@ -34,18 +34,17 @@ const handleMQTTPaho = () => {
   client.onMessageArrived = function (message) {
     const objData = JSON.parse(message.payloadString);
 
-	$.pjax.reload({ container: "#room-button", async:false });
 	$.pjax.reload({ container: "#room-request", async:false });
 	$.pjax.reload({ container: "#room-member", async:false });
 
-	if(is_owner && objData.type !== "request_join"){
-		// $.pjax.reload({ container: "#room-video"});
+	if(is_owner && objData.type === "request_join"){
+		$('#pendingRequests').modal('show');
 	}
 	
 	if (objData.type === "response_join") {
-		if(Number(objData.user_id) === Number(user_id)  && !is_owner){
+		// if(Number(objData.user_id) === Number(user_id)  && !is_owner){
 			window.location.reload();
-		  }
+		//   }
 	}
   };
 
@@ -339,11 +338,15 @@ const initJanus = () => {
 
 $(document).ready(function () {
   handleMQTTPaho();
-
+  
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
     return;
   }
+  if(is_owner && countRequest> 0){
+	$('#pendingRequests').modal('show');
+}
+
   if(is_owner || is_allowed){
 	initJanus()
   }

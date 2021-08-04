@@ -14,6 +14,7 @@ JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
 $user_id =  Yii::$app->getUser()->getId();
+$this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myroom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('user_id', $user_id, View::POS_END);
@@ -75,38 +76,28 @@ $this->title = 'The Room';
 
 ?>
 <div class="room">
-
-    <h1><?= $this->title . " " . $room_id ?></h1>
     <? if ($is_owner || $is_allowed) { ?>
         <div class="room-section d-flex flex-wrap justify-content-center">
-
             <?php foreach ($members as $key => $member) { ?>
                 <div class="box">
-                    <div class="">
-                        <div class="">
-                            <div id="video-source<?= $member['id'] ?>"> </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="video-source<?= $member['id'] ?>"></div>
                         </div>
                     </div>
                 </div>
             <?php } ?>
-
         </div>
+
         <div class="control-section border text-light bg-dark">
             <button class="btn btn-default text-white" id="mute" onclick="toggleMute()">Mute</button>
             <button class="btn btn-default text-white" id="unpublish" onclick="unpublishOwnFeed()">Video</button>
         </div>
     <? } ?>
 
-    <? Pjax::begin(['id' => 'room-button', "options" => []]);
-    if ($is_owner && count($requests) > 0) {
-        echo Button::widget([
-            'label' => 'Join requests available!',
-            "options" => ["class" => "btn-lg btn-info mb-3", "onclick" => "(function ( event ) { $('#pendingRequests').modal('show'); })();"],
-        ]);
-    }
-    Pjax::end();
 
-    Modal::begin([
+
+    <?  Modal::begin([
         'title' => 'Require to join...',
         'id' => 'pendingRequests',
     ]);
