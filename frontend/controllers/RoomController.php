@@ -4,8 +4,8 @@ namespace frontend\controllers;
 
 
 use Yii;
-use common\models\Member;
-use common\models\Request;
+use common\models\RoomMember;
+use common\models\RoomRequest;
 use common\models\Room;
 use common\models\User;
 use Ramsey\Uuid\Rfc4122\UuidV4;
@@ -54,17 +54,17 @@ class RoomController extends \yii\web\Controller
         if ($user_id == $room->owner_id) {
             $is_owner = true;
         } else {
-            $request = Request::find()->where(['room_id' => $room->id, 'user_id' => $user_id])->limit(1)->one();
+            $request = RoomRequest::find()->where(['room_id' => $room->id, 'user_id' => $user_id])->limit(1)->one();
             $status = $request->status ?? null;
-            $is_allowed = $status === Request::STATUS_ALLOW;
+            $is_allowed = $status === RoomRequest::STATUS_ALLOW;
         }
 
         $requests = [];
         if ($is_owner) {
-            $requests = Request::find()->with("user")->where(['room_id' => $room->id, 'status' => Request::STATUS_PENDING])->all();
+            $requests = RoomRequest::find()->with("user")->where(['room_id' => $room->id, 'status' => RoomRequest::STATUS_PENDING])->all();
         }
-       
-        $subQuery = Member::find()
+
+        $subQuery = RoomMember::find()
             ->where(['not in', 'user_id', Yii::$app->getUser()->getId()])
             ->andWhere(['room_id' => $room->id])
             ->select('user_id');
@@ -94,12 +94,12 @@ class RoomController extends \yii\web\Controller
             $fields['Room']['scheduled_at'] = time();
 
             if ($model->load($fields) && $model->save()) {
-                $memberOwner = new Member();
+                $memberOwner = new RoomMember();
                 $memberOwner->room_id = $model->id;
                 $memberOwner->user_id = $userId;
                 $memberOwner->save();
 
-           Yii::$app->janusApi->videoRoomCreate($model->uuid);
+                Yii::$app->janusApi->videoRoomCreate($model->uuid);
 
                 return $this->redirect([$model->uuid]);
             }
@@ -115,29 +115,29 @@ class RoomController extends \yii\web\Controller
 
         $room = $this->joinRequestCheck($uuid, $user_id);
 
-        $request = Request::find()->where([
+        $request = RoomRequest::find()->where([
             'room_id' => $room->id,
             'user_id' => $user_id
         ])->limit(1)->one();
 
         if ($request) {
-            if ($request->status == Request::STATUS_ALLOW) {
+            if ($request->status == RoomRequest::STATUS_ALLOW) {
                 return throw new TooManyRequestsHttpException("Your request to join the room was already approved.");
-            } else if ($request->status == Request::STATUS_PENDING) {
+            } else if ($request->status == RoomRequest::STATUS_PENDING) {
                 return throw new UnprocessableEntityHttpException("Your request to join the room is pending.");
             } else {
-                if ($request->attempts == Request::MAX_ATTEMPTS) {
+                if ($request->attempts == RoomRequest::MAX_ATTEMPTS) {
                     return throw new UnprocessableEntityHttpException("You have reached the max request attempts to join a room.");
                 }
             }
 
             $request->attempts += 1;
-            $request->status = Request::STATUS_PENDING;
+            $request->status = RoomRequest::STATUS_PENDING;
         } else {
-            $request = new Request();
+            $request = new RoomRequest();
             $request->user_id = $user_id;
             $request->room_id = $room->id;
-            $request->status = Request::STATUS_PENDING;
+            $request->status = RoomRequest::STATUS_PENDING;
             $request->attempts += 1;
         }
 
@@ -164,7 +164,7 @@ class RoomController extends \yii\web\Controller
 
         $room = $this->joinRequestCheck($uuid, $user_id);
 
-        $request = Request::find()->where([
+        $request = RoomRequest::find()->where([
             'room_id' => $room->id,
             'user_id' => $user_id
         ])->limit(1)->one();
@@ -172,18 +172,18 @@ class RoomController extends \yii\web\Controller
         if (!$request)
             return throw new UnprocessableEntityHttpException("Request to join the room does not exist.");
 
-        if ($request->status != Request::STATUS_PENDING) {
-            $status = strtolower($request->status == 1 ? Request::STATUS_ALLOW : Request::STATUS_DENY);
+        if ($request->status != RoomRequest::STATUS_PENDING) {
+            $status = strtolower($request->status == 1 ? RoomRequest::STATUS_ALLOW : RoomRequest::STATUS_DENY);
             return throw new UnprocessableEntityHttpException("Request to join the room has status $status.");
         }
 
-        $request->status = ($action == "allow" ? Request::STATUS_ALLOW : Request::STATUS_DENY);
+        $request->status = ($action == "allow" ? RoomRequest::STATUS_ALLOW : RoomRequest::STATUS_DENY);
 
-        Request::getDb()->transaction(function ($db) use ($request) {
+        RoomRequest::getDb()->transaction(function ($db) use ($request) {
             $request->save();
 
-            if ($request->status == Request::STATUS_ALLOW) {
-                $member = new Member();
+            if ($request->status == RoomRequest::STATUS_ALLOW) {
+                $member = new RoomMember();
                 $member->user_id = $request->user_id;
                 $member->room_id = $request->room_id;
                 $member->save();
