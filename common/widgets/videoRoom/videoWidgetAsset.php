@@ -9,8 +9,9 @@ class videoWidgetAsset extends AssetBundle
     public $sourcePath = '@common/widgets/videoRoom/assets';
 
     public $js = [
-        'js/room.js',
         'js/mqtt.js',
+        // 'js/room.js',
+        // 'js/janusFunctionsImp.js',
     ];
 
     public $css = [

@@ -15,7 +15,7 @@ $this->registerAssetBundle(PahoMqttAsset::class);
 
 $this->registerJsVar('myroom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
-$this->registerJsVar('user_id', $user_id, View::POS_END);
+$this->registerJsVar('user_id',  Yii::$app->getUser()->getId(), View::POS_END);
 $this->registerJsVar('is_owner', $is_owner, View::POS_END);
 $this->registerJsVar('is_allowed', $is_allowed, View::POS_END);
 

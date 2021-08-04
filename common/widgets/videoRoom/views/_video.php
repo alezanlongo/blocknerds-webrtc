@@ -3,37 +3,31 @@
 use yii\widgets\Pjax;
 
 $this->registerJsVar('room_uuid', $myRoom);
-$this->registerJsVar('user_id',  Yii::$app->getUser()->getId());
+$this->registerJsVar('user_id',   Yii::$app->getUser()->getId());
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username);
 $this->registerJsVar('is_owner', $is_owner);
 $this->registerJsVar('is_allowed', $is_allowed);
+
 ?>
 
-
-
-
 <? if ($is_owner || $is_allowed) { ?>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Local Video </span>
-                    </h3>
+    <?php Pjax::begin(['id' => 'room-video', "options" => ["class" => "room-section d-flex flex-wrap justify-content-center"]]); ?>
+    <? foreach ($members as $key => $member) {  ?>
+        <div class="box">
+            <div class="card">
+                <div class="card-body">
+                    <div id="video-source<?= $member->id ?>">
+                        <video class="rounded centered" id="myvideo<?= $member->id ?>" width="100%" height="100%" autoplay playsinline muted="muted">
+                    </div>
                 </div>
-                <div class="panel-body" id="videolocal"></div>
             </div>
         </div>
+    <? } ?>
     </div>
-    <?php Pjax::begin(['id' => 'room-video', "options" => ["class" => "row"]]); ?>
-    <?php foreach ($members as $key => $member) { ?>
-        <div class="col-md-4">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Video #<?= $member->username ?> </span></h3>
-                </div>
-                <div class="panel-body relative" id="videoremote<?= $key + 1 ?>"></div>
-            </div>
-        </div>
-    <?php } ?>
     <?php Pjax::end(); ?>
+
+    <div class="control-section border ">
+        <button class="btn btn-default" id="mute" onclick="toggleMute()">Mute</button>
+        <button class="btn btn-default c-white" id="unpublish" onclick="unpublishOwnFeed()">Video</button>
+    </div>
 <? } ?>

@@ -2,7 +2,6 @@
 /* @var $this yii\web\View */
 
 use common\models\Request;
-use common\widgets\videoRoom\videoWidget;
 use frontend\assets\Janus\JanusAsset;
 use yii\web\View;
 use yii\helpers\Html;
@@ -14,11 +13,11 @@ use yii\bootstrap4\Modal;
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
-// $this->registerJsVar('myroom', $uuid, View::POS_END);
-// $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
-// $this->registerJsVar('user_id', Yii::$app->getUser()->getId(), View::POS_END);
-// $this->registerJsVar('is_owner', $is_owner, View::POS_END);
-// $this->registerJsVar('is_allowed', $is_allowed, View::POS_END);
+$this->registerJsVar('myroom', $uuid, View::POS_END);
+$this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
+$this->registerJsVar('user_id',  Yii::$app->getUser()->getId(), View::POS_END);
+$this->registerJsVar('is_owner', $is_owner, View::POS_END);
+$this->registerJsVar('is_allowed', $is_allowed, View::POS_END);
 
 $this->registerJsFile(
     "https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/8.0.0/adapter.min.js",
@@ -56,21 +55,47 @@ $this->registerJsFile(
     ]
 );
 
+$this->registerJsFile(
+    Yii::$app->request->BaseUrl . '/js/otherFunctions.js',
+    [
+        'depends' => "yii\web\JqueryAsset",
+        'position' => View::POS_END
+    ]
+);
+$this->registerJsFile(
+    Yii::$app->request->BaseUrl . '/js/room.js',
+    [
+        'depends' => "yii\web\JqueryAsset",
+        'position' => View::POS_END
+    ]
+);
+
 $this->title = 'The Room';
 
 ?>
+<div class="room">
 
+    <? if ($is_owner || $is_allowed) { ?>
+        <div class="room-section d-flex flex-wrap justify-content-center">
+     
+        <?php foreach ($members as $key => $member) { ?>
+            <div class="box">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="video-source<?= $member['id'] ?>"> </div>
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
+        
+        </div>
+        <div class="control-section border ">
+            <button class="btn btn-default" id="mute" onclick="toggleMute()">Mute</button>
+            <button class="btn btn-default c-white" id="unpublish" onclick="unpublishOwnFeed()">Video</button>
+        </div>
+    <? } ?>
 
-<?= videoWidget::widget(
-    [
-        'members' => $members,
-        'myRoom' => $uuid,
-        'is_owner' => $is_owner,
-        'is_allowed' => $is_allowed,
-        ]
-) ?>
-
-<? Pjax::begin(['id' => 'room-button', "options" => []]);
+    <? Pjax::begin(['id' => 'room-button', "options" => []]);
     if ($is_owner && count($requests) > 0) {
         echo Button::widget([
             'label' => 'Join requests available!',
@@ -129,3 +154,4 @@ $this->title = 'The Room';
     Pjax::end();
     ?>
 
+</div><!-- room -->

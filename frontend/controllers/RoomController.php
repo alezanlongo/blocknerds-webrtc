@@ -65,12 +65,12 @@ class RoomController extends \yii\web\Controller
         }
        
         $subQuery = Member::find()
-            ->where(['not in', 'user_id', Yii::$app->getUser()->getId()])
+            // ->where(['not in', 'user_id', Yii::$app->getUser()->getId()])
             ->andWhere(['room_id' => $room->id])
             ->select('user_id');
         $query = User::find()->where(['in', 'id', $subQuery])->select('id, username');
 
-        $members = $query->all();
+        $members = $query->asArray()->all();
 
         return $this->render('index', [
             'members' => $members,
