@@ -1,0 +1,29 @@
+body {
+  /* background-color: #202124 !important;
+    color: #fafafa !important; */
+  height: 100%;
+}
+
+/* .room-section {
+    background-color:blue;
+    height: 80%; border:red solid 2px;
+    display: table;
+    width:100%
+  } */
+
+.control-section {
+  /* color: #fafafa !important; */
+  width: 100%;
+  justify-content: center;
+  display: flex;
+}
+
+.box {
+  min-width: 30%;
+  padding: 1%;
+  /* min-width: 30%; */
+}
+.box .card{
+  min-height: 150px;
+  width: 400px;
+}

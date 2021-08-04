@@ -21,8 +21,10 @@ $this->title = 'Welcome to Room!';
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Start a meeting', ['class' => 'btn btn-primary', 'id' => 'btnStart']) ?>
+        <?= Html::submitButton('Start a quick meeting', ['class' => 'btn btn-primary', 'id' => 'btnStart']) ?>
     </div>
     <?php ActiveForm::end(); ?>
+    <?= Html::tag("button", "Planning a meeting", ["class"=> "btn btn-success"]) ?>
+
 
 </div><!-- room-create -->

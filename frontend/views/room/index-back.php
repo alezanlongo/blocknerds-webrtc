@@ -1,7 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
-use common\models\RoomRequest;
+use common\models\Request;
 use frontend\assets\Janus\JanusAsset;
 use yii\web\View;
 use yii\helpers\Html;
@@ -13,11 +13,9 @@ use yii\bootstrap4\Modal;
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
-$user_id =  Yii::$app->getUser()->getId();
-$this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myroom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
-$this->registerJsVar('user_id', $user_id, View::POS_END);
+$this->registerJsVar('user_id',  Yii::$app->getUser()->getId(), View::POS_END);
 $this->registerJsVar('is_owner', $is_owner, View::POS_END);
 $this->registerJsVar('is_allowed', $is_allowed, View::POS_END);
 
@@ -76,30 +74,50 @@ $this->title = 'The Room';
 
 ?>
 <div class="room">
-    <? if ($is_owner || $is_allowed) { ?>
-        <div class="room-section d-flex flex-wrap justify-content-center">
-            <?php foreach ($members as $key => $member) { ?>
-                <div class="box">
-                    <div class="card">
-                        <div class="card-body">
-                            <div id="video-source<?= $member['id'] ?>">
-                            <h1 class="text-light " id="label<?= $member['id'] ?>" style="position: absolute; top: 0px; left: 0px; margin: 25px;"><?= $member['username'] ?></h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <?php } ?>
-        </div>
 
-        <div class="control-section border text-light bg-dark">
-            <button class="btn btn-default text-white" id="mute" onclick="toggleMute()">Mute</button>
-            <button class="btn btn-default text-white" id="unpublish" onclick="unpublishOwnFeed()">Video</button>
+    <h1><?= $this->title . " " . $room_id ?></h1>
+
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+        ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+        fugiat nulla pariatur.</p>
+
+    <? if ($is_owner || $is_allowed) { ?>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Local Video </span>
+                        </h3>
+                    </div>
+                    <div class="panel-body" id="videolocal"></div>
+                </div>
+            </div>
         </div>
+        <?php Pjax::begin(['id' => 'room-video', "options" => ["class" => "row"]]); ?>
+        <?php foreach ($members as $key => $member) { ?>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Video #<?= $member->username ?> </span></h3>
+                    </div>
+                    <div class="panel-body relative" id="videoremote<?= $key + 1 ?>"></div>
+                </div>
+            </div>
+        <?php } ?>
+        <?php Pjax::end(); ?>
     <? } ?>
 
+    <? Pjax::begin(['id' => 'room-button', "options" => []]);
+    if ($is_owner && count($requests) > 0) {
+        echo Button::widget([
+            'label' => 'Join requests available!',
+            "options" => ["class" => "btn-lg btn-info mb-3", "onclick" => "(function ( event ) { $('#pendingRequests').modal('show'); })();"],
+        ]);
+    }
+    Pjax::end();
 
-
-    <?  Modal::begin([
+    Modal::begin([
         'title' => 'Require to join...',
         'id' => 'pendingRequests',
     ]);
@@ -134,11 +152,11 @@ $this->title = 'The Room';
 
     if (!$is_owner) {
         if ($request) {
-            if ($request->status == RoomRequest::STATUS_DENY) {
+            if ($request->status == Request::STATUS_DENY) {
                 echo "<p class='text-danger'>Your join request has been denied.<p>";
-                echo $request->attempts < RoomRequest::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null;
-            } else if ($request->status == RoomRequest::STATUS_ALLOW) {
-                // echo "<p class='text-primary'>Welcome to the room!<p>";
+                echo $request->attempts < Request::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null;
+            } else if ($request->status == Request::STATUS_ALLOW) {
+                echo "<p class='text-primary'>Welcome to the room!<p>";
             } else {
                 echo "<p class='text-info'>Your join request is waiting for approval.<p>";
             }
