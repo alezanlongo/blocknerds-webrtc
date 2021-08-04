@@ -6,7 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 
 /**
- * This is the model class for table "request".
+ * This is the model class for table "room_request".
  *
  * @property int $room_id
  * @property int $user_id
@@ -18,7 +18,7 @@ use yii\behaviors\TimestampBehavior;
  * @property Room $room
  * @property User $user
  */
-class Request extends \yii\db\ActiveRecord
+class RoomRequest extends \yii\db\ActiveRecord
 {
     const STATUS_DENY = 0;
     const STATUS_ALLOW = 1;
@@ -30,7 +30,7 @@ class Request extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'request';
+        return 'room_request';
     }
 
     public function behaviors()

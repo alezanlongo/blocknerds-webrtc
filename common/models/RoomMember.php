@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 
 /**
- * This is the model class for table "member".
+ * This is the model class for table "room_member".
  *
  * @property int $room_id
  * @property int $user_id
@@ -14,14 +14,14 @@ use Yii;
  * @property Room $room
  * @property User $user
  */
-class Member extends \yii\db\ActiveRecord
+class RoomMember extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'member';
+        return 'room_member';
     }
 
     /**
@@ -80,7 +80,7 @@ class Member extends \yii\db\ActiveRecord
      */
     public function getRequest()
     {
-        return $this->hasOne(Request::class, ['room_id' => 'room_id', 'user_id' => 'user_id']);
+        return $this->hasOne(RoomRequest::class, ['room_id' => 'room_id', 'user_id' => 'user_id']);
     }
 
     public function beforeSave($insert)

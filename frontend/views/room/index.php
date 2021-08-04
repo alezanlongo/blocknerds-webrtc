@@ -1,7 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
-use common\models\Request;
+use common\models\RoomRequest;
 use frontend\assets\Janus\JanusAsset;
 use yii\web\View;
 use yii\helpers\Html;
@@ -13,9 +13,10 @@ use yii\bootstrap4\Modal;
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
+$user_id =  Yii::$app->getUser()->getId();
 $this->registerJsVar('myroom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
-$this->registerJsVar('user_id',  Yii::$app->getUser()->getId(), View::POS_END);
+$this->registerJsVar('user_id', $user_id, View::POS_END);
 $this->registerJsVar('is_owner', $is_owner, View::POS_END);
 $this->registerJsVar('is_allowed', $is_allowed, View::POS_END);
 
@@ -75,23 +76,24 @@ $this->title = 'The Room';
 ?>
 <div class="room">
 
+    <h1><?= $this->title . " " . $room_id ?></h1>
     <? if ($is_owner || $is_allowed) { ?>
         <div class="room-section d-flex flex-wrap justify-content-center">
-     
-        <?php foreach ($members as $key => $member) { ?>
-            <div class="box">
-                <div class="card">
-                    <div class="card-body">
-                        <div id="video-source<?= $member['id'] ?>"> </div>
+
+            <?php foreach ($members as $key => $member) { ?>
+                <div class="box">
+                    <div class="">
+                        <div class="">
+                            <div id="video-source<?= $member['id'] ?>"> </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <?php } ?>
-        
+            <?php } ?>
+
         </div>
-        <div class="control-section border ">
-            <button class="btn btn-default" id="mute" onclick="toggleMute()">Mute</button>
-            <button class="btn btn-default c-white" id="unpublish" onclick="unpublishOwnFeed()">Video</button>
+        <div class="control-section border text-light bg-dark">
+            <button class="btn btn-default text-white" id="mute" onclick="toggleMute()">Mute</button>
+            <button class="btn btn-default text-white" id="unpublish" onclick="unpublishOwnFeed()">Video</button>
         </div>
     <? } ?>
 
@@ -139,11 +141,11 @@ $this->title = 'The Room';
 
     if (!$is_owner) {
         if ($request) {
-            if ($request->status == Request::STATUS_DENY) {
+            if ($request->status == RoomRequest::STATUS_DENY) {
                 echo "<p class='text-danger'>Your join request has been denied.<p>";
-                echo $request->attempts < Request::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null;
-            } else if ($request->status == Request::STATUS_ALLOW) {
-                echo "<p class='text-primary'>Welcome to the room!<p>";
+                echo $request->attempts < RoomRequest::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null;
+            } else if ($request->status == RoomRequest::STATUS_ALLOW) {
+                // echo "<p class='text-primary'>Welcome to the room!<p>";
             } else {
                 echo "<p class='text-info'>Your join request is waiting for approval.<p>";
             }

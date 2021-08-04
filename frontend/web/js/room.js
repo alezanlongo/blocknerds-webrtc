@@ -1,4 +1,5 @@
 let janus = null;
+const limitMembers = 6;
 let pluginHandler = null;
 const opaqueId = "videoroomtest-" + Janus.randomString(12);
 const server = "wss://" + window.location.hostname + ":8989/ws";
@@ -186,7 +187,7 @@ const initJanus = () => {
               			var leaving = msg["leaving"];
               			Janus.log("Publisher left: " + leaving);
               			var remoteFeed = null;
-              			for(var i=1; i<6; i++) {
+              			for(var i=1; i<limitMembers; i++) {
               				if(feeds[i] && feeds[i].rfid == leaving) {
               					remoteFeed = feeds[i];
               					break;
@@ -209,7 +210,7 @@ const initJanus = () => {
               				return;
               			}
               			var remoteFeed = null;
-              			for(var i=1; i<6; i++) {
+              			for(var i=1; i<limitMembers; i++) {
               				if(feeds[i] && feeds[i].rfid == unpublished) {
               					remoteFeed = feeds[i];
               					break;

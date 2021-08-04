@@ -57,8 +57,7 @@ function newRemoteFeed(id, display, audio, video) {
       } else if (event) {
         if (event === "attached") {
           // Subscriber created and attached
-          // for (var i = 1; i < 6; i++) {
-          //   console.log(remoteFeed, remoteFeed.rfindex)
+          // for (var i = 1; i < limitMembers; i++) {
           //   if (!feeds[i]) {
           //     feeds[i] = remoteFeed;
           //     remoteFeed.rfindex = i;
@@ -168,8 +167,8 @@ function newRemoteFeed(id, display, audio, video) {
           $('#waitingvideo'+remoteFeed.rfindex).remove();
           if(this.videoWidth)
             $('#remotevideo'+remoteFeed.rfindex).removeClass('hide').show();
-          var width = this.videoWidth;
-          var height = this.videoHeight;
+          // var width = this.videoWidth;
+          // var height = this.videoHeight;
           // $('#curres'+remoteFeed.rfindex).removeClass('hide').text(width+'x'+height).show();
           // if(Janus.webRTCAdapter.browserDetails.browser === "firefox") {
           //   // Firefox Stable has a bug: width and height are not immediately available after a playing

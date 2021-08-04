@@ -57,6 +57,17 @@ class m210705_150004_add_admin_and_test_users extends Migration
             'verification_token' =>  Yii::$app->getSecurity()->generateRandomString(),
         ]);
         $user2->insert();
+
+        $user3 = \Yii::createObject([
+            'class'    => User::class,
+            'username' => 'test3',
+            'auth_key' =>  Yii::$app->getSecurity()->generateRandomString(),
+            'password' => '12345678',
+            'email'    => 'test3@@example.com',
+            'status' => 10,
+            'verification_token' =>  Yii::$app->getSecurity()->generateRandomString(),
+        ]);
+        $user3->insert();
     }
 
     /**
