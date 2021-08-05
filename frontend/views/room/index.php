@@ -14,12 +14,13 @@ JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
 $user_id =  Yii::$app->getUser()->getId();
+$this->registerJsVar('limitMembers', $limit_members, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
-$this->registerJsVar('myroom', $uuid, View::POS_END);
+$this->registerJsVar('myRoom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
-$this->registerJsVar('user_id', $user_id, View::POS_END);
-$this->registerJsVar('is_owner', $is_owner, View::POS_END);
-$this->registerJsVar('is_allowed', $is_allowed, View::POS_END);
+$this->registerJsVar('userId', $user_id, View::POS_END);
+$this->registerJsVar('isOwner', $is_owner, View::POS_END);
+$this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 
 $this->registerJsFile(
     "https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/8.0.0/adapter.min.js",
@@ -57,15 +58,15 @@ $this->registerJsFile(
     ]
 );
 
+// $this->registerJsFile(
+//     Yii::$app->request->BaseUrl . '/js/otherFunctions.js',
+//     [
+//         'depends' => "yii\web\JqueryAsset",
+//         'position' => View::POS_END
+//     ]
+// );
 $this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/otherFunctions.js',
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/room.js',
+    Yii::$app->request->BaseUrl . '/js/room.new.js',
     [
         'depends' => "yii\web\JqueryAsset",
         'position' => View::POS_END
@@ -78,13 +79,11 @@ $this->title = 'The Room';
 <div class="room">
     <? if ($is_owner || $is_allowed) { ?>
         <div class="room-section d-flex flex-wrap justify-content-center">
-            <?php foreach ($members as $key => $member) { ?>
+            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                 <div class="box">
                     <div class="card">
                         <div class="card-body">
-                            <div id="video-source<?= $member['id'] ?>">
-                            <h1 class="text-light " id="label<?= $member['id'] ?>" style="position: absolute; top: 0px; left: 0px; margin: 25px;"><?= $member['username'] ?></h1>
-                            </div>
+                            <div id="video-source<?= $i ?>"></div>
                         </div>
                     </div>
                 </div>
@@ -99,7 +98,7 @@ $this->title = 'The Room';
 
 
 
-    <?  Modal::begin([
+    <? Modal::begin([
         'title' => 'Require to join...',
         'id' => 'pendingRequests',
     ]);
