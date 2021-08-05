@@ -58,13 +58,6 @@ $this->registerJsFile(
     ]
 );
 
-// $this->registerJsFile(
-//     Yii::$app->request->BaseUrl . '/js/otherFunctions.js',
-//     [
-//         'depends' => "yii\web\JqueryAsset",
-//         'position' => View::POS_END
-//     ]
-// );
 $this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/room.new.js',
     [
@@ -80,7 +73,7 @@ $this->title = 'The Room';
     <? if ($is_owner || $is_allowed) { ?>
         <div class="room-section d-flex flex-wrap justify-content-center">
             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                <div class="box">
+                <div class="box<?= $i ?> d-none">
                     <div class="card">
                         <div class="card-body">
                             <div id="video-source<?= $i ?>"></div>

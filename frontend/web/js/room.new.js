@@ -137,6 +137,7 @@ const initJanus = () => {
                       "</h1>"
                   );
               }
+              $('.box0').removeClass('d-none')
               Janus.attachMediaStream($("#myvideo").get(0), stream);
               $("#myvideo").get(0).muted = "muted";
               if (
@@ -461,12 +462,6 @@ function newRemoteFeed(id, display, audio, video) {
             }
           }
 
-          // if (!feeds[idFeed]) {
-          //   remoteFeed.rfindex = idFeed
-          //   remoteFeed.rflabel = usernameFeed
-          //   feeds[idFeed] = remoteFeed
-          // }
-
           remoteFeed.rfid = msg["id"];
           remoteFeed.rfdisplay = msg["display"];
           if (!remoteFeed.spinner) {
@@ -577,6 +572,7 @@ function newRemoteFeed(id, display, audio, video) {
               .show();
         });
       }
+      $('.box'+ remoteFeed.rfindex).removeClass('d-none')
       Janus.attachMediaStream(
         $("#remotevideo" + remoteFeed.rfindex).get(0),
         stream
