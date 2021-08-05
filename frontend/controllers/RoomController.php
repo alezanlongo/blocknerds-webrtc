@@ -46,7 +46,7 @@ class RoomController extends \yii\web\Controller
         }
 
         $user_id = Yii::$app->user->getId();
-
+        $limit_members = 10;
         $is_owner = false;
         $is_allowed = false;
         $status = null;
@@ -71,7 +71,13 @@ class RoomController extends \yii\web\Controller
 
         $members = $query->asArray()->all();
 
+        if(count($members) > $limit_members){
+            var_dump("No possible add more members can't be in this room. The limit is " . $limit_members);
+            die;
+        }
+
         return $this->render('index', [
+            'limit_members' => $limit_members,
             'members' => $members,
             'room_id' => $room->id,
             'is_owner' => $is_owner,
