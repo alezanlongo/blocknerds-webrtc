@@ -59,7 +59,7 @@ $this->registerJsFile(
 );
 
 $this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/room.new.js',
+    Yii::$app->request->BaseUrl . '/js/room.js',
     [
         'depends' => "yii\web\JqueryAsset",
         'position' => View::POS_END
