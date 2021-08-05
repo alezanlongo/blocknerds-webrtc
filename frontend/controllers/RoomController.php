@@ -46,7 +46,7 @@ class RoomController extends \yii\web\Controller
         }
 
         $user_id = Yii::$app->user->getId();
-        $limit_members = 10;
+        $limit_members = Yii::$app->params['janus.roomMaxMembersAllowed'];
         $is_owner = false;
         $is_allowed = false;
         $status = null;
