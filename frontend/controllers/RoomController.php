@@ -63,7 +63,7 @@ class RoomController extends \yii\web\Controller
         if ($is_owner) {
             $requests = Request::find()->with("user")->where(['room_id' => $room->id, 'status' => Request::STATUS_PENDING])->all();
         }
-       
+
         $subQuery = Member::find()
             ->where(['not in', 'user_id', Yii::$app->getUser()->getId()])
             ->andWhere(['room_id' => $room->id])
@@ -71,8 +71,17 @@ class RoomController extends \yii\web\Controller
         $query = User::find()->where(['in', 'id', $subQuery])->select('id, username');
 
         $members = $query->all();
+        if ($is_owner || $is_allowed || Yii::$app->janusApi->videoRoomExists($uuid) === true) {
+            $userToken = Member::find()->select('token')->where(['user_id' => $user_id, 'room_id' => $room->id])->limit(1)->one();
+            $token = \str_replace('-', '', ($userToken->token ?? null));
+            //$res = Yii::$app->janusApi->addUserToken($uuid, 'secret');
+            //$token = Yii::$app->janusApi->createHmacToken();
+            $res = Yii::$app->janusApi->addUserToken($uuid, $token);
+        }
 
         return $this->render('index', [
+            //'token' => Yii::$app->janusApi->createHmacToken(),
+            'token' => $token, //storedToken
             'members' => $members,
             'room_id' => $room->id,
             'is_owner' => $is_owner,
@@ -99,7 +108,7 @@ class RoomController extends \yii\web\Controller
                 $memberOwner->user_id = $userId;
                 $memberOwner->save();
 
-           Yii::$app->janusApi->videoRoomCreate($model->uuid);
+                Yii::$app->janusApi->videoRoomCreate($model->uuid);
 
                 return $this->redirect([$model->uuid]);
             }

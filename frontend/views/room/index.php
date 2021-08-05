@@ -13,6 +13,7 @@ use yii\bootstrap4\Modal;
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 
+$this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('myroom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('user_id', $user_id, View::POS_END);

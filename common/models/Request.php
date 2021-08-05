@@ -30,7 +30,7 @@ class Request extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'request';
+        return 'room_request';
     }
 
     public function behaviors()

@@ -21,7 +21,7 @@ class Member extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'member';
+        return 'room_member';
     }
 
     /**
