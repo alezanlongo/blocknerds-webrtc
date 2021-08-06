@@ -70,7 +70,15 @@ a.desc:after {
   padding-top: 7px;
   color: rgba(255, 255, 255, 0.5);
 }
-
+@media (min-width: 1200px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl {
+    max-width: 1500px;
+  }
+}
 @media (max-width: 767px) {
   .nav li > form > button.logout {
     display: block;
@@ -96,19 +104,55 @@ body {
   height: 100%;
 }
 
+.room-section {
+}
 .control-section {
-  /* color: #fafafa !important; */
+  color: #fafafa !important;
   width: 100%;
   justify-content: center;
   display: flex;
+  background-attachment: scroll;
+  background-position: 0% 0%;
+  position: fixed;
+  bottom: 0pt;
+  left: 0pt;
+}
+
+body {
+  background-color: #202124 !important;
+  color: #fafafa;
 }
 
 .box {
-  min-width: 30%;
-  padding: 1%;
-  /* min-width: 30%; */
+  margin: 1px;
+  width: 30%;
+  max-height: 350px;
+  height: auto;
+  padding: 0%;
+  display: table;
+  border-radius: 5%;
+  position: relative;
 }
-.box .card {
-  min-height: 150px;
-  width: 400px;
+
+.content-video video {
+  border-radius: 5%;
+}
+.content-video {
+  margin: 0%;
+  height: 350px;
+  width: 100%;
+  margin: 0;
+
+  padding: 1%;
+}
+
+.username-on-call {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  margin: 25px;
+}
+.video-on-call {
+  width: 100%;
+  height: 100%;
 }
