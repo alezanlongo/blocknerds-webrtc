@@ -74,7 +74,7 @@ class JanusApiComponent extends Component
         $this->attach('janus.plugin.videoroom');
         $this->storeToken($token);
 
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'add', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => [$token]], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'add', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => $token], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
         if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
             return true;
         } elseif (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] != 'success') {
@@ -99,7 +99,7 @@ class JanusApiComponent extends Component
 
     public function createHmacToken()
     {
-        $expire = \floor(\time()) + (24 * 60 * 60);
+        $expire = \floor(\time()) + (12 * 60 * 60);
         $str = join(',', [$expire, 'janus', join(',', ['janus.plugin.videoroom'])]);
 
         $hmac =  \hash_hmac('sha1', $str, $this->apiParams['tokenAuthSecret'], true);
@@ -119,7 +119,7 @@ class JanusApiComponent extends Component
     private function storeToken($token)
     {
 
-        $res = $this->apiCall('POST', ['janus' => 'add_token', 'token' => $token, 'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], null, true);
+        $res = $this->apiCall('POST', ['janus' => 'add_token', 'token' => $token,'plugins'=>['janus.plugin.videoroom'], 'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], null, true);
         if (!$res->isOk) {
             return false;
         }
@@ -142,7 +142,7 @@ class JanusApiComponent extends Component
         if (null !== $tokens) {
             $grep = \preg_grep("/^{$this->adminTokenPrefix}.*/", \array_column($tokens, 'token'));
             if (!empty($grep)) {
-                return $this->adminToken = $grep[0];
+                return $this->adminToken =  $grep[\array_key_first($grep)];
             }
         }
         $newToken = $this->adminTokenPrefix . $this->createRandStr(32);

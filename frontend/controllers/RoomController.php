@@ -74,8 +74,6 @@ class RoomController extends \yii\web\Controller
         if ($is_owner || $is_allowed || Yii::$app->janusApi->videoRoomExists($uuid) === true) {
             $userToken = Member::find()->select('token')->where(['user_id' => $user_id, 'room_id' => $room->id])->limit(1)->one();
             $token = \str_replace('-', '', ($userToken->token ?? null));
-            //$res = Yii::$app->janusApi->addUserToken($uuid, 'secret');
-            //$token = Yii::$app->janusApi->createHmacToken();
             $res = Yii::$app->janusApi->addUserToken($uuid, $token);
         }
 
