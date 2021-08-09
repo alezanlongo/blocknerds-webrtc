@@ -8,6 +8,7 @@ use common\models\RoomMember;
 use common\models\RoomRequest;
 use common\models\Room;
 use common\models\User;
+use DateTime;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use thamtech\uuid\helpers\UuidHelper;
 use yii\filters\AccessControl;
@@ -71,7 +72,7 @@ class RoomController extends \yii\web\Controller
 
         $members = $query->asArray()->all();
 
-        if(count($members) > $limit_members){
+        if (count($members) > $limit_members) {
             var_dump("No possible add more members can't be in this room. The limit is " . $limit_members);
             die;
         }
@@ -229,5 +230,56 @@ class RoomController extends \yii\web\Controller
         }
 
         return $room;
+    }
+
+    public function actionUserList($q = null, $id = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $out = ['results' => ['id' => '', 'username' => '']];
+        if (!is_null($q)) {
+            $users = User::find()
+                ->select(['id', 'username'])
+                ->where(['status' => User::STATUS_ACTIVE])
+                ->andWhere(['LIKE', 'username', $q])
+                ->andWhere(['NOT IN', 'id', Yii::$app->user->identity->getId()])
+                ->limit(10)
+                ->all();
+
+            $out['results'] = array_values($users);
+        } elseif ($id > 0) {
+            $out['results'] = ['id' => $id, 'username' => User::find($id)->username];
+        }
+        return $out;
+    }
+
+    public function actionCreateSchedule()
+    {
+        if (Yii::$app->request->isPost) {
+            $model = new \common\models\Room();
+
+            $userId = Yii::$app->user->identity->getId();
+            $fields['Room']['owner_id'] = $userId;
+
+            $datetimepicker = new DateTime(Yii::$app->request->post("datetimepicker"));
+            $fields['Room']['scheduled_at'] = $datetimepicker->getTimestamp();
+
+            $members = Yii::$app->request->post("User");
+
+            if ($model->load($fields) && $model->save()) {
+
+                foreach ($members["username"] as $k => $id) {
+                    $member = new RoomMember();
+                    $member->user_id = (int)$id;
+                    $member->room_id = $model->id;
+                    $member->save();
+                }
+
+                Yii::$app->janusApi->videoRoomCreate($model->uuid);
+
+                return Json::encode($model);
+            }
+        }
+
+        return throw new UnprocessableEntityHttpException();
     }
 }
