@@ -355,13 +355,13 @@ const joinMe = () => {
   pluginHandler.send({ message: register });
 };
 
-const publishOwnFeed = (useAudio) => {
+const publishOwnFeed = (useAudio = true, useVideo= true) => {
   pluginHandler.createOffer({
     media: {
       audioRecv: false,
       videoRecv: false,
       audioSend: useAudio,
-      videoSend: true,
+      videoSend: useVideo,
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
@@ -370,7 +370,7 @@ const publishOwnFeed = (useAudio) => {
       let publish = {
         request: REQUEST_CONFIGURE,
         audio: useAudio,
-        video: true,
+        video: useVideo,
       };
       if (AUDIO_CODEC) publish["audiocodec"] = AUDIO_CODEC;
       if (VIDEO_CODEC) publish["videocodec"] = VIDEO_CODEC;
@@ -379,7 +379,7 @@ const publishOwnFeed = (useAudio) => {
     error: function (error) {
       Janus.error("WebRTC error:", error);
       if (useAudio) {
-        publishOwnFeed(false);
+        publishOwnFeed(false, false);
       } else {
         bootbox.alert("WebRTC error... " + error.message);
         //   $("#publish")
@@ -443,6 +443,7 @@ function newRemoteFeed(id, display, audio, video) {
         subscribe["offer_video"] = false;
       }
       remoteFeed.videoCodec = video;
+      remoteFeed.audioCodec = audio;
       remoteFeed.send({ message: subscribe });
     },
     error: function (error) {
@@ -489,10 +490,10 @@ function newRemoteFeed(id, display, audio, video) {
           );
         } else if (event === EVENT) {
           // Check if we got a simulcast-related event from this publisher
-          const substream = msg["substream"];
+          const subStream = msg["substream"];
           const temporal = msg["temporal"];
           if (
-            (substream !== null && substream !== undefined) ||
+            (subStream !== null && subStream !== undefined) ||
             (temporal !== null && temporal !== undefined)
           ) {
             if (!remoteFeed.simulcastStarted) {
@@ -504,7 +505,7 @@ function newRemoteFeed(id, display, audio, video) {
               );
             }
             // We just received notice that there's been a switch, update the buttons
-            updateSimulcastButtons(remoteFeed.rfindex, substream, temporal);
+            updateSimulcastButtons(remoteFeed.rfindex, subStream, temporal);
           }
         } else {
           // What has just happened?
@@ -658,6 +659,16 @@ function unpublishOwnFeed() {
   const unpublish = { request: "unpublish" };
   pluginHandler.send({ message: unpublish });
 }
+
+function toggleVideo() {
+  let noVideo = pluginHandler.isVideoMuted();
+  Janus.log((noVideo ? "No video" : "Video") + " local stream...");
+  if (noVideo) pluginHandler.unmuteVideo();
+  else pluginHandler.muteVideo();
+  muted = pluginHandler.isVideoMuted();
+  $("#no-video").html(muted ? "Unvideo" : "Video");
+}
+
 function toggleMute() {
   let muted = pluginHandler.isAudioMuted();
   Janus.log((muted ? "Unmuting" : "Muting") + " local stream...");
@@ -689,7 +700,6 @@ const handleMQTTPaho = () => {
 
   client.onMessageArrived = function (message) {
     const objData = JSON.parse(message.payloadString);
-    console.log(objData);
     $.pjax.reload({ container: "#room-request", async: false });
     $.pjax.reload({ container: "#room-member", async: false });
 
@@ -697,10 +707,10 @@ const handleMQTTPaho = () => {
       $("#pendingRequests").modal("show");
     }
 
-    if (objData.type === "response_join") {
-      // if(Number(objData.user_id) === Number(userId)  && !isOwner){
-      window.location.reload();
-      //   }
+    if (objData.type === "response_join") { 
+      if(Number(objData.user_id) === Number(userId)  && !isOwner && objData.status === 1) {
+        location.reload();
+        }
     }
   };
 

@@ -84,7 +84,7 @@ $this->title = 'The Room';
 
         <div class="control-section border text-light bg-dark">
             <button class="btn btn-default text-white" id="mute" onclick="toggleMute()">Mute</button>
-            <button class="btn btn-default text-white" id="unpublish" onclick="unpublishOwnFeed()">Video</button>
+            <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
         </div>
     <? } ?>
 
