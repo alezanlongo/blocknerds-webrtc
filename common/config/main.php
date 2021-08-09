@@ -49,6 +49,8 @@ return [
             'uri' => 'janus',
             'apiSecret' => 'janusrocks',
             'adminSecret' => 'janusoverlord',
+            'adminPort' => 7088,
+            'adminUri' => 'admin',
             'adminKey' => 'supersecret',
             'tokenAuthSecret' => 'fcknlorenzo',
             'adminKey' => 'supersecret',
