@@ -21,6 +21,7 @@ $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username,
 $this->registerJsVar('userId', $user_id, View::POS_END);
 $this->registerJsVar('isOwner', $is_owner, View::POS_END);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
+$this->registerJsVar('mytoken', $token, View::POS_END);
 
 $this->registerJsFile(
     "https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/8.0.0/adapter.min.js",

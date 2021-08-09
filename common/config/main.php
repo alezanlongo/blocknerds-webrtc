@@ -47,7 +47,13 @@ return [
             'url' => 'http://janus',
             'port' => 8088,
             'uri' => 'janus',
-            'password'=>'janusrocks'
+            'apiSecret' => 'janusrocks',
+            'adminSecret' => 'janusoverlord',
+            'adminKey' => 'supersecret',
+            'tokenAuthSecret' => 'fcknlorenzo',
+            'adminKey' => 'supersecret',
+            'storedAuth' => false
+
         ]
     ],
 ];
