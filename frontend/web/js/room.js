@@ -700,7 +700,6 @@ const handleMQTTPaho = () => {
 
   client.onMessageArrived = function (message) {
     const objData = JSON.parse(message.payloadString);
-    console.log(objData);
     $.pjax.reload({ container: "#room-request", async: false });
     $.pjax.reload({ container: "#room-member", async: false });
 
@@ -708,10 +707,10 @@ const handleMQTTPaho = () => {
       $("#pendingRequests").modal("show");
     }
 
-    if (objData.type === "response_join") {
-      // if(Number(objData.user_id) === Number(userId)  && !isOwner){
-      window.location.reload();
-      //   }
+    if (objData.type === "response_join") { 
+      if(Number(objData.user_id) === Number(userId)  && !isOwner && objData.status === 1) {
+        location.reload();
+        }
     }
   };
 
