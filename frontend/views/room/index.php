@@ -73,11 +73,9 @@ $this->title = 'The Room';
     <? if ($is_owner || $is_allowed) { ?>
         <div class="room-section d-flex flex-wrap justify-content-center">
             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                <div class="box<?= $i ?> d-none">
-                    <div class="card">
-                        <div class="card-body">
-                            <div id="video-source<?= $i ?>"></div>
-                        </div>
+                <div class="box<?= $i ?> box d-none">
+                    <div class="content-video" id="video-source<?= $i ?>">
+                        <h1 class="text-light username-on-call"></h1>
                     </div>
                 </div>
             <?php } ?>

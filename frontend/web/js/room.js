@@ -20,6 +20,9 @@ const EVENT_DESTROYED = "destroyed";
 const EVENT = "event";
 const ERROR_CODE_ROOM_NOT_FOUND = 426;
 
+const ICE_CONNECTION_STATE_COMPLETED = "completed";
+const ICE_CONNECTION_STATE_CONNECTED = "connected";
+
 const DO_SIMULCAST =
   getQueryStringValue("simulcast") === "yes" ||
   getQueryStringValue("simulcast") === "true";
@@ -129,21 +132,22 @@ const initJanus = () => {
               myStream = stream;
               if ($("#myvideo").length === 0) {
                 $(`#video-source0`).append(
-                  '<video class="rounded centered" id="myvideo" width="100%" height="100%" autoplay playsinline muted="muted"/>'
+                  '<video class="rounded centered video-on-call" id="myvideo" autoplay playsinline muted="muted"/>'
                 );
-                $("#video-source0").append(
-                    '<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">' +
-                      username +
-                      "</h1>"
-                  );
+                $("#video-source0 h1").text(username)
+                // $("#video-source0").append(
+                //     '<h1 class="text-light username-on-call " >' +
+                //       username +
+                //       "</h1>"
+                //   );
               }
               $('.box0').removeClass('d-none')
               Janus.attachMediaStream($("#myvideo").get(0), stream);
               $("#myvideo").get(0).muted = "muted";
               if (
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  "completed" &&
-                pluginHandler.webrtcStuff.pc.iceConnectionState !== "connected"
+                ICE_CONNECTION_STATE_COMPLETED && 
+                pluginHandler.webrtcStuff.pc.iceConnectionState !== ICE_CONNECTION_STATE_CONNECTED
               ) {
                 $(`#video-source0`)
                   .parent()
@@ -154,6 +158,8 @@ const initJanus = () => {
                       border: "none",
                       backgroundColor: "transparent",
                       color: "white",
+                      margin: "0 auto",
+                      with: "30%",
                     },
                   });
               }
@@ -555,11 +561,12 @@ function newRemoteFeed(id, display, audio, video) {
             remoteFeed.rfindex +
             '" width="100%" height="100%" autoplay playsinline/>'
         );
-        $("#video-source" + remoteFeed.rfindex).append(
-          '<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">' +
-            feeds[remoteFeed.rfindex].rfuser.usernameFeed +
-            "</h1>"
-        );
+        $(`#video-source${remoteFeed.rfindex} h1`).text(feeds[remoteFeed.rfindex].rfuser.usernameFeed)
+        // $("#video-source" + remoteFeed.rfindex).append(
+        //   '<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">' +
+        //     feeds[remoteFeed.rfindex].rfuser.usernameFeed +
+        //     "</h1>"
+        // );
 
         // Show the video, hide the spinner and show the resolution when we get a playing event
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
