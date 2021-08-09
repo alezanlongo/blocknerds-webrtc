@@ -75,8 +75,16 @@ class RoomController extends \yii\web\Controller
             var_dump("No possible add more members can't be in this room. The limit is " . $limit_members);
             die;
         }
+        $members = $query->all();
+        if ($is_owner || $is_allowed || Yii::$app->janusApi->videoRoomExists($uuid) === true) {
+            $userToken = RoomMember::find()->select('token')->where(['user_id' => $user_id, 'room_id' => $room->id])->limit(1)->one();
+            $token = \str_replace('-', '', ($userToken->token ?? null));
+            $res = Yii::$app->janusApi->addUserToken($uuid, $token);
+        }
 
         return $this->render('index', [
+            //'token' => Yii::$app->janusApi->createHmacToken(),
+            'token' => $token, //storedToken
             'limit_members' => $limit_members,
             'members' => $members,
             'room_id' => $room->id,

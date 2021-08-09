@@ -64,6 +64,7 @@ const initJanus = () => {
     debug: "all",
     callback: () => {
       janus = new Janus({
+        token: mytoken,
         server,
         success: () => {
           janus.attach({
@@ -717,11 +718,11 @@ $(document).on("click", "#btnJoin", function (e) {
 });
 
 $(document).on("click", "#btnAllow", function (e) {
-  joinHandler("allow", $(this).data("user"));
+	joinHandler("allow", $(this).data("user"));
 });
 
 $(document).on("click", "#btnDeny", function (e) {
-  joinHandler("deny", $(this).data("user"));
+	joinHandler("deny", $(this).data("user"));
 });
 
 function joinHandler(action, userId) {
