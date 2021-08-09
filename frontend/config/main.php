@@ -42,6 +42,8 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'GET room/create' => 'room/create',
+                'POST room/create-schedule' => 'room/create-schedule',
+                'GET room/user-list' => 'room/user-list',
                 'GET room/<uuid>' => 'room',
                 'POST room/join/request' => 'room/join-request',
                 'POST room/join/<action:(allow|deny)>' => 'room/join',
