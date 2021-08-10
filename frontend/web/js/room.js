@@ -18,6 +18,7 @@ const PUBLISH_TYPE_SUBSCRIBER = "subscriber";
 const EVENT_JOINED = "joined";
 const EVENT_DESTROYED = "destroyed";
 const EVENT = "event";
+const EVENT_ATTACHED = "attached";
 const ERROR_CODE_ROOM_NOT_FOUND = 426;
 
 const ICE_CONNECTION_STATE_COMPLETED = "completed";
@@ -85,7 +86,7 @@ const initJanus = () => {
               if (on) {
                 // Darken screen and show hint
                 $.blockUI({
-                  message: '<div><img src="up_arrow.png"/></div>',
+                  // message: '<div><img src="up_arrow.png"/></div>',
                   css: {
                     border: "none",
                     padding: "15px",
@@ -135,20 +136,21 @@ const initJanus = () => {
                 $(`#video-source0`).append(
                   '<video class="rounded centered video-on-call" id="myvideo" autoplay playsinline muted="muted"/>'
                 );
-                $("#video-source0 h1").text(username)
+                $("#video-source0 h1").text(username);
                 // $("#video-source0").append(
                 //     '<h1 class="text-light username-on-call " >' +
                 //       username +
                 //       "</h1>"
                 //   );
               }
-              $('.box0').removeClass('d-none')
+              $(".box0").removeClass("d-none");
               Janus.attachMediaStream($("#myvideo").get(0), stream);
               $("#myvideo").get(0).muted = "muted";
               if (
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                ICE_CONNECTION_STATE_COMPLETED && 
-                pluginHandler.webrtcStuff.pc.iceConnectionState !== ICE_CONNECTION_STATE_CONNECTED
+                  ICE_CONNECTION_STATE_COMPLETED &&
+                pluginHandler.webrtcStuff.pc.iceConnectionState !==
+                  ICE_CONNECTION_STATE_CONNECTED
               ) {
                 $(`#video-source0`)
                   .parent()
@@ -351,11 +353,12 @@ const joinMe = () => {
     room: myRoom,
     ptype: PUBLISH_TYPE_PUBLISHER,
     display: `${username}_${userId}`,
+    data: true,
   };
   pluginHandler.send({ message: register });
 };
 
-const publishOwnFeed = (useAudio = true, useVideo= true) => {
+const publishOwnFeed = (useAudio = true, useVideo = true) => {
   pluginHandler.createOffer({
     media: {
       audioRecv: false,
@@ -418,7 +421,7 @@ function newRemoteFeed(id, display, audio, video) {
           ")"
       );
       Janus.log("  -- This is a subscriber");
-      var subscribe = {
+      let subscribe = {
         request: REQUEST_JOIN,
         room: myRoom,
         ptype: PUBLISH_TYPE_SUBSCRIBER,
@@ -451,14 +454,14 @@ function newRemoteFeed(id, display, audio, video) {
       bootbox.alert("Error attaching plugin... " + error);
     },
     onmessage: function (msg, jsep) {
-      var event = msg["videoroom"];
+      const event = msg["videoroom"];
       Janus.debug("Event: " + event);
       if (msg["error"]) {
         bootbox.alert(msg["error"]);
       } else if (event) {
-        const EVENT_ATTACHED = "attached";
         if (event === EVENT_ATTACHED) {
-          for (var i = 1; i < limitMembers; i++) {
+          // muteAudio(remoteFeed);
+          for (let i = 1; i < limitMembers; i++) {
             if (!feeds[i]) {
               const splittedString = display.split("_");
               const idFeed = Number(splittedString[1]);
@@ -563,7 +566,9 @@ function newRemoteFeed(id, display, audio, video) {
             remoteFeed.rfindex +
             '" width="100%" height="100%" autoplay playsinline/>'
         );
-        $(`#video-source${remoteFeed.rfindex} h1`).text(feeds[remoteFeed.rfindex].rfuser.usernameFeed)
+        $(`#video-source${remoteFeed.rfindex} h1`).text(
+          feeds[remoteFeed.rfindex].rfuser.usernameFeed
+        );
         // $("#video-source" + remoteFeed.rfindex).append(
         //   '<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">' +
         //     feeds[remoteFeed.rfindex].rfuser.usernameFeed +
@@ -581,12 +586,12 @@ function newRemoteFeed(id, display, audio, video) {
               .show();
         });
       }
-      $('.box'+ remoteFeed.rfindex).removeClass('d-none')
+      $(".box" + remoteFeed.rfindex).removeClass("d-none");
       Janus.attachMediaStream(
         $("#remotevideo" + remoteFeed.rfindex).get(0),
         stream
       );
-      var videoTracks = stream.getVideoTracks();
+      const videoTracks = stream.getVideoTracks();
       if (!videoTracks || videoTracks.length === 0) {
         // No remote video
         $("#remotevideo" + remoteFeed.rfindex).hide();
@@ -707,10 +712,14 @@ const handleMQTTPaho = () => {
       $("#pendingRequests").modal("show");
     }
 
-    if (objData.type === "response_join") { 
-      if(Number(objData.user_id) === Number(userId)  && !isOwner && objData.status === 1) {
+    if (objData.type === "response_join") {
+      if (
+        Number(objData.user_id) === Number(userId) &&
+        !isOwner &&
+        objData.status === 1
+      ) {
         location.reload();
-        }
+      }
     }
   };
 
@@ -728,11 +737,11 @@ $(document).on("click", "#btnJoin", function (e) {
 });
 
 $(document).on("click", "#btnAllow", function (e) {
-	joinHandler("allow", $(this).data("user"));
+  joinHandler("allow", $(this).data("user"));
 });
 
 $(document).on("click", "#btnDeny", function (e) {
-	joinHandler("deny", $(this).data("user"));
+  joinHandler("deny", $(this).data("user"));
 });
 
 function joinHandler(action, userId) {
@@ -745,3 +754,32 @@ function joinHandler(action, userId) {
     },
   });
 }
+
+const pinMember = (index) => {
+  console.log(index);
+};
+
+let isMuted = false;
+const muteMember = (index) => {
+  if (isOwner) {
+    let remoteHandler = feeds[index];
+    remoteHandler.send({
+      message: {
+        request: "moderate",
+        room: myRoom,
+        id: remoteHandler.rfid,
+        mute_audio: !isMuted,
+      },
+      success: function (data) {
+        if (data.videoroom === "success") {
+          console.log("was muted", isMuted);
+          isMuted = !isMuted;
+          // feeds[index] = remoteHandler;
+        }
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  }
+};
