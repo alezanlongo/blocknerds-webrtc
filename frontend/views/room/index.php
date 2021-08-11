@@ -60,6 +60,14 @@ $this->registerJsFile(
 );
 
 $this->registerJsFile(
+    Yii::$app->request->BaseUrl . '/js/mqtt_handler.js',
+    [
+        'depends' => "yii\web\JqueryAsset",
+        'position' => View::POS_END
+    ]
+);
+
+$this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/room.js',
     [
         'depends' => "yii\web\JqueryAsset",
@@ -70,28 +78,37 @@ $this->registerJsFile(
 $this->title = 'The Room';
 
 ?>
-<div class="room">
+<div class="room  mw-100">
     <? if ($is_owner || $is_allowed) { ?>
-        <div class="room-section d-flex flex-wrap justify-content-center">
-            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                <div class="box<?= $i ?> box border bg-dark d-none">
-                    <div class="content-video" id="video-source<?= $i ?>">
-                        <h1 class="text-light username-on-call">Nickname</h1>
-                        <?php if ($is_owner && $i > 0) { ?>
-                            <div class="control-owner d-flex ">
-                                <button onclick="muteMember(<?= $i ?>)" class="btn btn-default text-white">Mute</button>
-                                <button onclick="pinMember(<?= $i ?>)" class="btn btn-default text-white">Pin</button>
-                            </div>
-                        <?php } ?>
-                    </div>
-                </div>
-            <?php } ?>
-        </div>
+        <div class="room-videos">
+            <!-- <?php Pjax::begin(["id" => "main-video-room", "options" => ["class" => "room-videos"]]) ?> -->
+            <div class="room-section d-flex flex-wrap justify-content-center">
+                <?php for ($i = 0; $i < $limit_members; $i++) { ?>
+                    <div class="box<?= $i ?> box border bg-dark" data-id="<?= $i ?>">
+                        <div class="content-video" id="video-source<?= $i ?>">
+                            <h1 class="text-light username-on-call">Nickname <?= $i ?></h1>
 
-        <div class="control-section border text-light bg-dark">
-            <button class="btn btn-default text-white" id="mute" onclick="toggleMute()">Mute</button>
-            <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
+                            <div class="control-owner d-flex ">
+                                <?php if ($is_owner && $i > 0) { ?>
+                                <button onclick="muteMember(<?= $i ?>)" class="btn btn-default text-white">Mute</button>
+                                <?php } ?>
+                                <button onclick="pinMember(<?= $i ?>)" class="btn btn-default btn-pin text-white">Pin</button>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
+            <div class="room-user-control bg-dark">
+                <div class="other-stuff"></div>
+                <div class="content-calls overflow-auto"></div>
+            </div>
+
+            <div class="control-section border text-light bg-dark">
+                <button class="btn btn-default text-white" id="mute" onclick="toggleMute()">Mute</button>
+                <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
+            </div>
         </div>
+        <!-- <?php Pjax::end() ?> -->
     <? } ?>
 
 

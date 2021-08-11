@@ -45,7 +45,8 @@ let bitrateTimer = [];
 ///////////   ON READY
 ////////////////////////////////////////////////////////////
 $(document).ready(function () {
-  handleMQTTPaho();
+  // handleMQTTPaho();
+  connectMQTT();
 
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
@@ -686,52 +687,6 @@ function toggleMute() {
 ////////////////////////////////////////////////////////////
 ///////////   PAHO MQTT HANDLE
 ////////////////////////////////////////////////////////////
-const handleMQTTPaho = () => {
-  const wsbroker = "localhost"; // mqtt websocket enabled broker
-  const wsport = 15675; // port for above
-  const client = new Paho.MQTT.Client(
-    wsbroker,
-    wsport,
-    "/ws",
-    "myclientid_" + parseInt(Math.random() * 100, 10)
-  );
-
-  connect();
-
-  client.onConnectionLost = function (responseObject) {
-    console.log("Connection Lost: " + responseObject.errorMessage);
-    connect();
-  };
-
-  client.onMessageArrived = function (message) {
-    const objData = JSON.parse(message.payloadString);
-    $.pjax.reload({ container: "#room-request", async: false });
-    $.pjax.reload({ container: "#room-member", async: false });
-
-    if (isOwner && objData.type === "request_join") {
-      $("#pendingRequests").modal("show");
-    }
-
-    if (objData.type === "response_join") {
-      if (
-        Number(objData.user_id) === Number(userId) &&
-        !isOwner &&
-        objData.status === 1
-      ) {
-        location.reload();
-      }
-    }
-  };
-
-  function connect() {
-    client.connect({
-      onSuccess: () => {
-        client.subscribe(window.location.pathname);
-        console.log("Connected!");
-      },
-    });
-  }
-};
 $(document).on("click", "#btnJoin", function (e) {
   joinHandler("request", userId);
 });
@@ -754,15 +709,78 @@ function joinHandler(action, userId) {
     },
   });
 }
+// const sendMessageMQTT = (type, data) => {
+//     const objData = {
+//       type,
+//       data,
+//     };
+//     const message = new Paho.MQTT.Message(JSON.stringify(objData));
+//     message.destinationName = window.location.pathname;
+//     client.send(message);
+//   };
 
 const pinMember = (index) => {
-  console.log(index);
+  const boxClassComp = Array.from($(".box"));
+  const boxPinned = boxClassComp.find((boxComp) =>
+    $(boxComp).hasClass("pinned")
+  );
+  if (!boxPinned) pinBehavior(boxClassComp, index);
+  else {
+    if (Number($(boxPinned).attr("data-id")) === Number(index)) {
+      unpinBehavior(boxClassComp, index);
+    } else {
+      switchingComponents(boxPinned, index);
+    }
+  }
+};
+
+const switchingComponents = (compPinnedToUnpin, indexToPin, width = 100) => {
+  const compControl = $(".room-user-control .content-calls");
+  const compVideos = $(".room-section");
+  const indexAlreadyPinned = Number($(compPinnedToUnpin).attr("data-id"));
+  // reset component pinned and move to list
+  $(compPinnedToUnpin).removeClass("pinned");
+  $(compPinnedToUnpin).attr("style", `width:${width}%`);
+  $(`.box${indexAlreadyPinned} .btn-pin`).text("pin");
+  compControl.append(compPinnedToUnpin);
+  // get component to list, adapt it and move as pinned component
+  $(`.box${indexToPin}`).attr("style", `width:${width}%`);
+  $(`.box${indexToPin}`).addClass("pinned");
+  $(`.box${indexToPin} .btn-pin`).text("pinned");
+  compVideos.append($(`.box${indexToPin}`));
+};
+
+const unpinBehavior = (list, index, width = 20) => {
+  const compVideos = $(".room-section");
+  $(`.box${index} .btn-pin`).text("pin");
+  list.forEach((boxComp) => {
+    $(boxComp).attr("style", `width:${width}%`);
+    $(boxComp).removeClass("pinned");
+    compVideos.append(boxComp);
+  });
+};
+
+const pinBehavior = (list, index, width = "100%", height = "90vh") => {
+  const compControl = $(".room-user-control .content-calls");
+  list.forEach((boxComp) => {
+    $(boxComp).attr("style", `width:${width}`);
+    if (Number($(boxComp).attr("data-id")) !== Number(index)) {
+      compControl.append(boxComp);
+    } else {
+      // $(`.box${index} video`).attr("style", `width:${width}; height:${height}`);
+      $(boxComp).addClass("pinned");
+      $(`.box${index} .btn-pin`).text("pinned");
+    }
+  });
 };
 
 let isMuted = false;
 const muteMember = (index) => {
   if (isOwner) {
     let remoteHandler = feeds[index];
+    if (!remoteHandler) {
+      return;
+    }
     remoteHandler.send({
       message: {
         request: "moderate",
