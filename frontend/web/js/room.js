@@ -135,7 +135,7 @@ const initJanus = () => {
               myStream = stream;
               if ($("#myvideo").length === 0) {
                 $(`#video-source0`).append(
-                  '<video class="rounded centered video-on-call" id="myvideo" autoplay playsinline muted="muted"/>'
+                  '<video class="rounded centered relative" width="100%" height="100%" id="myvideo" autoplay playsinline muted="muted"/>'
                 );
                 $("#video-source0 h1").text(username);
                 // $("#video-source0").append(

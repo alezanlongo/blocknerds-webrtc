@@ -84,13 +84,13 @@ $this->title = 'The Room';
             <!-- <?php Pjax::begin(["id" => "main-video-room", "options" => ["class" => "room-videos"]]) ?> -->
             <div class="room-section d-flex flex-wrap justify-content-center">
                 <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                    <div class="box<?= $i ?> box border bg-dark" data-id="<?= $i ?>">
+                    <div class="box<?= $i ?> box border d-none bg-dark" data-id="<?= $i ?>">
                         <div class="content-video" id="video-source<?= $i ?>">
                             <h1 class="text-light username-on-call">Nickname <?= $i ?></h1>
 
                             <div class="control-owner d-flex ">
                                 <?php if ($is_owner && $i > 0) { ?>
-                                <button onclick="muteMember(<?= $i ?>)" class="btn btn-default text-white">Mute</button>
+                                    <button onclick="muteMember(<?= $i ?>)" class="btn btn-default text-white">Mute</button>
                                 <?php } ?>
                                 <button onclick="pinMember(<?= $i ?>)" class="btn btn-default btn-pin text-white">Pin</button>
                             </div>
