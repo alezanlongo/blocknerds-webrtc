@@ -1,3 +1,6 @@
+const EVENT_TYPE_REQUEST_JOIN = "request_join";
+const EVENT_TYPE_RESPONSE_JOIN = "response_join";
+const EVENT_TYPE_TOGGLE_MUTE = "toggle_mute_remote";
 const wsbroker = "localhost"; // mqtt websocket enabled broker
 const wsport = 15675; // port for above
 const client = new Paho.MQTT.Client(
@@ -14,30 +17,27 @@ client.onConnectionLost = function (responseObject) {
 
 client.onMessageArrived = function (message) {
   const objData = JSON.parse(message.payloadString);
-  if(objData.type ===  "toggle_mute_remote" && userId === objData.data.user_id){
+  
+  if(objData.type ===  EVENT_TYPE_TOGGLE_MUTE && userId === objData.data.user_id){
     $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
   }
   
-  if (isOwner && objData.type === "request_join") {
+  if (isOwner && objData.type === EVENT_TYPE_REQUEST_JOIN) {
     $.pjax.reload({ container: "#room-request", async: false });
     $.pjax.reload({ container: "#room-member", async: false });
     $("#pendingRequests").modal("show");
   }
 
-  if (objData.type === "response_join") {
+  if (objData.type === EVENT_TYPE_RESPONSE_JOIN) {
     $.pjax.reload({ container: "#room-request", async: false });
     $.pjax.reload({ container: "#room-member", async: false });
     if (
       Number(objData.user_id) === Number(userId) &&
       !isOwner &&
-      objData.status === 1
+      objData.status === 1 // 1 = Allowed
     ) {
       location.reload();
     }
-  }
-
-  if (objData.type === "moving_screens") {
-    console.log("asdasd");
   }
 };
 

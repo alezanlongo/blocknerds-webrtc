@@ -764,12 +764,12 @@ const unpinBehavior = (list, index, width = 20) => {
 
 const pinBehavior = (list, index, width = "100%", height = "90vh") => {
   const compControl = $(".room-user-control .content-calls");
+
   list.forEach((boxComp) => {
     $(boxComp).attr("style", `width:${width}`);
     if (Number($(boxComp).attr("data-id")) !== Number(index)) {
       compControl.append(boxComp);
     } else {
-      // $(`.box${index} video`).attr("style", `width:${width}; height:${height}`);
       $(boxComp).addClass("pinned");
       $(`.box${index} .btn-pin`).text("pinned");
     }
@@ -798,7 +798,7 @@ const muteMember = (index) => {
           
           $(`.box${remoteHandler.rfindex} .btn-mute`).text(isMuted ? "Unmute" : "Mute");
 
-          sendMessageMQTT("toggle_mute_remote", {user_id:remoteHandler.rfuser.idFeed, isMuted});
+          sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {user_id:remoteHandler.rfuser.idFeed, isMuted});
         }
       },
       error: function (error) {
