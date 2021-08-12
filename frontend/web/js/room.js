@@ -11,6 +11,7 @@ const PLUGIN_VIDEO_ROOM = "janus.plugin.videoroom";
 const REQUEST_CONFIGURE = "configure";
 const REQUEST_JOIN = "join";
 const REQUEST_START = "start";
+const REQUEST_MODERATE = "moderate";
 
 const PUBLISH_TYPE_PUBLISHER = "publisher";
 const PUBLISH_TYPE_SUBSCRIBER = "subscriber";
@@ -304,6 +305,8 @@ const handlingEvent = (objMessage) => {
         .empty()
         .hide();
       $("#videoremote" + remoteFeed.rfindex).empty();
+      // $(`.box${remoteFeed.rfindex}`).hide();
+      // $(`.box${remoteFeed.rfindex} h1`).text("");
       feeds[remoteFeed.rfindex] = null;
       remoteFeed.detach();
     }
@@ -461,7 +464,6 @@ function newRemoteFeed(id, display, audio, video) {
         bootbox.alert(msg["error"]);
       } else if (event) {
         if (event === EVENT_ATTACHED) {
-          // muteAudio(remoteFeed);
           for (let i = 1; i < limitMembers; i++) {
             if (!feeds[i]) {
               const splittedString = display.split("_");
@@ -781,18 +783,22 @@ const muteMember = (index) => {
     if (!remoteHandler) {
       return;
     }
+
     remoteHandler.send({
       message: {
-        request: "moderate",
+        request: REQUEST_MODERATE,
         room: myRoom,
         id: remoteHandler.rfid,
         mute_audio: !isMuted,
       },
       success: function (data) {
         if (data.videoroom === "success") {
-          console.log("was muted", isMuted);
           isMuted = !isMuted;
-          // feeds[index] = remoteHandler;
+          console.log("is muted", isMuted, remoteHandler.rfindex);
+          
+          $(`.box${remoteHandler.rfindex} .btn-mute`).text(isMuted ? "Unmute" : "Mute");
+
+          sendMessageMQTT("toggle_mute_remote", {user_id:remoteHandler.rfuser.idFeed, isMuted});
         }
       },
       error: function (error) {

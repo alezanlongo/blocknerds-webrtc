@@ -90,7 +90,7 @@ $this->title = 'The Room';
 
                             <div class="control-owner d-flex ">
                                 <?php if ($is_owner && $i > 0) { ?>
-                                    <button onclick="muteMember(<?= $i ?>)" class="btn btn-default text-white">Mute</button>
+                                    <button onclick="muteMember(<?= $i ?>)" class="btn btn-default btn-mute text-white">Mute</button>
                                 <?php } ?>
                                 <button onclick="pinMember(<?= $i ?>)" class="btn btn-default btn-pin text-white">Pin</button>
                             </div>
@@ -104,7 +104,7 @@ $this->title = 'The Room';
             </div>
 
             <div class="control-section border text-light bg-dark">
-                <button class="btn btn-default text-white" id="mute" onclick="toggleMute()">Mute</button>
+                <button class="btn btn-default text-white " id="mute" onclick="toggleMute()">Mute</button>
                 <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
             </div>
         </div>
