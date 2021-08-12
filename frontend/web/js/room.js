@@ -46,7 +46,6 @@ let bitrateTimer = [];
 ///////////   ON READY
 ////////////////////////////////////////////////////////////
 $(document).ready(function () {
-  // handleMQTTPaho();
   connectMQTT();
 
   if (!Janus.isWebrtcSupported()) {
@@ -711,15 +710,6 @@ function joinHandler(action, userId) {
     },
   });
 }
-// const sendMessageMQTT = (type, data) => {
-//     const objData = {
-//       type,
-//       data,
-//     };
-//     const message = new Paho.MQTT.Message(JSON.stringify(objData));
-//     message.destinationName = window.location.pathname;
-//     client.send(message);
-//   };
 
 const pinMember = (index) => {
   const boxClassComp = Array.from($(".box"));
