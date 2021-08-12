@@ -14,12 +14,18 @@ class JanusAsset extends \yii\web\AssetBundle
     public $css = [
     ];
     public $js = [
-        'js/janus.js'
+        'libs/janus.js',
+        'libs/adapter.min.js',
+        'libs/jquery.blockUI.min.js',
+        'libs/bootbox.min.js',
+        'libs/spin.min.js',
+        'libs/toastr.min.js',
     ];
     public $depends = [
+    	'yii\web\JqueryAsset'
     ];
     public $publishOptions = [
-        'forceCopy' => false,
+        'forceCopy' => true,
     ];
 
 }

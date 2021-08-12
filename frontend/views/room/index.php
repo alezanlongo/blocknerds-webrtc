@@ -24,35 +24,7 @@ $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 
 $this->registerJsFile(
-    "https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/8.0.0/adapter.min.js",
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-$this->registerJsFile(
-    "https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js",
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-$this->registerJsFile(
-    "https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js",
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-$this->registerJsFile(
-    "https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.3.2/spin.min.js",
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-$this->registerJsFile(
-    "https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js",
+    Yii::$app->request->BaseUrl . '/js/mqtt_handler.js',
     [
         'depends' => "yii\web\JqueryAsset",
         'position' => View::POS_END
@@ -70,22 +42,37 @@ $this->registerJsFile(
 $this->title = 'The Room';
 
 ?>
-<div class="room">
+<div class="room  mw-100">
     <? if ($is_owner || $is_allowed) { ?>
-        <div class="room-section d-flex flex-wrap justify-content-center">
-            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                <div class="box<?= $i ?> box d-none">
-                    <div class="content-video" id="video-source<?= $i ?>">
-                        <h1 class="text-light username-on-call"></h1>
-                    </div>
-                </div>
-            <?php } ?>
-        </div>
+        <div class="room-videos">
+            <!-- <?php Pjax::begin(["id" => "main-video-room", "options" => ["class" => "room-videos"]]) ?> -->
+            <div class="room-section d-flex flex-wrap justify-content-center">
+                <?php for ($i = 0; $i < $limit_members; $i++) { ?>
+                    <div class="box<?= $i ?> box border d-none bg-dark" data-id="<?= $i ?>">
+                        <div class="content-video" id="video-source<?= $i ?>">
+                            <h1 class="text-light username-on-call">Nickname <?= $i ?></h1>
 
-        <div class="control-section border text-light bg-dark">
-            <button class="btn btn-default text-white" id="mute" onclick="toggleMute()">Mute</button>
-            <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
+                            <div class="control-owner d-flex ">
+                                <?php if ($is_owner && $i > 0) { ?>
+                                    <button onclick="muteMember(<?= $i ?>)" class="btn btn-default btn-mute text-white">Mute</button>
+                                <?php } ?>
+                                <button onclick="pinMember(<?= $i ?>)" class="btn btn-default btn-pin text-white">Pin</button>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
+            <div class="room-user-control bg-dark">
+                <div class="other-stuff"></div>
+                <div class="content-calls overflow-auto"></div>
+            </div>
+
+            <div class="control-section border text-light bg-dark">
+                <button class="btn btn-default text-white " id="mute" onclick="toggleMute()">Mute</button>
+                <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
+            </div>
         </div>
+        <!-- <?php Pjax::end() ?> -->
     <? } ?>
 
 

@@ -11,6 +11,7 @@ const PLUGIN_VIDEO_ROOM = "janus.plugin.videoroom";
 const REQUEST_CONFIGURE = "configure";
 const REQUEST_JOIN = "join";
 const REQUEST_START = "start";
+const REQUEST_MODERATE = "moderate";
 
 const PUBLISH_TYPE_PUBLISHER = "publisher";
 const PUBLISH_TYPE_SUBSCRIBER = "subscriber";
@@ -18,6 +19,7 @@ const PUBLISH_TYPE_SUBSCRIBER = "subscriber";
 const EVENT_JOINED = "joined";
 const EVENT_DESTROYED = "destroyed";
 const EVENT = "event";
+const EVENT_ATTACHED = "attached";
 const ERROR_CODE_ROOM_NOT_FOUND = 426;
 
 const ICE_CONNECTION_STATE_COMPLETED = "completed";
@@ -44,7 +46,7 @@ let bitrateTimer = [];
 ///////////   ON READY
 ////////////////////////////////////////////////////////////
 $(document).ready(function () {
-  handleMQTTPaho();
+  connectMQTT();
 
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
@@ -85,7 +87,7 @@ const initJanus = () => {
               if (on) {
                 // Darken screen and show hint
                 $.blockUI({
-                  message: '<div><img src="up_arrow.png"/></div>',
+                  // message: '<div><img src="up_arrow.png"/></div>',
                   css: {
                     border: "none",
                     padding: "15px",
@@ -133,22 +135,23 @@ const initJanus = () => {
               myStream = stream;
               if ($("#myvideo").length === 0) {
                 $(`#video-source0`).append(
-                  '<video class="rounded centered video-on-call" id="myvideo" autoplay playsinline muted="muted"/>'
+                  '<video class="rounded centered relative" width="100%" height="100%" id="myvideo" autoplay playsinline muted="muted"/>'
                 );
-                $("#video-source0 h1").text(username)
+                $("#video-source0 h1").text(username);
                 // $("#video-source0").append(
                 //     '<h1 class="text-light username-on-call " >' +
                 //       username +
                 //       "</h1>"
                 //   );
               }
-              $('.box0').removeClass('d-none')
+              $(".box0").removeClass("d-none");
               Janus.attachMediaStream($("#myvideo").get(0), stream);
               $("#myvideo").get(0).muted = "muted";
               if (
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                ICE_CONNECTION_STATE_COMPLETED && 
-                pluginHandler.webrtcStuff.pc.iceConnectionState !== ICE_CONNECTION_STATE_CONNECTED
+                  ICE_CONNECTION_STATE_COMPLETED &&
+                pluginHandler.webrtcStuff.pc.iceConnectionState !==
+                  ICE_CONNECTION_STATE_CONNECTED
               ) {
                 $(`#video-source0`)
                   .parent()
@@ -301,6 +304,8 @@ const handlingEvent = (objMessage) => {
         .empty()
         .hide();
       $("#videoremote" + remoteFeed.rfindex).empty();
+      // $(`.box${remoteFeed.rfindex}`).hide();
+      // $(`.box${remoteFeed.rfindex} h1`).text("");
       feeds[remoteFeed.rfindex] = null;
       remoteFeed.detach();
     }
@@ -351,11 +356,12 @@ const joinMe = () => {
     room: myRoom,
     ptype: PUBLISH_TYPE_PUBLISHER,
     display: `${username}_${userId}`,
+    data: true,
   };
   pluginHandler.send({ message: register });
 };
 
-const publishOwnFeed = (useAudio = true, useVideo= true) => {
+const publishOwnFeed = (useAudio = true, useVideo = true) => {
   pluginHandler.createOffer({
     media: {
       audioRecv: false,
@@ -418,7 +424,7 @@ function newRemoteFeed(id, display, audio, video) {
           ")"
       );
       Janus.log("  -- This is a subscriber");
-      var subscribe = {
+      let subscribe = {
         request: REQUEST_JOIN,
         room: myRoom,
         ptype: PUBLISH_TYPE_SUBSCRIBER,
@@ -451,14 +457,13 @@ function newRemoteFeed(id, display, audio, video) {
       bootbox.alert("Error attaching plugin... " + error);
     },
     onmessage: function (msg, jsep) {
-      var event = msg["videoroom"];
+      const event = msg["videoroom"];
       Janus.debug("Event: " + event);
       if (msg["error"]) {
         bootbox.alert(msg["error"]);
       } else if (event) {
-        const EVENT_ATTACHED = "attached";
         if (event === EVENT_ATTACHED) {
-          for (var i = 1; i < limitMembers; i++) {
+          for (let i = 1; i < limitMembers; i++) {
             if (!feeds[i]) {
               const splittedString = display.split("_");
               const idFeed = Number(splittedString[1]);
@@ -563,7 +568,9 @@ function newRemoteFeed(id, display, audio, video) {
             remoteFeed.rfindex +
             '" width="100%" height="100%" autoplay playsinline/>'
         );
-        $(`#video-source${remoteFeed.rfindex} h1`).text(feeds[remoteFeed.rfindex].rfuser.usernameFeed)
+        $(`#video-source${remoteFeed.rfindex} h1`).text(
+          feeds[remoteFeed.rfindex].rfuser.usernameFeed
+        );
         // $("#video-source" + remoteFeed.rfindex).append(
         //   '<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">' +
         //     feeds[remoteFeed.rfindex].rfuser.usernameFeed +
@@ -581,12 +588,12 @@ function newRemoteFeed(id, display, audio, video) {
               .show();
         });
       }
-      $('.box'+ remoteFeed.rfindex).removeClass('d-none')
+      $(".box" + remoteFeed.rfindex).removeClass("d-none");
       Janus.attachMediaStream(
         $("#remotevideo" + remoteFeed.rfindex).get(0),
         stream
       );
-      var videoTracks = stream.getVideoTracks();
+      const videoTracks = stream.getVideoTracks();
       if (!videoTracks || videoTracks.length === 0) {
         // No remote video
         $("#remotevideo" + remoteFeed.rfindex).hide();
@@ -681,58 +688,16 @@ function toggleMute() {
 ////////////////////////////////////////////////////////////
 ///////////   PAHO MQTT HANDLE
 ////////////////////////////////////////////////////////////
-const handleMQTTPaho = () => {
-  const wsbroker = "localhost"; // mqtt websocket enabled broker
-  const wsport = 15675; // port for above
-  const client = new Paho.MQTT.Client(
-    wsbroker,
-    wsport,
-    "/ws",
-    "myclientid_" + parseInt(Math.random() * 100, 10)
-  );
-
-  connect();
-
-  client.onConnectionLost = function (responseObject) {
-    console.log("Connection Lost: " + responseObject.errorMessage);
-    connect();
-  };
-
-  client.onMessageArrived = function (message) {
-    const objData = JSON.parse(message.payloadString);
-    $.pjax.reload({ container: "#room-request", async: false });
-    $.pjax.reload({ container: "#room-member", async: false });
-
-    if (isOwner && objData.type === "request_join") {
-      $("#pendingRequests").modal("show");
-    }
-
-    if (objData.type === "response_join") { 
-      if(Number(objData.user_id) === Number(userId)  && !isOwner && objData.status === 1) {
-        location.reload();
-        }
-    }
-  };
-
-  function connect() {
-    client.connect({
-      onSuccess: () => {
-        client.subscribe(window.location.pathname);
-        console.log("Connected!");
-      },
-    });
-  }
-};
 $(document).on("click", "#btnJoin", function (e) {
   joinHandler("request", userId);
 });
 
 $(document).on("click", "#btnAllow", function (e) {
-	joinHandler("allow", $(this).data("user"));
+  joinHandler("allow", $(this).data("user"));
 });
 
 $(document).on("click", "#btnDeny", function (e) {
-	joinHandler("deny", $(this).data("user"));
+  joinHandler("deny", $(this).data("user"));
 });
 
 function joinHandler(action, userId) {
@@ -745,3 +710,90 @@ function joinHandler(action, userId) {
     },
   });
 }
+
+const pinMember = (index) => {
+  const boxClassComp = Array.from($(".box"));
+  const boxPinned = boxClassComp.find((boxComp) =>
+    $(boxComp).hasClass("pinned")
+  );
+  if (!boxPinned) pinBehavior(boxClassComp, index);
+  else {
+    if (Number($(boxPinned).attr("data-id")) === Number(index)) {
+      unpinBehavior(boxClassComp, index);
+    } else {
+      switchingComponents(boxPinned, index);
+    }
+  }
+};
+
+const switchingComponents = (compPinnedToUnpin, indexToPin, width = 100) => {
+  const compControl = $(".room-user-control .content-calls");
+  const compVideos = $(".room-section");
+  const indexAlreadyPinned = Number($(compPinnedToUnpin).attr("data-id"));
+  // reset component pinned and move to list
+  $(compPinnedToUnpin).removeClass("pinned");
+  $(compPinnedToUnpin).attr("style", `width:${width}%`);
+  $(`.box${indexAlreadyPinned} .btn-pin`).text("pin");
+  compControl.append(compPinnedToUnpin);
+  // get component to list, adapt it and move as pinned component
+  $(`.box${indexToPin}`).attr("style", `width:${width}%`);
+  $(`.box${indexToPin}`).addClass("pinned");
+  $(`.box${indexToPin} .btn-pin`).text("pinned");
+  compVideos.append($(`.box${indexToPin}`));
+};
+
+const unpinBehavior = (list, index, width = 20) => {
+  const compVideos = $(".room-section");
+  $(`.box${index} .btn-pin`).text("pin");
+  list.forEach((boxComp) => {
+    $(boxComp).attr("style", `width:${width}%`);
+    $(boxComp).removeClass("pinned");
+    compVideos.append(boxComp);
+  });
+};
+
+const pinBehavior = (list, index, width = "100%", height = "90vh") => {
+  const compControl = $(".room-user-control .content-calls");
+
+  list.forEach((boxComp) => {
+    $(boxComp).attr("style", `width:${width}`);
+    if (Number($(boxComp).attr("data-id")) !== Number(index)) {
+      compControl.append(boxComp);
+    } else {
+      $(boxComp).addClass("pinned");
+      $(`.box${index} .btn-pin`).text("pinned");
+    }
+  });
+};
+
+let isMuted = false;
+const muteMember = (index) => {
+  if (isOwner) {
+    let remoteHandler = feeds[index];
+    if (!remoteHandler) {
+      return;
+    }
+
+    remoteHandler.send({
+      message: {
+        request: REQUEST_MODERATE,
+        room: myRoom,
+        id: remoteHandler.rfid,
+        mute_audio: !isMuted,
+      },
+      success: function (data) {
+        if (data.videoroom === "success") {
+          isMuted = !isMuted;
+          console.log("is muted", isMuted, remoteHandler.rfindex);
+          
+          $(`.box${remoteHandler.rfindex} .btn-mute`).text(isMuted ? "Unmute" : "Mute");
+
+          sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {user_id:remoteHandler.rfuser.idFeed, isMuted});
+        }
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  }
+};
