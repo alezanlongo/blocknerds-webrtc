@@ -9,17 +9,22 @@ use yii\behaviors\TimestampBehavior;
  * This is the model class for table "room".
  *
  * @property int $id
+ * @property string $title
  * @property string $uuid
  * @property int $owner_id
+ * @property int $duration
  * @property int $scheduled_at
  * @property int $created_at
  * @property int $updated_at
  *
- * @property Member[] $members
+ * @property RoomMember[] $members
  * @property User[] $users
  */
 class Room extends \yii\db\ActiveRecord
 {
+    const DEFAULT_DURATION = 60;
+    const DEFAULT_TITLE = "quick meeting";
+
     /**
      * {@inheritdoc}
      */
@@ -44,8 +49,9 @@ class Room extends \yii\db\ActiveRecord
             ['uuid', 'string', 'max' => 36],
             ['uuid', 'unique'],
             ['uuid', 'thamtech\uuid\validators\UuidValidator'],
-            [['owner_id', 'scheduled_at'], 'required'],
-            [['owner_id', 'scheduled_at', 'created_at', 'updated_at'], 'integer'],
+            ['title', 'string'],
+            [['title', 'duration', 'owner_id', 'scheduled_at'], 'required'],
+            [['owner_id', 'duration', 'scheduled_at', 'created_at', 'updated_at'], 'integer'],
             ['owner_id', 'exist', 'targetClass' => User::class, 'targetAttribute' => ['owner_id' => 'id']],
         ];
     }
@@ -72,7 +78,7 @@ class Room extends \yii\db\ActiveRecord
      */
     public function getMembers()
     {
-        return $this->hasMany(Member::class, ['room_id' => 'id']);
+        return $this->hasMany(RoomMember::class, ['room_id' => 'id']);
     }
 
     /**

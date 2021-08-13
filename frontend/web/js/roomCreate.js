@@ -9,7 +9,6 @@ if (window.jQuery) {
     });
 }
 
-// $(document).on("click", "#btnCreateSchedule", function (e) {
 $(document).on('submit', '#formCreateSchedule', function (e) {
 
     e.preventDefault();
@@ -21,11 +20,27 @@ $(document).on('submit', '#formCreateSchedule', function (e) {
     var checkMembers = 1;
 
     $.each($(this).serializeArray(), function () {
+        if (this.name == "title") {
+            if (this.value == "") {
+                alert('Please select a title');
+                checks = false;
+                throw new Error("Field validation error: title");
+            }
+        }
+
+        if (this.name == "duration") {
+            if (this.value == "") {
+                alert('Please select a duration');
+                checks = false;
+                throw new Error("Field validation error: duration");
+            }
+        }
+
         if (this.name == "datetimepicker") {
             if (this.value == "") {
                 alert('Please select a date and time to schedule a room');
                 checks = false;
-                throw new Error("Date time validation error");
+                throw new Error("Field validation error: datetimepicker");
             }
         }
 
@@ -60,5 +75,6 @@ $(document).on('submit', '#formCreateSchedule', function (e) {
         })
         .always(function () {
             $("#datetimepicker").datetimepicker('reset');
+            $("#formCreateSchedule")[0].reset();
         });
 });
