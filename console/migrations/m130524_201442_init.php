@@ -32,8 +32,10 @@ class m130524_201442_init extends Migration
 
         $this->createTable('{{%room}}', [
             'id' => $this->primaryKey(),
+            'title' => $this->string()->notNull(),
             'uuid' => 'uuid DEFAULT uuid_generate_v4() UNIQUE NOT NULL',
             'owner_id' => $this->integer()->notNull(),
+            'duration' => $this->integer()->notNull(),
             'scheduled_at' => $this->integer()->notNull(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),

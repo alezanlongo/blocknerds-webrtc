@@ -12,6 +12,7 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    'defaultRoute' => 'room/calendar',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
@@ -44,6 +45,7 @@ return [
                 'GET room/create' => 'room/create',
                 'POST room/create-schedule' => 'room/create-schedule',
                 'GET room/user-list' => 'room/user-list',
+                'GET room/calendar' => 'room/calendar',
                 'GET room/<uuid>' => 'room',
                 'POST room/join/request' => 'room/join-request',
                 'POST room/join/<action:(allow|deny)>' => 'room/join',

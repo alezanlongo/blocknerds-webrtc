@@ -12,6 +12,7 @@ use DateTime;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use thamtech\uuid\helpers\UuidHelper;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\web\TooManyRequestsHttpException;
@@ -103,7 +104,9 @@ class RoomController extends \yii\web\Controller
         if (Yii::$app->request->isPost) {
             $userId = Yii::$app->user->identity->getId();
             $model = new \common\models\Room();
+            $fields['Room']['title'] = Room::DEFAULT_TITLE;
             $fields['Room']['owner_id'] = $userId;
+            $fields['Room']['duration'] = Room::DEFAULT_DURATION;
             $fields['Room']['scheduled_at'] = time();
 
             if ($model->load($fields) && $model->save()) {
@@ -240,23 +243,60 @@ class RoomController extends \yii\web\Controller
         return $room;
     }
 
-    public function actionUserList($q = null, $id = null)
+    public function actionAddMember()
+    {
+        $uuid = $this->request->post('uuid') ?? null;
+
+        $user_id = $this->request->post('user_id') ?? null;
+
+        $room = $this->joinRequestCheck($uuid, $user_id);
+
+        $member = new RoomMember();
+        $member->user_id = $user_id;
+        $member->room_id = $room->id;
+        $member->save();
+
+        return Json::encode($member);
+    }
+
+
+    public function actionRemoveMember()
+    {
+        $room_id = $this->request->post('room_id') ?? null;
+
+        $user_id = $this->request->post('user_id') ?? null;
+
+        $member = RoomMember::find()->where(["room_id" => $room_id, "user_id" => $user_id])->one();
+        $member->delete();
+
+        return Json::encode($member);
+    }
+
+    public function actionUserList($q = null, $id = null, $room_id = null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
         $out = ['results' => ['id' => '', 'username' => '']];
+
         if (!is_null($q)) {
+
             $users = User::find()
                 ->select(['id', 'username'])
                 ->where(['status' => User::STATUS_ACTIVE])
                 ->andWhere(['LIKE', 'username', $q])
                 ->andWhere(['NOT IN', 'id', Yii::$app->user->identity->getId()])
-                ->limit(10)
-                ->all();
+                ->limit(10);
 
-            $out['results'] = array_values($users);
+            if (!is_null($room_id)) {
+                $idMembers = RoomMember::find()->where(["room_id" => $room_id])->select(['user_id']);
+                $users->andWhere(['NOT IN', 'id', $idMembers]);
+            }
+
+            $out['results'] = array_values($users->all());
         } elseif ($id > 0) {
             $out['results'] = ['id' => $id, 'username' => User::find($id)->username];
         }
+
         return $out;
     }
 
@@ -265,8 +305,12 @@ class RoomController extends \yii\web\Controller
         if (Yii::$app->request->isPost) {
             $model = new \common\models\Room();
 
+            $fields['Room']['title'] = Yii::$app->request->post("title");
+
             $userId = Yii::$app->user->identity->getId();
             $fields['Room']['owner_id'] = $userId;
+
+            $fields['Room']['duration'] = Yii::$app->request->post("duration");
 
             $datetimepicker = new DateTime(Yii::$app->request->post("datetimepicker"));
             $fields['Room']['scheduled_at'] = $datetimepicker->getTimestamp();
@@ -275,6 +319,11 @@ class RoomController extends \yii\web\Controller
 
             if ($model->load($fields) && $model->save()) {
 
+                $member = new RoomMember();
+                $member->user_id = $userId;
+                $member->room_id = $model->id;
+                $member->save();
+
                 foreach ($members["username"] as $k => $id) {
                     $member = new RoomMember();
                     $member->user_id = (int)$id;
@@ -282,12 +331,46 @@ class RoomController extends \yii\web\Controller
                     $member->save();
                 }
 
-                Yii::$app->janusApi->videoRoomCreate($model->uuid);
-
                 return Json::encode($model);
             }
         }
 
         return throw new UnprocessableEntityHttpException();
+    }
+
+    function actionCalendar()
+    {
+        $formatter = \Yii::$app->formatter;
+
+        $user_id = Yii::$app->user->getId();
+        $subQuery = RoomMember::find()->where(["user_id" => $user_id])->select(['room_id']);
+        $data = Room::find()->where(['in', 'id', $subQuery])->all();
+
+        $events = [];
+        foreach ($data as $key => $value) {
+            $events[$key]['room_id'] = $value->id;
+            $events[$key]['title'] = $value->title;
+            $events[$key]['duration'] = $value->duration;
+            $events[$key]['start'] = $formatter->asDate($value->scheduled_at, 'php:Y-m-d m:i:00');
+        }
+
+        $roomSelected = null;
+        $roomMembers = [];
+
+        if (Yii::$app->request->isAjax) {
+            $room_id = Yii::$app->request->get("room_id", 0);
+
+            $roomSelected = Room::findOne($room_id);
+
+            $roomMembers = $roomSelected->getMembers()->all();
+        }
+
+        return $this->render('calendar', [
+            'formatter' => $formatter,
+            'user_id' => $user_id,
+            "events" => $events,
+            "roomSelected" => $roomSelected,
+            "roomMembers" => $roomMembers
+        ]);
     }
 }
