@@ -29,7 +29,7 @@
     "php-amqplib/php-amqplib": "^3.0",
     "php-mqtt/client": "^1.1",
     "yiisoft/yii2-httpclient": "2.0.x-dev",
-    "kartik-v/yii2-widget-select2": "2.2.x-dev",
+    "kartik-v/yii2-widget-select2": "2.2.x-dev"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",

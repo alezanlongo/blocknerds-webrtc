@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27e04f6862bfb5301dba931b823e6aaf",
+    "content-hash": "46dd3c8e0e889fea9cd682e2f147db01",
     "packages": [
         {
             "name": "bower-asset/inputmask",
@@ -456,70 +456,6 @@
                 "source": "https://github.com/kartik-v/yii2-krajee-base/tree/v2.0.6"
             },
             "time": "2021-04-08T18:07:22+00:00"
-        },
-        {
-            "name": "kartik-v/yii2-number",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kartik-v/yii2-number.git",
-                "reference": "0e1d1233041c9b64428fa393fd6f66f1c95dd5a0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-number/zipball/0e1d1233041c9b64428fa393fd6f66f1c95dd5a0",
-                "reference": "0e1d1233041c9b64428fa393fd6f66f1c95dd5a0",
-                "shasum": ""
-            },
-            "require": {
-                "kartik-v/yii2-krajee-base": ">=2.0.0"
-            },
-            "default-branch": true,
-            "type": "yii2-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "kartik\\number\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Kartik Visweswaran",
-                    "email": "kartikv2@gmail.com",
-                    "homepage": "http://www.krajee.com/"
-                }
-            ],
-            "description": "Number control and format mask input for Yii2 Framework.",
-            "homepage": "https://github.com/kartik-v/yii2-number",
-            "keywords": [
-                "currency",
-                "extension",
-                "format",
-                "mask",
-                "number",
-                "number control",
-                "widget",
-                "yii2"
-            ],
-            "support": {
-                "issues": "https://github.com/kartik-v/yii2-number/issues",
-                "source": "https://github.com/kartik-v/yii2-number/tree/master"
-            },
-            "funding": [
-                {
-                    "url": "https://opencollective.com/kartik-v",
-                    "type": "open_collective"
-                }
-            ],
-            "time": "2019-06-19T07:12:40+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-select2",
@@ -3805,12 +3741,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "79d27778136b1aa08533e9e1f3ee3b6910af354a"
+                "reference": "c5ac781da36459457837159b308fe88912e07a78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/79d27778136b1aa08533e9e1f3ee3b6910af354a",
-                "reference": "79d27778136b1aa08533e9e1f3ee3b6910af354a",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/c5ac781da36459457837159b308fe88912e07a78",
+                "reference": "c5ac781da36459457837159b308fe88912e07a78",
                 "shasum": ""
             },
             "require": {
@@ -3855,7 +3791,7 @@
                 "issues": "https://github.com/phpDocumentor/ReflectionDocBlock/issues",
                 "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/master"
             },
-            "time": "2021-08-09T17:52:09+00:00"
+            "time": "2021-08-13T09:13:23+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -3863,12 +3799,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "64bbc0f46e6c7dd8e6a0260c25ba4987937b172d"
+                "reference": "b456db85fc80ecb2fed8441c9c89dbcb945735a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/64bbc0f46e6c7dd8e6a0260c25ba4987937b172d",
-                "reference": "64bbc0f46e6c7dd8e6a0260c25ba4987937b172d",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/b456db85fc80ecb2fed8441c9c89dbcb945735a9",
+                "reference": "b456db85fc80ecb2fed8441c9c89dbcb945735a9",
                 "shasum": ""
             },
             "require": {
@@ -3906,7 +3842,7 @@
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
                 "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.x"
             },
-            "time": "2021-08-10T17:52:41+00:00"
+            "time": "2021-08-13T09:11:31+00:00"
         },
         {
             "name": "phpspec/php-diff",
@@ -4320,12 +4256,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "0598f5829347e7fed2f4f0a12fa2840667db6a31"
+                "reference": "f3dde0a4810e2b99e444df0530be3b98d360ca96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0598f5829347e7fed2f4f0a12fa2840667db6a31",
-                "reference": "0598f5829347e7fed2f4f0a12fa2840667db6a31",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f3dde0a4810e2b99e444df0530be3b98d360ca96",
+                "reference": "f3dde0a4810e2b99e444df0530be3b98d360ca96",
                 "shasum": ""
             },
             "require": {
@@ -4409,7 +4345,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-08-10T14:16:23+00:00"
+            "time": "2021-08-13T14:06:04+00:00"
         },
         {
             "name": "psr/container",
@@ -5470,12 +5406,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "c3119a1578277b7cd7a5ba3be208721fc7e72e17"
+                "reference": "05185ba47605665f3db5e2fa97eafeea64c2d4ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/c3119a1578277b7cd7a5ba3be208721fc7e72e17",
-                "reference": "c3119a1578277b7cd7a5ba3be208721fc7e72e17",
+                "url": "https://api.github.com/repos/symfony/console/zipball/05185ba47605665f3db5e2fa97eafeea64c2d4ab",
+                "reference": "05185ba47605665f3db5e2fa97eafeea64c2d4ab",
                 "shasum": ""
             },
             "require": {
@@ -5561,7 +5497,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-09T09:36:42+00:00"
+            "time": "2021-08-13T15:59:15+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -6250,12 +6186,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "1057386877494a8f5db303c33f6f00db85dc3c19"
+                "reference": "088eb6f6ec7ac822f7cf688f64975532dd51bdc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/1057386877494a8f5db303c33f6f00db85dc3c19",
-                "reference": "1057386877494a8f5db303c33f6f00db85dc3c19",
+                "url": "https://api.github.com/repos/symfony/string/zipball/088eb6f6ec7ac822f7cf688f64975532dd51bdc8",
+                "reference": "088eb6f6ec7ac822f7cf688f64975532dd51bdc8",
                 "shasum": ""
             },
             "require": {
@@ -6327,7 +6263,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-09T13:04:03+00:00"
+            "time": "2021-08-13T07:43:57+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -6776,8 +6712,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "yiisoft/yii2-httpclient": 20,
-        "kartik-v/yii2-widget-select2": 20,
-        "kartik-v/yii2-number": 20
+        "kartik-v/yii2-widget-select2": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
