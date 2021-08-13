@@ -12,6 +12,7 @@ const REQUEST_CONFIGURE = "configure";
 const REQUEST_JOIN = "join";
 const REQUEST_START = "start";
 const REQUEST_MODERATE = "moderate";
+const REQUEST_UNPUBLISH = "unpublish";
 
 const PUBLISH_TYPE_PUBLISHER = "publisher";
 const PUBLISH_TYPE_SUBSCRIBER = "subscriber";
@@ -60,6 +61,16 @@ $(document).ready(function () {
     initJanus();
   }
 });
+
+$(".btn-leave").on('click', ()=>{
+  unpublishOwnFeed()
+})
+$(".btn-join-again").on('click', ()=>{
+  $(".room-videos").show()
+  $(".btn-join-again").hide()
+  publishOwnFeed(true);
+})
+
 
 const initJanus = () => {
   Janus.init({
@@ -138,11 +149,6 @@ const initJanus = () => {
                   '<video class="rounded centered relative" width="100%" height="100%" id="myvideo" autoplay playsinline muted="muted"/>'
                 );
                 $("#video-source0 h1").text(username);
-                // $("#video-source0").append(
-                //     '<h1 class="text-light username-on-call " >' +
-                //       username +
-                //       "</h1>"
-                //   );
               }
               $(".box0").removeClass("d-none");
               Janus.attachMediaStream($("#myvideo").get(0), stream);
@@ -190,13 +196,18 @@ const initJanus = () => {
                 " ::: Got a cleanup notification: we are unpublished now :::"
               );
               myStream = null;
-              $(`#video-source0`).html(
-                '<button id="publish" class="btn btn-primary">Publish</button>'
-              );
-              $("#publish").click(function () {
-                publishOwnFeed(true);
-              });
-              $(`#video-source0`).parent().parent().unblock();
+              // alert("do someting else after to go")
+              $(".room-videos").hide()
+              $(".join-again").removeClass("d-none").show()
+
+              
+              // $(`#video-source0`).html(
+              //   '<button id="publish" class="btn btn-primary">Publish</button>'
+              // );
+              // $("#publish").click(function () {
+              //   publishOwnFeed(true);
+              // });
+              // $(`#video-source0`).parent().parent().unblock();
             },
           });
         },
@@ -253,6 +264,7 @@ const handleJsep = (objMessage, jsep) => {
 };
 
 const handlingJoined = (objMessage) => {
+  console.log(objMessage)
   const myId = objMessage["id"];
   my_private_id = objMessage["private_id"];
   const publishersList = objMessage["publishers"];
@@ -314,6 +326,7 @@ const handlingEvent = (objMessage) => {
     const unpublished = objMessage["unpublished"];
     if (unpublished === "ok") {
       // That's us
+      // TODO: update UI local client
       pluginHandler.hangup();
       return;
     }
@@ -329,6 +342,7 @@ const handlingEvent = (objMessage) => {
         .empty()
         .hide();
       $("#videoremote" + remoteFeed.rfindex).empty();
+      $(".box" + remoteFeed.rfindex).hide();
       feeds[remoteFeed.rfindex] = null;
       remoteFeed.detach();
     }
@@ -474,7 +488,7 @@ function newRemoteFeed(id, display, audio, video) {
               break;
             }
           }
-
+          $(".box" + remoteFeed.rfindex).show();
           remoteFeed.rfid = msg["id"];
           remoteFeed.rfdisplay = msg["display"];
           if (!remoteFeed.spinner) {
@@ -661,9 +675,7 @@ function newRemoteFeed(id, display, audio, video) {
 }
 
 function unpublishOwnFeed() {
-  // Unpublish our stream
-  $("#unpublish").attr("disabled", true).unbind("click");
-  const unpublish = { request: "unpublish" };
+  const unpublish = { request: REQUEST_UNPUBLISH };
   pluginHandler.send({ message: unpublish });
 }
 

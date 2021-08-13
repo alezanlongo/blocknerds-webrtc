@@ -24,7 +24,7 @@ $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 
 $this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/mqtt_handler.js',
+    Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
     [
         'depends' => "yii\web\JqueryAsset",
         'position' => View::POS_END
@@ -44,8 +44,10 @@ $this->title = 'The Room';
 ?>
 <div class="room  mw-100">
     <? if ($is_owner || $is_allowed) { ?>
+        <div class="join-again d-none">
+            <button type="button" class="btn btn-primary btn-join-again">Join again</button>
+        </div>
         <div class="room-videos">
-            <!-- <?php Pjax::begin(["id" => "main-video-room", "options" => ["class" => "room-videos"]]) ?> -->
             <div class="room-section d-flex flex-wrap justify-content-center">
                 <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                     <div class="box<?= $i ?> box border d-none bg-dark" data-id="<?= $i ?>">
@@ -63,7 +65,9 @@ $this->title = 'The Room';
                 <?php } ?>
             </div>
             <div class="room-user-control bg-dark">
-                <div class="other-stuff"></div>
+                <div class="other-stuff">
+                    <?= Html::tag('button', "Leaving", ["class" => "btn btn-danger btn-leave"]) ?>
+                </div>
                 <div class="content-calls overflow-auto"></div>
             </div>
 
@@ -72,7 +76,6 @@ $this->title = 'The Room';
                 <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
             </div>
         </div>
-        <!-- <?php Pjax::end() ?> -->
     <? } ?>
 
 
