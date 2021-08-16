@@ -191,3 +191,15 @@ body {
 .other-stuff{
   height: 30%;
 }
+
+.join-again{
+  text-align: center;
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  padding: 1%;
+}
+.join-again .card{
+  color: #fafafa;
+  background-color: transparent;
+}

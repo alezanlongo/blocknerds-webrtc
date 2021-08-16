@@ -45,14 +45,24 @@ $this->title = 'The Room';
 <div class="room  mw-100">
     <? if ($is_owner || $is_allowed) { ?>
         <div class="join-again d-none">
-            <button type="button" class="btn btn-primary btn-join-again">Join again</button>
+            <div class="card">
+                <div class="card-title">
+                <?= Html::tag("h4", "You left of the room") ?>
+            </div>
+            <div class="card-body">
+                <?= Html::tag("button", "Join again",  ["class"=> "btn btn-primary btn-join-again"]) ?>
+                <?= Html::a('Go home', ['/room/create'], ['class'=>'btn btn-default text-white']) ?>
+
+
+                </div>
+            </div>
         </div>
         <div class="room-videos">
             <div class="room-section d-flex flex-wrap justify-content-center">
                 <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                     <div class="box<?= $i ?> box border d-none bg-dark" data-id="<?= $i ?>">
                         <div class="content-video" id="video-source<?= $i ?>">
-                            <h1 class="text-light username-on-call">Nickname <?= $i ?></h1>
+                            <h1 class="text-light username-on-call"> <?= $i ?></h1>
 
                             <div class="control-owner d-flex ">
                                 <?php if ($is_owner && $i > 0) { ?>
