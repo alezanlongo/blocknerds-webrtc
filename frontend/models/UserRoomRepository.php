@@ -3,9 +3,9 @@
 namespace frontend\models;
 
 use yii\db\ActiveRecord;
-use common\models\Member;
 use common\models\Room;
-
+use common\models\RoomMember;
+use common\models\User;
 
 class UserRoomRepository extends Room
 {
@@ -18,6 +18,13 @@ class UserRoomRepository extends Room
     static public function getUserTokenByRoom(int $userId, $roomUuid): ?ActiveRecord
     {
         $room = parent::find()->select(['id'])->where(['uuid' => $roomUuid])->limit(1);
-        return Member::find()->where(['room_id' => $room, 'user_id' => $userId])->one();
+        return RoomMember::find()->where(['room_id' => $room, 'user_id' => $userId])->one();
+    }
+
+
+    static public function getUsersByTokens(array|string $usersTokens): array
+    {
+        $usersId = RoomMember::find()->select(['user_id'])->where(['token' => $usersTokens]);
+        return User::find()->select(['id', 'username', 'email'])->where(['id' => $usersId])->all();
     }
 }

@@ -2,13 +2,14 @@
 
 namespace frontend\controllers;
 
-
+use common\components\JanusApiComponent;
 use Yii;
 use common\models\RoomMember;
 use common\models\RoomRequest;
 use common\models\Room;
 use common\models\User;
 use DateTime;
+use frontend\models\UserRoomRepository;
 use Ramsey\Uuid\Rfc4122\UuidV4;
 use thamtech\uuid\helpers\UuidHelper;
 use yii\filters\AccessControl;
@@ -80,7 +81,7 @@ class RoomController extends \yii\web\Controller
         $members = $query->all();
         if ($is_owner || $is_allowed || Yii::$app->janusApi->videoRoomExists($uuid) === true) {
             $userToken = RoomMember::find()->select('token')->where(['user_id' => $user_id, 'room_id' => $room->id])->limit(1)->one();
-            $token = \str_replace('-', '', ($userToken->token ?? null));
+            $token = $userToken->token ?? null;
             $res = Yii::$app->janusApi->addUserToken($uuid, $token);
         }
 
@@ -97,6 +98,16 @@ class RoomController extends \yii\web\Controller
             'request' => $request,
             'requests' => $requests,
         ]);
+    }
+
+    public function actionWaiting($uuid)
+    {
+        $roomUsersToken = Yii::$app->janusApi->getVideoRoomUsersToken($uuid);
+        $usersInRoom = [];
+        if (!empty($roomUsersToken)) {
+            $usersInRoom =  UserRoomRepository::getUsersByTokens(\array_column($roomUsersToken, 'token'));
+        }
+        return $this->render('waiting', ['usersInRoom' => $usersInRoom]);
     }
 
     public function actionCreate()

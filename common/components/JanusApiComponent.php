@@ -44,7 +44,7 @@ class JanusApiComponent extends Component
     public function videoRoomCreate(string $uuid, string $description = '')
     {
         $this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'create', 'room' => $uuid, 'description' => $description, 'is_private' => true, 'admin_key' => $this->apiParams['adminKey']], 'transaction' =>  $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'create', 'room' => $uuid, 'description' => $description, 'is_private' => true, 'publisher' => 10, 'admin_key' => $this->apiParams['adminKey']], 'transaction' =>  $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
         if (!$res->isOk) {
         }
         $data = $res->getData();
@@ -58,10 +58,10 @@ class JanusApiComponent extends Component
         return false;
     }
 
-    public function videoRoomExists(string $uuid)
+    public function videoRoomExists(string $roomUuid)
     {
         $this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'exists', 'room' => $uuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'exists', 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
         $data = $res->getData();
         if (isset($data['plugindata']['data']['videoroom']) && isset($data['plugindata']['data']['exists']) && $data['plugindata']['data']['videoroom'] == 'success') {
             return $data['plugindata']['data']['exists'];
@@ -69,12 +69,85 @@ class JanusApiComponent extends Component
         return false;
     }
 
+    public function getVideoRoomUsersToken($roomUuid): false|array
+    {
+        $this->attach('janus.plugin.videoroom');
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'listparticipants', 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        if (!$res->isOk) {
+            return false;
+        }
+        $data = $res->getData();
+        if (!isset($data['janus']) || $data['janus'] !== 'success') {
+            //log error
+            return false;
+        }
+        $participants = [];
+        if (!empty($data['plugindata']['data']['participants'])) {
+            foreach ($data['plugindata']['data']['participants'] as $k => $v) {
+                $participants[$k] = ['id' => $v['id']];
+                $userHandle = $this->getUserHandle($v['id']);
+                if (!empty($userHandle) && isset($userHandle['token'])) {
+                    $participants[$k]['token'] = $userHandle['token'];
+                }
+            }
+        }
+        return $participants;
+    }
+
+    private function getSessions()
+    {
+        $res = $this->apiCall('POST', ['janus' => 'list_sessions', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], null, true);
+        if (!$res->isOk) {
+            return false;
+        }
+        if ($res->getData()['janus'] !== 'success') {
+            return false;
+        }
+        return $res->getData()['sessions'];
+    }
+
+    private function getUserHandle(string $janusUserId)
+    {
+        $sess = $this->getSessions();
+        if (false === $sess) {
+            return false;
+        }
+        if (empty($sess)) {
+            return [];
+        }
+        for ($i = 0; $i < count($sess); $i++) {
+            $resHandle = $this->apiCall('POST', ['janus' => 'list_handles', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], $sess[$i], true);
+            if (!$resHandle->isOk || $resHandle->getData()['janus'] !== 'success') {
+                return false;
+            }
+            if (!empty($resHandle->getData()['handles'])) {
+                $handles[$sess[$i]] = $resHandle->getData()['handles'];
+            }
+        }
+        if (empty($handles)) {
+            return [];
+        }
+        foreach ($handles as $k => $v) {
+            for ($i = 0; $i < count($v); $i++) {
+
+                $handleInfoRes = $this->apiCall('POST', ['janus' => 'handle_info', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], $k . '/' . $v[$i], true);
+                if (!$handleInfoRes->isOk || $handleInfoRes->getData()['janus'] !== 'success') {
+                    return false;
+                }
+                if (isset($handleInfoRes->getData()['info']['plugin_specific']['id']) && $handleInfoRes->getData()['info']['plugin_specific']['id'] === $janusUserId) {
+                    return $handleInfoRes->getData()['info'];
+                }
+            }
+        }
+        return [];
+    }
+
     public function addUserToken($roomUuid, $token)
     {
         $this->attach('janus.plugin.videoroom');
         $this->storeToken($token);
 
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'add', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => $token], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'add', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => [$token]], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
         if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
             return true;
         } elseif (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] != 'success') {
@@ -84,16 +157,6 @@ class JanusApiComponent extends Component
             $this->lastError = $data['error'];
         }
         return false;
-    }
-
-
-
-    public function listUserToken($roomUuid)
-    {
-        $this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall('POST', ['janus' => 'list_tokens', 'transaction' => $this->createRandStr()], $this->createSession());
-        $data = $res->getData();
-        \var_dump($data);
     }
 
 
@@ -119,7 +182,7 @@ class JanusApiComponent extends Component
     private function storeToken($token)
     {
 
-        $res = $this->apiCall('POST', ['janus' => 'add_token', 'token' => $token,'plugins'=>['janus.plugin.videoroom'], 'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], null, true);
+        $res = $this->apiCall('POST', ['janus' => 'add_token', 'token' => $token, 'plugins' => ['janus.plugin.videoroom'], 'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], null, true);
         if (!$res->isOk) {
             return false;
         }
