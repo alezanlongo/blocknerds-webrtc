@@ -254,35 +254,6 @@ class RoomController extends \yii\web\Controller
         return $room;
     }
 
-    public function actionAddMember()
-    {
-        $uuid = $this->request->post('uuid') ?? null;
-
-        $user_id = $this->request->post('user_id') ?? null;
-
-        $room = $this->joinRequestCheck($uuid, $user_id);
-
-        $member = new RoomMember();
-        $member->user_id = $user_id;
-        $member->room_id = $room->id;
-        $member->save();
-
-        return Json::encode($member);
-    }
-
-
-    public function actionRemoveMember()
-    {
-        $room_id = $this->request->post('room_id') ?? null;
-
-        $user_id = $this->request->post('user_id') ?? null;
-
-        $member = RoomMember::find()->where(["room_id" => $room_id, "user_id" => $user_id])->one();
-        $member->delete();
-
-        return Json::encode($member);
-    }
-
     public function actionUserList($q = null, $id = null, $room_id = null)
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -349,22 +320,52 @@ class RoomController extends \yii\web\Controller
         return throw new UnprocessableEntityHttpException();
     }
 
+    public function actionUpdateSchedule()
+    {
+        if (Yii::$app->request->isPost) {
+            $room_id = $this->request->post('room_id') ?? null;
+
+            $room = Room::findOne($room_id);
+
+            $fields['Room']['title'] = Yii::$app->request->post("title", $room->title);
+
+            $fields['Room']['duration'] = Yii::$app->request->post("duration", $room->duration);
+
+            $datetimepicker = $room->scheduled_at;
+            if (Yii::$app->request->post("datetimepicker")) {
+                $datetimepicker = new DateTime(Yii::$app->request->post("datetimepicker"));
+                $datetimepicker = $datetimepicker->getTimestamp();
+            }
+            $fields['Room']['scheduled_at'] = $datetimepicker;
+
+            $members = Yii::$app->request->post("User");
+
+            if ($room->load($fields) && $room->save()) {
+
+                $oldMembers = $room->getMembers()->all();
+                foreach ($oldMembers as $member) {
+                    $member->delete();
+                }
+
+                foreach ($members["username"] as $k => $id) {
+                    $member = new RoomMember();
+                    $member->user_id = (int)$id;
+                    $member->room_id = $room->id;
+                    $member->save();
+                }
+
+                return Json::encode($room);
+            }
+        }
+
+        return throw new UnprocessableEntityHttpException();
+    }
+
     function actionCalendar()
     {
         $formatter = \Yii::$app->formatter;
 
         $user_id = Yii::$app->user->getId();
-        $subQuery = RoomMember::find()->where(["user_id" => $user_id])->select(['room_id']);
-        $data = Room::find()->where(['in', 'id', $subQuery])->all();
-
-        $events = [];
-        foreach ($data as $key => $value) {
-            $events[$key]['room_id'] = $value->id;
-            $events[$key]['title'] = $value->title;
-            $events[$key]['duration'] = $value->duration;
-            $events[$key]['start'] = $formatter->asDate($value->scheduled_at, 'php:Y-m-d m:i:00');
-        }
-
         $roomSelected = null;
         $roomMembers = [];
 
@@ -379,9 +380,26 @@ class RoomController extends \yii\web\Controller
         return $this->render('calendar', [
             'formatter' => $formatter,
             'user_id' => $user_id,
-            "events" => $events,
             "roomSelected" => $roomSelected,
             "roomMembers" => $roomMembers
         ]);
+    }
+
+    function actionFetchCalendarEvents($user_id)
+    {
+        $formatter = \Yii::$app->formatter;
+
+        $subQuery = RoomMember::find()->where(["user_id" => $user_id])->select(['room_id']);
+        $data = Room::find()->where(['in', 'id', $subQuery])->all();
+
+        $events = [];
+        foreach ($data as $key => $value) {
+            $events[$key]['room_id'] = $value->id;
+            $events[$key]['title'] = $value->title;
+            $events[$key]['duration'] = $value->duration;
+            $events[$key]['start'] = $formatter->asDate($value->scheduled_at, 'php:Y-m-d m:i:00');
+        }
+
+        return Json::encode($events);
     }
 }
