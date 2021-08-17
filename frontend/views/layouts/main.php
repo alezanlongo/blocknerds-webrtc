@@ -36,11 +36,8 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
-        // ['label' => 'About', 'url' => ['/site/about']],
-        // ['label' => 'Contact', 'url' => ['/site/contact']],
         ['label' => 'The room', 'url' => ['/room/create']],
-        // ['label' => 'Text room', 'url' => ['/site/text-room']],
-        // ['label' => 'Screen sharing', 'url' => ['/site/screen-sharing']],
+        ['label' => 'Edit Profile', 'url' => ['/user/edit-profile']],
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
@@ -65,20 +62,13 @@ AppAsset::register($this);
 
 <main role="main" class="flex-shrink-0">
     <div class="container">
-        <?= Breadcrumbs::widget([
+        <!-- <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
+        ]) ?> -->
         <?= Alert::widget() ?>
         <?= $content ?>
     </div>
 </main>
-
-<!-- <footer class="footer mt-auto py-3 text-muted">
-    <div class="container">
-        <p class="float-left">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
-        <p class="float-right"><?= Yii::powered() ?></p>
-    </div>
-</footer> -->
 
 <?php $this->endBody() ?>
 </body>
