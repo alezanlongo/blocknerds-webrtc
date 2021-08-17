@@ -43,7 +43,7 @@ class UserController extends Controller
             if($model->save()){
                 Yii::$app->session->setFlash('success', 'Profile successfully updated.');
             } else{
-                Yii::$app->session->setFlash('error', 'Profile successfully updated.');
+                Yii::$app->session->setFlash('error', 'Error updating profile.');
             }
 
             return $this->redirect(['user/edit-profile']);
