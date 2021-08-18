@@ -17,17 +17,19 @@ client.onConnectionLost = function (responseObject) {
 
 client.onMessageArrived = function (message) {
   const objData = JSON.parse(message.payloadString);
-  
-  if(objData.type ===  EVENT_TYPE_TOGGLE_MUTE && userId === objData.data.user_id){
+
+  if (objData.type === EVENT_TYPE_TOGGLE_MUTE && userId === objData.data.user_id) {
     $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
   }
-  
-  if (isOwner && objData.type === EVENT_TYPE_REQUEST_JOIN) {
+
+  if (objData.type === EVENT_TYPE_REQUEST_JOIN) {
     $.pjax.reload({ container: "#room-request", async: false });
     $.pjax.reload({ container: "#room-member", async: false });
-    $("#pendingRequests").modal("show");
+    if (isOwner) {
+      $("#pendingRequests").modal("show");
+    }
   }
-
+  
   if (objData.type === EVENT_TYPE_RESPONSE_JOIN) {
     $.pjax.reload({ container: "#room-request", async: false });
     $.pjax.reload({ container: "#room-member", async: false });
