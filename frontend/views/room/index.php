@@ -150,7 +150,8 @@ $this->title = 'The Room';
                     '<p class="text-info">Your join request is waiting for approval.</p>',
                     RoomRequest::STATUS_DENY =>
                     '<p class="text-danger">Your join request has been denied.</p>' .
-                        ($request->attempts < RoomRequest::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null)
+                        ($request->attempts < RoomRequest::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null),
+                    default => ''
                 };
                 ?>
         </div>
