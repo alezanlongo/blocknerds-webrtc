@@ -67,7 +67,7 @@ $(".btn-leave").on('click', ()=>{
 })
 $(".btn-join-again").on('click', ()=>{
   $(".room-videos").show()
-  $(".btn-join-again").hide()
+  $(".join-again").hide()
   publishOwnFeed(true);
 })
 
