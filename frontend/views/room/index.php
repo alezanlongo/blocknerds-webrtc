@@ -9,6 +9,7 @@ use yii\widgets\Pjax;
 use frontend\assets\pahoMqtt\PahoMqttAsset;
 use yii\bootstrap4\Button;
 use yii\bootstrap4\Modal;
+use frontend\widgets\imageSlider\ImageSlider;
 
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
@@ -100,7 +101,7 @@ $this->title = 'The Room';
                         ?>
                     </div>
                 </div>
-    <?
+        <?
             }
         } else {
             echo "<script>if (window.jQuery) $('#pendingRequests').modal('hide');</script>";
@@ -113,21 +114,41 @@ $this->title = 'The Room';
 
     Pjax::begin(['id' => 'room-member', "options" => []]);
 
-    if (!$is_owner) {
-        if ($request) {
-            if ($request->status == RoomRequest::STATUS_DENY) {
-                echo "<p class='text-danger'>Your join request has been denied.<p>";
-                echo $request->attempts < RoomRequest::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null;
-            } else if ($request->status == RoomRequest::STATUS_ALLOW) {
-                // echo "<p class='text-primary'>Welcome to the room!<p>";
-            } else {
-                echo "<p class='text-info'>Your join request is waiting for approval.<p>";
-            }
-        } else {
-            echo Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin']);
-        }
-    }
-    Pjax::end();
-    ?>
+    if (!$is_owner) : ?>
+        <? if (!$request || $request->status != RoomRequest::STATUS_ALLOW) : ?>
+            <div class="row">
+                <div class="d-flex w-100 border-bottom">
+                    <div class="d-flex mr-auto justify-content-start">
+                        <h1 class="display-5">Waiting room</h1>
+                    </div>
+                    <div class="d-flex p-1 justify-content-end"><span class="pt-3"><a href="/site/index" class="text-reset text-decoration-none">Back home <i class="fa fa-times" aria-hidden="true"></i></a></span></div>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class=" d-flex w-100 justify-content-center">
+                    <div class="d-flex w-auto">
+                        <?= ImageSlider::widget(['images' => ['https://images.unsplash.com/photo-1507413245164-6160d8298b31?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80', 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=634&q=80',  'https://images.unsplash.com/photo-1530210124550-912dc1381cb8?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80', 'https://images.unsplash.com/photo-1582719471137-c3967ffb1c42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=707&q=80']]); ?>
+                    </div>
+                </div>
+            </div>
+        <? endif ?>
+        <div class="row pt-5">
+            <? if (!$request || $request->attempts == 0) : ?>
+                <?= Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) ?>
+            <? else : ?>
+                <?
+                echo match ($request->status) {
+                    RoomRequest::STATUS_PENDING =>
+                    '<p class="text-info">Your join request is waiting for approval.</p>',
+                    RoomRequest::STATUS_DENY =>
+                    '<p class="text-danger">Your join request has been denied.</p>' .
+                        ($request->attempts < RoomRequest::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null)
+                };
+                ?>
+        </div>
+<? endif;
+        endif;
+        Pjax::end();
+?>
 
 </div><!-- room -->
