@@ -100,16 +100,6 @@ class RoomController extends \yii\web\Controller
         ]);
     }
 
-    public function actionWaiting($uuid)
-    {
-        $roomUsersToken = Yii::$app->janusApi->getVideoRoomUsersToken($uuid);
-        $usersInRoom = [];
-        if (!empty($roomUsersToken)) {
-            $usersInRoom =  UserRoomRepository::getUsersByTokens(\array_column($roomUsersToken, 'token'));
-        }
-        return $this->render('waiting', ['usersInRoom' => $usersInRoom]);
-    }
-
     public function actionCreate()
     {
         $userId = Yii::$app->user->identity->getId();
