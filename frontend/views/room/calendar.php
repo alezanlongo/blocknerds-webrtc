@@ -46,13 +46,6 @@ $this->registerJsFile(
         'position' => View::POS_END
     ]
 );
-// $this->registerJsFile(
-//     Yii::$app->request->BaseUrl . '/js/roomCreate.js',
-//     [
-//         'depends' => "yii\web\JqueryAsset",
-//         'position' => View::POS_END
-//     ]
-// );
 
 $this->registerJsVar('user_id',   Yii::$app->getUser()->getId());
 
@@ -331,5 +324,7 @@ Modal::begin([
     'title' => 'Planning a meeting...',
     'id' => 'planningMeetingSuccessfully',
 ]);
+Html::tag("h1");
+Html::tag("p");
 Modal::end();
 ?>

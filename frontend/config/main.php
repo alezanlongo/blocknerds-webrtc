@@ -42,7 +42,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'GET room/create' => 'room/create',
+                'POST room/create' => 'room/create',
                 'POST room/create-schedule' => 'room/create-schedule',
                 'GET room/user-list' => 'room/user-list',
                 'GET room/waiting/<uuid>' => 'room/waiting',

@@ -112,27 +112,22 @@ class RoomController extends \yii\web\Controller
 
     public function actionCreate()
     {
-        if (Yii::$app->request->isPost) {
-            $userId = Yii::$app->user->identity->getId();
-            $model = new \common\models\Room();
-            $fields['Room']['title'] = Room::DEFAULT_TITLE;
-            $fields['Room']['owner_id'] = $userId;
-            $fields['Room']['duration'] = Room::DEFAULT_DURATION;
-            $fields['Room']['scheduled_at'] = time();
+        $userId = Yii::$app->user->identity->getId();
+        $model = new \common\models\Room();
+        $fields['Room']['title'] = Room::DEFAULT_TITLE;
+        $fields['Room']['owner_id'] = $userId;
+        $fields['Room']['duration'] = Room::DEFAULT_DURATION;
+        $fields['Room']['scheduled_at'] = time();
 
-            if ($model->load($fields) && $model->save()) {
-                $memberOwner = new RoomMember();
-                $memberOwner->room_id = $model->id;
-                $memberOwner->user_id = $userId;
-                $memberOwner->save();
+        if ($model->load($fields) && $model->save()) {
+            $memberOwner = new RoomMember();
+            $memberOwner->room_id = $model->id;
+            $memberOwner->user_id = $userId;
+            $memberOwner->save();
+            Yii::$app->janusApi->videoRoomCreate($model->uuid);
 
-                Yii::$app->janusApi->videoRoomCreate($model->uuid);
-
-                return $this->redirect([$model->uuid]);
-            }
+            return $this->redirect([$model->uuid]);
         }
-
-        return $this->render('create');
     }
 
     public function actionJoinRequest()
