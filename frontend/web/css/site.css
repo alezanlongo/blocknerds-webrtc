@@ -7,3 +7,8 @@ main > .container-body {
   width: 90%;
   margin: 0 auto;
 }
+
+
+.modal {
+  color: black;
+}

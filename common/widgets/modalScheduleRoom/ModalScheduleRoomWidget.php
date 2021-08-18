@@ -21,6 +21,7 @@ class ModalScheduleRoomWidget extends Widget
                     '1800' => '30 minutes',
                     '2700' => '45 minutes',
                     '3600' => '1 hour',
+                    '4500' => '1 hour and 15 minutes',
                     '5400' => '1 hour and 30 minutes',
                     '6300' => '1 hour and 45 minutes',
                     '7200' => '2 hours'
