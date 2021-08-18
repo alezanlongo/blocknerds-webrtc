@@ -54,7 +54,7 @@ $this->title = 'The Room';
                 </div>
                 <div class="card-body">
                     <?= Html::tag("button", "Join again",  ["class" => "btn btn-primary btn-join-again"]) ?>
-                    <?= Html::a('Go home', ['/room/create'], ['class' => 'btn btn-default text-white']) ?>
+                    <?= Html::a('Go home', ['/'], ['class' => 'btn btn-default text-white']) ?>
                 </div>
             </div>
         </div>
@@ -131,7 +131,7 @@ $this->title = 'The Room';
                     <div class="d-flex mr-auto justify-content-start">
                         <h1 class="display-5">Waiting room</h1>
                     </div>
-                    <div class="d-flex p-1 justify-content-end"><span class="pt-3"><a href="/site/index" class="text-reset text-decoration-none">Back home <i class="fa fa-times" aria-hidden="true"></i></a></span></div>
+                    <div class="d-flex p-1 justify-content-end"><span class="pt-3"><a href="/" class="text-reset text-decoration-none">Back home <i class="fa fa-times" aria-hidden="true"></i></a></span></div>
                 </div>
             </div>
             <div class="row mt-5">
