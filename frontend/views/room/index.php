@@ -47,13 +47,11 @@ $this->title = 'The Room';
         <div class="join-again d-none">
             <div class="card">
                 <div class="card-title">
-                <?= Html::tag("h4", "You left of the room") ?>
-            </div>
-            <div class="card-body">
-                <?= Html::tag("button", "Join again",  ["class"=> "btn btn-primary btn-join-again"]) ?>
-                <?= Html::a('Go home', ['/room/create'], ['class'=>'btn btn-default text-white']) ?>
-
-
+                    <?= Html::tag("h4", "You left of the room") ?>
+                </div>
+                <div class="card-body">
+                    <?= Html::tag("button", "Join again",  ["class" => "btn btn-primary btn-join-again"]) ?>
+                    <?= Html::a('Go home', ['/room/create'], ['class' => 'btn btn-default text-white']) ?>
                 </div>
             </div>
         </div>

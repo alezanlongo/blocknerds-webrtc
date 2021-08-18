@@ -22,12 +22,7 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <!-- <style>
-        .alert-style {
-            width: fit-content;
-            float: right;
-        }
-    </style> -->
+
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -55,7 +50,6 @@ AppAsset::register($this);
                         ['label' => 'Edit Profile', 'url' => ['/user/edit-profile']],
                         ['label' => 'Logout', 'url' => ['/site/logout'], ['data-method' => 'post']],
                     ]
-
                 ];
         }
 
@@ -69,9 +63,6 @@ AppAsset::register($this);
 
     <main role="main" class="flex-shrink-0">
         <div class="container">
-            <!-- <?= Breadcrumbs::widget([
-                        'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-                    ]) ?> -->
             <?= Alert::widget() ?>
             <?= $content ?>
         </div>

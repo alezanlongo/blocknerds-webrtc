@@ -44,7 +44,7 @@ $this->title = 'Welcome to Room!';
         fugiat nulla pariatur.</p>
 
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['action'=> 'room/create' ]); ?>
     <?= Html::submitButton("Start a quick meeting", ["class" => "btn btn-primary btn-lg", "id" => "btnStart"]) ?>
     <?= Html::a(
         "Planning a meeting",

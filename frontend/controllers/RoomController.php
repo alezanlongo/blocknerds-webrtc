@@ -29,7 +29,7 @@ class RoomController extends \yii\web\Controller
         return [
             'access' => [
                 "class" => AccessControl::class,
-                "only" => ['index', "create"],
+                "only" => ['index', "create", "calendar"],
                 "rules" => [
                     [
                         'allow' => true,
