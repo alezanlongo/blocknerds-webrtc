@@ -348,8 +348,6 @@ class RoomController extends \yii\web\Controller
 
     function actionCalendar()
     {
-        $formatter = \Yii::$app->formatter;
-
         $user_id = Yii::$app->user->getId();
         $roomSelected = null;
         $roomMembers = [];
@@ -363,7 +361,6 @@ class RoomController extends \yii\web\Controller
         }
 
         return $this->render('calendar', [
-            'formatter' => $formatter,
             'user_id' => $user_id,
             "roomSelected" => $roomSelected,
             "roomMembers" => $roomMembers
