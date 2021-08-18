@@ -9,17 +9,46 @@ if (window.jQuery) {
     });
 }
 
-$(document).on('submit', '#formCreateSchedule', function (e) {
+jQuery(document).on("pjax:success", "#calendar-request", function (event) {
+    if (window.jQuery) {
+        jQuery('#datetimepicker').datetimepicker({
+            defaultDate: $("input[name=date]").val(),
+            defaultTime: $("input[name=time]").val(),
+            minDate: 0,
+            format: 'Y-m-d H:i:00',
+            // format: 'unix',
+            inline: true,
+            step: 5,
+            ampm: true,
+        });
+    }
 
-    e.preventDefault();
+});
 
-    var fields = $(this).serializeArray();
+var calendar;
+
+document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: "room/calendar/events/" + user_id,
+        eventClick: function (info) {
+            var room_id = info.event.extendedProps.room_id;
+            $.pjax.reload({ container: "#calendar-request", async: false, data: { room_id } });
+            $('#scheduledRoom').modal('show');
+        }
+    });
+    calendar.render();
+});
+
+function createSchedule() {
+    var fields = $('#formCreateSchedule').serializeArray();
     var offset = { name: 'offset', value: new Date().getTimezoneOffset() };
     fields.push(offset);
-
+    console.log("NB", fields)
     var checkMembers = 1;
 
-    $.each($(this).serializeArray(), function () {
+    $.each(fields, function () {
         if (this.name == "title") {
             if (this.value == "") {
                 alert('Please select a title');
@@ -78,47 +107,11 @@ $(document).on('submit', '#formCreateSchedule', function (e) {
             $("#formCreateSchedule")[0].reset();
             calendar.refetchEvents();
         });
-});
+}
 
+function updateSchedule() {
 
-
-jQuery(document).on("pjax:success", "#calendar-request", function (event) {
-    if (window.jQuery) {
-        jQuery('#datetimepicker').datetimepicker({
-            defaultDate: $("input[name=date]").val(),
-            defaultTime: $("input[name=time]").val(),
-            minDate: 0,
-            format: 'Y-m-d H:i:00',
-            // format: 'unix',
-            inline: true,
-            step: 5,
-            ampm: true,
-        });
-    }
-
-});
-
-var calendar;
-
-document.addEventListener('DOMContentLoaded', function () {
-    var calendarEl = document.getElementById('calendar');
-    calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: "room/calendar/events/" + user_id,
-        eventClick: function (info) {
-            var room_id = info.event.extendedProps.room_id;
-            $.pjax.reload({ container: "#calendar-request", async: false, data: { room_id } });
-            $('#scheduledRoom').modal('show');
-        }
-    });
-    calendar.render();
-});
-
-$(document).on('submit', '#formUpdateSchedule', function (e) {
-
-    e.preventDefault();
-
-    var fields = $(this).serializeArray();
+    var fields = $('#formUpdateSchedule').serializeArray();
 
     $(".current-member-list li").each(function () {
         fields.push({ name: "User[username][]", value: $(this).attr("data-member-id") });
@@ -181,7 +174,8 @@ $(document).on('submit', '#formUpdateSchedule', function (e) {
             $("#formUpdateSchedule")[0].reset();
             calendar.refetchEvents();
         });
-});
+    // });
+}
 
 function addMemberToList(user) {
     $(".current-member-list li").each(function () {
