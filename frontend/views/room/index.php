@@ -7,11 +7,13 @@ use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use frontend\assets\pahoMqtt\PahoMqttAsset;
+use frontend\assets\room\RoomAsset;
 use yii\bootstrap4\Button;
 use yii\bootstrap4\Modal;
 
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
+$this->registerAssetBundle(RoomAsset::class);
 
 $user_id =  Yii::$app->getUser()->getId();
 $this->registerJsVar('limitMembers', $limit_members, View::POS_END);
@@ -66,7 +68,7 @@ $this->title = 'The Room';
                                 <?php if ($is_owner && $i > 0) { ?>
                                     <button onclick="muteMember(<?= $i ?>)" class="btn btn-default btn-mute text-white">Mute</button>
                                 <?php } ?>
-                                <button onclick="pinMember(<?= $i ?>)" class="btn btn-default btn-pin text-white">Pin</button>
+                                <!-- <button onclick="pinMember(<?= $i ?>)" class="btn btn-default btn-pin text-white">Pin</button> -->
                             </div>
                         </div>
                     </div>
