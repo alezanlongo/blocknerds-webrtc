@@ -141,25 +141,21 @@ $this->title = 'The Room';
                     </div>
                 </div>
             </div>
-        <? endif ?>
-        <div class="row pt-5">
-            <? if (!$request || $request->attempts == 0) : ?>
-                <?= Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) ?>
-            <? else : ?>
+            <div class="row pt-5">
                 <?
-                echo match ($request->status) {
+                echo match ($request->status ?? null) {
                     RoomRequest::STATUS_PENDING =>
                     '<p class="text-info">Your join request is waiting for approval.</p>',
                     RoomRequest::STATUS_DENY =>
                     '<p class="text-danger">Your join request has been denied.</p>' .
                         ($request->attempts < RoomRequest::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null),
-                    default => ''
+                    default => Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin'])
                 };
                 ?>
-        </div>
-<? endif;
-        endif;
-        Pjax::end();
-?>
+            </div>
+        <? endif ?>
+    <? endif;
+    Pjax::end();
+    ?>
 
 </div><!-- room -->
