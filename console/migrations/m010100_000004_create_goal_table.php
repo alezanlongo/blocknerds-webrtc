@@ -28,6 +28,88 @@ class m010100_000004_create_goal_table extends Migration
             'text__div' => $this->string(),
             'text__status' => $this->string(),
         ]);
+
+        $this->createTable('{{%goal_category}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'goal_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-category-goal_id',
+            'goal_category',
+            'goal_id',
+            'goal',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%goal_status_reason}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'goal_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-status_reason-goal_id',
+            'goal_status_reason',
+            'goal_id',
+            'goal',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%goal_priority}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'goal_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-priority-goal_id',
+            'goal_priority',
+            'goal_id',
+            'goal',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%goal_note}}', [
+            'id' => $this->primaryKey(),
+            'authorReference' => $this->json(),
+            'authorString' => $this->string(),
+            'time' => $this->string(),
+            'text' => $this->string(),
+            'goal_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-note-goal_id',
+            'goal_note',
+            'goal_id',
+            'goal',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%goal_outcome}}', [
+            'id' => $this->primaryKey(),
+            'resultCodeableConcept' => $this->json(),
+            'resultReference' => $this->json(),
+            'goal_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-outcome-goal_id',
+            'goal_outcome',
+            'goal_id',
+            'goal',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
@@ -35,6 +117,11 @@ class m010100_000004_create_goal_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropTable('{{%goal_outcome}}');
+        $this->dropTable('{{%goal_note}}');
+        $this->dropTable('{{%goal_priority}}');
+        $this->dropTable('{{%goal_status_reason}}');
+        $this->dropTable('{{%goal_category}}');
         $this->dropTable('{{%goal}}');
     }
 }

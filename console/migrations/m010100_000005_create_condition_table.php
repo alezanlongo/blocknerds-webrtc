@@ -53,6 +53,38 @@ class m010100_000005_create_condition_table extends Migration
             'asserter__display' => $this->string(),
             'asserter__reference' => $this->string(),
         ]);
+
+        $this->createTable('{{%condition_evidence}}', [
+            'id' => $this->primaryKey(),
+            'code__coding' => $this->string(),
+            'code__text' => $this->json(),
+            'condition_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-evidence-condition_id',
+            'condition_evidence',
+            'condition_id',
+            'condition',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%condition_body_site}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->string(),
+            'text' => $this->json(),
+            'condition_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-body_site-condition_id',
+            'condition_body_site',
+            'condition_id',
+            'condition',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
@@ -60,6 +92,8 @@ class m010100_000005_create_condition_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropTable('{{%condition_body_site}}');
+        $this->dropTable('{{%condition_evidence}}');
         $this->dropTable('{{%condition}}');
     }
 }

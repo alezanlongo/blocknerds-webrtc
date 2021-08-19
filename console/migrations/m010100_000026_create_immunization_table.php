@@ -38,6 +38,63 @@ class m010100_000026_create_immunization_table extends Migration
             'explanation__reason' => $this->json(),
             'explanation__reasonNotGiven' => $this->json(),
         ]);
+
+        $this->createTable('{{%immunization_note}}', [
+            'id' => $this->primaryKey(),
+            'authorReference' => $this->json(),
+            'authorString' => $this->string(),
+            'time' => $this->string(),
+            'text' => $this->string(),
+            'immunization_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-note-immunization_id',
+            'immunization_note',
+            'immunization_id',
+            'immunization',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%immunization_reaction}}', [
+            'id' => $this->primaryKey(),
+            'date' => $this->string(),
+            'reported' => $this->boolean(),
+            'immunization_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-reaction-immunization_id',
+            'immunization_reaction',
+            'immunization_id',
+            'immunization',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%immunization_vaccination_protocol}}', [
+            'id' => $this->primaryKey(),
+            'dosSequence' => $this->integer(),
+            'description' => $this->string(),
+            'series' => $this->string(),
+            'seriesDoses' => $this->string(),
+            'targetDisease' => $this->json(),
+            'doseStatus__coding' => $this->json(),
+            'doseStatus__text' => $this->string(),
+            'doseStatusReason' => $this->json(),
+            'immunization_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-vaccination_protocol-immunization_id',
+            'immunization_vaccination_protocol',
+            'immunization_id',
+            'immunization',
+            'id',
+            'CASCADE'
+        );
+
     }
 
     /**
@@ -45,6 +102,9 @@ class m010100_000026_create_immunization_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropTable('{{%immunization_reaction}}');
+        $this->dropTable('{{%immunization_vaccination_protocol}}');
+        $this->dropTable('{{%immunization_note}}');
         $this->dropTable('{{%immunization}}');
     }
 }

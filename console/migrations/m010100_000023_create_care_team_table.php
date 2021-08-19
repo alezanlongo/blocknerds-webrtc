@@ -35,6 +35,38 @@ class m010100_000023_create_care_team_table extends Migration
             'text__div' => $this->string(),
             'text__status' => $this->string(),
         ]);
+
+        $this->createTable('{{%care_team_category}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'care_team_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-category-care_team_id',
+            'care_team_category',
+            'care_team_id',
+            'care_team',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%care_team_reason_code}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'care_team_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-reason_code-care_team_id',
+            'care_team_reason_code',
+            'care_team_id',
+            'care_team',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
@@ -42,6 +74,8 @@ class m010100_000023_create_care_team_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropTable('{{%care_team_reason_code}}');
+        $this->dropTable('{{%care_team_category}}');
         $this->dropTable('{{%care_team}}');
     }
 }
