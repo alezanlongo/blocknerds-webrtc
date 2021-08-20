@@ -56,8 +56,8 @@ class EditProfileForm extends Model
         // $this->username = $user->username;
         // $this->email = $user->email;
         $this->image = $this->profile->image;
-        $this->timezone = $this->profile->timezone;
         $this->phone = $this->profile->phone;
+        $this->timezone = $this->profile->timezone;
         $this->locale = $this->profile->locale;
         $this->first_name = $this->profile->first_name;;
         $this->last_name = $this->profile->last_name;;
