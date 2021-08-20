@@ -24,6 +24,31 @@ class m210817_204046_create_appointment_table extends Migration
             'practiceid'        => $this->integer()->null(),
             'departmentid'      => $this->integer()->null(),
         ]);
+
+        $this->createTable('{{%appointment_participant}}', [
+            'id'                => $this->primaryKey(),
+            'status'            => $this->string(255)->null(),
+            'actor__reference'  => $this->string(255)->null(),
+            'actor__display'    => $this->string(255)->null(),
+            'appointment_id'    => $this->integer()->null()
+        ]);
+
+        // creates index for column `author_id`
+        $this->createIndex(
+            'idx_appointment_participant_01',
+            '{{%appointment_participant}}',
+            'appointment_id'
+        );
+
+        // add foreign key for table `user`
+        $this->addForeignKey(
+            'fk_appointment_participant_01',
+            '{{%appointment_participant}}',
+            'appointment_id',
+            'appointment',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
@@ -31,6 +56,7 @@ class m210817_204046_create_appointment_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropTable('{{%appointment_participant}}');
         $this->dropTable('{{%appointment}}');
     }
 }
