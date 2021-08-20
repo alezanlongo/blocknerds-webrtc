@@ -9,21 +9,21 @@ use yii\behaviors\TimestampBehavior;
  * This is the model class for table "room".
  *
  * @property int $id
- * @property string $title
+ * @property int $meeting_id
  * @property string $uuid
- * @property int $owner_id
- * @property int $duration
- * @property int $scheduled_at
+ * @property int $status
  * @property int $created_at
  * @property int $updated_at
  *
- * @property RoomMember[] $members
- * @property User[] $users
+ * @property Meeting $meeting
+ * @property RoomMember[] $roomMembers
+ * @property RoomRequest[] $roomRequests
  */
 class Room extends \yii\db\ActiveRecord
 {
-    const DEFAULT_DURATION = 60;
-    const DEFAULT_TITLE = "quick meeting";
+    const STATUS_PENDING = 0;
+    const STATUS_CREATED = 1;
+    const STATUS_DESTROYED = 2;
 
     /**
      * {@inheritdoc}
@@ -46,13 +46,12 @@ class Room extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['meeting_id'], 'required'],
+            [['meeting_id', 'status', 'created_at', 'updated_at'], 'integer'],
             ['uuid', 'string', 'max' => 36],
             ['uuid', 'unique'],
             ['uuid', 'thamtech\uuid\validators\UuidValidator'],
-            ['title', 'string'],
-            [['title', 'duration', 'owner_id', 'scheduled_at'], 'required'],
-            [['owner_id', 'duration', 'scheduled_at', 'created_at', 'updated_at'], 'integer'],
-            ['owner_id', 'exist', 'targetClass' => User::class, 'targetAttribute' => ['owner_id' => 'id']],
+            [['meeting_id'], 'exist', 'skipOnError' => true, 'targetClass' => Meeting::class, 'targetAttribute' => ['meeting_id' => 'id']],
         ];
     }
 
@@ -63,32 +62,42 @@ class Room extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'meeting_id' => 'Meeting ID',
             'uuid' => 'Uuid',
-            'owner_id' => 'Owner ID',
-            'scheduled_at' => 'Scheduled At',
+            'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
     }
 
     /**
-     * Gets query for [[Members]].
+     * Gets query for [[Meeting]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getMembers()
+    public function getMeeting()
+    {
+        return $this->hasOne(Meeting::class, ['id' => 'meeting_id']);
+    }
+
+    /**
+     * Gets query for [[RoomMembers]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRoomMembers()
     {
         return $this->hasMany(RoomMember::class, ['room_id' => 'id']);
     }
 
     /**
-     * Gets query for [[Users]].
+     * Gets query for [[RoomRequests]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUsers()
+    public function getRoomRequests()
     {
-        return $this->hasMany(User::class, ['id' => 'user_id'])->viaTable('member', ['room_id' => 'id']);
+        return $this->hasMany(RoomRequest::class, ['room_id' => 'id']);
     }
 
     public function beforeSave($insert)

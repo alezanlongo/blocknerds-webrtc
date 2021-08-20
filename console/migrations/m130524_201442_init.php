@@ -58,6 +58,8 @@ class m130524_201442_init extends Migration
             'name' => $this->string(),
             'data_type' => $this->string(),
             'value' => $this->string(),
+            'created_at' => $this->integer()->notNull(),
+            'updated_at' => $this->integer()->notNull(),
         ]);
 
         $this->addForeignKey(
@@ -110,6 +112,8 @@ class m130524_201442_init extends Migration
             'user_id' => $this->integer()->notNull(),
             'token' => 'uuid DEFAULT uuid_generate_v4() UNIQUE NOT NULL',
             'PRIMARY KEY(room_id, user_id)',
+            'created_at' => $this->integer()->notNull(),
+            'updated_at' => $this->integer()->notNull(),
         ]);
 
         $this->addForeignKey(

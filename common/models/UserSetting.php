@@ -6,29 +6,27 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 
 /**
- * This is the model class for table "user_profile".
+ * This is the model class for table "user_setting".
  *
  * @property int $id
  * @property int $user_id
- * @property string|null $first_name
- * @property string|null $last_name
- * @property string|null $phone
- * @property string|null $timezone
- * @property string|null $locale
- * @property string|null $image
+ * @property string|null $group_name
+ * @property string|null $name
+ * @property string|null $data_type
+ * @property string|null $value
  * @property int $created_at
  * @property int $updated_at
  *
  * @property User $user
  */
-class UserProfile extends \yii\db\ActiveRecord
+class UserSetting extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'user_profile';
+        return 'user_setting';
     }
 
     public function behaviors()
@@ -44,12 +42,8 @@ class UserProfile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            // [['user_id'], 'required'],
-            [['first_name', 'last_name'], 'string', 'max' => 100],
-            [['phone'], 'string', 'max' => 36],
-            [['timezone'], 'string', 'max' => 60],
-            [['locale'], 'string', 'max' => 10],
-            [['image'], 'string', 'max' => 255],
+            [['user_id', 'created_at', 'updated_at'], 'integer'],
+            [['group_name', 'name', 'data_type', 'value'], 'string', 'max' => 255],
             [['user_id'], 'unique'],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
@@ -63,12 +57,10 @@ class UserProfile extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'first_name' => 'First Name',
-            'last_name' => 'Last Name',
-            'phone' => 'Phone',
-            'timezone' => 'Timezone',
-            'locale' => 'Locale',
-            'image' => 'Image',
+            'group_name' => 'Group Name',
+            'name' => 'Name',
+            'data_type' => 'Data Type',
+            'value' => 'Value',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
