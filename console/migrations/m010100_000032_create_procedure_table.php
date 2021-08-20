@@ -35,6 +35,121 @@ class m010100_000032_create_procedure_table extends Migration
             'outcome__coding' => $this->json(),
             'outcome__text' => $this->string(),
         ]);
+
+        $this->createTable('{{%procedure_reason_not_performed}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'procedure_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-reason_not_performed-procedure_id',
+            'procedure_reason_not_performed',
+            'procedure_id',
+            'procedure',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%procedure_body_site}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'procedure_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-body_site-procedure_id',
+            'procedure_body_site',
+            'procedure_id',
+            'procedure',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%procedure_performer}}', [
+            'id' => $this->primaryKey(),
+            'role__coding' => $this->json(),
+            'role__text' => $this->string(),
+            'procedure_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-performer-procedure_id',
+            'procedure_performer',
+            'procedure_id',
+            'procedure',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%procedure_outcome}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'procedure_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-outcome-procedure_id',
+            'procedure_outcome',
+            'procedure_id',
+            'procedure',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%procedure_complication}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'procedure_id' => $this->integer()->notNull(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-complication-procedure_id',
+            'procedure_complication',
+            'procedure_id',
+            'procedure',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%procedure_follow_up}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'procedure_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-follow_up-procedure_id',
+            'procedure_follow_up',
+            'procedure_id',
+            'procedure',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%procedure_notes}}', [
+            'id' => $this->primaryKey(),
+            'authorReference' => $this->json(),
+            'authorString' => $this->string(),
+            'time' => $this->string(),
+            'text' => $this->string(),
+            'procedure_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-notes-procedure_id',
+            'procedure_notes',
+            'procedure_id',
+            'procedure',
+            'id',
+            'CASCADE'
+        );
+
     }
 
     /**
@@ -42,6 +157,13 @@ class m010100_000032_create_procedure_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropTable('{{%procedure_notes}}');
+        $this->dropTable('{{%procedure_follow_up}}');
+        $this->dropTable('{{%procedure_complication}}');
+        $this->dropTable('{{%procedure_outcome}}');
+        $this->dropTable('{{%procedure_performer}}');
+        $this->dropTable('{{%procedure_body_site}}');
+        $this->dropTable('{{%procedure_reason_not_performed}}');
         $this->dropTable('{{%procedure}}');
     }
 }

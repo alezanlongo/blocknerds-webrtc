@@ -43,6 +43,44 @@ class m010100_000044_create_diagnostic_report_table extends Migration
             'imagingStudy__reference' => $this->string(),
             'conclusion' => $this->string(),
         ]);
+
+        $this->createTable('{{%diagnostic_report_coded_diagnosis}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'diagnostic_report_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-coded_diagnosis-diagnostic_report_id',
+            'diagnostic_report_coded_diagnosis',
+            'diagnostic_report_id',
+            'diagnostic_report',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createTable('{{%diagnostic_report_presented_form}}', [
+            'id' => $this->primaryKey(),
+            'contentType' => $this->string(),
+            'language' => $this->string(),
+            'data' => $this->string(),
+            'uri' => $this->string(),
+            'size' => $this->integer(),
+            'hash' => $this->string(),
+            'title' => $this->string(),
+            'creation' => $this->string(),
+            'diagnostic_report_id' => $this->integer(),
+        ]);
+
+        $this->addForeignKey(
+            'fk-presented_form-diagnostic_report_id',
+            'diagnostic_report_presented_form',
+            'diagnostic_report_id',
+            'diagnostic_report',
+            'id',
+            'CASCADE'
+        );
     }
 
     /**
@@ -50,6 +88,8 @@ class m010100_000044_create_diagnostic_report_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropTable('{{%diagnostic_report_presented_form}}');
+        $this->dropTable('{{%diagnostic_report_coded_diagnosis}}');
         $this->dropTable('{{%diagnostic_report}}');
     }
 }
