@@ -4,7 +4,10 @@ $('.profile-image').on('click', ()=>{
 
 $('.input-image-profile').on('change', (e)=>{
     const [file] = e.target.files
+    console.log(file)
     if (file) {
-      $('.profile-image').attr('src', URL.createObjectURL(file))
+        $('.icon-profile').addClass('d-none')  
+        $('img.profile-image').removeClass('d-none')
+      $('img.profile-image').attr('src', URL.createObjectURL(file))
   }
 })

@@ -22,7 +22,12 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-
+    <style>
+        .alert-style {
+            width: fit-content;
+            float: right;
+        }
+    </style>
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -63,7 +68,11 @@ AppAsset::register($this);
 
     <main role="main" class="flex-shrink-0">
         <div class="container-body">
-            <?= Alert::widget() ?>
+        <div class="">
+            <?= Alert::widget([
+                'options' => ['class' => 'alert-style'],
+            ]) ?>
+        </div>
             <?= $content ?>
         </div>
     </main>
