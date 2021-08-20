@@ -7,8 +7,10 @@ use common\models\EditProfileForm;
 use common\models\User;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\BaseFileHelper;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
+use yii\web\UploadedFile;
 
 class UserController extends Controller
 {
@@ -38,8 +40,22 @@ class UserController extends Controller
     {
 
         $model = new EditProfileForm();
+        $imageBack = $model->image;
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+        if ($model->load(Yii::$app->request->post()) ) {
+            $model->validate();
+            $image = UploadedFile::getInstance($model, 'image');
+
+            if($image){
+                $path = 'uploads' . DIRECTORY_SEPARATOR . Yii::$app->user->id;
+                BaseFileHelper::createDirectory($path);
+                $filename = $path . DIRECTORY_SEPARATOR . $image->baseName . '.' . $image->extension;
+                $image->saveAs($filename);
+                $model->image = $filename;
+            }else{
+                $model->image = $imageBack;
+            }
+
             if($model->save()){
                 Yii::$app->session->setFlash('success', 'Profile successfully updated.');
             } else{

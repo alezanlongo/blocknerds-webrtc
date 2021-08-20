@@ -3,6 +3,7 @@
 /yii_test
 /yii_test.bat
 composer.lock
+/frontend/web/uploads
 
 # tmp files
 *.tmp

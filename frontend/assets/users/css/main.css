@@ -16,3 +16,7 @@
 .icon-profile {
     font-size: 200px;
 }
+
+.profile-image:hover{
+    cursor:pointer;
+}
