@@ -15,7 +15,6 @@ class m210804_151814_create_medication_administration_table extends Migration
         $this->createTable('{{%medication_administration}}', [
             'id' => $this->primaryKey(),
             'ext_id' => $this->string()->notNull(),
-            'device_id' => $this->integer(),
             'dosage__method__coding' => $this->json(),
             'dosage__method__text' => $this->string(),
             'dosage__quantity__code' => $this->string(),
@@ -37,8 +36,6 @@ class m210804_151814_create_medication_administration_table extends Migration
             'practitioner__reference' => $this->string(),
             'prescription__display' => $this->string(),
             'prescription__reference' => $this->string(),
-            'reasongiven_id' => $this->integer(),
-            'reasonnotgiven_id' => $this->integer(),
             'resourcetype' => $this->string(),
             'status' => $this->string(),
             'text__div' => $this->string(),
@@ -48,29 +45,51 @@ class m210804_151814_create_medication_administration_table extends Migration
 
         ]);
 
+        $this->createTable('{{%device}}', [
+            'id' => $this->primaryKey(),
+            'display' => $this->string(),
+            'reference' => $this->string(),
+            'medication_administration_id' => $this->integer(),
+
+        ]);
+
         $this->addForeignKey(
-            'fk-device-device_id',
-            'medication_administration',
-            'device_id',
+            'fk-device-medication_administration_id',
             'device',
+            'medication_administration_id',
+            'medication_administration',
             'id',
             'CASCADE'
         );
+
+        $this->createTable('{{%reason_given}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'medication_administration_id' => $this->integer(),
+        ]);
 
         $this->addForeignKey(
             'fk-reasongiven-reasongiven_id',
-            'medication_administration',
-            'reasongiven_id',
             'reason_given',
+            'medication_administration_id',
+            'medication_administration',
             'id',
             'CASCADE'
         );
 
+        $this->createTable('{{%reason_notgiven}}', [
+            'id' => $this->primaryKey(),
+            'coding' => $this->json(),
+            'text' => $this->string(),
+            'medication_administration_id' => $this->integer(),
+        ]);
+
         $this->addForeignKey(
-            'fk-reasonnotgiven-reasonnotgiven_id',
-            'medication_administration',
-            'reasonnotgiven_id',
+            'fk-reason_notgiven-medication_administration_id',
             'reason_notgiven',
+            'medication_administration_id',
+            'medication_administration',
             'id',
             'CASCADE'
         );
@@ -82,5 +101,8 @@ class m210804_151814_create_medication_administration_table extends Migration
     public function safeDown()
     {
         $this->dropTable('{{%medication_administration}}');
+        $this->dropTable('{{%device}}');
+        $this->dropTable('{{%reason_given}}');
+        $this->dropTable('{{%reason_notgiven}}');
     }
 }

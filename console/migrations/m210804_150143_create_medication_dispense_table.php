@@ -15,7 +15,6 @@ class m210804_150143_create_medication_dispense_table extends Migration
         $this->createTable('{{%medication_dispense}}', [
             'id' => $this->primaryKey(),
             'ext_id' => $this->string()->notNull(),
-            'authorizingprescriptions_id' => $this->integer()->notNull(),
             'dayssuply__code' => $this->string(),
             'dayssuply__system' => $this->string(),
             'dayssuply__unit' => $this->string(),
@@ -24,7 +23,6 @@ class m210804_150143_create_medication_dispense_table extends Migration
             'destination__reference' => $this->string(),
             'dispenser__display' => $this->string(),
             'dispenser__reference' => $this->string(),
-            'dosageinstruction_id' => $this->integer(),
             'identifier' => $this->string(),
             'medicationreference__display' => $this->string(),
             'medicationreference__reference' => $this->string(),
@@ -48,23 +46,45 @@ class m210804_150143_create_medication_dispense_table extends Migration
 
         ]);
 
+        $this->createTable('{{%authorizing_prescriptions}}', [
+            'id' => $this->primaryKey(),
+            'display' => $this->string(),
+            'reference' => $this->string(),
+            'medication_dispense_id' => $this->integer(),
+        ]);
+
         $this->addForeignKey(
-            'fk-authorizingprescriptions-authorizingprescriptions_id',
-            'medication_dispense',
-            'authorizingprescriptions_id',
+            'fk-authorizing_prescriptions-medication_dispense_id',
             'authorizing_prescriptions',
+            'medication_dispense_id',
+            'medication_dispense',
             'id',
             'CASCADE'
         );
 
+        $this->createTable('{{%dosage_instructions}}', [
+            'id' => $this->primaryKey(),
+            'additionalinstructions__coding' => $this->json(),
+            'additionalinstructions__text' => $this->string(),
+            'text' => $this->string(),
+            'timing__event' => $this->json(),
+            'timing__repeat__frequency' => $this->integer(),
+            'timing__repeat__period' => $this->integer(),
+            'timing__repeat__periodunits' => $this->string(),
+            'medication_dispense_id' => $this->integer(),
+
+        ]);
+
         $this->addForeignKey(
-            'fk-dosageinstruction-dosageinstruction_id',
+            'fk-dosage_instructions-medication_dispense_id',
+            'dosage_instructions',
+            'medication_dispense_id',
             'medication_dispense',
-            'dosageinstruction_id',
-            'dosage_instruction',
             'id',
             'CASCADE'
         );
+
+
 
     }
 
@@ -74,5 +94,7 @@ class m210804_150143_create_medication_dispense_table extends Migration
     public function safeDown()
     {
         $this->dropTable('{{%medication_dispense}}');
+        $this->dropTable('{{%authorizing_prescriptions}}');
+        $this->dropTable('{{%dosage_instructions}}');
     }
 }

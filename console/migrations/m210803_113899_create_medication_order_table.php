@@ -22,7 +22,6 @@ class m210803_113899_create_medication_order_table extends Migration
             'dispenserequest__quantity__system' => $this->string(),
             'dispenserequest__quantity__unit' => $this->string(),
             'dispenserequest__quantity__number' => $this->integer(),
-            'dosageinstruction_id' => $this->integer()->notNull(),
             'encounter__display' => $this->string(),
             'encounter__reference' => $this->string(),
             'medicationreference__display' => $this->string(),
@@ -31,7 +30,6 @@ class m210803_113899_create_medication_order_table extends Migration
             'patient__reference' => $this->string(),
             'prescriber__display' => $this->string(),
             'prescriber__reference' => $this->string(),
-            'reasonended_coding_id' => $this->integer(),
             'reasonended_text' => $this->string(),
             'identifier' => $this->string()->notNull(),
             'resourcetype' => $this->string()->notNull(),
@@ -40,20 +38,42 @@ class m210803_113899_create_medication_order_table extends Migration
             'text__status' => $this->string(),
         ]);
 
+        $this->createTable('{{%dosage_instruction}}', [
+            'id' => $this->primaryKey(),
+            'dosequantity__code' => $this->string(),
+            'dosequantity__system' => $this->string(),
+            'dosequantity__unit' => $this->string(),
+            'dosequantity__value' => $this->integer(),
+            'text' => $this->string(),
+            'timing__event' => $this->json(),
+            'timing__repeat__frequency' => $this->integer(),
+            'timing__repeat__period' => $this->string(),
+            'timing__repeat__periodunits' => $this->string(),
+            'medication_order_id' => $this->integer(),
+        ]);
+
         $this->addForeignKey(
-            'fk-medication_order-dosageinstruction_id',
-            'medication_order',
-            'dosageinstruction_id',
+            'fk-dosage_instruction-medication_order_id',
             'dosage_instruction',
+            'medication_order_id',
+            'medication_order',
             'id',
             'CASCADE'
         );
 
+        $this->createTable('{{%coding}}', [
+            'id' => $this->primaryKey(),
+            'code' => $this->string(),
+            'display' => $this->string(),
+            'system' => $this->string(),
+            'medication_order_id' => $this->integer(),
+        ]);
+
         $this->addForeignKey(
-            'fk-medication_order-reasonended_coding_id',
-            'medication_order',
-            'reasonended_coding_id',
+            'fk-coding-medication_order_id',
             'coding',
+            'medication_order_id',
+            'medication_order',
             'id',
             'CASCADE'
         );
@@ -66,5 +86,7 @@ class m210803_113899_create_medication_order_table extends Migration
     public function safeDown()
     {
         $this->dropTable('{{%medication_order}}');
+        $this->dropTable('{{%dosage_instruction}}');
+        $this->dropTable('{{%coding}}');
     }
 }
