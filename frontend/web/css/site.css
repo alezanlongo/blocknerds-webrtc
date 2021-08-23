@@ -8,7 +8,12 @@ main > .container-body {
   margin: 0 auto;
 }
 
-
 .modal {
   color: black;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+  padding: 0 10%;
 }

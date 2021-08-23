@@ -22,59 +22,18 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <style>
-        .alert-style {
-            width: fit-content;
-            float: right;
-        }
-    </style>
 </head>
 
 <body class="d-flex flex-column h-100">
     <?php $this->beginBody() ?>
 
-    <header>
-        <?php
-        NavBar::begin([
-            'options' => [
-                'class' => 'navbar navbar-expand-md navbar-dark bg-withe fixed-top',
-            ],
-        ]);
-        $menuItems = [];
-        if (Yii::$app->user->isGuest) {
-            $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-            $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-        } else {
-            $menuItems[] =
-                [
-                    'label' => Yii::$app->getUser()->getIdentity()->username,
-                    'items' => [
-                        ['label' => 'Edit Profile', 'url' => ['/user/edit-profile']],
-                        ['label' => 'Logout', 'url' => ['/site/logout'], ['data-method' => 'post']],
-                    ]
-                ];
-        }
-
-        echo Nav::widget([
-            'options' => ['class' => 'navbar-nav ml-auto'],
-            'items' => $menuItems,
-        ]);
-        NavBar::end();
-        ?>
-    </header>
-
     <main role="main" class="flex-shrink-0">
-        <div class="container-body">
-        <div class="">
-            <?= Alert::widget([
-                'options' => ['class' => 'alert-style'],
-            ]) ?>
-        </div>
-            <?= $content ?>
-        </div>
+        <?= $content ?>
     </main>
 
     <?php $this->endBody() ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+
 </body>
 
 </html>
