@@ -38,6 +38,7 @@ class RoomController extends \yii\web\Controller
 
     public function actionIndex($uuid)
     {
+        $this->layout = 'room';
         $room = Room::find()->where(['uuid' => $uuid])->limit(1)->one();
 
         if (!$room) {
