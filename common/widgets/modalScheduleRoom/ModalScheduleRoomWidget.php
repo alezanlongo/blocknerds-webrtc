@@ -16,6 +16,13 @@ class ModalScheduleRoomWidget extends Widget
         return $this->render(
             '_modal',
             [
+                'itemsReminder' => [
+                    '0' => 'Select option',
+                    '900' => '15 minutes',
+                    '1800' => '30 minutes',
+                    '2700' => '45 minutes',
+                    '3600' => '1 hour'
+                ],
                 'itemsDuration' => [
                     '900' => '15 minutes',
                     '1800' => '30 minutes',

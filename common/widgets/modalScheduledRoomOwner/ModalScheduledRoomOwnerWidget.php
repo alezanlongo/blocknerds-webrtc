@@ -11,15 +11,18 @@ class ModalScheduledRoomOwnerWidget extends Widget
     public $uuid;
     public $owner_id;
     public $title;
+    public $description;
     public $duration;
     public $scheduled_at;
+    public $reminder_time;
+    public $allow_waiting;
     public $members;
 
     public function init()
     {
         parent::init();
     }
-    
+
     public function run()
     {
         return $this->render(
@@ -30,9 +33,19 @@ class ModalScheduledRoomOwnerWidget extends Widget
                 'uuid' => $this->uuid,
                 'owner_id' => $this->owner_id,
                 'title' => $this->title,
+                'description'=> $this->description,
                 'duration' => $this->duration,
                 'scheduled_at' => $this->scheduled_at,
+                'reminder_time' => $this->reminder_time,
+                'allow_waiting' => $this->allow_waiting,
                 'members' => $this->members,
+                'itemsReminder' => [
+                    '0' => 'Select option',
+                    '900' => '15 minutes',
+                    '1800' => '30 minutes',
+                    '2700' => '45 minutes',
+                    '3600' => '1 hour'
+                ],
                 'itemsDuration' => [
                     '900' => '15 minutes',
                     '1800' => '30 minutes',

@@ -11,7 +11,7 @@ use yii\web\JsExpression;
 Modal::begin([
     'title' => 'Scheduled room',
     'id' => 'scheduledRoom',
-    'footer' => Html::submitButton('Save', ['class' => 'btn btn-primary', 'onclick' => "updateSchedule();return false;"])
+    'footer' => Html::submitButton('Submit', ['class' => 'btn btn-primary', 'onclick' => "updateSchedule();return false;"])
 ]);
 
 $form = ActiveForm::begin([
@@ -26,7 +26,7 @@ echo Html::input('hidden', 'room_id', $room_id);
         <div class="row">
             <div class="col">
                 <div class="form-group">
-                    <label class="control-label" for="title">Title</label>
+                    <label class="control-label" for="title">*Title</label>
                     <?= Html::input('text', 'title', $title, ['class' => 'form-control']) ?>
                 </div>
             </div>
@@ -44,11 +44,36 @@ echo Html::input('hidden', 'room_id', $room_id);
         </div>
 
         <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label" for="title">Description</label>
+                    <?= Html::textarea('description', $description, ['class' => 'form-control']) ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col text-center">
-                <p class="control-label text-left" for="datetimepicker">Date & time</p>
+                <p class="control-label text-left" for="datetimepicker">*Date & time</p>
                 <?= Html::input('hidden', 'date', date("Y-m-d", $scheduled_at)) ?>
                 <?= Html::input('hidden', 'time', date("H:i:00", $scheduled_at)) ?>
                 <?= Html::input('text', 'datetimepicker', date("Y-m-d H:i:00", $scheduled_at), ["id" => "datetimepicker"]) ?>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label" for="duration">Reminder time</label>
+                    <?
+                    echo Html::dropDownList(
+                        'reminder_time',
+                        $reminder_time,
+                        $itemsReminder,
+                        ['class' => 'form-control'],
+                    );
+                    ?>
+                </div>
             </div>
         </div>
 
@@ -67,6 +92,23 @@ echo Html::input('hidden', 'room_id', $room_id);
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label" for="duration">Allow waiting</label>
+                    <?
+                    echo Html::checkbox(
+                        'allow_waiting',
+                        $allow_waiting,
+                        $itemsReminder,
+                        ['class' => 'form-control'],
+                    );
+                    ?>
+                </div>
+            </div>
+        </div>
+
         <?php
         echo $form->field(new User, 'username')->widget(Select2::class, [
             'options' => ['placeholder' => 'Search for a user ...', 'multiple' => true],

@@ -2,9 +2,9 @@
 /* @var $this yii\web\View */
 
 use yii\web\View;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\bootstrap4\Modal;
-use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use frontend\assets\Fullcalendar\FullcalendarAsset;
 use frontend\assets\Datetimepicker\DatetimepickerAsset;
@@ -20,8 +20,6 @@ $this->registerJsFile(
     [
         'depends' => [
             "yii\web\JqueryAsset",
-            // "frontend\assets\Fullcalendar\FullcalendarAsset",
-            // "frontend\assets\Datetimepicker\DatetimepickerAsset",
         ],
         'position' => View::POS_END
     ]
@@ -55,15 +53,18 @@ ActiveForm::end();
 Pjax::begin(['id' => 'calendar-request', "options" => ["class" => ""]]);
 
 if ($roomSelected) {
-    if ($roomSelected->owner_id == $user_id) {
+    if ($roomSelected->meeting->owner_id == $user_id) {
         echo ModalScheduledRoomOwnerWidget::widget([
             'user_id' => $user_id,
             'room_id' => $roomSelected->id,
             'uuid' => $roomSelected->uuid,
-            'owner_id' => $roomSelected->owner_id,
-            'title' => $roomSelected->title,
-            'duration' => $roomSelected->duration,
-            'scheduled_at' => $roomSelected->scheduled_at,
+            'owner_id' => $roomSelected->meeting->owner_id,
+            'title' => $roomSelected->meeting->title,
+            'duration' => $roomSelected->meeting->duration,
+            'description' => $roomSelected->meeting->description,
+            'reminder_time' => $roomSelected->meeting->reminder_time,
+            'allow_waiting' => $roomSelected->meeting->allow_waiting,
+            'scheduled_at' => $roomSelected->meeting->scheduled_at,
             'members' => $roomMembers
         ]);
     } else {
@@ -71,9 +72,9 @@ if ($roomSelected) {
             'user_id' => $user_id,
             'room_id' => $roomSelected->id,
             'uuid' => $roomSelected->uuid,
-            'title' => $roomSelected->title,
-            'duration' => $roomSelected->duration,
-            'scheduled_at' => $roomSelected->scheduled_at,
+            'title' => $roomSelected->meeting->title,
+            'duration' => $roomSelected->meeting->duration,
+            'scheduled_at' => $roomSelected->meeting->scheduled_at,
             'members' => $roomMembers
         ]);
     }

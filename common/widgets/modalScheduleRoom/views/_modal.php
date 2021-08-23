@@ -10,7 +10,7 @@ use yii\web\JsExpression;
 Modal::begin([
     'title' => 'Planning a meeting...',
     'id' => 'planningMeeting',
-    'footer' => Html::submitButton('Create', ['class' => 'btn btn-primary', 'onclick' => "createSchedule();return false;"])
+    'footer' => Html::submitButton('Submit', ['class' => 'btn btn-primary', 'onclick' => "createSchedule();return false;"])
 ]);
 
 $form = ActiveForm::begin([
@@ -23,15 +23,24 @@ $form = ActiveForm::begin([
         <div class="row">
             <div class="col">
                 <div class="form-group">
-                    <label class="control-label" for="title">Title</label>
+                    <label class="control-label" for="title">*Title</label>
                     <?= Html::input('text', 'title', null, ['class' => 'form-control']) ?>
                 </div>
             </div>
         </div>
 
         <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label" for="title">Description</label>
+                    <?= Html::textarea('description', null, ['class' => 'form-control']) ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col text-center">
-                <p class="control-label text-left" for="datetimepicker">Date & time</p>
+                <p class="control-label text-left" for="datetimepicker">*Date & time</p>
                 <input type="text" name="datetimepicker" id="datetimepicker">
             </div>
         </div>
@@ -39,7 +48,23 @@ $form = ActiveForm::begin([
         <div class="row">
             <div class="col">
                 <div class="form-group">
-                    <label class="control-label" for="duration">Duration</label>
+                    <label class="control-label" for="duration">Reminder time</label>
+                    <?
+                    echo Html::dropDownList(
+                        'reminder_time',
+                        0,
+                        $itemsReminder,
+                        ['class' => 'form-control'],
+                    );
+                    ?>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label" for="duration">*Duration</label>
                     <?
                     echo Html::dropDownList(
                         'duration',
@@ -52,9 +77,27 @@ $form = ActiveForm::begin([
             </div>
         </div>
 
-        <?
-        echo $form->field(new User, 'username')->widget(Select2::class, [
-            'options' => ['multiple' => true, 'placeholder' => 'Search for a user ...'],
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label class="control-label" for="duration">Allow waiting</label>
+                    <?
+                    echo Html::checkbox(
+                        'allow_waiting',
+                        false,
+                        $itemsDuration,
+                        ['class' => 'form-control'],
+                    );
+                    ?>
+                </div>
+            </div>
+        </div>
+
+        <?php
+        echo '<label class="control-label">Username</label>';
+        echo Select2::widget([
+            'name' => 'username',
+            'options' => ['placeholder' => 'Search for a user ...', 'multiple' => true],
             'pluginOptions' => [
                 'allowClear' => true,
                 'minimumInputLength' => 2,

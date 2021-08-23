@@ -2,19 +2,15 @@
 
 namespace frontend\controllers;
 
-use common\components\JanusApiComponent;
 use Yii;
-use common\models\RoomMember;
-use common\models\RoomRequest;
+use DateTime;
+use yii\helpers\Json;
 use common\models\Room;
 use common\models\User;
-use DateTime;
-use frontend\models\UserRoomRepository;
-use Ramsey\Uuid\Rfc4122\UuidV4;
-use thamtech\uuid\helpers\UuidHelper;
+use common\models\Meeting;
+use common\models\RoomMember;
+use common\models\RoomRequest;
 use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\web\TooManyRequestsHttpException;
 use yii\web\UnprocessableEntityHttpException;
@@ -48,13 +44,19 @@ class RoomController extends \yii\web\Controller
             return throw new NotFoundHttpException("Room not found.");
         }
 
+        $meeting = $room->getMeeting()->one();
+
+        if (!$meeting) {
+            return throw new NotFoundHttpException("Meeting not found.");
+        }
+
         $user_id = Yii::$app->user->getId();
         $limit_members = Yii::$app->params['janus.roomMaxMembersAllowed'];
         $is_owner = false;
         $is_allowed = false;
         $status = null;
         $request = null;
-        if ($user_id == $room->owner_id) {
+        if ($user_id == $meeting->owner_id) {
             $is_owner = true;
         } else {
             $request = RoomRequest::find()->where(['room_id' => $room->id, 'user_id' => $user_id])->limit(1)->one();
@@ -103,20 +105,29 @@ class RoomController extends \yii\web\Controller
     public function actionCreate()
     {
         $userId = Yii::$app->user->identity->getId();
-        $model = new \common\models\Room();
-        $fields['Room']['title'] = Room::DEFAULT_TITLE;
-        $fields['Room']['owner_id'] = $userId;
-        $fields['Room']['duration'] = Room::DEFAULT_DURATION;
-        $fields['Room']['scheduled_at'] = time();
+        $meeting = new Meeting();
 
-        if ($model->load($fields) && $model->save()) {
+        $fields['Meeting']['title'] = Meeting::DEFAULT_TITLE;
+        $fields['Meeting']['owner_id'] = $userId;
+        $fields['Meeting']['duration'] = Meeting::DEFAULT_DURATION;
+        $fields['Meeting']['scheduled_at'] = time();
+        $fields['Meeting']['reminder_time'] = 0;
+        $fields['Meeting']['allow_waiting'] = 1;
+
+        if ($meeting->load($fields) && $meeting->save()) {
+            $room = new Room();
+            $room->meeting_id = $meeting->id;
+            $room->status = Room::STATUS_CREATED;
+            $room->save();
+
+            Yii::$app->janusApi->videoRoomCreate($room->uuid);
+
             $memberOwner = new RoomMember();
-            $memberOwner->room_id = $model->id;
+            $memberOwner->room_id = $room->id;
             $memberOwner->user_id = $userId;
             $memberOwner->save();
-            Yii::$app->janusApi->videoRoomCreate($model->uuid);
 
-            return $this->redirect([$model->uuid]);
+            return $this->redirect([$room->uuid]);
         }
     }
 
@@ -226,13 +237,19 @@ class RoomController extends \yii\web\Controller
             return throw new NotFoundHttpException("Room not found.");
         }
 
+        $meeting = $room->getMeeting()->one();
+
+        if (!$meeting) {
+            return throw new NotFoundHttpException("Meeting not found.");
+        }
+
         $user = User::find()->where(['id' => $user_id])->limit(1)->one();
 
         if (!$user) {
             return throw new NotFoundHttpException("User not found.");
         }
 
-        if ($room->owner_id == $user->id) {
+        if ($meeting->owner_id == $user->id) {
             return throw new UnprocessableEntityHttpException("Owner is member by default.");
         }
 
@@ -269,37 +286,42 @@ class RoomController extends \yii\web\Controller
 
     public function actionCreateSchedule()
     {
-        if (Yii::$app->request->isPost) {
-            $model = new \common\models\Room();
+        $user_id = Yii::$app->user->identity->getId();
 
-            $fields['Room']['title'] = Yii::$app->request->post("title");
+        $meeting = new Meeting();
 
-            $userId = Yii::$app->user->identity->getId();
-            $fields['Room']['owner_id'] = $userId;
+        $fields['Meeting']['title'] =  Yii::$app->request->post("title");
+        $fields['Meeting']['description'] =  Yii::$app->request->post("description", null);
+        $fields['Meeting']['owner_id'] = $user_id;
+        $fields['Meeting']['duration'] = Yii::$app->request->post("duration");
 
-            $fields['Room']['duration'] = Yii::$app->request->post("duration");
+        $datetimepicker = new DateTime(Yii::$app->request->post("datetimepicker"));
+        $fields['Meeting']['scheduled_at'] = $datetimepicker->getTimestamp();
 
-            $datetimepicker = new DateTime(Yii::$app->request->post("datetimepicker"));
-            $fields['Room']['scheduled_at'] = $datetimepicker->getTimestamp();
+        $fields['Meeting']['reminder_time'] = Yii::$app->request->post("reminder_time", 0);
+        $fields['Meeting']['allow_waiting'] = Yii::$app->request->post("allow_waiting", 0);
 
-            $members = Yii::$app->request->post("User");
+        $members = Yii::$app->request->post("username");
 
-            if ($model->load($fields) && $model->save()) {
+        if ($meeting->load($fields) && $meeting->save()) {
+            $room = new Room();
+            $room->meeting_id = $meeting->id;
+            $room->status = Room::STATUS_CREATED;
+            $room->save();
 
+            $member = new RoomMember();
+            $member->user_id = $user_id;
+            $member->room_id = $room->id;
+            $member->save();
+
+            foreach ($members as $k => $id) {
                 $member = new RoomMember();
-                $member->user_id = $userId;
-                $member->room_id = $model->id;
+                $member->user_id = (int)$id;
+                $member->room_id = $room->id;
                 $member->save();
-
-                foreach ($members["username"] as $k => $id) {
-                    $member = new RoomMember();
-                    $member->user_id = (int)$id;
-                    $member->room_id = $model->id;
-                    $member->save();
-                }
-
-                return Json::encode($model);
             }
+
+            return Json::encode($meeting);
         }
 
         return throw new UnprocessableEntityHttpException();
@@ -308,26 +330,30 @@ class RoomController extends \yii\web\Controller
     public function actionUpdateSchedule()
     {
         if (Yii::$app->request->isPost) {
-            $room_id = $this->request->post('room_id') ?? null;
+            $room_id = $this->request->post('room_id');
 
             $room = Room::findOne($room_id);
 
-            $fields['Room']['title'] = Yii::$app->request->post("title", $room->title);
+            $meeting = $room->getMeeting()->one();
 
-            $fields['Room']['duration'] = Yii::$app->request->post("duration", $room->duration);
+            $fields['Meeting']['title'] = Yii::$app->request->post("title", $meeting->title);
+            $fields['Meeting']['description'] = Yii::$app->request->post("description", $meeting->description);
+            $fields['Meeting']['duration'] = Yii::$app->request->post("duration", $meeting->duration);
+            $fields['Meeting']['reminder_time'] = Yii::$app->request->post("reminder_time", $meeting->reminder_time);
 
-            $datetimepicker = $room->scheduled_at;
+            $datetimepicker = $meeting->scheduled_at;
             if (Yii::$app->request->post("datetimepicker")) {
                 $datetimepicker = new DateTime(Yii::$app->request->post("datetimepicker"));
                 $datetimepicker = $datetimepicker->getTimestamp();
             }
-            $fields['Room']['scheduled_at'] = $datetimepicker;
+            $fields['Meeting']['scheduled_at'] = $datetimepicker;
 
             $members = Yii::$app->request->post("User");
 
-            if ($room->load($fields) && $room->save()) {
+            if ($meeting->load($fields) && $meeting->save()) {
 
-                $oldMembers = $room->getMembers()->all();
+                $oldMembers = $room->getRoomMembers()->all();
+
                 foreach ($oldMembers as $member) {
                     $member->delete();
                 }
@@ -339,7 +365,7 @@ class RoomController extends \yii\web\Controller
                     $member->save();
                 }
 
-                return Json::encode($room);
+                return Json::encode($meeting);
             }
         }
 
@@ -357,7 +383,7 @@ class RoomController extends \yii\web\Controller
 
             $roomSelected = Room::findOne($room_id);
 
-            $roomMembers = $roomSelected->getMembers()->all();
+            $roomMembers = $roomSelected->getRoomMembers()->all();
         }
 
         return $this->render('calendar', [
@@ -372,14 +398,14 @@ class RoomController extends \yii\web\Controller
         $formatter = \Yii::$app->formatter;
 
         $subQuery = RoomMember::find()->where(["user_id" => $user_id])->select(['room_id']);
-        $data = Room::find()->where(['in', 'id', $subQuery])->all();
+        $rooms = Room::find()->where(['in', 'id', $subQuery])->all();
 
         $events = [];
-        foreach ($data as $key => $value) {
-            $events[$key]['room_id'] = $value->id;
-            $events[$key]['title'] = $value->title;
-            $events[$key]['duration'] = $value->duration;
-            $events[$key]['start'] = $formatter->asDate($value->scheduled_at, 'php:Y-m-d m:i:00');
+        foreach ($rooms as $key => $room) {
+            $events[$key]['room_id'] = $room->id;
+            $events[$key]['title'] = $room->meeting->title;
+            $events[$key]['duration'] = $room->meeting->duration;
+            $events[$key]['start'] = $formatter->asDate($room->meeting->scheduled_at, 'php:Y-m-d m:i:00');
         }
 
         return Json::encode($events);
