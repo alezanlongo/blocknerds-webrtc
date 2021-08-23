@@ -73,7 +73,7 @@ function createSchedule() {
             }
         }
 
-        if (this.name == "User[username][]") {
+        if (this.name == "username[]") {
             checkMembers += 1;
         }
     });
@@ -174,7 +174,6 @@ function updateSchedule() {
             $("#formUpdateSchedule")[0].reset();
             calendar.refetchEvents();
         });
-    // });
 }
 
 function addMemberToList(user) {

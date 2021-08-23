@@ -10,7 +10,7 @@ $formatter = \Yii::$app->formatter;
 Modal::begin([
     'title' => 'Scheduled room',
     'id' => 'scheduledRoom',
-    'footer' => Html::submitButton('Save', ['class' => 'btn btn-primary', 'onclick' => "updateSchedule();return false;"])
+    'footer' => Html::submitButton('Submit', ['class' => 'btn btn-primary', 'onclick' => "updateSchedule();return false;"])
 ]);
 
 $form = ActiveForm::begin([
