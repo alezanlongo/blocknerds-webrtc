@@ -30,8 +30,19 @@ var calendar;
 document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+        aspectRatio: 3,
+        initialView: 'dayGridWeek',
+        headerToolbar: { center: 'dayGridMonth,dayGridWeek' },
         events: "room/calendar/events/" + user_id,
+        eventLimit: true,
+        views: {
+            month: {
+                dayMaxEvents: 2
+            },
+            week: {
+                dayMaxEvents: 20
+            }
+        },
         eventClick: function (info) {
             var room_id = info.event.extendedProps.room_id;
             $.pjax.reload({ container: "#calendar-request", async: false, data: { room_id } });
