@@ -12,6 +12,7 @@ class m130524_201442_init extends Migration
             // http://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
+        $this->execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
 
         $this->createTable('{{%user}}', [
             'id' => $this->primaryKey(),
@@ -53,11 +54,11 @@ class m130524_201442_init extends Migration
         // user_setting
         $this->createTable('{{%user_setting}}', [
             'id' => $this->primaryKey(),
-            'user_id' => $this->integer()->notNull()->unique(),
+            'user_id' => $this->integer()->notNull(),
             'group_name' => $this->string(),
             'name' => $this->string(),
             'data_type' => $this->string(),
-            'value' => $this->string(),
+            'value' => $this->text(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
@@ -70,6 +71,15 @@ class m130524_201442_init extends Migration
             'id',
             'CASCADE'
         );
+
+        $this->createIndex(
+            '{{%idx-constraint-user_setting-group_name-name-user_id}}',
+            '{{%user_setting}}',
+            ['group_name','name','user_id'],
+            true
+        );
+
+        
 
         // meeting
         $this->createTable('{{%meeting}}', [
