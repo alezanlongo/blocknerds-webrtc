@@ -62,15 +62,14 @@ $(document).ready(function () {
   }
 });
 
-$(".btn-leave").on('click', ()=>{
-  unpublishOwnFeed()
-})
-$(".btn-join-again").on('click', ()=>{
-  $(".room-videos").show()
-  $(".join-again").hide()
+$(".btn-leave").on("click", () => {
+  unpublishOwnFeed();
+});
+$(".btn-join-again").on("click", () => {
+  $(".room-videos").show();
+  $(".join-again").hide();
   publishOwnFeed(true);
-})
-
+});
 
 const initJanus = () => {
   Janus.init({
@@ -197,10 +196,9 @@ const initJanus = () => {
               );
               myStream = null;
               // alert("do someting else after to go")
-              $(".room-videos").hide()
-              $(".join-again").removeClass("d-none").show()
+              $(".room-videos").hide();
+              $(".join-again").removeClass("d-none").show();
 
-              
               // $(`#video-source0`).html(
               //   '<button id="publish" class="btn btn-primary">Publish</button>'
               // );
@@ -264,7 +262,7 @@ const handleJsep = (objMessage, jsep) => {
 };
 
 const handlingJoined = (objMessage) => {
-  console.log(objMessage)
+  console.log(objMessage);
   const myId = objMessage["id"];
   my_private_id = objMessage["private_id"];
   const publishersList = objMessage["publishers"];
@@ -797,10 +795,15 @@ const muteMember = (index) => {
         if (data.videoroom === "success") {
           isMuted = !isMuted;
           console.log("is muted", isMuted, remoteHandler.rfindex);
-          
-          $(`.box${remoteHandler.rfindex} .btn-mute`).text(isMuted ? "Unmute" : "Mute");
 
-          sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {user_id:remoteHandler.rfuser.idFeed, isMuted});
+          $(`.box${remoteHandler.rfindex} .btn-mute`).text(
+            isMuted ? "Unmute" : "Mute"
+          );
+
+          sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
+            user_id: remoteHandler.rfuser.idFeed,
+            isMuted,
+          });
         }
       },
       error: function (error) {
@@ -809,3 +812,28 @@ const muteMember = (index) => {
     });
   }
 };
+
+////////////////////////////////////////////////////////////////////////////////
+///////////////////////// HANDLING SIDEBAR
+////////////////////////////////////////////////////////////////////////////////
+const toggleSidebar = (isOpen) => {
+  const sizeSidebar = (isOpen) ? 0 : 350;
+
+  document.getElementById("optionsSidebar").style.width = `${sizeSidebar}px`;
+  document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
+}
+
+$(".option-side").on("click", (e) => {
+  const componentClicked = $(e.target);
+  const controlName = componentClicked.attr("aria-controls");
+  const isOpen = Array.from($(".option-side").children()).some(child => $(child).hasClass('active'))
+
+  if (!isOpen) {
+    toggleSidebar(isOpen);
+  } else if ($(`#${controlName}`).hasClass("active")) {
+    toggleSidebar(isOpen);
+    setTimeout(() => {
+      componentClicked.removeClass("active");
+    }, 10);
+  }
+});

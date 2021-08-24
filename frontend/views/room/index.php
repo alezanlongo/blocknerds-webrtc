@@ -48,21 +48,21 @@ $this->title = 'The Room';
 ?>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
-    <div class="row main-content">
-        <div class="col-9 room-content">
+    <div class="main-content">
+        <div class="room-content" id="main">
             <div class="header-content d-flex pt-3">
                 <div class=" flex-grow-1 text-center ">
                     <h3> 4:34 left</h3>
                 </div>
-                <div class="options-tab d-flex">
+                <div class="options-tab d-flex ">
                     <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <a class="nav-link active" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true">Settings</a>
+                        <li class="nav-item option-side" role="presentation">
+                            <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true">Settings</a>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item option-side" role="presentation">
                             <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false">Attendees</a>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <li class="nav-item option-side" role="presentation">
                             <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false">Chat</a>
                         </li>
                         <li class="nav-item ml-3">
@@ -105,27 +105,18 @@ $this->title = 'The Room';
                                 <div class="box<?= $i ?> box border bg-dark d-none" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <h1 class="text-light username-on-call"> <?= $i ?></h1>
-                                        <!-- <div class="control-owner d-flex ">
-                                            <?php if ($is_owner && $i > 0) { ?>
-                                                <button onclick="muteMember(<?= $i ?>)" class="btn btn-default btn-mute text-white">Mute</button>
-                                            <?php } ?>
-                                        </div> -->
                                     </div>
                                 </div>
                             <?php } ?>
                         </div>
-                        <!-- <div class="control-section border text-light bg-dark">
-                            <button class="btn btn-default text-white " id="mute" onclick="toggleMute()">Mute</button>
-                            <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
-                        </div> -->
 
                     </div>
                 <? } ?>
             </div>
         </div>
-        <div class="col-3 side-content">
+        <div class="side-content sidebar" id="optionsSidebar">
             <div class="tab-content" id="pills-tabContent">
-                <div class="tab-pane fade show active" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
+                <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
                 <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">Attendees section</div>
                 <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
             </div>

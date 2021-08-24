@@ -1,6 +1,7 @@
 .main-content {
-  width: 100%;
+  width: 90%;
   height: 100vh;
+  margin: 0 auto;
 }
 .room-content {
   /* border: black 1px solid; */
@@ -106,5 +107,23 @@
 .wrapper {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-  padding: 0 10%;
+}
+
+
+.sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 16px;
 }
