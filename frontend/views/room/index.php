@@ -66,7 +66,21 @@ $this->title = 'The Room';
                             <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false">Chat</a>
                         </li>
                         <li class="nav-item ml-3">
-                            <?= Html::tag('button', "Leaving", ["class" => "btn btn-danger btn-leave"]) ?>
+                            <?= Html::tag('button', "Mute", [
+                                'id' => "mute",
+                                "class" => "btn btn-default text-white",
+                                'onclick' => "toggleMute()"
+                            ]) ?>
+                        </li>
+                        <li class="nav-item ml-3">
+                            <?= Html::tag('button', "Video", [
+                                'id' => "no-video",
+                                "class" => "btn btn-default text-white",
+                                'onclick' => "toggleVideo()"
+                            ]) ?>
+                        </li>
+                        <li class="nav-item ml-3">
+                            <?= Html::tag('button', "Leave", ["class" => "btn btn-danger btn-leave"]) ?>
                         </li>
                     </ul>
 
@@ -91,19 +105,19 @@ $this->title = 'The Room';
                                 <div class="box<?= $i ?> box border bg-dark d-none" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <h1 class="text-light username-on-call"> <?= $i ?></h1>
-                                        <div class="control-owner d-flex ">
+                                        <!-- <div class="control-owner d-flex ">
                                             <?php if ($is_owner && $i > 0) { ?>
                                                 <button onclick="muteMember(<?= $i ?>)" class="btn btn-default btn-mute text-white">Mute</button>
                                             <?php } ?>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                             <?php } ?>
                         </div>
-                        <div class="control-section border text-light bg-dark">
+                        <!-- <div class="control-section border text-light bg-dark">
                             <button class="btn btn-default text-white " id="mute" onclick="toggleMute()">Mute</button>
                             <button class="btn btn-default text-white" id="no-video" onclick="toggleVideo()">Video</button>
-                        </div>
+                        </div> -->
 
                     </div>
                 <? } ?>
