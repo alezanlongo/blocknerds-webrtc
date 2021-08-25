@@ -91,4 +91,31 @@ Modal::begin([
 Html::tag("h1");
 Html::tag("p");
 Modal::end();
+
+Modal::begin([
+    'title' => 'Confirm meeting',
+    'id' => 'confirmMeeting',
+    'options' => [
+        'data-backdrop' => "static",
+        'data-keyboard' => "false"
+    ],
+]); 
+echo Html::tag('h3','', ['class'=>'summaryTitle']);
+echo Html::tag('p','', ['class'=>'summaryDescription']);
+echo Html::tag('p','', ['class'=>'summaryTime']);
+echo Html::tag('p','', ['class'=>'summaryDuration']);
+echo Html::tag('p','', ['class'=>'summaryReminderTime']);
+echo Html::tag('p','', ['class'=>'summaryIsWaiting']);
+echo Html::tag('p','', ['class'=>'summaryMembers']);
 ?>
+<div class="modal-footer">
+    <p class="pull-left">
+        <?= Html::tag('button','Cancel', [
+            'class' => 'btn btn-default btnCancelMeet'
+        ]); ?>
+        <?= Html::tag('button','Confirm', [
+            'class' => 'btn btn-primary btnConfirmMeet'
+        ]); ?>
+    </p>
+</div>
+<?php Modal::end(); ?>
