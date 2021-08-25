@@ -26,33 +26,41 @@ jQuery(document).on("pjax:success", "#calendar-request", function (event) {
 
 var calendar;
 
-document.addEventListener("DOMContentLoaded", function () {
-  var calendarEl = document.getElementById("calendar");
-  calendar = new FullCalendar.Calendar(calendarEl, {
-    aspectRatio: 3,
-    initialView: "dayGridWeek",
-    headerToolbar: { center: "dayGridMonth,dayGridWeek" },
-    events: "room/calendar/events/" + user_id,
-    eventLimit: true,
-    views: {
-      month: {
-        dayMaxEvents: 2,
-      },
-      week: {
-        dayMaxEvents: 20,
-      },
-    },
-    eventClick: function (info) {
-      var room_id = info.event.extendedProps.room_id;
-      $.pjax.reload({
-        container: "#calendar-request",
-        async: false,
-        data: { room_id },
-      });
-      $("#scheduledRoom").modal("show");
-    },
-  });
-  calendar.render();
+document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        aspectRatio: 3,
+        initialView: initialView,
+        headerToolbar: { center: 'listWeek,dayGridMonth,dayGridWeek' },
+        events: "room/calendar/events/" + user_id,
+        views: {
+            month: {
+                dayMaxEvents: 2
+            },
+            week: {
+                dayMaxEvents: 20
+            }
+        },
+        eventClick: function (info) {
+            var room_id = info.event.extendedProps.room_id;
+            $.pjax.reload({ container: "#calendar-request", async: false, data: { room_id } });
+            $('#scheduledRoom').modal('show');
+        }
+    });
+    calendar.render();
+
+    $('.fc-listWeek-button, .fc-dayGridMonth-button, .fc-dayGridWeek-button').click(function (e) {
+
+        var initialView = 'listWeek';
+        if (this.className.includes('dayGridMonth')) {
+            initialView = 'dayGridMonth';
+        } else if (this.className.includes('dayGridWeek')) {
+            initialView = 'dayGridWeek';
+        }
+
+        $.post("room/calendar", { initialView });
+    });
+
 });
 
 const modalConfirm = $("#confirmMeeting");
@@ -61,7 +69,6 @@ function createSchedule() {
   const fields = $("#formCreateSchedule").serializeArray();
   const offset = { name: "offset", value: new Date().getTimezoneOffset() };
   fields.push(offset);
-  console.log("NB", fields);
   let checkMembers = 1;
 
   $.each(fields, function () {
@@ -177,6 +184,7 @@ const sendCreateMeetOrder = (fields) => {
     "/room/create-schedule",
     fields,
     function (data, status) {
+        console.log(data)
       $("#user-username").empty().trigger("change");
       $("#planningMeeting").modal("hide");
       modalConfirm.modal("hide");

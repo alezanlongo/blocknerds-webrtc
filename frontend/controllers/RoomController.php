@@ -323,7 +323,7 @@ class RoomController extends \yii\web\Controller
                 $member->save();
             }
 
-            return Json::encode($meeting);
+            return Json::encode($room);
         }
 
         return throw new UnprocessableEntityHttpException();
