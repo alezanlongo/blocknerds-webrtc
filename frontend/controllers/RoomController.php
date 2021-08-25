@@ -383,7 +383,7 @@ class RoomController extends \yii\web\Controller
             $value = $this->request->post('initialView');
 
             if ($user_id && $value) {
-                $userSetting = UserSetting::setValue($user_id, 'initialView', 'calendar', $value);
+                $userSetting = UserSetting::setValue($user_id, 'initialView', UserSetting::GROUP_NAME_CALENDAR, $value);
 
                 return Json::encode($userSetting);
             }
@@ -393,7 +393,7 @@ class RoomController extends \yii\web\Controller
 
         $roomSelected = null;
         $roomMembers = [];
-        $initialView = UserSetting::getSetting($user_id, 'initialView', 'calendar');
+        $initialView = UserSetting::getSetting($user_id, 'initialView', UserSetting::GROUP_NAME_CALENDAR);
 
         if (Yii::$app->request->isAjax) {
             $room_id = Yii::$app->request->get("room_id", 0);
