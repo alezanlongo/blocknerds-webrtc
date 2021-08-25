@@ -31,10 +31,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
         aspectRatio: 3,
-        initialView: 'dayGridWeek',
-        headerToolbar: { center: 'dayGridMonth,dayGridWeek' },
+        initialView: initialView,
+        headerToolbar: { center: 'listWeek,dayGridMonth,dayGridWeek' },
         events: "room/calendar/events/" + user_id,
-        eventLimit: true,
         views: {
             month: {
                 dayMaxEvents: 2
@@ -50,13 +49,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
     calendar.render();
+
+    $('.fc-listWeek-button, .fc-dayGridMonth-button, .fc-dayGridWeek-button').click(function (e) {
+
+        var initialView = 'listWeek';
+        if (this.className.includes('dayGridMonth')) {
+            initialView = 'dayGridMonth';
+        } else if (this.className.includes('dayGridWeek')) {
+            initialView = 'dayGridWeek';
+        }
+
+        $.post("room/calendar", { initialView });
+    });
+
 });
 
 function createSchedule() {
     var fields = $('#formCreateSchedule').serializeArray();
     var offset = { name: 'offset', value: new Date().getTimezoneOffset() };
     fields.push(offset);
-    console.log("NB", fields)
     var checkMembers = 1;
 
     $.each(fields, function () {

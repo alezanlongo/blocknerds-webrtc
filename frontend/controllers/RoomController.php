@@ -10,6 +10,7 @@ use common\models\User;
 use common\models\Meeting;
 use common\models\RoomMember;
 use common\models\RoomRequest;
+use common\models\UserSetting;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\web\TooManyRequestsHttpException;
@@ -376,8 +377,23 @@ class RoomController extends \yii\web\Controller
     function actionCalendar()
     {
         $user_id = Yii::$app->user->getId();
+
+        if (Yii::$app->request->isPost) {
+
+            $value = $this->request->post('initialView');
+
+            if ($user_id && $value) {
+                $userSetting = UserSetting::setValue($user_id, 'initialView', 'calendar', $value);
+
+                return Json::encode($userSetting);
+            }
+
+            return throw new UnprocessableEntityHttpException();
+        }
+
         $roomSelected = null;
         $roomMembers = [];
+        $initialView = UserSetting::getSetting($user_id, 'initialView', 'calendar');
 
         if (Yii::$app->request->isAjax) {
             $room_id = Yii::$app->request->get("room_id", 0);
@@ -389,8 +405,9 @@ class RoomController extends \yii\web\Controller
 
         return $this->render('calendar', [
             'user_id' => $user_id,
-            "roomSelected" => $roomSelected,
-            "roomMembers" => $roomMembers
+            'roomSelected' => $roomSelected,
+            'roomMembers' => $roomMembers,
+            'initialView' => $initialView ? $initialView->value : 'listWeek'
         ]);
     }
 

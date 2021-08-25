@@ -25,7 +25,9 @@ $this->registerJsFile(
     ]
 );
 
-$this->registerJsVar('user_id',   Yii::$app->getUser()->getId());
+$this->registerJsVar('user_id', Yii::$app->getUser()->getId());
+
+$this->registerJsVar('initialView', $initialView);
 
 $this->registerJsVar('roomMaxMembersAllowed', Yii::$app->params['janus.roomMaxMembersAllowed'], View::POS_END);
 
