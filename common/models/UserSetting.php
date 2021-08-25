@@ -115,7 +115,7 @@ class UserSetting extends \yii\db\ActiveRecord
 
         $currentSetting = self::getSetting($user_id, $name, $group_name);
         $newValue = self::prepareValueByType($value);
-        if (false !== $newValue && (null !== $currentSetting || false !== $currentSetting)) {
+        if (false !== $newValue && !empty($currentSetting)) {
             $currentSetting->value = $newValue;
             $currentSetting->data_type = \gettype($value);
             return $currentSetting->update(false);
