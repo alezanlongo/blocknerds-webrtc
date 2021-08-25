@@ -103,7 +103,7 @@ class UserSetting extends \yii\db\ActiveRecord
             //produce error
             return false;
         }
-        if (preg_match("/[^a-z0-9\_\-]/", $name) == 1) {
+        if (preg_match("/[^a-zA-Z0-9\_\-]/", $name) == 1) {
             //bad chars. Accept a-z(lowercase), 0-9, _ and -  
             return false;
         }
@@ -115,7 +115,7 @@ class UserSetting extends \yii\db\ActiveRecord
 
         $currentSetting = self::getSetting($user_id, $name, $group_name);
         $newValue = self::prepareValueByType($value);
-        if (false !== $newValue && (null !== $currentSetting || false !== $currentSetting)) {
+        if (false !== $newValue && !empty($currentSetting)) {
             $currentSetting->value = $newValue;
             $currentSetting->data_type = \gettype($value);
             return $currentSetting->update(false);
