@@ -1,18 +1,15 @@
-#calendar a {
+a.fc-list-day-text {
   color: black;
   text-decoration: none;
 }
 
-#calendar a:hover {
+a:hover {
   color: black;
+  text-decoration: none;
 }
 
-#calendar td.fc-list-event-title a {
-  color: #fafafa;
-}
-
-#calendar tr.fc-list-event:hover,
-#calendar td.fc-list-event-title a:hover {
+tr.fc-list-event:hover {
+  background-color: transparent;
   color: black;
   cursor: pointer;
 }

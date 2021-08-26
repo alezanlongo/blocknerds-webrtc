@@ -50,7 +50,7 @@ echo Html::a(
 ActiveForm::end();
 ?>
 
-<div id="calendar"></div>
+<div id="calendar" class="text-white"></div>
 
 <?php
 Pjax::begin(['id' => 'calendar-request', "options" => ["class" => ""]]);
