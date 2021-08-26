@@ -184,16 +184,11 @@ const sendCreateMeetOrder = (fields) => {
     "/room/create-schedule",
     fields,
     function (data, status) {
-        console.log(data)
       $("#user-username").empty().trigger("change");
       $("#planningMeeting").modal("hide");
       modalConfirm.modal("hide");
-      $("#planningMeetingSuccessfully .modal-body").html(
-        "Room created successfully!<br><br>Room's link<br>" +
-          window.location.hostname +
-          "/room/" +
-          data.uuid
-      );
+      const baseRoomUrl = $("#planningMeetingSuccessfully input[name]").val()
+      $("#planningMeetingSuccessfully input[name]").val(`${baseRoomUrl}${data.uuid}`)
       $("#planningMeetingSuccessfully").modal("show");
     },
     "json"

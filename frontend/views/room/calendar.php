@@ -11,6 +11,7 @@ use frontend\assets\Datetimepicker\DatetimepickerAsset;
 use common\widgets\modalScheduleRoom\ModalScheduleRoomWidget;
 use common\widgets\modalScheduledRoomOwner\ModalScheduledRoomOwnerWidget;
 use common\widgets\modalScheduledRoomMember\ModalScheduledRoomMemberWidget;
+use yii\helpers\Url;
 
 DatetimepickerAsset::register($this);
 FullcalendarAsset::register($this);
@@ -89,10 +90,22 @@ echo ModalScheduleRoomWidget::widget();
 Modal::begin([
     'title' => 'Planning a meeting...',
     'id' => 'planningMeetingSuccessfully',
+    // 'size' => Modal::SIZE_LARGE
 ]);
-Html::tag("h1");
-Html::tag("p");
-Modal::end();
+echo Html::tag("h3", 'Room created successfully!');
+echo Html::tag("p", "Copy a link to access when the time it's come"); ?>
+<div class="row">
+    <div class="col">
+        <div class="input-group mb-3">
+            <?= Html::input('text', 'roomLink', Url::to('room/'), ['readonly' => true, 'class' => 'form-control']) ?>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard();return false;">Copy link</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php Modal::end();
 
 Modal::begin([
     'title' => 'Confirm meeting',
@@ -101,21 +114,21 @@ Modal::begin([
         'data-backdrop' => "static",
         'data-keyboard' => "false"
     ],
-]); 
-echo Html::tag('h3','', ['class'=>'summaryTitle']);
-echo Html::tag('p','', ['class'=>'summaryDescription']);
-echo Html::tag('p','', ['class'=>'summaryTime']);
-echo Html::tag('p','', ['class'=>'summaryDuration']);
-echo Html::tag('p','', ['class'=>'summaryReminderTime']);
-echo Html::tag('p','', ['class'=>'summaryIsWaiting']);
-echo Html::tag('p','', ['class'=>'summaryMembers']);
+]);
+echo Html::tag('h3', '', ['class' => 'summaryTitle']);
+echo Html::tag('p', '', ['class' => 'summaryDescription']);
+echo Html::tag('p', '', ['class' => 'summaryTime']);
+echo Html::tag('p', '', ['class' => 'summaryDuration']);
+echo Html::tag('p', '', ['class' => 'summaryReminderTime']);
+echo Html::tag('p', '', ['class' => 'summaryIsWaiting']);
+echo Html::tag('p', '', ['class' => 'summaryMembers']);
 ?>
 <div class="modal-footer">
     <p class="pull-left">
-        <?= Html::tag('button','Cancel', [
+        <?= Html::tag('button', 'Cancel', [
             'class' => 'btn btn-default btnCancelMeet'
         ]); ?>
-        <?= Html::tag('button','Confirm', [
+        <?= Html::tag('button', 'Confirm', [
             'class' => 'btn btn-primary btnConfirmMeet'
         ]); ?>
     </p>
