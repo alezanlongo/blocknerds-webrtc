@@ -162,6 +162,10 @@ Pjax::end();
 <? Modal::begin([
     'title' => 'Require to join...',
     'id' => 'pendingRequests',
+    'options' => [
+        'data-backdrop' => "static",
+        'data-keyboard' => "false"
+    ],
 ]);
 
 Pjax::begin(['id' => 'room-request', "options" => []]);

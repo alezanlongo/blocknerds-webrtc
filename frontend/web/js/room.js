@@ -683,7 +683,7 @@ function toggleVideo() {
   if (noVideo) pluginHandler.unmuteVideo();
   else pluginHandler.muteVideo();
   muted = pluginHandler.isVideoMuted();
-  $("#no-video").html(muted ? "Unvideo" : "Video");
+  $("#no-video").html(muted ? "No video" : "Video");
 }
 
 function toggleMute() {
