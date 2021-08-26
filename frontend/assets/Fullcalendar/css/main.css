@@ -1,0 +1,18 @@
+#calendar a {
+  color: black;
+  text-decoration: none;
+}
+
+#calendar a:hover {
+  color: black;
+}
+
+#calendar td.fc-list-event-title a {
+  color: #fafafa;
+}
+
+#calendar tr.fc-list-event:hover,
+#calendar td.fc-list-event-title a:hover {
+  color: black;
+  cursor: pointer;
+}
