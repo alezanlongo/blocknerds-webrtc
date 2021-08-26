@@ -109,18 +109,17 @@
   grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
 }
 
-
 .sidebar {
   height: 100%;
   width: 0;
   position: fixed;
   z-index: 1;
-  top: 0;
+  top: 73px;
   right: 0;
   background-color: #111;
   overflow-x: hidden;
   transition: 0.5s;
-  padding-top: 60px;
+  padding-top: 30px;
 }
 
 #main {
