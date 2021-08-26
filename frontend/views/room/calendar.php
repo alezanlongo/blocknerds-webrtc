@@ -97,7 +97,7 @@ echo Html::tag("p", "Copy a link to access when the time it's come"); ?>
 <div class="row">
     <div class="col">
         <div class="input-group mb-3">
-            <?= Html::input('text', 'roomLink', Url::to('room/'), ['readonly' => true, 'class' => 'form-control']) ?>
+            <?= Html::input('text', 'roomLink', Url::to('room/', true), ['readonly' => true, 'class' => 'form-control']) ?>
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard();return false;">Copy link</button>
             </div>
