@@ -18,7 +18,7 @@ client.onConnectionLost = function (responseObject) {
 client.onMessageArrived = function (message) {
   const objData = JSON.parse(message.payloadString);
 
-  if (objData.type === EVENT_TYPE_TOGGLE_MUTE && userId === objData.data.user_id) {
+  if (objData.type === EVENT_TYPE_TOGGLE_MUTE && userProfileId === objData.data.user_profile_id) {
     $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
   }
 
@@ -34,7 +34,7 @@ client.onMessageArrived = function (message) {
     $.pjax.reload({ container: "#room-request", async: false });
     $.pjax.reload({ container: "#room-member", async: false });
     if (
-      Number(objData.user_id) === Number(userId) &&
+      Number(objData.user_profile_id) === Number(userProfileId) &&
       !isOwner &&
       objData.status === 1 // 1 = Allowed
     ) {

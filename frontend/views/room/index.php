@@ -1,27 +1,25 @@
 <?php
 /* @var $this yii\web\View */
 
-use common\models\RoomRequest;
-use frontend\assets\Janus\JanusAsset;
 use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
-use frontend\assets\pahoMqtt\PahoMqttAsset;
-use frontend\assets\room\RoomAsset;
-use yii\bootstrap4\Button;
 use yii\bootstrap4\Modal;
+use common\models\RoomRequest;
+use frontend\assets\room\RoomAsset;
+use frontend\assets\Janus\JanusAsset;
+use frontend\assets\pahoMqtt\PahoMqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
 
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
 
-$user_id =  Yii::$app->getUser()->getId();
 $this->registerJsVar('limitMembers', $limit_members, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myRoom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
-$this->registerJsVar('userId', $user_id, View::POS_END);
+$this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
 $this->registerJsVar('isOwner', $is_owner, View::POS_END);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
@@ -175,8 +173,8 @@ if ($is_owner) {
                 <div class="card-header"><?= $request->user->username ?> wants to join the room</div>
                 <div class="card-body">
                     <?
-                    echo Html::submitButton('Allow to join', ['class' => 'btn btn-success', 'id' => 'btnAllow', 'data-user' => $request->user_id]);
-                    echo Html::submitButton('Deny to join', ['class' => 'btn btn-danger', 'id' => 'btnDeny', 'data-user' => $request->user_id]);
+                    echo Html::submitButton('Allow to join', ['class' => 'btn btn-success', 'id' => 'btnAllow', 'data-user' => $request->user_profile_id]);
+                    echo Html::submitButton('Deny to join', ['class' => 'btn btn-danger', 'id' => 'btnDeny', 'data-user' => $request->user_profile_id]);
                     ?>
                 </div>
             </div>

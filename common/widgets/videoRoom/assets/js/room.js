@@ -728,7 +728,7 @@ const handleMQTTPaho = () => {
   };
   
   $(document).on("click", "#btnJoin", function (e) {
-    joinHandler("request", user_id);
+    joinHandler("request", user_profile_id);
   });
   
   $(document).on("click", "#btnAllow", function (e) {
@@ -739,10 +739,10 @@ const handleMQTTPaho = () => {
     joinHandler("deny", $(this).data("user"));
   });
   
-  function joinHandler(action, user_id) {
+  function joinHandler(action, user_profile_id) {
     $.post({
       url: "/room/join/" + action,
-      data: { uuid: room_uuid, user_id },
+      data: { uuid: room_uuid, user_profile_id },
       cache: false,
     });
   }
