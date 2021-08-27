@@ -6,7 +6,7 @@ use yii\base\Widget;
 
 class ModalScheduledRoomMemberWidget extends Widget
 {
-    public $user_id;
+    public $user_profile_id;
     public $room_id;
     public $uuid;
     public $title;
@@ -24,7 +24,7 @@ class ModalScheduledRoomMemberWidget extends Widget
         return $this->render(
             '_modal',
             [
-                'user_id' => $this->user_id,
+                'user_profile_id' => $this->user_profile_id,
                 'room_id' => $this->room_id,
                 'uuid' => $this->uuid,
                 'title' => $this->title,

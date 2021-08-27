@@ -148,10 +148,10 @@ echo Html::input('hidden', 'room_id', $room_id);
                     <?php
                     if (count($members) > 0) {
                         foreach ($members as $member) {
-                            $removeButton = '<a href="#"><i class="fas fa-times-circle" onClick="removeMemberFromList(' . $member->user_id . ');"></i></a>';
-                            $removeButton = ($owner_id != $member->user_id ? $removeButton : null);
+                            $removeButton = '<a href="#"><i class="fas fa-times-circle" onClick="removeMemberFromList(' . $member->user_profile_id . ');"></i></a>';
+                            $removeButton = ($owner_id != $member->user_profile_id ? $removeButton : null);
                     ?>
-                            <li class="list-group-item d-flex justify-content-between align-items-center" data-member-id="<?= $member->user_id ?>">
+                            <li class="list-group-item d-flex justify-content-between align-items-center" data-member-id="<?= $member->user_profile_id ?>">
                                 <?= $member->user->username ?>
                                 <?= $removeButton ?>
                             </li>
