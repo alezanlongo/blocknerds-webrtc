@@ -4,13 +4,15 @@ namespace frontend\controllers;
 
 use common\models\ChatForm;
 use common\models\LoginForm;
+use common\models\RoomMemberRepository;
 use common\models\User;
+use common\models\UserSetting;
 use frontend\models\ContactForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
-use frontend\models\UserRoomRepository;
+
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -79,14 +81,13 @@ class SiteController extends Controller
 
     public function actionVideoRoom($roomUuid)
     {
-        $token = UserRoomRepository::getUserTokenByRoom(Yii::$app->getUser()->getId(), $roomUuid);
-        
+        $token = RoomMemberRepository::getMemberTokenByRoom(Yii::$app->getUser()->getId(), $roomUuid);
+
         if (null === $token) {
             throw new NotFoundHttpException();
         }
-        
+
         Yii::$app->janusApi->videoRoomCreate($token->room_id);
-        
     }
 
 
@@ -143,7 +144,13 @@ class SiteController extends Controller
      * @return mixed
      */
     public function actionIndex()
+    // {
     {
+        // $res = UserSetting::setValue(Yii::$app->getUser()->getId(), 'view_mode2', 'calendar', 'month');
+        // $res = UserSetting::getSetting(Yii::$app->getUser()->getId(), 'test', 'calendar');
+        $res = \strtotime('2021-08-27 11:00:00');
+        \var_dump($res,date('Y-m-d H:i:s','1630072316'));
+        die;
         return $this->render('index');
     }
 

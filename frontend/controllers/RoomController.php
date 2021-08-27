@@ -306,7 +306,7 @@ class RoomController extends \yii\web\Controller
         if ($meeting->load($fields) && $meeting->save()) {
             $room = new Room();
             $room->meeting_id = $meeting->id;
-            $room->status = Room::STATUS_CREATED;
+            $room->status = Room::STATUS_PENDING;
             $room->save();
 
             $member = new RoomMember();

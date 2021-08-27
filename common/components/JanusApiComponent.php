@@ -2,9 +2,13 @@
 
 namespace common\components;
 
+use common\components\janusApi\JanusCommonException;
 use common\traits\HttpClientTrait;
+use Exception as GlobalException;
+use phpDocumentor\Reflection\Types\Boolean;
 use Ramsey\Uuid\Uuid;
 use yii\base\Component;
+use yii\base\InvalidConfigException;
 use yii\httpclient\Client;
 use yii\httpclient\Exception;
 use yii\httpclient\Exception as HttpClientException;
@@ -43,9 +47,13 @@ class JanusApiComponent extends Component
 
     public function videoRoomCreate(string $uuid, string $description = '')
     {
-        $this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'create', 'room' => $uuid, 'description' => $description, 'is_private' => true, 'publisher' => 10, 'admin_key' => $this->apiParams['adminKey']], 'transaction' =>  $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
-        if (!$res->isOk) {
+
+        try {
+            $this->attach('janus.plugin.videoroom');
+            $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'create', 'room' => $uuid, 'description' => $description, 'is_private' => true, 'publisher' => 10, 'admin_key' => $this->apiParams['adminKey']], 'transaction' =>  $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        } catch (Exception $e) {
+            $this->lastError = $this->exceptionFormatter('janus server not found', $e);
+            throw new JanusCommonException($this->lastError, 404);
         }
         $data = $res->getData();
         if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'created') {
@@ -58,13 +66,25 @@ class JanusApiComponent extends Component
         return false;
     }
 
-    public function videoRoomExists(string $roomUuid)
+    /**
+     * 
+     * @param string $roomUuid
+     * @return Boolean true if room exists, false if not
+     * @throws Exception 
+     * @throws InvalidConfigException 
+     */
+    public function videoRoomExists(string $roomUuid): bool
     {
-        $this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'exists', 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
-        $data = $res->getData();
+        try {
+            $this->attach('janus.plugin.videoroom');
+            $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'exists', 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+            $data = $res->getData();
+        } catch (Exception $e) {
+            $this->lastError = $this->exceptionFormatter('janus server not found', $e);
+            throw new JanusCommonException($this->lastError, 404);
+        }
         if (isset($data['plugindata']['data']['videoroom']) && isset($data['plugindata']['data']['exists']) && $data['plugindata']['data']['videoroom'] == 'success') {
-            return $data['plugindata']['data']['exists'];
+            return \boolval($data['plugindata']['data']['exists']);
         }
         return false;
     }
@@ -290,5 +310,10 @@ class JanusApiComponent extends Component
             'class' => Client::class,
             'baseUrl' => ($isAdmin === true ? $this->apiParams['adminBaseUrl'] : $this->apiParams['baseUrl']) . ($uri !== null ? '/' . $uri : null)
         ]);
+    }
+
+    private function exceptionFormatter($message, Exception $e)
+    {
+        return $message . ' - ' . $e->getFile() . ':' . $e->getLine();
     }
 }
