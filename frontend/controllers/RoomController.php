@@ -10,6 +10,7 @@ use common\models\User;
 use common\models\Meeting;
 use common\models\RoomMember;
 use common\models\RoomRequest;
+use common\models\UserProfile;
 use common\models\UserSetting;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
@@ -52,16 +53,19 @@ class RoomController extends \yii\web\Controller
             return throw new NotFoundHttpException("Meeting not found.");
         }
 
-        $user_id = Yii::$app->user->getId();
+        $user = Yii::$app->user->identity;
+        $profile = $user->getUserProfile()->one();
+
         $limit_members = Yii::$app->params['janus.roomMaxMembersAllowed'];
         $is_owner = false;
         $is_allowed = false;
         $status = null;
         $request = null;
-        if ($user_id == $meeting->owner_id) {
+
+        if ($profile->id == $meeting->owner_id) {
             $is_owner = true;
         } else {
-            $request = RoomRequest::find()->where(['room_id' => $room->id, 'user_id' => $user_id])->limit(1)->one();
+            $request = RoomRequest::find()->where(['room_id' => $room->id, 'user_profile_id' => $profile->id])->limit(1)->one();
             $status = $request->status ?? null;
             $is_allowed = $status === RoomRequest::STATUS_ALLOW;
         }
@@ -71,20 +75,27 @@ class RoomController extends \yii\web\Controller
             $requests = RoomRequest::find()->with("user")->where(['room_id' => $room->id, 'status' => RoomRequest::STATUS_PENDING])->all();
         }
 
-        $subQuery = RoomMember::find()
+        $profileIds = RoomMember::find()
             ->andWhere(['room_id' => $room->id])
-            ->select('user_id');
-        $query = User::find()->where(['in', 'id', $subQuery])->select('id, username');
+            ->select('user_profile_id');
 
-        $members = $query->asArray()->all();
+        $usersIds = UserProfile::find()->where(['in', 'id', $profileIds])
+            ->select('user_id');
+
+        $users = User::find()->where(['in', 'id', $usersIds])
+            ->select('id, username');
+
+        $members = $users->asArray()->all();
 
         if (count($members) > $limit_members) {
             var_dump("No possible add more members can't be in this room. The limit is " . $limit_members);
             die;
         }
-        $members = $query->all();
+
+        $members = $users->all();
+
         if ($is_owner || $is_allowed || Yii::$app->janusApi->videoRoomExists($uuid) === true) {
-            $userToken = RoomMember::find()->select('token')->where(['user_id' => $user_id, 'room_id' => $room->id])->limit(1)->one();
+            $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
             $token = $userToken->token ?? null;
             $res = Yii::$app->janusApi->addUserToken($uuid, $token);
         }
@@ -106,11 +117,13 @@ class RoomController extends \yii\web\Controller
 
     public function actionCreate()
     {
-        $userId = Yii::$app->user->identity->getId();
+        $user = Yii::$app->user->identity;
+        $profile = $user->getUserProfile()->one();
+
         $meeting = new Meeting();
 
         $fields['Meeting']['title'] = Meeting::DEFAULT_TITLE;
-        $fields['Meeting']['owner_id'] = $userId;
+        $fields['Meeting']['owner_id'] = $profile->id;
         $fields['Meeting']['duration'] = Meeting::DEFAULT_DURATION;
         $fields['Meeting']['scheduled_at'] = time();
         $fields['Meeting']['reminder_time'] = 0;
@@ -119,6 +132,7 @@ class RoomController extends \yii\web\Controller
         if ($meeting->load($fields) && $meeting->save()) {
             $room = new Room();
             $room->meeting_id = $meeting->id;
+            $room->is_quick = true;
             $room->status = Room::STATUS_CREATED;
             $room->save();
 
@@ -126,7 +140,7 @@ class RoomController extends \yii\web\Controller
 
             $memberOwner = new RoomMember();
             $memberOwner->room_id = $room->id;
-            $memberOwner->user_id = $userId;
+            $memberOwner->user_profile_id = $profile->id;
             $memberOwner->save();
 
             return $this->redirect([$room->uuid]);
@@ -136,13 +150,13 @@ class RoomController extends \yii\web\Controller
     public function actionJoinRequest()
     {
         $uuid = $this->request->post('uuid') ?? null;
-        $user_id = $this->request->post('user_id') ?? null;
+        $user_profile_id = $this->request->post('user_profile_id') ?? null;
 
-        $room = $this->joinRequestCheck($uuid, $user_id);
+        $room = $this->joinRequestCheck($uuid, $user_profile_id);
 
         $request = RoomRequest::find()->where([
             'room_id' => $room->id,
-            'user_id' => $user_id
+            'user_profile_id' => $user_profile_id
         ])->limit(1)->one();
 
         if ($request) {
@@ -160,7 +174,7 @@ class RoomController extends \yii\web\Controller
             $request->status = RoomRequest::STATUS_PENDING;
         } else {
             $request = new RoomRequest();
-            $request->user_id = $user_id;
+            $request->user_profile_id = $user_profile_id;
             $request->room_id = $room->id;
             $request->status = RoomRequest::STATUS_PENDING;
             $request->attempts += 1;
@@ -171,7 +185,7 @@ class RoomController extends \yii\web\Controller
             $response = [
                 'type' => 'request_join',
                 'status' => $request->status,
-                'user_id' => $user_id,
+                'user_profile_id' => $user_profile_id,
             ];
 
             Yii::$app->mqtt->sendMessage($topic, $response);
@@ -185,13 +199,13 @@ class RoomController extends \yii\web\Controller
     public function actionJoin($action)
     {
         $uuid = $this->request->post('uuid') ?? null;
-        $user_id = $this->request->post('user_id') ?? null;
+        $user_profile_id = $this->request->post('user_profile_id') ?? null;
 
-        $room = $this->joinRequestCheck($uuid, $user_id);
+        $room = $this->joinRequestCheck($uuid, $user_profile_id);
 
         $request = RoomRequest::find()->where([
             'room_id' => $room->id,
-            'user_id' => $user_id
+            'user_profile_id' => $user_profile_id
         ])->limit(1)->one();
 
         if (!$request)
@@ -209,7 +223,7 @@ class RoomController extends \yii\web\Controller
 
             if ($request->status == RoomRequest::STATUS_ALLOW) {
                 $member = new RoomMember();
-                $member->user_id = $request->user_id;
+                $member->user_profile_id = $request->user_profile_id;
                 $member->room_id = $request->room_id;
                 $member->save();
             }
@@ -219,7 +233,7 @@ class RoomController extends \yii\web\Controller
         $response = [
             'type' => 'response_join',
             'status' => $request->status,
-            'user_id' => $user_id,
+            'user_profile_id' => $user_profile_id,
         ];
 
         Yii::$app->mqtt->sendMessage($topic, $response);
@@ -227,9 +241,9 @@ class RoomController extends \yii\web\Controller
         return Json::encode($request);
     }
 
-    private function joinRequestCheck($uuid = null, $user_id = null)
+    private function joinRequestCheck($uuid = null, $user_profile_id = null)
     {
-        if (!$uuid || !$user_id) {
+        if (!$uuid || !$user_profile_id) {
             return throw new UnprocessableEntityHttpException("One or more parameters are empty.");
         }
 
@@ -245,13 +259,13 @@ class RoomController extends \yii\web\Controller
             return throw new NotFoundHttpException("Meeting not found.");
         }
 
-        $user = User::find()->where(['id' => $user_id])->limit(1)->one();
+        $profile = UserProfile::find()->where(['id' => $user_profile_id])->limit(1)->one();
 
-        if (!$user) {
+        if (!$profile) {
             return throw new NotFoundHttpException("User not found.");
         }
 
-        if ($meeting->owner_id == $user->id) {
+        if ($meeting->owner_id == $profile->id) {
             return throw new UnprocessableEntityHttpException("Owner is member by default.");
         }
 
@@ -267,20 +281,19 @@ class RoomController extends \yii\web\Controller
         if (!is_null($q)) {
 
             $users = User::find()
-                ->select(['id', 'username'])
-                ->where(['status' => User::STATUS_ACTIVE])
-                ->andWhere(['LIKE', 'username', $q])
-                ->andWhere(['NOT IN', 'id', Yii::$app->user->identity->getId()])
+                ->select(['user_profile.id', '"user".username'])
+                ->where(['"user".status' => User::STATUS_ACTIVE])
+                ->andWhere(['LIKE', '"user".username', $q])
+                ->andWhere(['NOT IN', '"user".id', Yii::$app->user->identity->getId()])
+                ->leftJoin('user_profile', 'user_profile.user_id = "user".id')
                 ->limit(10);
 
             if (!is_null($room_id)) {
-                $idMembers = RoomMember::find()->where(["room_id" => $room_id])->select(['user_id']);
-                $users->andWhere(['NOT IN', 'id', $idMembers]);
+                $idMembers = RoomMember::find()->where(["room_id" => $room_id])->select(['user_profile_id']);
+                $users->andWhere(['NOT IN', 'user_profile.id', $idMembers]);
             }
 
             $out['results'] = array_values($users->all());
-        } elseif ($id > 0) {
-            $out['results'] = ['id' => $id, 'username' => User::find($id)->username];
         }
 
         return $out;
@@ -288,37 +301,39 @@ class RoomController extends \yii\web\Controller
 
     public function actionCreateSchedule()
     {
-        $user_id = Yii::$app->user->identity->getId();
+        $user = Yii::$app->user->identity;
+        $profile = $user->getUserProfile()->one();
 
         $meeting = new Meeting();
 
         $fields['Meeting']['title'] =  Yii::$app->request->post("title");
         $fields['Meeting']['description'] =  Yii::$app->request->post("description", null);
-        $fields['Meeting']['owner_id'] = $user_id;
+        $fields['Meeting']['owner_id'] = $profile->id;
         $fields['Meeting']['duration'] = Yii::$app->request->post("duration");
 
         $datetimepicker = new DateTime(Yii::$app->request->post("datetimepicker"));
         $fields['Meeting']['scheduled_at'] = $datetimepicker->getTimestamp();
 
-        $fields['Meeting']['reminder_time'] = Yii::$app->request->post("reminder_time", 0);
-        $fields['Meeting']['allow_waiting'] = Yii::$app->request->post("allow_waiting", 0);
+        $fields['Meeting']['reminder_time'] = (int)Yii::$app->request->post("reminder_time", 0);
+        $fields['Meeting']['allow_waiting'] = (bool)Yii::$app->request->post("allow_waiting", 0);
 
         $members = Yii::$app->request->post("username");
 
         if ($meeting->load($fields) && $meeting->save()) {
             $room = new Room();
             $room->meeting_id = $meeting->id;
-            $room->status = Room::STATUS_CREATED;
+            $room->is_quick = false;
+            $room->status = Room::STATUS_PENDING;
             $room->save();
 
             $member = new RoomMember();
-            $member->user_id = $user_id;
             $member->room_id = $room->id;
+            $member->user_profile_id = $profile->id;
             $member->save();
 
             foreach ($members as $k => $id) {
                 $member = new RoomMember();
-                $member->user_id = (int)$id;
+                $member->user_profile_id = (int)$id;
                 $member->room_id = $room->id;
                 $member->save();
             }
@@ -362,7 +377,7 @@ class RoomController extends \yii\web\Controller
 
                 foreach ($members["username"] as $k => $id) {
                     $member = new RoomMember();
-                    $member->user_id = (int)$id;
+                    $member->user_profile_id = (int)$id;
                     $member->room_id = $room->id;
                     $member->save();
                 }
@@ -376,14 +391,15 @@ class RoomController extends \yii\web\Controller
 
     function actionCalendar()
     {
-        $user_id = Yii::$app->user->getId();
+        $user = Yii::$app->user->identity;
+        $profile = $user->getUserProfile()->one();
 
         if (Yii::$app->request->isPost) {
 
             $value = $this->request->post('initialView');
 
-            if ($user_id && $value) {
-                $userSetting = UserSetting::setValue($user_id, 'initialView', UserSetting::GROUP_NAME_CALENDAR, $value);
+            if ($user && $value) {
+                $userSetting = UserSetting::setValue($user->id, 'initialView', UserSetting::GROUP_NAME_CALENDAR, $value);
 
                 return Json::encode($userSetting);
             }
@@ -393,7 +409,7 @@ class RoomController extends \yii\web\Controller
 
         $roomSelected = null;
         $roomMembers = [];
-        $initialView = UserSetting::getSetting($user_id, 'initialView', UserSetting::GROUP_NAME_CALENDAR);
+        $initialView = UserSetting::getSetting($user->id, 'initialView', UserSetting::GROUP_NAME_CALENDAR);
 
         if (Yii::$app->request->isAjax) {
             $room_id = Yii::$app->request->get("room_id", 0);
@@ -404,18 +420,18 @@ class RoomController extends \yii\web\Controller
         }
 
         return $this->render('calendar', [
-            'user_id' => $user_id,
+            'user_profile_id' => $profile->id,
             'roomSelected' => $roomSelected,
             'roomMembers' => $roomMembers,
             'initialView' => $initialView ? $initialView->value : 'listWeek'
         ]);
     }
 
-    function actionFetchCalendarEvents($user_id)
+    function actionFetchCalendarEvents($id)
     {
         $formatter = \Yii::$app->formatter;
 
-        $subQuery = RoomMember::find()->where(["user_id" => $user_id])->select(['room_id']);
+        $subQuery = RoomMember::find()->where(["user_profile_id" => $id])->select(['room_id']);
         $rooms = Room::find()->where(['in', 'id', $subQuery])->all();
 
         $events = [];

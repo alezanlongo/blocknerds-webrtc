@@ -9,7 +9,7 @@ use yii\behaviors\TimestampBehavior;
  * This is the model class for table "room_member".
  *
  * @property int $room_id
- * @property int $user_id
+ * @property int $user_profile_id
  * @property string $token
  * @property int $created_at
  * @property int $updated_at
@@ -40,11 +40,11 @@ class RoomMember extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['room_id', 'user_id'], 'required'],
-            [['room_id', 'user_id', 'created_at', 'updated_at'], 'integer'],
-            [['room_id', 'user_id'], 'unique', 'targetAttribute' => ['room_id', 'user_id']],
+            [['room_id', 'user_profile_id'], 'required'],
+            [['room_id', 'user_profile_id', 'created_at', 'updated_at'], 'integer'],
+            [['room_id', 'user_profile_id'], 'unique', 'targetAttribute' => ['room_id', 'user_profile_id']],
             [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::class, 'targetAttribute' => ['room_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['user_profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserProfile::class, 'targetAttribute' => ['user_profile_id' => 'id']],
             ['token', 'string', 'max' => 36],
             ['token', 'unique'],
             ['token', 'thamtech\uuid\validators\UuidValidator'],
@@ -58,7 +58,7 @@ class RoomMember extends \yii\db\ActiveRecord
     {
         return [
             'room_id' => 'Room ID',
-            'user_id' => 'User ID',
+            'user_profile_id' => 'User Profile ID',
             'token' => 'Token',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -82,7 +82,8 @@ class RoomMember extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
+        $profile = UserProfile::findOne($this->user_profile_id);
+        return $profile->getUser()->one();
     }
 
     /**
@@ -92,7 +93,7 @@ class RoomMember extends \yii\db\ActiveRecord
      */
     public function getRequest()
     {
-        return $this->hasOne(RoomRequest::class, ['room_id' => 'room_id', 'user_id' => 'user_id']);
+        return $this->hasOne(RoomRequest::class, ['room_id' => 'room_id', 'user_profile_id' => 'user_profile_id']);
     }
 
     public function beforeSave($insert)

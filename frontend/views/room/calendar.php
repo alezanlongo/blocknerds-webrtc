@@ -25,7 +25,7 @@ $this->registerJsFile(
     ]
 );
 
-$this->registerJsVar('user_id', Yii::$app->getUser()->getId());
+$this->registerJsVar('user_profile_id', $user_profile_id);
 
 $this->registerJsVar('initialView', $initialView);
 
@@ -55,9 +55,9 @@ ActiveForm::end();
 Pjax::begin(['id' => 'calendar-request', "options" => ["class" => ""]]);
 
 if ($roomSelected) {
-    if ($roomSelected->meeting->owner_id == $user_id) {
+    if ($roomSelected->meeting->owner_id == $user_profile_id) {
         echo ModalScheduledRoomOwnerWidget::widget([
-            'user_id' => $user_id,
+            'user_profile_id' => $user_profile_id,
             'room_id' => $roomSelected->id,
             'uuid' => $roomSelected->uuid,
             'owner_id' => $roomSelected->meeting->owner_id,
@@ -71,7 +71,7 @@ if ($roomSelected) {
         ]);
     } else {
         echo ModalScheduledRoomMemberWidget::widget([
-            'user_id' => $user_id,
+            'user_profile_id' => $user_profile_id,
             'room_id' => $roomSelected->id,
             'uuid' => $roomSelected->uuid,
             'title' => $roomSelected->meeting->title,
@@ -101,21 +101,21 @@ Modal::begin([
         'data-backdrop' => "static",
         'data-keyboard' => "false"
     ],
-]); 
-echo Html::tag('h3','', ['class'=>'summaryTitle']);
-echo Html::tag('p','', ['class'=>'summaryDescription']);
-echo Html::tag('p','', ['class'=>'summaryTime']);
-echo Html::tag('p','', ['class'=>'summaryDuration']);
-echo Html::tag('p','', ['class'=>'summaryReminderTime']);
-echo Html::tag('p','', ['class'=>'summaryIsWaiting']);
-echo Html::tag('p','', ['class'=>'summaryMembers']);
+]);
+echo Html::tag('h3', '', ['class' => 'summaryTitle']);
+echo Html::tag('p', '', ['class' => 'summaryDescription']);
+echo Html::tag('p', '', ['class' => 'summaryTime']);
+echo Html::tag('p', '', ['class' => 'summaryDuration']);
+echo Html::tag('p', '', ['class' => 'summaryReminderTime']);
+echo Html::tag('p', '', ['class' => 'summaryIsWaiting']);
+echo Html::tag('p', '', ['class' => 'summaryMembers']);
 ?>
 <div class="modal-footer">
     <p class="pull-left">
-        <?= Html::tag('button','Cancel', [
+        <?= Html::tag('button', 'Cancel', [
             'class' => 'btn btn-default btnCancelMeet'
         ]); ?>
-        <?= Html::tag('button','Confirm', [
+        <?= Html::tag('button', 'Confirm', [
             'class' => 'btn btn-primary btnConfirmMeet'
         ]); ?>
     </p>
