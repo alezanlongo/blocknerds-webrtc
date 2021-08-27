@@ -26,7 +26,7 @@ $this->registerJsFile(
     ]
 );
 
-$this->registerJsVar('user_id', Yii::$app->getUser()->getId());
+$this->registerJsVar('user_profile_id', $user_profile_id);
 
 $this->registerJsVar('initialView', $initialView);
 
@@ -56,9 +56,9 @@ ActiveForm::end();
 Pjax::begin(['id' => 'calendar-request', "options" => ["class" => ""]]);
 
 if ($roomSelected) {
-    if ($roomSelected->meeting->owner_id == $user_id) {
+    if ($roomSelected->meeting->owner_id == $user_profile_id) {
         echo ModalScheduledRoomOwnerWidget::widget([
-            'user_id' => $user_id,
+            'user_profile_id' => $user_profile_id,
             'room_id' => $roomSelected->id,
             'uuid' => $roomSelected->uuid,
             'owner_id' => $roomSelected->meeting->owner_id,
@@ -72,7 +72,7 @@ if ($roomSelected) {
         ]);
     } else {
         echo ModalScheduledRoomMemberWidget::widget([
-            'user_id' => $user_id,
+            'user_profile_id' => $user_profile_id,
             'room_id' => $roomSelected->id,
             'uuid' => $roomSelected->uuid,
             'title' => $roomSelected->meeting->title,

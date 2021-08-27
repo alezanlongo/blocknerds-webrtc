@@ -15,7 +15,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int $duration
  * @property int $scheduled_at
  * @property int $reminder_time
- * @property int $allow_waiting
+ * @property boolean $allow_waiting
  * @property int $created_at
  * @property int $updated_at
  *
@@ -48,8 +48,9 @@ class Meeting extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'owner_id', 'duration', 'scheduled_at'], 'required'],
-            [['owner_id', 'duration', 'scheduled_at', 'reminder_time', 'allow_waiting', 'created_at', 'updated_at'], 'integer'],
+            [['owner_id', 'duration', 'scheduled_at', 'reminder_time', 'created_at', 'updated_at'], 'integer'],
             [['title', 'description'], 'string', 'max' => 255],
+            ['allow_waiting', 'boolean'],
         ];
     }
 

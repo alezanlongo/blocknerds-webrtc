@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         aspectRatio: 3,
         initialView: initialView,
         headerToolbar: { center: 'listWeek,dayGridMonth,dayGridWeek' },
-        events: "room/calendar/events/" + user_id,
+        events: "room/calendar/events/" + user_profile_id,
         views: {
             month: {
                 dayMaxEvents: 2
@@ -305,9 +305,9 @@ function addMemberToList(user) {
   });
 }
 
-function removeMemberFromList(user_id) {
+function removeMemberFromList(user_profile_id) {
   $(".current-member-list")
-    .find("[data-member-id=" + user_id + "]")
+    .find("[data-member-id=" + user_profile_id + "]")
     .remove();
 }
 

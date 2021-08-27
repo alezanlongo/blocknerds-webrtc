@@ -12,6 +12,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int $meeting_id
  * @property string $uuid
  * @property int $status
+ * @property boolean $is_quick
  * @property int $created_at
  * @property int $updated_at
  *
@@ -48,6 +49,7 @@ class Room extends \yii\db\ActiveRecord
         return [
             [['meeting_id'], 'required'],
             [['meeting_id', 'status', 'created_at', 'updated_at'], 'integer'],
+            ['is_quick', 'boolean'],
             ['uuid', 'string', 'max' => 36],
             ['uuid', 'unique'],
             ['uuid', 'thamtech\uuid\validators\UuidValidator'],
@@ -65,6 +67,7 @@ class Room extends \yii\db\ActiveRecord
             'meeting_id' => 'Meeting ID',
             'uuid' => 'Uuid',
             'status' => 'Status',
+            'is_quick' => 'Is quick',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

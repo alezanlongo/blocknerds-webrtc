@@ -47,7 +47,7 @@ return [
                 'GET room/user-list' => 'room/user-list',
                 'GET room/waiting/<uuid>' => 'room/waiting',
                 'GET room/calendar' => 'room/calendar',
-                'GET room/calendar/events/<user_id>' => 'room/fetch-calendar-events',
+                'GET room/calendar/events/<id>' => 'room/fetch-calendar-events',
                 'GET room/<uuid>' => 'room',
                 'POST room/join/request' => 'room/join-request',
                 'POST room/time/expired' => 'room/time-expired',
