@@ -95,6 +95,15 @@ class m130524_201442_init extends Migration
             'updated_at' => $this->integer()->notNull(),
         ]);
 
+        $this->addForeignKey(
+            '{{%fk-meeting-owner_id}}',
+            '{{%meeting}}',
+            'owner_id',
+            '{{%user_profile}}',
+            'id',
+            'CASCADE'
+        );
+
         // room
         $this->execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
 
