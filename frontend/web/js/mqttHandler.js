@@ -1,4 +1,6 @@
 const EVENT_TYPE_REQUEST_JOIN = "request_join";
+const EVENT_TYPE_REQUEST_TIME_OVER = "request_time_over";
+const EVENT_TYPE_RESPONSE_TIME_OVER_ADD = "response_time_over_add";
 const EVENT_TYPE_RESPONSE_JOIN = "response_join";
 const EVENT_TYPE_TOGGLE_MUTE = "toggle_mute_remote";
 const wsbroker = "localhost"; // mqtt websocket enabled broker
@@ -17,6 +19,17 @@ client.onConnectionLost = function (responseObject) {
 
 client.onMessageArrived = function (message) {
   const objData = JSON.parse(message.payloadString);
+  console.log(objData)
+
+  if (objData.type === EVENT_TYPE_REQUEST_TIME_OVER && isOwner) {
+    $("#requestAddMoreTime").modal("show");
+  }
+  if (objData.type === EVENT_TYPE_RESPONSE_TIME_OVER_ADD) {
+    $.pjax.reload({ container: "#time-down-counter-2", async: false });
+    if (isOwner) {
+      $("#requestAddMoreTime").modal("hide");
+    }
+  }
 
   if (objData.type === EVENT_TYPE_TOGGLE_MUTE && userId === objData.data.user_id) {
     $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");

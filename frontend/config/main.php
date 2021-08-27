@@ -50,6 +50,8 @@ return [
                 'GET room/calendar/events/<user_id>' => 'room/fetch-calendar-events',
                 'GET room/<uuid>' => 'room',
                 'POST room/join/request' => 'room/join-request',
+                'POST room/time/expired' => 'room/time-expired',
+                'POST room/time/add' => 'room/add-time',
                 'POST room/join/<action:(allow|deny)>' => 'room/join',
             ],
         ],

@@ -1,6 +1,7 @@
 <?php
 /* @var $this yii\web\View */
 
+use aneeshikmat\yii2\Yii2TimerCountDown\Yii2TimerCountDown;
 use common\models\RoomRequest;
 use frontend\assets\Janus\JanusAsset;
 use yii\web\View;
@@ -33,6 +34,13 @@ $this->registerJsFile(
         'position' => View::POS_END
     ]
 );
+$this->registerJsFile(
+    Yii::$app->request->BaseUrl . '/js/countdown.js',
+    [
+        'depends' => "yii\web\JqueryAsset",
+        'position' => View::POS_END
+    ]
+);
 
 $this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/room.js',
@@ -42,15 +50,25 @@ $this->registerJsFile(
     ]
 );
 
-
 $this->title = 'The Room';
 ?>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
     <div class="main-content">
         <div class="header-content d-flex pt-3">
-            <div class=" flex-grow-1 text-center ">
-                <h3> 4:34 left </h3>
+            <div class=" flex-grow-1 text-center  ">
+                <?php Pjax::begin(['id' => 'time-down-counter-2']); ?>
+                <?= Yii2TimerCountDown::widget([
+                    'countDownIdSelector' => 'time-down-counter-2',
+                    'countDownDate' => strtotime('+' . $time . ' seconds') * 1000, // You most * 1000 to convert time to milisecond
+                    'countDownResSperator' => ':',
+                    'countDownOver' => 'Expired time',
+                    'countDownReturnData' => 'from-hours',
+                    'getTemplateResult' => 0,
+                    'addServerTime' => true,
+                    'callBack' => 'handleCountDownOver()'
+                ]) ?>
+                <?php Pjax::end(); ?>
             </div>
             <div class="options-tab d-flex ">
                 <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
@@ -180,7 +198,7 @@ if ($is_owner) {
                     ?>
                 </div>
             </div>
-<?
+    <?
         }
     } else {
         echo "<script>if (window.jQuery) $('#pendingRequests').modal('hide');</script>";
@@ -189,5 +207,19 @@ if ($is_owner) {
 }
 Pjax::end();
 
+Modal::end();
+
+Modal::begin([
+    'title' => 'Required more time?',
+    'id' => 'requestAddMoreTime',
+    'options' => [
+        'data-backdrop' => "static",
+        'data-keyboard' => "false"
+    ],
+]);
+if ($is_owner) { ?>
+    <?= Html::submitButton('Yes', ['class' => 'btn btn-success', 'id' => 'btnAddMoreTime']); ?>
+
+<? }
 Modal::end();
 ?>

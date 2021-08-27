@@ -43,6 +43,7 @@ const SUBSCRIBER_MODE =
 let myStream = null;
 let feeds = [];
 let bitrateTimer = [];
+
 ////////////////////////////////////////////////////////////
 ///////////   ON READY
 ////////////////////////////////////////////////////////////
@@ -58,7 +59,7 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
-    initJanus();
+    // initJanus();
   }
 });
 

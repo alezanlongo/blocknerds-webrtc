@@ -88,6 +88,22 @@ class RoomController extends \yii\web\Controller
             $token = $userToken->token ?? null;
             $res = Yii::$app->janusApi->addUserToken($uuid, $token);
         }
+        // TODO: calculate from duration, time of meet and now etc
+        date_default_timezone_set("America/New_York");
+        $dateEnd=strtotime("08:25 August 27 2021");
+
+        if (Yii::$app->request->isAjax){
+            // set new time on meet or add new field to show how much add
+            $dateEnd=strtotime("11:03 August 27 2021");    
+        }
+
+        // var_dump(date("Y-m-d h:i:sa", $dateEnd));
+        // die;
+        $time = $dateEnd - time(); 
+
+        // var_dump($time);
+        // var_dump(date("Y-m-d h:i:sa", $time));
+        // die;
 
         return $this->render('index', [
             //'token' => Yii::$app->janusApi->createHmacToken(),
@@ -101,6 +117,7 @@ class RoomController extends \yii\web\Controller
             'uuid' => $uuid,
             'request' => $request,
             'requests' => $requests,
+            'time' => $time
         ]);
     }
 
@@ -427,5 +444,40 @@ class RoomController extends \yii\web\Controller
         }
 
         return Json::encode($events);
+    }
+
+    public function actionTimeExpired()
+    {
+        $uuid = $this->request->post('uuid') ?? null;
+        $user_id = $this->request->post('user_id') ?? null;
+
+        // $room = $this->joinRequestCheck($uuid, $user_id);
+
+        $topic = "/room/{$uuid}";
+        $response = [
+            'type' => 'request_time_over',
+            // 'user_id' => $user_id,
+        ];
+
+        Yii::$app->mqtt->sendMessage($topic, $response);
+
+        return Json::encode($uuid);
+    }
+
+    public function actionAddTime()
+    {
+        $uuid = $this->request->post('uuid') ?? null;
+        $user_id = $this->request->post('user_id') ?? null;
+
+        // $room = $this->joinRequestCheck($uuid, $user_id);
+
+        $topic = "/room/{$uuid}";
+        $response = [
+            'type' => 'response_time_over_add',
+        ];
+
+        Yii::$app->mqtt->sendMessage($topic, $response);
+
+        return Json::encode($uuid);
     }
 }
