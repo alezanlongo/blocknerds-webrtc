@@ -1,0 +1,15 @@
+a.fc-list-day-text {
+  color: black;
+  text-decoration: none;
+}
+
+a:hover {
+  color: black;
+  text-decoration: none;
+}
+
+tr.fc-list-event:hover {
+  background-color: transparent;
+  color: black;
+  cursor: pointer;
+}

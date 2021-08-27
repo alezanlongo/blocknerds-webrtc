@@ -43,19 +43,14 @@ AppAsset::register($this);
             ],
         ]);
         $menuItems = [];
-        if (Yii::$app->user->isGuest) {
-            $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-            $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-        } else {
-            $menuItems[] =
-                [
-                    'label' => Yii::$app->getUser()->getIdentity()->username,
-                    'items' => [
-                        ['label' => 'Edit Profile', 'url' => ['/user/edit-profile']],
-                        ['label' => 'Logout', 'url' => ['/site/logout'], ['data-method' => 'post']],
-                    ]
-                ];
-        }
+        $menuItems[] =
+            [
+                'label' => Yii::$app->getUser()->getIdentity()->username,
+                'items' => [
+                    ['label' => 'Edit Profile', 'url' => ['/user/edit-profile']],
+                    ['label' => 'Logout', 'url' => ['/site/logout'], ['data-method' => 'post']],
+                ]
+            ];
 
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav ml-auto'],
@@ -67,11 +62,11 @@ AppAsset::register($this);
 
     <main role="main" class="flex-shrink-0">
         <div class="container-body">
-        <div class="">
-            <?= Alert::widget([
-                'options' => ['class' => 'alert-style'],
-            ]) ?>
-        </div>
+            <div class="">
+                <?= Alert::widget([
+                    'options' => ['class' => 'alert-style'],
+                ]) ?>
+            </div>
             <?= $content ?>
         </div>
     </main>

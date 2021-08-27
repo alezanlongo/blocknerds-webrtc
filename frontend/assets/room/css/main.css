@@ -1,87 +1,128 @@
+.main-content {
+  width: 90%;
+  height: 100vh;
+  margin: 0 auto;
+}
+.room-content {
+  /* border: black 1px solid; */
+}
+
+.side-content {
+  border-left: #fafafa 1px solid;
+  /* border: black 1px solid; */
+}
+
+.header-content {
+  /* border: black 1px solid; */
+}
 
 .control-section {
-    color: #fafafa !important;
-    width: 100%;
-    justify-content: center;
-    display: flex;
-    background-attachment: scroll;
-    background-position: 0% 0%;
-    position: fixed;
-    bottom: 0pt;
-    left: 0pt;
-  }
+  color: #fafafa !important;
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  background-attachment: scroll;
+  background-position: 0% 0%;
+  position: fixed;
+  bottom: 0pt;
+  left: 0pt;
+}
 
-  .box {
-    margin: 1px;
-    width: 20%;
-    height: fit-content;
-    min-height: 200px;
-    padding: 1%;
-    display: table;
-    border-radius: 5%;
-    position: relative;
-  }
-  
-  .content-video video {
-    border-radius: 5%;
-  }
-  .content-video {
-    margin: 0%;
-    height: auto;
-    width: 100%;
-    margin: 0;
-  
-    padding: 1%;
-  }
-  
-  .username-on-call {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    margin: 25px;
-  }
-  .video-on-call {
-    width: 100%;
-    height: auto;
-  }
-  
-  
-  .control-owner{
-    color: #fafafa;
-    position: absolute;
-    top: 0;
+.box {
+  margin: 1px;
+  /* width: 20%; */
+  height: auto;
+  min-height: 200px;
+  padding: 1%;
+  display: table;
+  border-radius: 5%;
+  position: relative;
+}
+
+.content-video video {
+  border-radius: 5%;
+}
+.content-video {
+  margin: 0%;
+  height: auto;
+  width: 100%;
+  margin: 0;
+  padding: 1%;
+}
+
+.username-on-call {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  margin: 25px;
+}
+.video-on-call {
+  width: 100%;
+  height: auto;
+}
+
+.control-owner {
+  color: #fafafa;
+  position: absolute;
+  /* top: 0;
     left: 0;
-    margin: 15px;
-    z-index: 999999;
-  }
-  
-  .room-videos {
-    max-height: 90vh;
-    display: flex;
-  }
-  .room-section {
-    width: 100%;
-    height: 90vh;
-  }
-  .room-user-control {
-    width: 30%;
-  }
-  .content-calls {
-    height: 70%;
-  }
-  
-  .other-stuff{
-    height: 30%;
-  }
-  
-  .join-again{
-    text-align: center;
-    width: 50%;
-    height: auto;
-    margin: 0 auto;
-    padding: 1%;
-  }
-  .join-again .card{
-    color: #fafafa;
-    background-color: transparent;
-  }
+    margin: 15px; */
+  bottom: 0;
+  right: 0;
+  margin: 20px;
+  z-index: 999999;
+}
+
+.room-videos {
+  max-height: 90vh;
+  /* display: flex; */
+}
+.room-section {
+  width: 100%;
+  height: 90vh;
+}
+.room-user-control {
+  width: 30%;
+}
+.content-calls {
+  height: 70%;
+}
+
+.other-stuff {
+  height: 30%;
+}
+
+.join-again {
+  text-align: center;
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  padding: 1%;
+}
+.join-again .card {
+  color: #fafafa;
+  background-color: transparent;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
+}
+
+.sidebar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 73px;
+  right: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 30px;
+}
+
+#main {
+  transition: margin-left .5s;
+  padding: 16px;
+}

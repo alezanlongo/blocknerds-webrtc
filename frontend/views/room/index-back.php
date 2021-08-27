@@ -1,25 +1,27 @@
 <?php
 /* @var $this yii\web\View */
 
+use common\models\RoomRequest;
+use frontend\assets\Janus\JanusAsset;
 use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
-use yii\bootstrap4\Modal;
-use common\models\RoomRequest;
-use frontend\assets\room\RoomAsset;
-use frontend\assets\Janus\JanusAsset;
 use frontend\assets\pahoMqtt\PahoMqttAsset;
+use frontend\assets\room\RoomAsset;
+use yii\bootstrap4\Button;
+use yii\bootstrap4\Modal;
 use frontend\widgets\imageSlider\ImageSlider;
 
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
 
+$user_id =  Yii::$app->getUser()->getId();
 $this->registerJsVar('limitMembers', $limit_members, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myRoom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
-$this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
+$this->registerJsVar('userId', $user_id, View::POS_END);
 $this->registerJsVar('isOwner', $is_owner, View::POS_END);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
@@ -42,46 +44,48 @@ $this->registerJsFile(
 
 
 $this->title = 'The Room';
+
 ?>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
     <div class="main-content">
-        <div class="header-content d-flex pt-3">
-            <div class=" flex-grow-1 text-center ">
-                <h3> 4:34 left </h3>
-            </div>
-            <div class="options-tab d-flex ">
-                <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
-                    <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true">Settings</a>
-                    </li>
-                    <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false">Attendees</a>
-                    </li>
-                    <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false">Chat</a>
-                    </li>
-                    <li class="nav-item ml-3">
-                        <?= Html::tag('button', "Mute", [
-                            'id' => "mute",
-                            "class" => "btn btn-default text-white",
-                            'onclick' => "toggleMute()"
-                        ]) ?>
-                    </li>
-                    <li class="nav-item ml-3">
-                        <?= Html::tag('button', "Video", [
-                            'id' => "no-video",
-                            "class" => "btn btn-default text-white",
-                            'onclick' => "toggleVideo()"
-                        ]) ?>
-                    </li>
-                    <li class="nav-item ml-3">
-                        <?= Html::tag('button', "Leave", ["class" => "btn btn-danger btn-leave"]) ?>
-                    </li>
-                </ul>
-            </div>
-        </div>
         <div class="room-content" id="main">
+            <div class="header-content d-flex pt-3">
+                <div class=" flex-grow-1 text-center ">
+                    <h3> 4:34 left</h3>
+                </div>
+                <div class="options-tab d-flex ">
+                    <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
+                        <li class="nav-item option-side" role="presentation">
+                            <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true">Settings</a>
+                        </li>
+                        <li class="nav-item option-side" role="presentation">
+                            <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false">Attendees</a>
+                        </li>
+                        <li class="nav-item option-side" role="presentation">
+                            <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false">Chat</a>
+                        </li>
+                        <li class="nav-item ml-3">
+                            <?= Html::tag('button', "Mute", [
+                                'id' => "mute",
+                                "class" => "btn btn-default text-white",
+                                'onclick' => "toggleMute()"
+                            ]) ?>
+                        </li>
+                        <li class="nav-item ml-3">
+                            <?= Html::tag('button', "Video", [
+                                'id' => "no-video",
+                                "class" => "btn btn-default text-white",
+                                'onclick' => "toggleVideo()"
+                            ]) ?>
+                        </li>
+                        <li class="nav-item ml-3">
+                            <?= Html::tag('button', "Leave", ["class" => "btn btn-danger btn-leave"]) ?>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
             <div class="room">
                 <? if ($is_owner || $is_allowed) { ?>
                     <div class="join-again d-none">
@@ -105,15 +109,16 @@ $this->title = 'The Room';
                                 </div>
                             <?php } ?>
                         </div>
+
                     </div>
                 <? } ?>
             </div>
-            <div class="side-content sidebar" id="optionsSidebar">
-                <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
-                    <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">Attendees section</div>
-                    <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
-                </div>
+        </div>
+        <div class="side-content sidebar" id="optionsSidebar">
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
+                <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">Attendees section</div>
+                <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
             </div>
         </div>
     </div>
@@ -173,8 +178,8 @@ if ($is_owner) {
                 <div class="card-header"><?= $request->user->username ?> wants to join the room</div>
                 <div class="card-body">
                     <?
-                    echo Html::submitButton('Allow to join', ['class' => 'btn btn-success', 'id' => 'btnAllow', 'data-user' => $request->user_profile_id]);
-                    echo Html::submitButton('Deny to join', ['class' => 'btn btn-danger', 'id' => 'btnDeny', 'data-user' => $request->user_profile_id]);
+                    echo Html::submitButton('Allow to join', ['class' => 'btn btn-success', 'id' => 'btnAllow', 'data-user' => $request->user_id]);
+                    echo Html::submitButton('Deny to join', ['class' => 'btn btn-danger', 'id' => 'btnDeny', 'data-user' => $request->user_id]);
                     ?>
                 </div>
             </div>

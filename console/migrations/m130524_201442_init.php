@@ -75,11 +75,11 @@ class m130524_201442_init extends Migration
         $this->createIndex(
             '{{%idx-constraint-user_setting-group_name-name-user_id}}',
             '{{%user_setting}}',
-            ['group_name','name','user_id'],
+            ['group_name', 'name', 'user_id'],
             true
         );
 
-        
+
 
         // meeting
         $this->createTable('{{%meeting}}', [
@@ -90,10 +90,19 @@ class m130524_201442_init extends Migration
             'duration' => $this->integer()->notNull(),
             'scheduled_at' => $this->integer()->notNull(),
             'reminder_time' => $this->smallInteger()->notNull()->defaultValue(0),
-            'allow_waiting' => $this->smallInteger()->notNull()->defaultValue(0),
+            'allow_waiting' => $this->boolean()->notNull()->defaultValue(false),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
+
+        $this->addForeignKey(
+            '{{%fk-meeting-owner_id}}',
+            '{{%meeting}}',
+            'owner_id',
+            '{{%user_profile}}',
+            'id',
+            'CASCADE'
+        );
 
         // room
         $this->execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";');
@@ -103,6 +112,7 @@ class m130524_201442_init extends Migration
             'meeting_id' => $this->integer()->notNull(),
             'uuid' => 'uuid DEFAULT uuid_generate_v4() UNIQUE NOT NULL',
             'status' => $this->smallInteger()->notNull()->defaultValue(0),
+            'is_quick' => $this->boolean()->notNull()->defaultValue(false),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
@@ -119,9 +129,9 @@ class m130524_201442_init extends Migration
         // room_member
         $this->createTable('{{%room_member}}', [
             'room_id' => $this->integer()->notNull(),
-            'user_id' => $this->integer()->notNull(),
+            'user_profile_id' => $this->integer()->notNull(),
             'token' => 'uuid DEFAULT uuid_generate_v4() UNIQUE NOT NULL',
-            'PRIMARY KEY(room_id, user_id)',
+            'PRIMARY KEY(room_id, user_profile_id)',
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
@@ -136,10 +146,10 @@ class m130524_201442_init extends Migration
         );
 
         $this->addForeignKey(
-            '{{%fk-room_member-user_id}}',
+            '{{%fk-room_member-user_profile_id}}',
             '{{%room_member}}',
-            'user_id',
-            '{{%user}}',
+            'user_profile_id',
+            '{{%user_profile}}',
             'id',
             'CASCADE'
         );
@@ -153,12 +163,12 @@ class m130524_201442_init extends Migration
         // room_request
         $this->createTable('{{%room_request}}', [
             'room_id' => $this->integer()->notNull(),
-            'user_id' => $this->integer()->notNull(),
+            'user_profile_id' => $this->integer()->notNull(),
             'status' => $this->smallInteger()->notNull()->defaultValue(2),
             'attempts' => $this->smallInteger()->notNull()->defaultValue(0),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
-            'PRIMARY KEY(room_id, user_id)',
+            'PRIMARY KEY(room_id, user_profile_id)',
         ]);
 
         $this->addForeignKey(
@@ -171,10 +181,10 @@ class m130524_201442_init extends Migration
         );
 
         $this->addForeignKey(
-            '{{%fk-room_request-user_id}}',
+            '{{%fk-room_request-user_profile_id}}',
             '{{%room_request}}',
-            'user_id',
-            '{{%user}}',
+            'user_profile_id',
+            '{{%user_profile}}',
             'id',
             'CASCADE'
         );
@@ -191,7 +201,7 @@ class m130524_201442_init extends Migration
             '{{%room_request}}'
         );
         $this->dropForeignKey(
-            '{{%fk-room_request-user_id}}',
+            '{{%fk-room_request-user_profile_id}}',
             '{{%room_request}}'
         );
         $this->dropTable('{{%room_request}}');
@@ -207,7 +217,7 @@ class m130524_201442_init extends Migration
             '{{%room_member}}'
         );
         $this->dropForeignKey(
-            '{{%fk-room_member-user_id}}',
+            '{{%fk-room_member-user_profile_id}}',
             '{{%room_member}}'
         );
         $this->dropTable('{{%room_member}}');

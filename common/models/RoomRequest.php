@@ -9,7 +9,7 @@ use yii\behaviors\TimestampBehavior;
  * This is the model class for table "room_request".
  *
  * @property int $room_id
- * @property int $user_id
+ * @property int $user_profile_id
  * @property int $status
  * @property int $attempts
  * @property int $created_at
@@ -46,14 +46,14 @@ class RoomRequest extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['room_id', 'user_id'], 'required'],
-            [['room_id', 'user_id', 'status', 'attempts', 'created_at', 'updated_at'], 'integer'],
-            [['room_id', 'user_id'], 'unique', 'targetAttribute' => ['room_id', 'user_id']],
+            [['room_id', 'user_profile_id'], 'required'],
+            [['room_id', 'user_profile_id', 'status', 'attempts', 'created_at', 'updated_at'], 'integer'],
+            [['room_id', 'user_profile_id'], 'unique', 'targetAttribute' => ['room_id', 'user_profile_id']],
             ['attempts', 'default', 'value' => 0],
             ['status', 'default', 'value' => self::STATUS_PENDING],
             ['status', 'in', 'range' => [self::STATUS_DENY, self::STATUS_ALLOW, self::STATUS_PENDING]],
             [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::class, 'targetAttribute' => ['room_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['user_profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserProfile::class, 'targetAttribute' => ['user_profile_id' => 'id']],
         ];
     }
 
@@ -64,7 +64,7 @@ class RoomRequest extends \yii\db\ActiveRecord
     {
         return [
             'room_id' => 'Room ID',
-            'user_id' => 'User ID',
+            'user_profile_id' => 'User Profile ID',
             'status' => 'Status',
             'attempts' => 'Attempts',
             'created_at' => 'Created At',
@@ -89,6 +89,7 @@ class RoomRequest extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
+        $profile = UserProfile::findOne($this->user_profile_id);
+        return $profile->getUser()->one();
     }
 }

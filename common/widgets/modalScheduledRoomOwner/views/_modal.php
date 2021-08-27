@@ -128,15 +128,15 @@ echo Html::input('hidden', 'room_id', $room_id);
                 'templateSelection' => new JsExpression('function (user) { return user.username; }')
             ],
             'pluginEvents' => [
-                //     "change" => "function(e) { console.log('change', e); }",
-                //     "select2:opening" => "function(e) { console.log('select2:opening', e); }",
-                //     "select2:open" => "function(e) { console.log('open', e); }",
-                //     "select2:closing" => "function(e) { console.log('close', e); }",
-                //     "select2:close" => "function(e) { console.log('close', e); }",
-                //     "select2:selecting" => "function(e) { console.log('selecting', e); }",
+                // "change" => "function(e) { console.log('change', e); test(e.params.data); }",
+                // "select2:opening" => "function(e) { console.log('select2:opening', e); test(e.params.data); }",
+                // "select2:open" => "function(e) { console.log('open', e); test(e.params.data); }",
+                // "select2:closing" => "function(e) { console.log('closing', e); test(e.params.data); }",
+                // "select2:close" => "function(e) { console.log('close', e); test(e.params.data); }",
+                // "select2:selecting" => "function(e) { selectingMemberList(e.params.data); }",
                 "select2:select" => "function(e) { console.log(e); addMemberToList(e.params.data); }",
-                //     "select2:unselecting" => "function(e) { console.log('unselecting', e); }",
-                //     "select2:unselect" => "function(e) { console.log('unselect', e); }"
+                // "select2:unselecting" => "function(e) { unselectingMemberList(e.params.data); }",
+                // "select2:unselect" => "function(e) {unselectMemberList(e.params.data); }"
             ]
         ]);
         ?>
@@ -148,10 +148,10 @@ echo Html::input('hidden', 'room_id', $room_id);
                     <?php
                     if (count($members) > 0) {
                         foreach ($members as $member) {
-                            $removeButton = '<a href="#"><i class="fas fa-times-circle" onClick="removeMemberFromList(' . $member->user_id . ');"></i></a>';
-                            $removeButton = ($owner_id != $member->user_id ? $removeButton : null);
+                            $removeButton = '<a href="#"><i class="fas fa-times-circle" onClick="removeMemberFromList(' . $member->user_profile_id . ');"></i></a>';
+                            $removeButton = ($owner_id != $member->user_profile_id ? $removeButton : null);
                     ?>
-                            <li class="list-group-item d-flex justify-content-between align-items-center" data-member-id="<?= $member->user_id ?>">
+                            <li class="list-group-item d-flex justify-content-between align-items-center" data-member-id="<?= $member->user_profile_id ?>">
                                 <?= $member->user->username ?>
                                 <?= $removeButton ?>
                             </li>

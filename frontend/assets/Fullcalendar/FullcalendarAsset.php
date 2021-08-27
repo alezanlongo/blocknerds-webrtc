@@ -11,7 +11,8 @@ class FullcalendarAsset extends \yii\web\AssetBundle
 
     public $sourcePath = '@frontend/assets/Fullcalendar';
     public $css = [
-        'css/jquery.fullcalendar.min.css'
+        'css/jquery.fullcalendar.min.css',
+        'css/main.css'
     ];
     public $js = [
         'js/jquery.fullcalendar.min.js'

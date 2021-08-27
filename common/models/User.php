@@ -110,7 +110,8 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $token verify email token
      * @return static|null
      */
-    public static function findByVerificationToken($token) {
+    public static function findByVerificationToken($token)
+    {
         return static::findOne([
             'verification_token' => $token,
             'status' => self::STATUS_INACTIVE
@@ -212,8 +213,23 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
 
-    public function getUserSetting() {
+    public function getUserSetting()
+    {
         return $this->hasMany(UserSetting::class, ['user_id' => 'id']);
     }
 
+    public function getUserProfile()
+    {
+        return $this->hasOne(UserProfile::class, ['user_id' => 'id']);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            $newProfile = new UserProfile();
+            $newProfile->user_id = $this->id;
+            $newProfile->save();
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
 }

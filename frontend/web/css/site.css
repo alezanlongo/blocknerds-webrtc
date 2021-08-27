@@ -8,7 +8,14 @@ main > .container-body {
   margin: 0 auto;
 }
 
-
 .modal {
   color: black;
+}
+
+a {
+  color: #fafafa;
+}
+
+a:hover {
+  color: lightblue;
 }
