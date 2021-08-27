@@ -368,7 +368,7 @@ const joinMe = () => {
     request: REQUEST_JOIN,
     room: myRoom,
     ptype: PUBLISH_TYPE_PUBLISHER,
-    display: `${username}_${userId}`,
+    display: `${username}_${userProfileId}`,
     data: true,
   };
   pluginHandler.send({ message: register });
@@ -700,7 +700,7 @@ function toggleMute() {
 ///////////   PAHO MQTT HANDLE
 ////////////////////////////////////////////////////////////
 $(document).on("click", "#btnJoin", function (e) {
-  joinHandler("request", userId);
+  joinHandler("request", userProfileId);
 });
 
 $(document).on("click", "#btnAllow", function (e) {
@@ -711,10 +711,10 @@ $(document).on("click", "#btnDeny", function (e) {
   joinHandler("deny", $(this).data("user"));
 });
 
-function joinHandler(action, userId) {
+function joinHandler(action, userProfileId) {
   $.post({
     url: "/room/join/" + action,
-    data: { uuid: myRoom, user_id: userId },
+    data: { uuid: myRoom, user_profile_id: userProfileId },
     cache: false,
     error: (err) => {
       console.log(err);

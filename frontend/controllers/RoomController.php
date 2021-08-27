@@ -73,7 +73,10 @@ class RoomController extends \yii\web\Controller
 
         $requests = [];
         if ($is_owner) {
-            $requests = RoomRequest::find()->with("user")->where(['room_id' => $room->id, 'status' => RoomRequest::STATUS_PENDING])->all();
+            $requests = RoomRequest::find()
+                ->where(['room_id' => $room->id, 'status' => RoomRequest::STATUS_PENDING])
+                ->leftJoin('user_profile', 'user_profile_id = id')
+                ->all();
         }
 
         $profileIds = RoomMember::find()
@@ -111,6 +114,7 @@ class RoomController extends \yii\web\Controller
         return $this->render('index', [
             //'token' => Yii::$app->janusApi->createHmacToken(),
             'token' => $token, //storedToken
+            'user_profile_id' => $profile->id,
             'limit_members' => $limit_members,
             'members' => $members,
             'room_id' => $room->id,
