@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use Carbon\Carbon;
 use Yii;
 use DateTime;
 use yii\helpers\Json;
@@ -88,22 +89,13 @@ class RoomController extends \yii\web\Controller
             $token = $userToken->token ?? null;
             $res = Yii::$app->janusApi->addUserToken($uuid, $token);
         }
-        // TODO: calculate from duration, time of meet and now etc
-        date_default_timezone_set("America/New_York");
-        $dateEnd=strtotime("08:25 August 27 2021");
-
-        if (Yii::$app->request->isAjax){
-            // set new time on meet or add new field to show how much add
-            $dateEnd=strtotime("11:03 August 27 2021");    
-        }
-
-        // var_dump(date("Y-m-d h:i:sa", $dateEnd));
-        // die;
-        $time = $dateEnd - time(); 
-
-        // var_dump($time);
-        // var_dump(date("Y-m-d h:i:sa", $time));
-        // die;
+       
+        $meeting = $room->getMeeting()->one();
+        $now = Carbon::now();
+        $endTime = Carbon::createFromTimestamp( $meeting->scheduled_at);
+        $endTime->addSeconds($meeting->duration);
+        
+        $timeDiff = $now->diff($endTime);
 
         return $this->render('index', [
             //'token' => Yii::$app->janusApi->createHmacToken(),
@@ -117,7 +109,7 @@ class RoomController extends \yii\web\Controller
             'uuid' => $uuid,
             'request' => $request,
             'requests' => $requests,
-            'time' => $time
+            'timeDiff' => $timeDiff
         ]);
     }
 
