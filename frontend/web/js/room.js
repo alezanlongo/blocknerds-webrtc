@@ -296,7 +296,6 @@ const handlingDestroyed = () => {
   });
 };
 const handlingEvent = (objMessage) => {
-  console.log("event", objMessage)
   if (objMessage["publishers"]) {
     const list = objMessage["publishers"];
     for (let f in list) {
@@ -594,6 +593,7 @@ function newRemoteFeed(id, display, audio, video) {
         //     feeds[remoteFeed.rfindex].rfuser.usernameFeed +
         //     "</h1>"
         // );
+        addNewAttendee(remoteFeed)
 
         // Show the video, hide the spinner and show the resolution when we get a playing event
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
@@ -802,7 +802,7 @@ const muteMember = (index) => {
           isMuted = !isMuted;
           console.log("is muted", isMuted, remoteHandler.rfindex);
 
-          $(`.box${remoteHandler.rfindex} .btn-mute`).text(
+          $(`.attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(
             isMuted ? "Unmute" : "Mute"
           );
 
@@ -843,3 +843,30 @@ $(".option-side").on("click", (e) => {
     }, 10);
   }
 });
+
+////////////////////////////////////////////////////////////////////////////////
+///////////////////////// HANDLING SIDEBAR -> ATTENDEES
+////////////////////////////////////////////////////////////////////////////////
+const addNewAttendee = (feed)=>{
+  $(`#attendee_${feed.rfindex}`).removeClass('d-none').show()
+  $(`span.usernameFeed${feed.rfindex}`).text(feed.rfuser.usernameFeed)
+}
+
+$(document).on("click", ".btn-remote-mute", function (e) {
+  let currentElement = $(e.target)
+  const index = currentElement.parent().attr('data-index');
+  muteMember(index)
+});
+
+$(document).on("click", ".btn-remote-video", function (e) {
+  let currentElement = $(e.target)
+  const index = currentElement.parent().attr('data-index');
+  console.log("video",index)
+});
+
+$(document).on("click", ".btn-remote-kick", function (e) {
+  let currentElement = $(e.target)
+  const index = currentElement.parent().attr('data-index');
+  console.log("kick",index)
+});
+

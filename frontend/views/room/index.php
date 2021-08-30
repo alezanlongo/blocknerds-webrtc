@@ -118,7 +118,22 @@ $this->title = 'The Room';
             <div class="side-content sidebar" id="optionsSidebar">
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
-                    <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">Attendees section</div>
+                    <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
+                        <?= Html::tag('h3', 'Attendees', ['class' => 'text-center']) ?>
+
+                        <ul class="list-group bg-dark list-attendees">
+                            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
+                                <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
+                                    <span class="p-1 usernameFeed<?= $i ?>"></span>
+                                    <?php if ($is_owner) { ?>
+                                        <button class="btn btn-default text-primary btn-remote-mute">Mute</button> |
+                                        <button class="btn btn-default text-primary btn-remote-video">Video</button> |
+                                        <button class="btn btn-default text-primary btn-remote-kick">Kick</button>
+                                    <?php } ?>
+                                </li>
+                            <?php } ?>
+                        </ul>
+                    </div>
                     <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
                 </div>
             </div>
