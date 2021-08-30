@@ -27,39 +27,60 @@ jQuery(document).on("pjax:success", "#calendar-request", function (event) {
 var calendar;
 
 document.addEventListener('DOMContentLoaded', function () {
-    var calendarEl = document.getElementById('calendar');
-    calendar = new FullCalendar.Calendar(calendarEl, {
-        aspectRatio: 3,
-        initialView: initialView,
-        headerToolbar: { center: 'listWeek,dayGridMonth,dayGridWeek' },
-        events: "room/calendar/events/" + user_profile_id,
-        views: {
-            month: {
-                dayMaxEvents: 2
-            },
-            week: {
-                dayMaxEvents: 20
-            }
-        },
-        eventClick: function (info) {
-            var room_id = info.event.extendedProps.room_id;
-            $.pjax.reload({ container: "#calendar-request", async: false, data: { room_id } });
-            $('#scheduledRoom').modal('show');
-        }
-    });
-    calendar.render();
+  var calendarEl = document.getElementById('calendar');
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    timeZone: 'UTC',
+    aspectRatio: 3,
+    initialView: initialView,
+    headerToolbar: { center: 'listWeek,dayGridMonth,dayGridWeek' },
+    events: "room/calendar/events/" + user_profile_id,
+    views: {
+      month: {
+        dayMaxEvents: 2
+      },
+      week: {
+        dayMaxEvents: 20
+      }
+    },
+    editable: true,
+    droppable: true,
+    eventDrop: function (info) {
 
-    $('.fc-listWeek-button, .fc-dayGridMonth-button, .fc-dayGridWeek-button').click(function (e) {
+      if (confirm("Are you sure about this change?")) {
+        console.log("drop", info.event.extendedProps, info.event.start.toUTCString());
 
-        var initialView = 'listWeek';
-        if (this.className.includes('dayGridMonth')) {
-            initialView = 'dayGridMonth';
-        } else if (this.className.includes('dayGridWeek')) {
-            initialView = 'dayGridWeek';
-        }
+        $.post(
+          "/room/update-schedule",
+          {
+            room_id: info.event.extendedProps.room_id,
+            datetimepicker: info.event.start.toUTCString()
+          },
+          "json"
+        );
 
-        $.post("room/calendar", { initialView });
-    });
+      } else {
+        info.revert();
+      }
+    },
+    eventClick: function (info) {
+      var room_id = info.event.extendedProps.room_id;
+      $.pjax.reload({ container: "#calendar-request", async: false, data: { room_id } });
+      $('#scheduledRoom').modal('show');
+    }
+  });
+  calendar.render();
+
+  $('.fc-listWeek-button, .fc-dayGridMonth-button, .fc-dayGridWeek-button').click(function (e) {
+
+    var initialView = 'listWeek';
+    if (this.className.includes('dayGridMonth')) {
+      initialView = 'dayGridMonth';
+    } else if (this.className.includes('dayGridWeek')) {
+      initialView = 'dayGridWeek';
+    }
+
+    $.post("room/calendar", { initialView });
+  });
 
 });
 
@@ -72,43 +93,43 @@ function createSchedule() {
   let checkMembers = 1;
 
   $.each(fields, function () {
-      if (this.name == "title") {
-          if (this.value == "") {
-              alert('Please select a title');
-              checks = false;
-              throw new Error("Field validation error: title");
-          }
+    if (this.name == "title") {
+      if (this.value == "") {
+        alert('Please select a title');
+        checks = false;
+        throw new Error("Field validation error: title");
       }
+    }
 
-      if (this.name == "duration") {
-          if (this.value == "") {
-              alert('Please select a duration');
-              checks = false;
-              throw new Error("Field validation error: duration");
-          }
+    if (this.name == "duration") {
+      if (this.value == "") {
+        alert('Please select a duration');
+        checks = false;
+        throw new Error("Field validation error: duration");
       }
+    }
 
-      if (this.name == "datetimepicker") {
-          if (this.value == "") {
-              alert('Please select a date and time to schedule a room');
-              checks = false;
-              throw new Error("Field validation error: datetimepicker");
-          }
+    if (this.name == "datetimepicker") {
+      if (this.value == "") {
+        alert('Please select a date and time to schedule a room');
+        checks = false;
+        throw new Error("Field validation error: datetimepicker");
       }
+    }
 
-      if (this.name == "username[]") {
-          checkMembers += 1;
-      }
+    if (this.name == "username[]") {
+      checkMembers += 1;
+    }
   });
 
   if (checkMembers == 1) {
-      alert('Please add some members to the room');
-      throw new Error("Member allowed validation error");
+    alert('Please add some members to the room');
+    throw new Error("Member allowed validation error");
   }
 
   if (checkMembers > roomMaxMembersAllowed) {
-      alert('Maximum number of member allowed in a room is ' + (parseInt(roomMaxMembersAllowed) - 1));
-      throw new Error("Member allowed validation error");
+    alert('Maximum number of member allowed in a room is ' + (parseInt(roomMaxMembersAllowed) - 1));
+    throw new Error("Member allowed validation error");
   }
 
   $("#planningMeeting").modal("hide");
@@ -271,7 +292,7 @@ function updateSchedule() {
   if (checkMembers > roomMaxMembersAllowed) {
     alert(
       "Maximum number of member allowed in a room is " +
-        (parseInt(roomMaxMembersAllowed) - 1)
+      (parseInt(roomMaxMembersAllowed) - 1)
     );
     throw new Error("Member allowed validation error");
   }
@@ -285,7 +306,7 @@ function updateSchedule() {
     },
     "json"
   )
-    .done(function () {})
+    .done(function () { })
     .fail(function () {
       $("#scheduledRoom").modal("hide");
       alert("Oops! Something went wrong please try again later");

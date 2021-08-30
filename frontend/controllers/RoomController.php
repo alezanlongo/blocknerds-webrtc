@@ -146,11 +146,13 @@ class RoomController extends \yii\web\Controller
             $room->save();
 
             Yii::$app->janusApi->videoRoomCreate($room->uuid);
-
+            
             $memberOwner = new RoomMember();
             $memberOwner->room_id = $room->id;
             $memberOwner->user_profile_id = $profile->id;
             $memberOwner->save();
+            Yii::$app->janusApi->addUserToken($room->uuid, $memberOwner->token);
+
 
             return $this->redirect([$room->uuid]);
         }
@@ -235,6 +237,7 @@ class RoomController extends \yii\web\Controller
                 $member->user_profile_id = $request->user_profile_id;
                 $member->room_id = $request->room_id;
                 $member->save();
+                Yii::$app->janusApi->addUserToken($request->room_id, $member->token);
             }
         });
 
@@ -374,21 +377,22 @@ class RoomController extends \yii\web\Controller
             }
             $fields['Meeting']['scheduled_at'] = $datetimepicker;
 
-            $members = Yii::$app->request->post("User");
-
             if ($meeting->load($fields) && $meeting->save()) {
 
-                $oldMembers = $room->getRoomMembers()->all();
+                if ($members = Yii::$app->request->post("User")) {
 
-                foreach ($oldMembers as $member) {
-                    $member->delete();
-                }
+                    $oldMembers = $room->getRoomMembers()->all();
 
-                foreach ($members["username"] as $k => $id) {
-                    $member = new RoomMember();
-                    $member->user_profile_id = (int)$id;
-                    $member->room_id = $room->id;
-                    $member->save();
+                    foreach ($oldMembers as $member) {
+                        $member->delete();
+                    }
+
+                    foreach ($members["username"] as $k => $id) {
+                        $member = new RoomMember();
+                        $member->user_profile_id = (int)$id;
+                        $member->room_id = $room->id;
+                        $member->save();
+                    }
                 }
 
                 return Json::encode($meeting);
@@ -445,6 +449,7 @@ class RoomController extends \yii\web\Controller
 
         $events = [];
         foreach ($rooms as $key => $room) {
+            $events[$key]['meeting_id'] = $room->meeting_id;
             $events[$key]['room_id'] = $room->id;
             $events[$key]['title'] = $room->meeting->title;
             $events[$key]['duration'] = $room->meeting->duration;
