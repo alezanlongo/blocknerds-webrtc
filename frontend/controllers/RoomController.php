@@ -98,10 +98,16 @@ class RoomController extends \yii\web\Controller
 
         $members = $users->all();
 
-        if ($is_owner || $is_allowed || Yii::$app->janusApi->videoRoomExists($uuid) === true) {
+        $token = null;
+        if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && $room->is_quick) {
             $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
-            $token = $userToken->token ?? null;
+            $token = $userToken->token;
             $res = Yii::$app->janusApi->addUserToken($uuid, $token);
+            $uTokens = Yii::$app->janusApi->getUsersTokenByRoom($uuid);
+            if (false !== $uTokens && (empty($uTokens) || !\in_array($token, \array_column($uTokens, 'token')))) {
+            }
+        }
+        if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && !$room->is_quick) {
         }
        
         $meeting = $room->getMeeting()->one();
@@ -146,12 +152,11 @@ class RoomController extends \yii\web\Controller
             $room->save();
 
             Yii::$app->janusApi->videoRoomCreate($room->uuid);
-            
+
             $memberOwner = new RoomMember();
             $memberOwner->room_id = $room->id;
             $memberOwner->user_profile_id = $profile->id;
             $memberOwner->save();
-            Yii::$app->janusApi->addUserToken($room->uuid, $memberOwner->token);
 
 
             return $this->redirect([$room->uuid]);
@@ -237,7 +242,6 @@ class RoomController extends \yii\web\Controller
                 $member->user_profile_id = $request->user_profile_id;
                 $member->room_id = $request->room_id;
                 $member->save();
-                Yii::$app->janusApi->addUserToken($request->room_id, $member->token);
             }
         });
 
