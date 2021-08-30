@@ -70,8 +70,6 @@ class JanusApiComponent extends Component
      * 
      * @param string $roomUuid
      * @return Boolean true if room exists, false if not
-     * @throws Exception 
-     * @throws InvalidConfigException 
      */
     public function videoRoomExists(string $roomUuid): bool
     {
@@ -89,7 +87,12 @@ class JanusApiComponent extends Component
         return false;
     }
 
-    public function getVideoRoomUsersToken($roomUuid): false|array
+    /**
+     * Returns an array with all members already connected to an room. If somethings fails, returns false
+     * @param string $roomUuid uuid of room
+     * @return false|array 
+     */
+    public function getInRoomUsersToken(string $roomUuid): false|array
     {
         $this->attach('janus.plugin.videoroom');
         $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'listparticipants', 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
@@ -113,6 +116,65 @@ class JanusApiComponent extends Component
         }
         return $participants;
     }
+
+
+    /**
+     * Add token to a specific room
+     * @param mixed $roomUuid 
+     * @param mixed $token 
+     * @return bool true or false if an error occurs
+     */
+    public function addUserToken($roomUuid, $token): bool
+    {
+        $this->attach('janus.plugin.videoroom');
+
+        //this line aren't right. It's added because something it's wrong in the room access 
+        $this->storeToken($token);
+
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'add', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => [$token]], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        if (!$res->isOk) {
+            return \false;
+        }
+        $data = $res->getData();
+        if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
+            return true;
+        } elseif (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] != 'success') {
+            return false;
+        }
+        if (isset($data['error'])) {
+            $this->lastError = $data['error'];
+        }
+        return false;
+    }
+
+    public function getUsersTokenByRoom(string $roomUuid): false|array
+    {
+        $this->attach('janus.plugin.videoroom');
+
+        $res = $this->apiCall('POST', ['janus' => 'list_tokens',  'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], null, true);
+        if (!$res->isOk) {
+            return \false;
+        }
+        $data = $res->getData();
+        if (isset($data['janus']) && $data['janus'] == 'success') {
+            return  $data['data']['tokens'];
+        }
+        if (isset($data['error'])) {
+            $this->lastError = $data['error'];
+        }
+        return false;
+    }
+
+
+    public function createHmacToken()
+    {
+        $expire = \floor(\time()) + (12 * 60 * 60);
+        $str = join(',', [$expire, 'janus', join(',', ['janus.plugin.videoroom'])]);
+
+        $hmac =  \hash_hmac('sha1', $str, $this->apiParams['tokenAuthSecret'], true);
+        return join(':', [$str, \base64_encode($hmac)]);
+    }
+
 
     private function getSessions()
     {
@@ -160,33 +222,6 @@ class JanusApiComponent extends Component
             }
         }
         return [];
-    }
-
-    public function addUserToken($roomUuid, $token)
-    {
-        $this->attach('janus.plugin.videoroom');
-        $this->storeToken($token);
-
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'add', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => [$token]], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
-        if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
-            return true;
-        } elseif (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] != 'success') {
-            return false;
-        }
-        if (isset($data['error'])) {
-            $this->lastError = $data['error'];
-        }
-        return false;
-    }
-
-
-    public function createHmacToken()
-    {
-        $expire = \floor(\time()) + (12 * 60 * 60);
-        $str = join(',', [$expire, 'janus', join(',', ['janus.plugin.videoroom'])]);
-
-        $hmac =  \hash_hmac('sha1', $str, $this->apiParams['tokenAuthSecret'], true);
-        return join(':', [$str, \base64_encode($hmac)]);
     }
 
     private function getStoredTokens()
