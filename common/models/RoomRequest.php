@@ -17,6 +17,7 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property Room $room
  * @property User $user
+ * @property UserProfile $userProfile
  */
 class RoomRequest extends \yii\db\ActiveRecord
 {
@@ -91,5 +92,15 @@ class RoomRequest extends \yii\db\ActiveRecord
     {
         $profile = UserProfile::findOne($this->user_profile_id);
         return $profile->getUser()->one();
+    }
+
+    /**
+     * Gets query for [[UserProfile]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUserProfile()
+    {
+        return $this->hasOne(UserProfile::class, ['id' => 'user_profile_id']);
     }
 }
