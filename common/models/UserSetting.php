@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionClassConstant;
 use Yii;
@@ -125,7 +124,12 @@ class UserSetting extends \yii\db\ActiveRecord
         $newSetting->group_name = $group_name;
         $newSetting->value = $newValue;
         $newSetting->data_type = \gettype($value);
-        User::find()->select('id')->where(['id' => $user_id])->limit(1)->one()->link('userSetting', $newSetting);
+        $userModel = User::find()->select('id')->where(['id' => $user_id])->limit(1)->one();
+        if (null === $userModel) {
+            //produce err
+            return false;
+        }
+        $userModel->link('userSetting', $newSetting);
         return $newSetting->save();
     }
 
@@ -145,7 +149,8 @@ class UserSetting extends \yii\db\ActiveRecord
         }
     }
 
-    private static function getValueByType($value){
+    private static function getValueByType($value)
+    {
         return \unserialize($value);
     }
 
