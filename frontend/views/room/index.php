@@ -126,9 +126,9 @@ $this->title = 'The Room';
                                 <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
                                     <?php if ($is_owner) { ?>
-                                        <button class="btn btn-default text-primary btn-remote-mute">Mute</button> |
-                                        <button class="btn btn-default text-primary btn-remote-video">Video</button> |
-                                        <button class="btn btn-default text-primary btn-remote-kick">Kick</button>
+                                        <button class="btn btn-default text-light btn-remote-mute">Mute</button> |
+                                        <button class="btn btn-default text-light btn-remote-video">Video</button> |
+                                        <button class="btn btn-default text-light btn-remote-kick">Kick</button>
                                     <?php } ?>
                                 </li>
                             <?php } ?>

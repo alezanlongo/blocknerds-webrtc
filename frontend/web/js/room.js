@@ -782,32 +782,29 @@ const pinBehavior = (list, index, width = "100%", height = "90vh") => {
   });
 };
 
-let isMuted = false;
 const muteMember = (index) => {
   if (isOwner) {
     let remoteHandler = feeds[index];
     if (!remoteHandler) {
       return;
     }
+    let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute"
 
     remoteHandler.send({
       message: {
         request: REQUEST_MODERATE,
         room: myRoom,
         id: remoteHandler.rfid,
-        mute_audio: !isMuted,
+        mute_audio: isMuted,
       },
       success: function (data) {
         if (data.videoroom === "success") {
-          isMuted = !isMuted;
-          console.log("is muted", isMuted, remoteHandler.rfindex);
-
-          $(`.attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(
+          $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(
             isMuted ? "Unmute" : "Mute"
           );
 
           sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
-            user_id: remoteHandler.rfuser.idFeed,
+            user_profile_id: remoteHandler.rfuser.idFeed,
             isMuted,
           });
         }
