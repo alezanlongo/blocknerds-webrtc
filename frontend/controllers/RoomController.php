@@ -105,11 +105,7 @@ class RoomController extends \yii\web\Controller
         }
        
         $meeting = $room->getMeeting()->one();
-        $now = Carbon::now();
-        $endTime = Carbon::createFromTimestamp( $meeting->scheduled_at);
-        $endTime->addSeconds($meeting->duration);
-        
-        $timeDiff = $now->diff($endTime);
+        $endTime = $meeting->scheduled_at + $meeting->duration;
 
         return $this->render('index', [
             //'token' => Yii::$app->janusApi->createHmacToken(),
@@ -124,7 +120,7 @@ class RoomController extends \yii\web\Controller
             'uuid' => $uuid,
             'request' => $request,
             'requests' => $requests,
-            'timeDiff' => $timeDiff
+            'endTime' => $endTime
         ]);
     }
 

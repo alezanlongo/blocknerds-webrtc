@@ -49,6 +49,7 @@ let bitrateTimer = [];
 ////////////////////////////////////////////////////////////
 $(document).ready(function () {
   connectMQTT();
+  handleCountdown(endTime)
 
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
@@ -59,7 +60,7 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
-    initJanus();
+    // initJanus();
   }
 });
 

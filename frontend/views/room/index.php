@@ -23,6 +23,7 @@ $this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
 $this->registerJsVar('isOwner', $is_owner, View::POS_END);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
+$this->registerJsVar('endTime', $endTime, View::POS_END);
 
 $this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
@@ -54,11 +55,7 @@ $this->title = 'The Room';
     <div class="main-content">
         <div class="header-content d-flex pt-3">
             <div class=" flex-grow-1 text-center ">
-                <?php Pjax::begin(['id' => 'room-countdown', "options" => ['class' => 'container']]);
-                echo Html::tag('span', $timeDiff->invert === 1 ? "+ " : "- ", []);
-                echo Html::tag('span', $timeDiff->format('%H:%I:%S'), ['class' => 'spanCountdown']);
-                Pjax::end();
-                ?>
+                <span class="spanCountdown"></span>
             </div>
             <div class="options-tab d-flex ">
                 <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">

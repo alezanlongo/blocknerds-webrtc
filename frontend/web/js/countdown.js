@@ -1,4 +1,31 @@
+const handleCountdown = (endTime) => {
+  const MILLISECONDS_STRING = "milliseconds";
+  const eventTimeFinish = moment(endTime);
+  const currentTime = moment();
+  let diffTime = eventTimeFinish._i - currentTime.unix();
+  let duration = moment.duration(diffTime * 1000, MILLISECONDS_STRING);
+  const interval = 1000;
 
-setInterval((e)=>{
-    $.pjax.reload({ container: "#room-countdown", async: false });
-}, 1000)
+  setInterval(() => {
+    duration = moment.duration(duration - interval, MILLISECONDS_STRING);
+    $(".spanCountdown").text(
+      switchSignal(duration.seconds()) +
+        checkAddZero(duration.hours()) +
+        ":" +
+        checkAddZero(duration.minutes()) +
+        ":" +
+        checkAddZero(duration.seconds())
+    );
+  }, interval);
+};
+
+const checkAddZero = (value) => {
+  value = Math.abs(value);
+  return value < 10 ? `0${value}` : `${value}`;
+};
+
+const switchSignal = (seconds) => {
+  if (seconds < 0) return "+ ";
+  if (seconds > 0) return "- ";
+  return "";
+};
