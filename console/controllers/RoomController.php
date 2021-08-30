@@ -20,7 +20,10 @@ class RoomController extends Controller
         $rooms = Room::find()->select(['id', 'uuid', 'status'])
             ->where(
                 [
-                    'meeting_id' => Meeting::find()->select(['id'])->where(new BetweenCondition('scheduled_at', 'BETWEEN', (time() - (15 * 60)), (time() + (5 * 60)))), 'status' => Room::STATUS_PENDING
+                    'meeting_id' => Meeting::find()->select(['id'])->where(new BetweenCondition('scheduled_at', 'BETWEEN', (time() - (5 * 60)), (time() + (5 * 60)))),
+                    'is_quick' => false,
+                    'status' => Room::STATUS_PENDING
+
                 ]
             )
             ->all();
@@ -61,8 +64,6 @@ class RoomController extends Controller
                 return $this->stderr($e->getMessage());
             }
         }
-
-        // \yii\helpers\VarDumper::dump($rooms->createCommand()->getRawSql());
     }
 
     private function addRoomMembers(string $roomUuid)
@@ -73,7 +74,7 @@ class RoomController extends Controller
         $janus = Yii::$app->janusApi;
         foreach ($members as $m) {
             $janus->addUserToken($roomUuid, $m->token);
-            if ($m->user_id == $owner->owner_id) {
+            if ($m->user_profile_id == $owner->owner_id) {
             }
         }
         if (!empty($members)) {

@@ -34,8 +34,8 @@ class RoomMemberRepository extends Room
      */
     static public function getMembersByTokens(array|string $membersTokens): array
     {
-        $usersId = RoomMember::find()->select(['user_id'])->where(['token' => $membersTokens]);
-        return User::find()->select(['id', 'username', 'email'])->where(['id' => $usersId])->all();
+        $uProfileId = RoomMember::find()->select(['user_profile_id'])->where(['token' => $membersTokens]);
+        return UserProfile::find()->select(['id', 'first_name', 'last_name'])->where(['id' => $uProfileId])->all();
     }
 
     /**

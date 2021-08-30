@@ -251,6 +251,13 @@ class JanusApiComponent extends Component
         return false;
     }
 
+    /**
+     * 
+     * @param bool $forceRefresh 
+     * @return mixed 
+     * @throws Exception 
+     * @throws InvalidConfigException 
+     */
     private function createSession($forceRefresh = false)
     {
         $res = $this->apiCall('POST', ['janus' => 'create', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret'], 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()]);

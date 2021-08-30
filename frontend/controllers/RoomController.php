@@ -141,11 +141,13 @@ class RoomController extends \yii\web\Controller
             $room->save();
 
             Yii::$app->janusApi->videoRoomCreate($room->uuid);
-
+            
             $memberOwner = new RoomMember();
             $memberOwner->room_id = $room->id;
             $memberOwner->user_profile_id = $profile->id;
             $memberOwner->save();
+            Yii::$app->janusApi->addUserToken($room->uuid, $memberOwner->token);
+
 
             return $this->redirect([$room->uuid]);
         }
@@ -230,6 +232,7 @@ class RoomController extends \yii\web\Controller
                 $member->user_profile_id = $request->user_profile_id;
                 $member->room_id = $request->room_id;
                 $member->save();
+                Yii::$app->janusApi->addUserToken($request->room_id, $member->token);
             }
         });
 
