@@ -60,7 +60,7 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
-    // initJanus();
+    initJanus();
   }
 });
 
@@ -69,6 +69,7 @@ $(".btn-leave").on("click", () => {
 });
 $(".btn-join-again").on("click", () => {
   $(".room-videos").show();
+  $(".header-content").show();
   $(".join-again").hide();
   publishOwnFeed(true);
 });
@@ -199,6 +200,8 @@ const initJanus = () => {
               myStream = null;
               // alert("do someting else after to go")
               $(".room-videos").hide();
+              $(".header-content").attr('style','display:none !important');
+              // $(".header-content").addClass('d-none')
               $(".join-again").removeClass("d-none").show();
 
               // $(`#video-source0`).html(
@@ -293,6 +296,7 @@ const handlingDestroyed = () => {
   });
 };
 const handlingEvent = (objMessage) => {
+  console.log("event", objMessage)
   if (objMessage["publishers"]) {
     const list = objMessage["publishers"];
     for (let f in list) {
