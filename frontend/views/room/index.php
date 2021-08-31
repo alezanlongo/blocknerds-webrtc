@@ -167,7 +167,7 @@ if (!$is_owner) : ?>
                 RoomRequest::STATUS_DENY =>
                 '<p class="text-danger">Your join request has been denied.</p>' .
                     ($request->attempts < RoomRequest::MAX_ATTEMPTS ? Html::submitButton('Ask for join again', ['class' => 'btn btn-primary', 'id' => 'btnJoin']) : null),
-                default => Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin'])
+                default => $this->registerJs('joinHandler("request", userProfileId);') //Html::submitButton('Join', ['class' => 'btn btn-primary', 'id' => 'btnJoin'])
             };
             ?>
         </div>
