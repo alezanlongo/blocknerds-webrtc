@@ -19,3 +19,7 @@ a {
 a:hover {
   color: lightblue;
 }
+
+.fc-popover.fc-more-popover.fc-day.fc-day-tue.fc-day-today{
+  background-color: black;
+}
