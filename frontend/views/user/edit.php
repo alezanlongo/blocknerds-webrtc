@@ -8,8 +8,6 @@ use yii\widgets\ActiveForm;
 
 $this->registerAssetBundle(UserProfileAsset::class);
 
-// var_dump($model);
-// die;
 ?>
 
 <h1>Edit Profile</h1>

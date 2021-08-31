@@ -55,6 +55,13 @@
   bottom: 0px;
   left: 0px;
   margin: 25px;
+  z-index: 999;
+}
+.username-on-call:hover {
+  cursor: pointer;
+  /* font-size: xx-large; */
+
+
 }
 .video-on-call {
   width: 100%;
@@ -123,6 +130,10 @@
 }
 
 #main {
-  transition: margin-left .5s;
+  transition: margin-left 0.5s;
   padding: 16px;
+}
+
+.icon-profile {
+  font-size: 150px;
 }

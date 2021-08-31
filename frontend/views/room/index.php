@@ -10,6 +10,7 @@ use frontend\assets\room\RoomAsset;
 use frontend\assets\Janus\JanusAsset;
 use frontend\assets\pahoMqtt\PahoMqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
+use yii\helpers\Url;
 
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
@@ -107,7 +108,7 @@ $this->title = 'The Room';
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                                 <div class="box<?= $i ?> box border bg-dark d-none" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
-                                        <h1 class="text-light username-on-call"> <?= $i ?></h1>
+                                        <h1 class="text-light username-on-call" > </h1>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -175,6 +176,23 @@ if (!$is_owner) : ?>
 <? endif;
 Pjax::end();
 ?>
+
+<?php Modal::begin([
+    'title' => 'Profile information',
+    'id' => 'modalInfoUser'
+]);?>
+<div class="image-profile text-center">
+    <img src="" alt="img-profile" width="150px" height="150px" class="border rounded-circle">
+    <i class="fa fa-user-circle icon-profile d-none" aria-hidden="true"></i>
+</div>
+<div class="info-profile text-center">
+    <p class="full-name-profile"></p>
+    <p class="nickname-profile"></p>
+    <p class="email-profile"></p>
+    <p class="phone-profile"></p>
+</div>
+
+<?php Modal::end(); ?>
 
 <? Modal::begin([
     'title' => 'Require to join...',

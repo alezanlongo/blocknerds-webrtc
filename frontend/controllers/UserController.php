@@ -5,6 +5,7 @@ namespace frontend\controllers;
 
 use common\models\EditProfileForm;
 use common\models\User;
+use common\models\UserProfile;
 use DateTimeZone;
 use Locale;
 use ResourceBundle;
@@ -12,8 +13,10 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\helpers\BaseFileHelper;
+use yii\helpers\Json;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 class UserController extends Controller
@@ -89,6 +92,28 @@ class UserController extends Controller
                 'localeOptions' => $this->localeOptions,
             ]
         );
+    }
+
+    public function actionGetProfile($profile_id)
+    {
+        $profileInfo = UserProfile::find()
+        ->where(['id' => $profile_id])
+            ->limit(1)->one();
+            
+        $user = $profileInfo->getUser()->one();
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return [
+            'status' => 200,
+            'data' => [
+                'username' => $user->username,
+                'email' => $user->email,
+                'first_name' => $profileInfo->first_name,
+                'last_name' => $profileInfo->last_name,
+                'phone' => $profileInfo->phone,
+                'image' => $profileInfo->image,
+            ]
+        ];
     }
 
     public function getTimezoneList()

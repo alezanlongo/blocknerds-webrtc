@@ -49,7 +49,7 @@ let bitrateTimer = [];
 ////////////////////////////////////////////////////////////
 $(document).ready(function () {
   connectMQTT();
-  handleCountdown(endTime)
+  handleCountdown(endTime);
 
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
@@ -200,7 +200,7 @@ const initJanus = () => {
               myStream = null;
               // alert("do someting else after to go")
               $(".room-videos").hide();
-              $(".header-content").attr('style','display:none !important');
+              $(".header-content").attr("style", "display:none !important");
               // $(".header-content").addClass('d-none')
               $(".join-again").removeClass("d-none").show();
 
@@ -593,7 +593,7 @@ function newRemoteFeed(id, display, audio, video) {
         //     feeds[remoteFeed.rfindex].rfuser.usernameFeed +
         //     "</h1>"
         // );
-        addNewAttendee(remoteFeed)
+        addNewAttendee(remoteFeed);
 
         // Show the video, hide the spinner and show the resolution when we get a playing event
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
@@ -788,7 +788,9 @@ const muteMember = (index) => {
     if (!remoteHandler) {
       return;
     }
-    let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute"
+    let isMuted =
+      $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() ===
+      "Mute";
 
     remoteHandler.send({
       message: {
@@ -820,16 +822,18 @@ const muteMember = (index) => {
 ///////////////////////// HANDLING SIDEBAR
 ////////////////////////////////////////////////////////////////////////////////
 const toggleSidebar = (isOpen) => {
-  const sizeSidebar = (isOpen) ? 0 : 350;
+  const sizeSidebar = isOpen ? 0 : 350;
 
   document.getElementById("optionsSidebar").style.width = `${sizeSidebar}px`;
   document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
-}
+};
 
 $(".option-side").on("click", (e) => {
   const componentClicked = $(e.target);
   const controlName = componentClicked.attr("aria-controls");
-  const isOpen = Array.from($(".option-side").children()).some(child => $(child).hasClass('active'))
+  const isOpen = Array.from($(".option-side").children()).some((child) =>
+    $(child).hasClass("active")
+  );
 
   if (!isOpen) {
     toggleSidebar(isOpen);
@@ -844,26 +848,64 @@ $(".option-side").on("click", (e) => {
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////// HANDLING SIDEBAR -> ATTENDEES
 ////////////////////////////////////////////////////////////////////////////////
-const addNewAttendee = (feed)=>{
-  $(`#attendee_${feed.rfindex}`).removeClass('d-none').show()
-  $(`span.usernameFeed${feed.rfindex}`).text(feed.rfuser.usernameFeed)
-}
+const addNewAttendee = (feed) => {
+  $(`#attendee_${feed.rfindex}`).removeClass("d-none").show();
+  $(`span.usernameFeed${feed.rfindex}`).text(feed.rfuser.usernameFeed);
+};
 
 $(document).on("click", ".btn-remote-mute", function (e) {
-  let currentElement = $(e.target)
-  const index = currentElement.parent().attr('data-index');
-  muteMember(index)
+  let currentElement = $(e.target);
+  const index = currentElement.parent().attr("data-index");
+  muteMember(index);
 });
 
 $(document).on("click", ".btn-remote-video", function (e) {
-  let currentElement = $(e.target)
-  const index = currentElement.parent().attr('data-index');
-  console.log("video",index)
+  let currentElement = $(e.target);
+  const index = currentElement.parent().attr("data-index");
+  console.log("video", index);
 });
 
 $(document).on("click", ".btn-remote-kick", function (e) {
-  let currentElement = $(e.target)
-  const index = currentElement.parent().attr('data-index');
-  console.log("kick",index)
+  let currentElement = $(e.target);
+  const index = currentElement.parent().attr("data-index");
+  console.log("kick", index);
 });
 
+$(".username-on-call").on("click", (e) => {
+  const modalInfoComponent = $("#modalInfoUser");
+  const indexClicked = Number($(e.target).parent().parent().attr("data-id"));
+
+  const profile_id = indexClicked === 0 ? userProfileId : getRemoteProfileToFeed(indexClicked);
+
+  if(!profile_id){
+    // TODO:  what happen?
+    return;
+  }
+  $.get(`/user/get-profile/${profile_id}`)
+    .then((resp) => {
+      const {data} = resp
+      
+      if(data.image){
+        modalInfoComponent.find('.image-profile img').show()
+        modalInfoComponent.find('i.icon-profile').hide()
+        modalInfoComponent.find('.image-profile img').attr('src', `${location.origin}/${data.image}`)
+      }else{
+        modalInfoComponent.find('i.icon-profile').removeClass('d-none').show()
+        modalInfoComponent.find('.image-profile img').hide()
+      }
+      modalInfoComponent.find('p.full-name-profile').text(`${data.image}`)
+      modalInfoComponent.find('p.full-name-profile').text(`${data.first_name || ""} ${data.last_name || ""}`)
+      modalInfoComponent.find('p.nickname-profile').text(`${data.username}`)
+      modalInfoComponent.find('p.email-profile').text(`${data.email}`)
+      modalInfoComponent.find('p.phone-profile').text(`${data.phone || ""}`)
+    })
+    .catch((err) => console.log(err));
+
+  modalInfoComponent.modal("show");
+});
+
+const getRemoteProfileToFeed = (index) => {
+  const feed = feeds[index]
+  if(!feed) return null;
+  return feed.rfuser.idFeed
+}

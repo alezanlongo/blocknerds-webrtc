@@ -53,6 +53,7 @@ return [
                 'POST room/time/expired' => 'room/time-expired',
                 'POST room/time/add' => 'room/add-time',
                 'POST room/join/<action:(allow|deny)>' => 'room/join',
+                'GET user/get-profile/<profile_id>' => 'user/get-profile',
             ],
         ],
     ],
