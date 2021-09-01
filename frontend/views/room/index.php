@@ -108,7 +108,7 @@ $this->title = 'The Room';
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                                 <div class="box<?= $i ?> box d-none" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
-                                        <h1 class="text-light username-on-call" > </h1>
+                                        <h1 class="text-light username-on-call"> </h1>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -125,12 +125,12 @@ $this->title = 'The Room';
                         <ul class="list-group bg-dark list-attendees">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                                 <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                                    <span class="p-1 usernameFeed<?= $i ?>"></span>
                                     <?php if ($is_owner) { ?>
                                         <button class="btn btn-default text-light btn-remote-mute">Mute</button> |
                                         <button class="btn btn-default text-light btn-remote-video">Video</button> |
                                         <button class="btn btn-default text-light btn-remote-kick">Kick</button>
                                     <?php } ?>
+                                    <span class="p-1 usernameFeed<?= $i ?>"></span>
                                 </li>
                             <?php } ?>
                         </ul>
@@ -180,7 +180,7 @@ Pjax::end();
 <?php Modal::begin([
     'title' => 'Profile information',
     'id' => 'modalInfoUser'
-]);?>
+]); ?>
 <div class="image-profile text-center">
     <img src="" alt="img-profile" width="150px" height="150px" class="border rounded-circle">
     <i class="fa fa-user-circle icon-profile d-none" aria-hidden="true"></i>
