@@ -10,6 +10,7 @@ use common\models\Room;
 use common\models\User;
 use common\models\Meeting;
 use common\models\RoomMember;
+use common\models\RoomMemberRepository;
 use common\models\RoomRequest;
 use common\models\UserProfile;
 use common\models\UserSetting;
@@ -103,12 +104,23 @@ class RoomController extends \yii\web\Controller
         if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && $room->is_quick) {
             $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
             $token = $userToken->token;
-            $res = Yii::$app->janusApi->addUserToken($uuid, $token);
-            $uTokens = Yii::$app->janusApi->getUsersTokenByRoom($uuid);
+            $uTokens = Yii::$app->janusApi->getMembersTokenByRoom($uuid);
             if (false !== $uTokens && (empty($uTokens) || !\in_array($token, \array_column($uTokens, 'token')))) {
+                $res = Yii::$app->janusApi->addUserToken($uuid, $token);
             }
         }
         if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && !$room->is_quick) {
+        }
+
+        $inRoomMembersIds = [];
+        $irm = Yii::$app->janusApi->getInRoomMembers($uuid);
+        if (!empty($irm)) {
+            $inRoomMembersIds = \array_column(\array_filter($irm, function ($v) use ($token) {
+                if (null !== $token && isset($v['token']) && $v['token'] == $token) {
+                    return false;
+                }
+                return true;
+            }), "id");
         }
 
         $meeting = $room->getMeeting()->one();
@@ -119,6 +131,7 @@ class RoomController extends \yii\web\Controller
             'token' => $token, //storedToken
             'user_profile_id' => $profile->id,
             'limit_members' => $limit_members,
+            'in_room_members' => $inRoomMembersIds,
             'members' => $members,
             'room_id' => $room->id,
             'is_owner' => $is_owner,

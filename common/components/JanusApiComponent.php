@@ -9,6 +9,8 @@ use phpDocumentor\Reflection\Types\Boolean;
 use Ramsey\Uuid\Uuid;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
+use yii\base\InvalidValueException;
+use yii\helpers\VarDumper;
 use yii\httpclient\Client;
 use yii\httpclient\Exception;
 use yii\httpclient\Exception as HttpClientException;
@@ -88,11 +90,11 @@ class JanusApiComponent extends Component
     }
 
     /**
-     * Returns an array with all members already connected to an room. If somethings fails, returns false
+     * Returns an array with all members already connected to an room. If are not members in rooms, return an empty array.
      * @param string $roomUuid uuid of room
-     * @return false|array 
+     * @return false|array return false if this api call fails
      */
-    public function getInRoomUsersToken(string $roomUuid): false|array
+    public function getInRoomMembers(string $roomUuid): false|array
     {
         $this->attach('janus.plugin.videoroom');
         $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'listparticipants', 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
@@ -147,10 +149,15 @@ class JanusApiComponent extends Component
         return false;
     }
 
-    public function getUsersTokenByRoom(string $roomUuid): false|array
+    public function getMembersTokenByRoom(string $roomUuid): false|array
     {
         $this->attach('janus.plugin.videoroom');
 
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'remove', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => ['fake']], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        if (!$res->isOk) {
+            return \false;
+        }
+        $data = $res->getData();
         $res = $this->apiCall('POST', ['janus' => 'list_tokens',  'transaction' => $this->createRandStr(), 'admin_secret' => $this->apiParams['adminSecret']], null, true);
         if (!$res->isOk) {
             return \false;
@@ -164,6 +171,43 @@ class JanusApiComponent extends Component
         }
         return false;
     }
+
+    /**
+     * Mute and unmute an room member
+     * @param string $roomUuid 
+     * @param mixed $token member token
+     * @param bool $apply true(default) fom mute, false unmute
+     * @return bool returns true if the action has completed, false if not 
+     */
+    public function muteMember(string $roomUuid, $token, bool $apply = true)
+    {
+        $this->attach('janus.plugin.videoroom');
+        $members = $this->getInRoomMembers($roomUuid);
+        VarDumper::dump($members, 20, true);
+        if (false === $members) {
+            return false;
+        }
+        if (empty($members)) {
+            return false;
+        }
+        $memberId = $members[\array_search($token, \array_column($members, 'token'))]['id'] ?? null;
+        if (null === $memberId) {
+            return false;
+        }
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['mute' => $apply, 'request' => 'moderate', 'id' => $memberId, 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+
+        if (!$res->isOk) {
+            return false;
+        }
+        $data = $res->getData();
+        if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
+            return true;
+        }
+        $this->lastError = $data['plugindata']['data']['error'] ?? null;
+        return false;
+    }
+
+    
 
 
     public function createHmacToken()

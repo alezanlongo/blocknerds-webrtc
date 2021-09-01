@@ -267,17 +267,16 @@ const handleJsep = (objMessage, jsep) => {
 };
 
 const handlingJoined = (objMessage) => {
-  console.log(objMessage);
+  //console.log(objMessage);
   const myId = objMessage["id"];
   my_private_id = objMessage["private_id"];
   const publishersList = objMessage["publishers"];
-
   if (SUBSCRIBER_MODE) {
     console.log("Do something on subscriber mode");
   } else {
     publishOwnFeed(true);
   }
-
+  
   // Any new feed to attach to?
   if (publishersList) {
     for (let f in publishersList) {
@@ -296,6 +295,7 @@ const handlingDestroyed = () => {
   });
 };
 const handlingEvent = (objMessage) => {
+  $.pjax.reload({container: '#room-participants-actions', async: false});
   if (objMessage["publishers"]) {
     const list = objMessage["publishers"];
     for (let f in list) {
@@ -798,6 +798,7 @@ const pinBehavior = (list, index, width = "100%", height = "90vh") => {
 
 const muteMember = (index) => {
   if (isOwner) {
+    console.log(index)
     let remoteHandler = feeds[index];
     if (!remoteHandler) {
       return;
@@ -878,7 +879,8 @@ const addNewAttendee = (feed) => {
 $(document).on("click", ".btn-remote-mute", function (e) {
   let currentElement = $(e.target);
   const index = currentElement.parent().attr("data-index");
-  muteMember(index);
+  const id = currentElement.parent().attr("data-id");
+  muteMember(id);
 });
 
 $(document).on("click", ".btn-remote-video", function (e) {

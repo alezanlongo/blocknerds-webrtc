@@ -120,11 +120,13 @@ $this->title = 'The Room';
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
                     <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
-                        <?= Html::tag('h3', 'Attendees', ['class' => 'text-center']) ?>
+                        <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                         <ul class="list-group bg-dark list-attendees">
-                            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
+                            <?php Pjax::begin(['id' => 'room-participants-actions', "options" => []]); ?>
+                            <?php for ($i = 0; $i < count($in_room_members); $i++) { ?>
+                                <li class="list-group-item bg-dark" id="participant_<?= $in_room_members[$i] ?>" data-id="<?= $in_room_members[$i] ?>" data-index="<?= $i ?>">
+                                <span class="p-1 usernameFeed"></span>
                                     <?php if ($is_owner) { ?>
                                         <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone"></i></button> |
                                         <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video"></i></button> |
@@ -132,7 +134,8 @@ $this->title = 'The Room';
                                     <?php } ?>
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
                                 </li>
-                            <?php } ?>
+                                <?php  } ?>
+                                <?php Pjax::end(); ?>
                         </ul>
                     </div>
                     <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
