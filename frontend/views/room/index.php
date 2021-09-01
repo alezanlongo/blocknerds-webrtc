@@ -106,7 +106,7 @@ $this->title = 'The Room';
                     <div class="room-videos">
                         <div class="wrapper">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <div class="box<?= $i ?> box border bg-dark d-none" data-id="<?= $i ?>">
+                                <div class="box<?= $i ?> box d-none" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <h1 class="text-light username-on-call" > </h1>
                                     </div>
