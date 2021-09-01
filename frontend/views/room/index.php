@@ -64,7 +64,7 @@ $this->title = 'The Room';
                         <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true">Settings</a>
                     </li>
                     <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false">Attendees</a>
+                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false">Participants</a>
                     </li>
                     <li class="nav-item option-side" role="presentation">
                         <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false">Chat</a>
@@ -108,7 +108,7 @@ $this->title = 'The Room';
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                                 <div class="box<?= $i ?> box border bg-dark d-none" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
-                                        <h1 class="text-light username-on-call" > </h1>
+                                        <h1 class="text-light username-on-call"> </h1>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -120,19 +120,21 @@ $this->title = 'The Room';
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
                     <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
-                        <?= Html::tag('h3', 'Attendees', ['class' => 'text-center']) ?>
+                        <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                         <ul class="list-group bg-dark list-attendees">
-                            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                                    <span class="p-1 usernameFeed<?= $i ?>"></span>
+                            <?php Pjax::begin(['id' => 'room-participants-actions', "options" => []]); ?>
+                            <?php for ($i = 0; $i < count($in_room_members); $i++) { ?>
+                                <li class="list-group-item bg-dark" id="participant_<?= $in_room_members[$i] ?>" data-id="<?= $in_room_members[$i] ?>" data-index="<?= $i ?>">
+                                <span class="p-1 usernameFeed"></span>
                                     <?php if ($is_owner) { ?>
                                         <button class="btn btn-default text-light btn-remote-mute">Mute</button> |
                                         <button class="btn btn-default text-light btn-remote-video">Video</button> |
                                         <button class="btn btn-default text-light btn-remote-kick">Kick</button>
                                     <?php } ?>
                                 </li>
-                            <?php } ?>
+                                <?php  } ?>
+                                <?php Pjax::end(); ?>
                         </ul>
                     </div>
                     <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
@@ -180,7 +182,7 @@ Pjax::end();
 <?php Modal::begin([
     'title' => 'Profile information',
     'id' => 'modalInfoUser'
-]);?>
+]); ?>
 <div class="image-profile text-center">
     <img src="" alt="img-profile" width="150px" height="150px" class="border rounded-circle">
     <i class="fa fa-user-circle icon-profile d-none" aria-hidden="true"></i>
