@@ -54,7 +54,7 @@ $this->title = 'The Room';
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
     <div class="main-content">
-        <div class="header-content d-flex pt-3">
+        <div class="header-content d-flex pt-3 pr-3 pl-3">
             <div class=" flex-grow-1 text-center ">
                 <span class="spanCountdown h4"></span>
             </div>
