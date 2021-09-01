@@ -78,8 +78,8 @@ class Meeting extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getRooms()
+    public function getRoom()
     {
-        return $this->hasMany(Room::class, ['meeting_id' => 'id']);
+        return $this->hasOne(Room::class, ['meeting_id' => 'id']);
     }
 }

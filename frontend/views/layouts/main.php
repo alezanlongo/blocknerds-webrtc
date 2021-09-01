@@ -72,11 +72,11 @@ AppAsset::register($this);
 
     <main role="main" class="flex-shrink-0">
         <div class="container-body">
-        <div class="">
-            <?= Alert::widget([
-                'options' => ['class' => 'alert-style'],
-            ]) ?>
-        </div>
+            <div class="">
+                <?= Alert::widget([
+                    'options' => ['class' => 'alert-style'],
+                ]) ?>
+            </div>
             <?= $content ?>
         </div>
     </main>

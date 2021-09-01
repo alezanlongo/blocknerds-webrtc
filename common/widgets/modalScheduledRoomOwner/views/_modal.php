@@ -8,8 +8,16 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 
+$btnOpenMeeting = Html::a(
+    '<i class="fas fa-external-link-alt"></i>',
+    'room/' . $uuid,
+    [
+        'onclick' => 'window.open("/room/' . $uuid . '");return false;'
+    ]
+);
+
 Modal::begin([
-    'title' => 'Scheduled room',
+    'title' => 'Scheduled room ' . $btnOpenMeeting,
     'id' => 'scheduledRoom',
     'footer' => Html::submitButton('Submit', ['class' => 'btn btn-primary', 'onclick' => "updateSchedule();return false;"])
 ]);

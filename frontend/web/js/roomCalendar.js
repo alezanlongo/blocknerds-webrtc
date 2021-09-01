@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     timeZone: 'UTC',
     aspectRatio: 3,
     initialView: initialView,
-    headerToolbar: { center: 'listWeek,dayGridMonth,dayGridWeek' },
+    headerToolbar: { center: 'listDay,dayGridWeek,dayGridMonth' },
     events: "room/calendar/events/" + user_profile_id,
     views: {
       month: {
@@ -68,7 +68,10 @@ document.addEventListener('DOMContentLoaded', function () {
       $('#scheduledRoom').modal('show');
     }
   });
+
   calendar.render();
+
+  setTimeout(() => { $.pjax.reload({ container: "#calendar-meeting-in-progress" }) }, 2500);
 
   $('.fc-listWeek-button, .fc-dayGridMonth-button, .fc-dayGridWeek-button').click(function (e) {
 
