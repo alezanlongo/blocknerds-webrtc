@@ -56,7 +56,7 @@ $this->title = 'The Room';
     <div class="main-content">
         <div class="header-content d-flex pt-3">
             <div class=" flex-grow-1 text-center ">
-                <span class="spanCountdown"></span>
+                <span class="spanCountdown h4"></span>
             </div>
             <div class="options-tab d-flex ">
                 <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
