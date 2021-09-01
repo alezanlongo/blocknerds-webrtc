@@ -825,7 +825,7 @@ const toggleSidebar = (isOpen) => {
   const sizeSidebar = isOpen ? 0 : 350;
 
   document.getElementById("optionsSidebar").style.width = `${sizeSidebar}px`;
-  document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
+  // document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
 };
 
 $(".option-side").on("click", (e) => {
