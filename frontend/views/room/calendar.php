@@ -34,26 +34,39 @@ $this->registerJsVar('roomMaxMembersAllowed', Yii::$app->params['janus.roomMaxMe
 
 $this->title = "Room's calendar";
 
-$form = ActiveForm::begin(['action' => 'room/create']);
-
-echo Html::submitButton("Start a quick meeting", ["class" => "btn btn-primary btn-lg", "id" => "btnStart"]);
-
-echo Html::a(
-    "Planning a meeting",
-    null,
-    [
-        'onclick' => "$('#planningMeeting').modal('show');return false;",
-        "class" => "btn btn-outline-secondary btn-lg", "id" => "btnPlanning"
-    ]
-);
-
-ActiveForm::end();
 ?>
+
+<div class="mb-5">
+    <?php
+    Pjax::begin(['id' => 'calendar-meeting-in-progress', 'timeout' => false]);
+
+    $form = ActiveForm::begin(['action' => 'room/create']);
+
+    echo Html::submitButton("Start a quick meeting", ["class" => "btn btn-primary btn-lg", "id" => "btnStart"]);
+
+    echo Html::a(
+        "Planning a meeting",
+        null,
+        [
+            'onclick' => "$('#planningMeeting').modal('show');return false;",
+            "class" => "btn btn-outline-secondary btn-lg ml-2", "id" => "btnPlanning"
+        ]
+    );
+
+    echo $btnInProgress;
+
+    ActiveForm::end();
+
+    Pjax::end();
+    ?>
+
+
+</div>
 
 <div id="calendar" class="text-white"></div>
 
 <?php
-Pjax::begin(['id' => 'calendar-request', "options" => ["class" => ""]]);
+Pjax::begin(['id' => 'calendar-request', 'timeout' => false, "options" => ["class" => ""]]);
 
 if ($roomSelected) {
     if ($roomSelected->meeting->owner_id == $user_profile_id) {

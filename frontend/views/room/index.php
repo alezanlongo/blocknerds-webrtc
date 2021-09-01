@@ -61,30 +61,30 @@ $this->title = 'The Room';
             <div class="options-tab d-flex ">
                 <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
                     <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true">Settings</a>
+                        <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog"></i></a>
                     </li>
                     <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false">Attendees</a>
+                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users"></i></a>
                     </li>
                     <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false">Chat</a>
+                        <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments"></i></a>
                     </li>
                     <li class="nav-item ml-3">
-                        <?= Html::tag('button', "Mute", [
+                        <?= Html::tag('button', '<i class="fas fa-microphone"></i>', [
                             'id' => "mute",
                             "class" => "btn btn-default text-white",
                             'onclick' => "toggleMute()"
                         ]) ?>
                     </li>
                     <li class="nav-item ml-3">
-                        <?= Html::tag('button', "Video", [
+                        <?= Html::tag('button', '<i class="fas fa-video"></i>', [
                             'id' => "no-video",
                             "class" => "btn btn-default text-white",
                             'onclick' => "toggleVideo()"
                         ]) ?>
                     </li>
                     <li class="nav-item ml-3">
-                        <?= Html::tag('button', "Leave", ["class" => "btn btn-danger btn-leave"]) ?>
+                        <?= Html::tag('button', '<i class="fas fa-sign-out-alt"></i>', ["class" => "btn btn-danger btn-leave"]) ?>
                     </li>
                 </ul>
             </div>
@@ -108,7 +108,7 @@ $this->title = 'The Room';
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                                 <div class="box<?= $i ?> box border bg-dark d-none" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
-                                        <h1 class="text-light username-on-call" > </h1>
+                                        <h1 class="text-light username-on-call"> </h1>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -127,9 +127,9 @@ $this->title = 'The Room';
                                 <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
                                     <?php if ($is_owner) { ?>
-                                        <button class="btn btn-default text-light btn-remote-mute">Mute</button> |
-                                        <button class="btn btn-default text-light btn-remote-video">Video</button> |
-                                        <button class="btn btn-default text-light btn-remote-kick">Kick</button>
+                                        <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone"></i></button> |
+                                        <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video"></i></button> |
+                                        <button class="btn btn-default text-light btn-remote-kick"><i class="fas fa-times-circle"></i></button>
                                     <?php } ?>
                                 </li>
                             <?php } ?>
@@ -180,7 +180,7 @@ Pjax::end();
 <?php Modal::begin([
     'title' => 'Profile information',
     'id' => 'modalInfoUser'
-]);?>
+]); ?>
 <div class="image-profile text-center">
     <img src="" alt="img-profile" width="150px" height="150px" class="border rounded-circle">
     <i class="fa fa-user-circle icon-profile d-none" aria-hidden="true"></i>
