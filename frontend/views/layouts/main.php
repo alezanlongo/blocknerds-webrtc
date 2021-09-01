@@ -27,6 +27,10 @@ AppAsset::register($this);
             width: fit-content;
             float: right;
         }
+        .w-90 {
+            width: 90%;
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -38,6 +42,7 @@ AppAsset::register($this);
         NavBar::begin([
             'brandLabel' => Yii::$app->name,
             'brandUrl' => Yii::$app->homeUrl,
+            'innerContainerOptions' => ['class' => 'container-fluid w-90'],
             'options' => [
                 'class' => 'navbar navbar-expand-md navbar-dark bg-withe fixed-top',
             ],
@@ -67,11 +72,11 @@ AppAsset::register($this);
 
     <main role="main" class="flex-shrink-0">
         <div class="container-body">
-        <div class="">
-            <?= Alert::widget([
-                'options' => ['class' => 'alert-style'],
-            ]) ?>
-        </div>
+            <div class="">
+                <?= Alert::widget([
+                    'options' => ['class' => 'alert-style'],
+                ]) ?>
+            </div>
             <?= $content ?>
         </div>
     </main>

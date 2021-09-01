@@ -8,8 +8,8 @@ const handleCountdown = (endTime) => {
 
   setInterval(() => {
     duration = moment.duration(duration - interval, MILLISECONDS_STRING);
+    if (duration.seconds() < 0) $(".spanCountdown").addClass('text-danger')
     $(".spanCountdown").text(
-      switchSignal(duration.seconds()) +
         checkAddZero(duration.hours()) +
         ":" +
         checkAddZero(duration.minutes()) +

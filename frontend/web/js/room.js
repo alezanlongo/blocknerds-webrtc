@@ -121,16 +121,16 @@ const initJanus = () => {
             mediaState: (medium, on) => {
               Janus.log(
                 "Janus " +
-                  (on ? "started" : "stopped") +
-                  " receiving our " +
-                  medium
+                (on ? "started" : "stopped") +
+                " receiving our " +
+                medium
               );
             },
             webrtcState: (on) => {
               Janus.log(
                 "Janus says our WebRTC PeerConnection is " +
-                  (on ? "up" : "down") +
-                  " now"
+                (on ? "up" : "down") +
+                " now"
               );
               $(`#video-source0`).parent().parent().unblock();
               if (!on) return;
@@ -157,9 +157,9 @@ const initJanus = () => {
               $("#myvideo").get(0).muted = "muted";
               if (
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  ICE_CONNECTION_STATE_COMPLETED &&
+                ICE_CONNECTION_STATE_COMPLETED &&
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  ICE_CONNECTION_STATE_CONNECTED
+                ICE_CONNECTION_STATE_CONNECTED
               ) {
                 $(`#video-source0`)
                   .parent()
@@ -182,9 +182,9 @@ const initJanus = () => {
                 if ($("#video-source .no-video-container").length === 0) {
                   $(`#video-source0`).append(
                     '<div class="no-video-container">' +
-                      '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-                      '<span class="no-video-text">No webcam available</span>' +
-                      "</div>"
+                    '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
+                    '<span class="no-video-text">No webcam available</span>' +
+                    "</div>"
                   );
                 }
               } else {
@@ -192,7 +192,7 @@ const initJanus = () => {
                 $("#myvideo").removeClass("hide").show();
               }
             },
-            onremotestream: (stream) => {},
+            onremotestream: (stream) => { },
             oncleanup: () => {
               Janus.log(
                 " ::: Got a cleanup notification: we are unpublished now :::"
@@ -354,13 +354,13 @@ const handlingEvent = (objMessage) => {
       // This is a "no such room" error: give a more meaningful description
       bootbox.alert(
         "<p>Apparently room <code>" +
-          room_uuid +
-          "</code> (the one this demo uses as a test room) " +
-          "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
-          "configuration file? If not, make sure you copy the details of room <code>" +
-          room_uuid +
-          "</code> " +
-          "from that sample in your current configuration file, then restart Janus and try again."
+        room_uuid +
+        "</code> (the one this demo uses as a test room) " +
+        "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
+        "configuration file? If not, make sure you copy the details of room <code>" +
+        room_uuid +
+        "</code> " +
+        "from that sample in your current configuration file, then restart Janus and try again."
       );
     } else {
       bootbox.alert(objMessage["error"]);
@@ -435,10 +435,10 @@ function newRemoteFeed(id, display, audio, video) {
       remoteFeed.simulcastStarted = false;
       Janus.log(
         "Plugin attached! (" +
-          remoteFeed.getPlugin() +
-          ", id=" +
-          remoteFeed.getId() +
-          ")"
+        remoteFeed.getPlugin() +
+        ", id=" +
+        remoteFeed.getId() +
+        ")"
       );
       Janus.log("  -- This is a subscriber");
       let subscribe = {
@@ -460,8 +460,8 @@ function newRemoteFeed(id, display, audio, video) {
         if (video) video = video.toUpperCase();
         toastr.warning(
           "Publisher is using " +
-            video +
-            ", but Safari doesn't support it: disabling video"
+          video +
+          ", but Safari doesn't support it: disabling video"
         );
         subscribe["offer_video"] = false;
       }
@@ -504,11 +504,11 @@ function newRemoteFeed(id, display, audio, video) {
           }
           Janus.log(
             "Successfully attached to feed " +
-              remoteFeed.rfid +
-              " (" +
-              remoteFeed.rfdisplay +
-              ") in room " +
-              msg["room"]
+            remoteFeed.rfid +
+            " (" +
+            remoteFeed.rfdisplay +
+            ") in room " +
+            msg["room"]
           );
         } else if (event === EVENT) {
           // Check if we got a simulcast-related event from this publisher
@@ -552,18 +552,18 @@ function newRemoteFeed(id, display, audio, video) {
     iceState: function (state) {
       Janus.log(
         "ICE state of this WebRTC PeerConnection (feed #" +
-          remoteFeed.rfindex +
-          ") changed to " +
-          state
+        remoteFeed.rfindex +
+        ") changed to " +
+        state
       );
     },
     webrtcState: function (on) {
       Janus.log(
         "Janus says this WebRTC PeerConnection (feed #" +
-          remoteFeed.rfindex +
-          ") is " +
-          (on ? "up" : "down") +
-          " now"
+        remoteFeed.rfindex +
+        ") is " +
+        (on ? "up" : "down") +
+        " now"
       );
     },
     onlocalstream: function (stream) {
@@ -577,13 +577,13 @@ function newRemoteFeed(id, display, audio, video) {
         // No remote video yet
         $("#video-source" + remoteFeed.rfindex).append(
           '<video class="rounded centered" id="waitingvideo' +
-            remoteFeed.rfindex +
-            '" width="100%" height="100%" />'
+          remoteFeed.rfindex +
+          '" width="100%" height="100%" />'
         );
         $("#video-source" + remoteFeed.rfindex).append(
           '<video class="rounded centered relative hide" id="remotevideo' +
-            remoteFeed.rfindex +
-            '" width="100%" height="100%" autoplay playsinline/>'
+          remoteFeed.rfindex +
+          '" width="100%" height="100%" autoplay playsinline/>'
         );
         $(`#video-source${remoteFeed.rfindex} h1`).text(
           feeds[remoteFeed.rfindex].rfuser.usernameFeed
@@ -621,9 +621,9 @@ function newRemoteFeed(id, display, audio, video) {
         ) {
           $("#video-source" + remoteFeed.rfindex).append(
             '<div class="no-video-container">' +
-              '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-              '<span class="no-video-text">No remote video available</span>' +
-              "</div>"
+            '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
+            '<span class="no-video-text">No remote video available</span>' +
+            "</div>"
           );
         }
       } else {
@@ -689,7 +689,14 @@ function toggleVideo() {
   if (noVideo) pluginHandler.unmuteVideo();
   else pluginHandler.muteVideo();
   muted = pluginHandler.isVideoMuted();
-  $("#no-video").html(muted ? "No video" : "Video");
+  // $("#no-video").html(muted ? "No video" : "Video");
+  if (muted) {
+    $("#no-video > i").removeClass("fa-video")
+      .addClass("fa-video-slash");
+  } else {
+    $("#no-video > i").removeClass("fa-video-slash")
+      .addClass("fa-video");
+  }
 }
 
 function toggleMute() {
@@ -698,7 +705,14 @@ function toggleMute() {
   if (muted) pluginHandler.unmuteAudio();
   else pluginHandler.muteAudio();
   muted = pluginHandler.isAudioMuted();
-  $("#mute").html(muted ? "Unmute" : "Mute");
+  // $("#mute").html(muted ? "Unmute" : "Mute");
+  if (muted) {
+    $("#mute > i").removeClass("fa-microphone")
+      .addClass("fa-microphone-slash");
+  } else {
+    $("#mute > i").removeClass("fa-microphone-slash")
+      .addClass("fa-microphone");
+  }
 }
 
 ////////////////////////////////////////////////////////////
@@ -788,9 +802,10 @@ const muteMember = (index) => {
     if (!remoteHandler) {
       return;
     }
-    let isMuted =
-      $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() ===
-      "Mute";
+    // let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute";
+    let btnRemoteMute = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute > i`);
+    let isMuted = btnRemoteMute.hasClass("fa-microphone");
+    console.log("NB > isMuted", isMuted)
 
     remoteHandler.send({
       message: {
@@ -801,9 +816,16 @@ const muteMember = (index) => {
       },
       success: function (data) {
         if (data.videoroom === "success") {
-          $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(
-            isMuted ? "Unmute" : "Mute"
-          );
+          // $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(isMuted ? "Unmute" : "Mute");
+          if (isMuted) {
+            console.log("NB > IS MUTED")
+            btnRemoteMute.removeClass("fa-microphone")
+              .addClass("fa-microphone-slash");
+          } else {
+            console.log("NB > NOT MUTED")
+            btnRemoteMute.removeClass("fa-microphone-slash")
+              .addClass("fa-microphone");
+          }
 
           sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
             user_profile_id: remoteHandler.rfuser.idFeed,
@@ -825,7 +847,7 @@ const toggleSidebar = (isOpen) => {
   const sizeSidebar = isOpen ? 0 : 350;
 
   document.getElementById("optionsSidebar").style.width = `${sizeSidebar}px`;
-  document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
+  // document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
 };
 
 $(".option-side").on("click", (e) => {
@@ -877,19 +899,19 @@ $(".username-on-call").on("click", (e) => {
 
   const profile_id = indexClicked === 0 ? userProfileId : getRemoteProfileToFeed(indexClicked);
 
-  if(!profile_id){
+  if (!profile_id) {
     // TODO:  what happen?
     return;
   }
   $.get(`/user/get-profile/${profile_id}`)
     .then((resp) => {
-      const {data} = resp
-      
-      if(data.image){
+      const { data } = resp
+
+      if (data.image) {
         modalInfoComponent.find('.image-profile img').show()
         modalInfoComponent.find('i.icon-profile').hide()
         modalInfoComponent.find('.image-profile img').attr('src', `${location.origin}/${data.image}`)
-      }else{
+      } else {
         modalInfoComponent.find('i.icon-profile').removeClass('d-none').show()
         modalInfoComponent.find('.image-profile img').hide()
       }
@@ -906,6 +928,6 @@ $(".username-on-call").on("click", (e) => {
 
 const getRemoteProfileToFeed = (index) => {
   const feed = feeds[index]
-  if(!feed) return null;
+  if (!feed) return null;
   return feed.rfuser.idFeed
 }

@@ -2,9 +2,9 @@
 
 namespace frontend\controllers;
 
-use Carbon\Carbon;
 use Yii;
 use DateTime;
+use Carbon\Carbon;
 use yii\helpers\Json;
 use common\models\Room;
 use common\models\User;
@@ -14,6 +14,7 @@ use common\models\RoomRequest;
 use common\models\UserProfile;
 use common\models\UserSetting;
 use yii\filters\AccessControl;
+use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 use yii\web\TooManyRequestsHttpException;
 use yii\web\UnprocessableEntityHttpException;
@@ -109,7 +110,7 @@ class RoomController extends \yii\web\Controller
         }
         if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && !$room->is_quick) {
         }
-       
+
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
@@ -428,7 +429,34 @@ class RoomController extends \yii\web\Controller
         $roomMembers = [];
         $initialView = UserSetting::getSetting($user->id, 'initialView', UserSetting::GROUP_NAME_CALENDAR);
 
-        if (Yii::$app->request->isAjax) {
+        $btnInProgress = null;
+        if (Yii::$app->request->isAjax && $this->request->get('_pjax') == "#calendar-meeting-in-progress") {
+            $subQuery = RoomMember::find()->where(["user_profile_id" => $profile->id])->select(['room_id']);
+            $rooms = Room::find()->where(['in', 'id', $subQuery])->select(['meeting_id']);
+            $nearestMeeting = Meeting::find()
+                ->where(['in', 'id', $rooms])
+                ->andWhere('to_timestamp(scheduled_at+duration) >= NOW()')
+                ->orderBy(['scheduled_at' => 'SORT_ASC'])
+                ->one();
+
+            if ($nearestMeeting) {
+
+                if (Carbon::now()->between(
+                    Carbon::createFromTimestamp($nearestMeeting->scheduled_at),
+                    Carbon::createFromTimestamp($nearestMeeting->scheduled_at)->addSeconds($nearestMeeting->duration)
+                )) {
+                    $btnInProgress = Html::a(
+                        'In progress meeting',
+                        'room/' . $nearestMeeting->room->uuid,
+                        [
+                            "class" => "ml-2", "id" => "btnInProgress"
+                        ]
+                    );
+                }
+            }
+        }
+
+        if (Yii::$app->request->isAjax && $this->request->get('_pjax') == "#calendar-request") {
             $room_id = Yii::$app->request->get("room_id", 0);
 
             $roomSelected = Room::findOne($room_id);
@@ -440,7 +468,8 @@ class RoomController extends \yii\web\Controller
             'user_profile_id' => $profile->id,
             'roomSelected' => $roomSelected,
             'roomMembers' => $roomMembers,
-            'initialView' => $initialView ? $initialView->value : 'listWeek'
+            'initialView' => $initialView ? $initialView->value : 'dayGridWeek',
+            'btnInProgress' => $btnInProgress
         ]);
     }
 
