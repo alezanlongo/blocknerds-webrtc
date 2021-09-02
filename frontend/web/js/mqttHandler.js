@@ -1,6 +1,7 @@
 const EVENT_TYPE_REQUEST_JOIN = "request_join";
 const EVENT_TYPE_RESPONSE_JOIN = "response_join";
 const EVENT_TYPE_TOGGLE_MUTE = "toggle_mute_remote";
+const EVENT_TYPE_TOGGLE_MEDIA = "request_toggle_media";
 const wsbroker = "localhost"; // mqtt websocket enabled broker
 const wsport = 15675; // port for above
 const client = new Paho.MQTT.Client(
@@ -18,8 +19,24 @@ client.onConnectionLost = function (responseObject) {
 client.onMessageArrived = function (message) {
   const objData = JSON.parse(message.payloadString);
 
-  if (objData.type === EVENT_TYPE_TOGGLE_MUTE && userProfileId === objData.data.user_profile_id) {
-    $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
+  // if (objData.type === EVENT_TYPE_TOGGLE_MUTE && userProfileId === objData.data.user_profile_id) {
+  //   $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
+  // }
+  if (objData.type === EVENT_TYPE_TOGGLE_MEDIA) {
+    if(Number(userProfileId) === Number(objData.profile_id)){
+      if (objData.video !== null) {
+        handleToggleVideoLocal(objData)
+      }
+      
+    }else{
+      const feed = getFeedFromProfileId(Number(objData.profile_id));
+      if (feed) {
+        if (objData.video !== null) {
+          handleToggleVideoRemote(objData, feed.rfindex);
+        }
+      }
+
+    }
   }
 
   if (objData.type === EVENT_TYPE_REQUEST_JOIN) {
@@ -29,7 +46,7 @@ client.onMessageArrived = function (message) {
       $("#pendingRequests").modal("show");
     }
   }
-  
+
   if (objData.type === EVENT_TYPE_RESPONSE_JOIN) {
     $.pjax.reload({ container: "#room-request", async: false });
     $.pjax.reload({ container: "#room-member", async: false });
@@ -61,3 +78,59 @@ const sendMessageMQTT = (type, data) => {
   message.destinationName = window.location.pathname;
   client.send(message);
 };
+
+const handleToggleVideoRemote = (objData, index) => {
+  const compVideo = $(`#remotevideo${index}`);
+  const compImage = $(`#img${index}`);
+  if (objData.video === "true") {
+    if (objData.profile_image !== null) {
+      compImage.attr("src", `${location.origin}/${objData.profile_image}`);
+    }
+    const width = compVideo.width();
+    const height = compVideo.height();
+    compImage.width(width);
+    compImage.height(height);
+    compImage.removeClass("d-none").show();
+    compVideo.addClass("d-none").hide();
+  } else {
+    compImage.addClass("d-none").hide();
+    compVideo.removeClass("d-none").show();
+  }
+};
+
+const handleToggleVideoLocal = (objData) =>{
+  const compVideo = $("#myvideo")
+  const compImage = $("#img0")
+  if (objData.video === "true") {
+    $("#no-video > i").removeClass("fa-video").addClass("fa-video-slash");
+    if (objData.profile_image !== null) {
+      compImage.attr("src", `${location.origin}/${objData.profile_image}`);
+    }
+    const width = compVideo.width();
+    const height = compVideo.height();
+    compImage.width(width);
+    compImage.height(height);
+    compImage.removeClass("d-none").show();
+    compVideo.addClass("d-none").hide();
+  } else {
+    $("#no-video > i").removeClass("fa-video-slash").addClass("fa-video");
+    compImage.addClass("d-none").hide();
+    compVideo.removeClass("d-none").show();
+  }
+  // const compVideo = $(`#remotevideo${index}`);
+  // const compImage = $(`#img${index}`);
+  // if (objData.video === "true") {
+  //   if (objData.profile_image !== null) {
+  //     const width = compVideo.width();
+  //     const height = compVideo.height();
+  //     compImage.attr("src", `${location.origin}/${objData.profile_image}`);
+  //     compImage.width(width);
+  //     compImage.height(height);
+  //   }
+  //   compImage.removeClass("d-none").show();
+  //   compVideo.addClass("d-none").hide();
+  // } else {
+  //   compImage.addClass("d-none").hide();
+  //   compVideo.removeClass("d-none").show();
+  // }
+}

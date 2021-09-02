@@ -54,6 +54,7 @@ return [
                 'POST room/time/add' => 'room/add-time',
                 'POST room/join/<action:(allow|deny)>' => 'room/join',
                 'GET user/get-profile/<profile_id>' => 'user/get-profile',
+                'POST room/toggle-media' => 'room/toggle-media',
             ],
         ],
     ],

@@ -122,7 +122,7 @@ class RoomController extends \yii\web\Controller
                 return true;
             }), "id");
         }
-
+        
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
@@ -505,34 +505,73 @@ class RoomController extends \yii\web\Controller
         return Json::encode($events);
     }
 
-    public function actionTimeExpired()
+    // public function actionTimeExpired()
+    // {
+    //     $uuid = $this->request->post('uuid') ?? null;
+    //     $user_id = $this->request->post('user_id') ?? null;
+
+    //     // $room = $this->joinRequestCheck($uuid, $user_id);
+
+    //     $topic = "/room/{$uuid}";
+    //     $response = [
+    //         'type' => 'request_time_over',
+    //         // 'user_id' => $user_id,
+    //     ];
+
+    //     Yii::$app->mqtt->sendMessage($topic, $response);
+
+    //     return Json::encode($uuid);
+    // }
+
+    // public function actionAddTime()
+    // {
+    //     $uuid = $this->request->post('uuid') ?? null;
+    //     $user_id = $this->request->post('user_id') ?? null;
+
+    //     // $room = $this->joinRequestCheck($uuid, $user_id);
+
+    //     $topic = "/room/{$uuid}";
+    //     $response = [
+    //         'type' => 'response_time_over_add',
+    //     ];
+
+    //     Yii::$app->mqtt->sendMessage($topic, $response);
+
+    //     return Json::encode($uuid);
+    // }
+
+    public function actionToggleMedia()
     {
         $uuid = $this->request->post('uuid') ?? null;
-        $user_id = $this->request->post('user_id') ?? null;
+        $profile_id = $this->request->post('user_profile_id') ?? null;
+        $video = $this->request->post('video') ?? null;
+        $audio = $this->request->post('audio') ?? null;
 
-        // $room = $this->joinRequestCheck($uuid, $user_id);
+        $room = Room::find()->where(['uuid' => $uuid])->limit(1)->one();
+        if (!$room) {
+            return throw new NotFoundHttpException("Room not found.");
+        }
+
+        $profile = Room::find()->where(['id' => $profile_id])->limit(1)->one();
+        if (!$profile) {
+            return throw new NotFoundHttpException("Profile not found.");
+        }
+
+        $roomMember = RoomMember::find()
+        ->where(['user_profile_id'=>$profile->id, 'room_id'=>$room->id])
+        ->limit(1)->one();
+
+        if (!$roomMember) {
+            return throw new NotFoundHttpException("Relation not found.");
+        }
 
         $topic = "/room/{$uuid}";
         $response = [
-            'type' => 'request_time_over',
-            // 'user_id' => $user_id,
-        ];
-
-        Yii::$app->mqtt->sendMessage($topic, $response);
-
-        return Json::encode($uuid);
-    }
-
-    public function actionAddTime()
-    {
-        $uuid = $this->request->post('uuid') ?? null;
-        $user_id = $this->request->post('user_id') ?? null;
-
-        // $room = $this->joinRequestCheck($uuid, $user_id);
-
-        $topic = "/room/{$uuid}";
-        $response = [
-            'type' => 'response_time_over_add',
+            'type' => 'request_toggle_media',
+            'profile_id' => $profile_id,
+            'video' => $video,
+            'audio' => $audio,
+            'profile_image' => $roomMember->getUserProfile()->one()->image,
         ];
 
         Yii::$app->mqtt->sendMessage($topic, $response);
