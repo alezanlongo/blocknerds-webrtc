@@ -106,7 +106,7 @@ $this->title = 'The Room';
                     <div class="room-videos">
                         <div class="wrapper">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <div class="box<?= $i ?> box d-none" data-id="<?= $i ?>">
+                                <div class="box<?= $i ?> box d-none <?= $i===0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <h1 class="text-light username-on-call"> </h1>
                                     </div>
@@ -130,7 +130,7 @@ $this->title = 'The Room';
                                     <?php if ($is_owner) { ?>
                                         <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone"></i></button> |
                                         <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video"></i></button> |
-                                        <button class="btn btn-default text-light btn-remote-kick"><i class="fas fa-times-circle"></i></button>
+                                        <button class="btn btn-default text-light btn-remote-kick"><i class="fas fa-user-times"></i></button>
                                     <?php } ?>
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
                                 </li>
