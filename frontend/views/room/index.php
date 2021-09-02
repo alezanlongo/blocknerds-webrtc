@@ -51,10 +51,17 @@ $this->registerJsFile(
 
 $this->title = 'The Room';
 ?>
+<pre>
+    <? 
+    // var_dump($in_room_members);
+    // die;
+    ?>
+
+</pre>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
     <div class="main-content">
-        <div class="header-content d-flex pt-3 pr-3 pl-3">
+        <div class="header-content d-flex pt-3 pr-3 pl-3 fixed-top">
             <div class=" flex-grow-1 text-center ">
                 <span class="spanCountdown h4"></span>
             </div>
@@ -89,7 +96,7 @@ $this->title = 'The Room';
                 </ul>
             </div>
         </div>
-        <div class="room-content" id="main">
+        <div class="room-content mt-5" id="main">
             <div class="room">
                 <? if ($is_owner || $is_allowed) { ?>
                     <div class="join-again d-none">
