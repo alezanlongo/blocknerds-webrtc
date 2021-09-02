@@ -51,47 +51,40 @@ $this->registerJsFile(
 
 $this->title = 'The Room';
 ?>
-<pre>
-    <? 
-    // var_dump($in_room_members);
-    // die;
-    ?>
-
-</pre>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
     <div class="main-content">
         <div class="header-content d-flex pt-3 pr-3 pl-3 fixed-top">
-            <div class=" flex-grow-1 text-center ">
+            <div class=" flex-grow-1 text-center">
                 <span class="spanCountdown h4"></span>
             </div>
             <div class="options-tab d-flex ">
                 <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
                     <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog"></i></a>
+                        <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog icon-menu"></i></a>
                     </li>
                     <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users"></i></a>
+                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></a>
                     </li>
                     <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments"></i></a>
+                        <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments icon-menu"></i></a>
                     </li>
                     <li class="nav-item ml-3">
-                        <?= Html::tag('button', '<i class="fas fa-microphone"></i>', [
+                        <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
                             'id' => "mute",
                             "class" => "btn btn-default text-white",
                             'onclick' => "toggleMute()"
                         ]) ?>
                     </li>
                     <li class="nav-item ml-3">
-                        <?= Html::tag('button', '<i class="fas fa-video"></i>', [
+                        <?= Html::tag('button', '<i class="fas fa-video icon-menu"></i>', [
                             'id' => "no-video",
                             "class" => "btn btn-default text-white",
                             'onclick' => "toggleVideo()"
                         ]) ?>
                     </li>
                     <li class="nav-item ml-3">
-                        <?= Html::tag('button', '<i class="fas fa-sign-out-alt"></i>', ["class" => "btn btn-danger btn-leave"]) ?>
+                        <?= Html::tag('button', 'Leave', ["class" => "btn btn-danger btn-leave"]) ?>
                     </li>
                 </ul>
             </div>

@@ -18,8 +18,7 @@
 
 .header-content {
   /* border: black 1px solid; */
-  background-color: darkgrey;
-  /* padding: 2%; */
+  background-color: #333335;
 }
 
 .control-section {
@@ -142,4 +141,7 @@
 
 .icon-profile {
   font-size: 150px;
+}
+.icon-menu {
+  font-size: x-large;
 }
