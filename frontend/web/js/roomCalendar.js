@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     timeZone: 'UTC',
     aspectRatio: 3,
     initialView: initialView,
-    headerToolbar: { center: 'listDay,dayGridWeek,dayGridMonth' },
+    headerToolbar: { center: 'timeGridDay,timeGridWeek,dayGridMonth,listWeek' },
     events: "room/calendar/events/" + user_profile_id,
     views: {
       month: {
