@@ -7,43 +7,11 @@
 echo $form->field($generator, 'openApiPath')->error(['encode' => false]);
 echo $form->field($generator, 'ignoreSpecErrors')->checkbox();
 ?>
-<div class="panel panel-default card">
-    <div class="panel-heading card-header">
-        <?= $form->field($generator, 'generateUrls')->checkbox() ?>
-    </div>
-    <div class="panel-body card-body">
-        <?= $form->field($generator, 'urlConfigFile') ?>
-    </div>
-</div>
 
-<div class="panel panel-default card">
-    <div class="panel-heading card-header">
-        <?= $form->field($generator, 'generateControllers')->checkbox() ?>
-    </div>
-    <div class="panel-body card-body">
-        <?= $form->field($generator, 'controllerNamespace') ?>
-    </div>
-</div>
+<?= $form->field($generator, 'generateUrls')->hiddenInput(['value'=> 0])->label(false)?>
+<?= $form->field($generator, 'generateControllers')->hiddenInput(['value'=> 0])->label(false)?>
+<?= $form->field($generator, 'folderPath') ?>
 
-<div class="panel panel-default card">
-    <div class="panel-heading card-header">
-        <?= $form->field($generator, 'generateModels')->checkbox() ?>
-    </div>
-    <div class="panel-body card-body">
-        <?= $form->field($generator, 'modelNamespace') ?>
-        <?= $form->field($generator, 'generateModelFaker')->checkbox() ?>
-    </div>
-</div>
-
-<div class="panel panel-default card">
-    <div class="panel-heading card-header">
-        <?= $form->field($generator, 'generateMigrations')->checkbox() ?>
-    </div>
-    <div class="panel-body card-body">
-        <?= $form->field($generator, 'migrationPath') ?>
-        <?= $form->field($generator, 'migrationNamespace') ?>
-    </div>
-</div>
 
 <?php
 
