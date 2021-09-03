@@ -16,32 +16,37 @@ class ApiGenerator extends ParentApiGenerator
      * @var bool whether to generate Api models from the spec.
      */
     public $generateApiModels = true;
-
+    public $folderPath = 'common/components';
     /**
      * @inheritDoc
      */
     public function generate() {
+        // var_dump($this);
+        $this->modelNamespace = $this->folderPath.'/'.'models';
+        $this->migrationPath = "@".$this->folderPath.'/'.'migrations';
+        $modelApiNamespace = $this->folderPath.'/'.'apiModels';
         $files = parent::generate();
         if ($this->generateApiModels) {
             $models = $this->generateApiModels();
-            $modelPath = $this->getPathFromNamespace($this->modelNamespace);
+            $modelPath = $this->getPathFromNamespace($this->folderPath);
             foreach ($models as $modelName => $model) {
                 $className = $modelName;
                 $files[] = new CodeFile(
-                    Yii::getAlias("$modelPath/$className.php"),
+                    Yii::getAlias("$modelPath/apiModels/$className.php"),
                     $this->render('apiModel.php', [
                         'className' => $className,
-                        'namespace' => $this->modelNamespace,
+                        'namespace' => $modelApiNamespace,
                         'description' => $model['description'],
                         'attributes' => $model['attributes'],
                         'relations' => $model['relations'],
                     ])
                 );
+                // echo "$modelPath/$className.php";
                 if (!$this->generateModelFaker) {
                     continue;
                 }
                 $files[] = new CodeFile(
-                    Yii::getAlias("$modelPath/{$className}Faker.php"),
+                    Yii::getAlias("$modelPath/models/{$className}Faker.php"),
                     $this->render('faker.php', [
                         'className' => "{$className}Faker",
                         'modelClass' => $className,
@@ -54,6 +59,16 @@ class ApiGenerator extends ParentApiGenerator
         }
 
         return $files;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return array_merge(parent::rules(), [
+            ['folderPath', 'required'],
+        ]);
     }
 
     /**
@@ -417,4 +432,73 @@ class ApiGenerator extends ParentApiGenerator
 
         return null;
     }
+
+    public function autoCompleteData()
+    {
+        $vendor = Yii::getAlias('@vendor');
+        $app = Yii::getAlias('@common');
+        $runtime = Yii::getAlias('@runtime');
+        $paths = [];
+        $pathIterator = new \RecursiveDirectoryIterator($app);
+        $recursiveIterator = new \RecursiveIteratorIterator($pathIterator);
+        $files = new \RegexIterator($recursiveIterator, '~.+\.(json|yaml|yml)$~i', \RegexIterator::GET_MATCH);
+        foreach ($files as $file) {
+            if (strpos($file[0], $vendor) === 0) {
+                $file = '@vendor' . substr($file[0], strlen($vendor));
+                if (DIRECTORY_SEPARATOR === '\\') {
+                    $file = str_replace('\\', '/', $file);
+                }
+            } elseif (strpos($file[0], $runtime) === 0) {
+                $file = null;
+            } elseif (strpos($file[0], $app) === 0) {
+                $file = '@common' . substr($file[0], strlen($app));
+                if (DIRECTORY_SEPARATOR === '\\') {
+                    $file = str_replace('\\', '/', $file);
+                }
+            } else {
+                $file = $file[0];
+            }
+
+            if ($file !== null) {
+                $paths[] = $file;
+            }
+        }
+
+        $namespaces = array_map(function ($alias) {
+            $path = Yii::getAlias($alias, false);
+            if (in_array($alias, ['@web', '@runtime', '@vendor', '@bower', '@npm'])) {
+                return [];
+            }
+            if (!file_exists($path)) {
+                return [];
+            }
+            try {
+                return array_map(function ($dir) use ($path, $alias) {
+                    return str_replace('/', '\\', substr($alias, 1) . substr($dir, strlen($path)));
+                }, FileHelper::findDirectories($path, ['except' => [
+                    'vendor/',
+                    'runtime/',
+                    'assets/',
+                    '.git/',
+                    '.svn/',
+                ]]));
+            } catch (\Throwable $e) {
+                // ignore errors with file permissions
+                Yii::error($e);
+                return [];
+            }
+        }, array_keys(Yii::$aliases));
+        $namespaces = array_merge(...$namespaces);
+
+        return [
+            'openApiPath' => $paths,
+            'controllerNamespace' => $namespaces,
+            'modelNamespace' => $namespaces,
+            'migrationNamespace' => $namespaces,
+//            'urlConfigFile' => [
+//                '@app/config/urls.rest.php',
+//            ],
+        ];
+    }
+
 }
