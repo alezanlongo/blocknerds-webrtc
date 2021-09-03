@@ -13,3 +13,7 @@ tr.fc-list-event:hover {
   color: black;
   cursor: pointer;
 }
+
+.fc-theme-standard .fc-popover {
+  background-color: #202124 ;
+}
