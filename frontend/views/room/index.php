@@ -109,7 +109,7 @@ $this->title = 'The Room';
                                 <div class="box<?= $i ?> box d-none <?= $i===0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <h1 class="text-light username-on-call"> </h1>
-                                        <img src="https://www.fimeint.org/images/default.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                        <img src="https://www.uic.mx/posgrados/files/2018/05/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
                                     </div>
                                 </div>
                             <?php } ?>

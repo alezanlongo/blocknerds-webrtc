@@ -88,7 +88,7 @@ const handleToggleVideoRemote = (objData, index) => {
     }
     const width = compVideo.width();
     const height = compVideo.height();
-    compImage.width(width);
+    compImage.width('auto');
     compImage.height(height);
     compImage.removeClass("d-none").show();
     compVideo.addClass("d-none").hide();
@@ -108,7 +108,7 @@ const handleToggleVideoLocal = (objData) =>{
     }
     const width = compVideo.width();
     const height = compVideo.height();
-    compImage.width(width);
+    compImage.width('auto');
     compImage.height(height);
     compImage.removeClass("d-none").show();
     compVideo.addClass("d-none").hide();
