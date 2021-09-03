@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   calendar.render();
 
-  setTimeout(() => { $.pjax.reload({ container: "#calendar-meeting-in-progress" }) }, 2500);
+  setInterval(() => { $.pjax.reload({ container: "#calendar-next-meeting" }) }, 2500);
 
   $('.fc-listWeek-button, .fc-dayGridMonth-button, .fc-dayGridWeek-button').click(function (e) {
 
