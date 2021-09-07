@@ -61,6 +61,7 @@
   left: 0px;
   margin: 25px;
   z-index: 999;
+  font-size: xx-large;
 }
 .username-on-call:hover {
   cursor: pointer;

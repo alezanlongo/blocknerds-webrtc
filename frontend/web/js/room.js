@@ -151,7 +151,7 @@ const initJanus = () => {
                 $(`#video-source0`).append(
                   '<video class="rounded centered relative" width="100%" height="100%" id="myvideo" autoplay playsinline muted="muted"/>'
                 );
-                $("#video-source0 h1").text(username);
+                $("#video-source0 .username-on-call").text(username);
               }
               $(".box0").removeClass("d-none");
               Janus.attachMediaStream($("#myvideo").get(0), stream);
@@ -588,7 +588,7 @@ function newRemoteFeed(id, display, audio, video) {
             remoteFeed.rfindex +
             '" width="100%" height="100%" autoplay playsinline/>'
         );
-        $(`#video-source${remoteFeed.rfindex} h1`).text(
+        $(`#video-source${remoteFeed.rfindex} .username-on-call`).text(
           feeds[remoteFeed.rfindex].rfuser.usernameFeed
         );
         // $("#video-source" + remoteFeed.rfindex).append(

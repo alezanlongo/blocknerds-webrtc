@@ -108,7 +108,7 @@ $this->title = 'The Room';
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                                 <div class="box<?= $i ?> box d-none <?= $i===0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
-                                        <h1 class="text-light username-on-call"> </h1>
+                                        <span class="text-light username-on-call"> </span>
                                         <img src="https://www.uic.mx/posgrados/files/2018/05/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
                                     </div>
                                 </div>
