@@ -129,9 +129,6 @@ class RoomController extends \yii\web\Controller
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
-        // VarDumper::dump( Yii::$app->janusApi->getInRoomMembers($uuid), $depth = 10, $highlight = true);
-        // die;
-
         return $this->render('index', [
             //'token' => Yii::$app->janusApi->createHmacToken(),
             'token' => $token, //storedToken
@@ -149,11 +146,6 @@ class RoomController extends \yii\web\Controller
             'endTime' => $endTime
         ]);
     }
-
-    // private function getOnlineMembers(string $uuid): ?array
-    // {
-    //     # code...
-    // }
 
     public function actionCreate()
     {
@@ -522,54 +514,20 @@ class RoomController extends \yii\web\Controller
         return Json::encode($events);
     }
 
-    // public function actionTimeExpired()
-    // {
-    //     $uuid = $this->request->post('uuid') ?? null;
-    //     $user_id = $this->request->post('user_id') ?? null;
-
-    //     // $room = $this->joinRequestCheck($uuid, $user_id);
-
-    //     $topic = "/room/{$uuid}";
-    //     $response = [
-    //         'type' => 'request_time_over',
-    //         // 'user_id' => $user_id,
-    //     ];
-
-    //     Yii::$app->mqtt->sendMessage($topic, $response);
-
-    //     return Json::encode($uuid);
-    // }
-
-    // public function actionAddTime()
-    // {
-    //     $uuid = $this->request->post('uuid') ?? null;
-    //     $user_id = $this->request->post('user_id') ?? null;
-
-    //     // $room = $this->joinRequestCheck($uuid, $user_id);
-
-    //     $topic = "/room/{$uuid}";
-    //     $response = [
-    //         'type' => 'response_time_over_add',
-    //     ];
-
-    //     Yii::$app->mqtt->sendMessage($topic, $response);
-
-    //     return Json::encode($uuid);
-    // }
-
     public function actionToggleMedia()
     {
         $uuid = $this->request->post('uuid') ?? null;
         $profile_id = $this->request->post('user_profile_id') ?? null;
         $video = $this->request->post('video') ?? null;
         $audio = $this->request->post('audio') ?? null;
-
+        
         $room = Room::find()->where(['uuid' => $uuid])->limit(1)->one();
         if (!$room) {
             return throw new NotFoundHttpException("Room not found.");
         }
-
-        $profile = Room::find()->where(['id' => $profile_id])->limit(1)->one();
+        
+        $profile = UserProfile::find()->where(['id' => $profile_id])->limit(1)->one();
+       
         if (!$profile) {
             return throw new NotFoundHttpException("Profile not found.");
         }

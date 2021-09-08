@@ -145,6 +145,8 @@ const initJanus = () => {
                 handleJsep(message, jsep);
               }
             },
+            ondataopen: (flag)=>{console.log('Nicholls',flag)},
+            ondata: (data)=>{console.log('Nicholls',data)},
             onlocalstream: (stream) => {
               myStream = stream;
               if ($("#myvideo").length === 0) {
@@ -342,7 +344,6 @@ const handlingEvent = (objMessage) => {
         break;
       }
     }
-    console.log('Nicholls',remoteFeed)
     if (remoteFeed !== null) {
       $("#remote" + remoteFeed.rfindex)
         .empty()
@@ -389,6 +390,7 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       videoRecv: false,
       audioSend: useAudio,
       videoSend: useVideo,
+      data:true,
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
