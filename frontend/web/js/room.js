@@ -145,8 +145,6 @@ const initJanus = () => {
                 handleJsep(message, jsep);
               }
             },
-            ondataopen: (flag)=>{console.log('Nicholls',flag)},
-            ondata: (data)=>{console.log('Nicholls',data)},
             onlocalstream: (stream) => {
               myStream = stream;
               if ($("#myvideo").length === 0) {
@@ -312,22 +310,27 @@ const handlingEvent = (objMessage) => {
     }
   } else if (objMessage["leaving"]) {
     const leaving = objMessage["leaving"];
-    let remoteFeed = null;
-    for (let i = 1; i < limitMembers; i++) {
-      if (feeds[i] && feeds[i].rfid === leaving) {
-        remoteFeed = feeds[i];
-        break;
+    if(leaving === 'ok' && objMessage["reason"] && objMessage["reason"] === 'kicked'){
+      // TODO: handle kick
+      console.log('you are kicked')
+    }else{
+      let remoteFeed = null;
+      for (let i = 1; i < limitMembers; i++) {
+        if (feeds[i] && feeds[i].rfid === leaving) {
+          remoteFeed = feeds[i];
+          break;
+        }
       }
-    }
-    if (remoteFeed !== null) {
-      $("#remote" + remoteFeed.rfindex)
-        .empty()
-        .hide();
-      $("#videoremote" + remoteFeed.rfindex).empty();
-      // $(`.box${remoteFeed.rfindex}`).hide();
-      // $(`.box${remoteFeed.rfindex} h1`).text("");
-      feeds[remoteFeed.rfindex] = null;
-      remoteFeed.detach();
+      if (remoteFeed !== null) {
+        $("#remote" + remoteFeed.rfindex)
+          .empty()
+          .hide();
+        $("#videoremote" + remoteFeed.rfindex).empty();
+        // $(`.box${remoteFeed.rfindex}`).hide();
+        // $(`.box${remoteFeed.rfindex} h1`).text("");
+        feeds[remoteFeed.rfindex] = null;
+        remoteFeed.detach();
+      }
     }
   } else if (objMessage["unpublished"]) {
     // One of the publishers has unpublished?
@@ -360,17 +363,19 @@ const handlingEvent = (objMessage) => {
       // This is a "no such room" error: give a more meaningful description
       bootbox.alert(
         "<p>Apparently room <code>" +
-          room_uuid +
+          myRoom +
           "</code> (the one this demo uses as a test room) " +
           "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
           "configuration file? If not, make sure you copy the details of room <code>" +
-          room_uuid +
+          myRoom +
           "</code> " +
           "from that sample in your current configuration file, then restart Janus and try again."
       );
     } else {
       bootbox.alert(objMessage["error"]);
     }
+  }else if(objMessage['kicked']){
+    console.log('member ', objMessage['kicked'], 'was kicked')
   }
 };
 const joinMe = () => {
@@ -379,7 +384,7 @@ const joinMe = () => {
     room: myRoom,
     ptype: PUBLISH_TYPE_PUBLISHER,
     display: `${username}_${userProfileId}`,
-    data: true,
+    // data: true,
   };
   pluginHandler.send({ message: register });
 };
@@ -391,7 +396,7 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       videoRecv: false,
       audioSend: useAudio,
       videoSend: useVideo,
-      data:true,
+      // data:true,
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
@@ -818,7 +823,6 @@ const pinBehavior = (list, index, width = "100%", height = "90vh") => {
 
 const muteMember = (index) => {
   if (isOwner) {
-    console.log(index);
     let remoteHandler = feeds[index];
     if (!remoteHandler) {
       return;
@@ -865,6 +869,29 @@ const muteMember = (index) => {
   }
 };
 
+const kickMember = (index) => {
+  if (isOwner) {
+    let remoteHandler = feeds[index];
+    if (!remoteHandler) {
+      return;
+    }
+
+    remoteHandler.send({
+      message: {
+        request: "kick",
+        room: myRoom,
+        id: remoteHandler.rfid,
+      },
+      success: function (data) {
+        console.log('success', data)
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  }
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////// HANDLING SIDEBAR
 ////////////////////////////////////////////////////////////////////////////////
@@ -886,6 +913,11 @@ $(".icon-menu").on("click", (e) => {
     }, 10);
   }
 })
+
+$('.icon-option-member').on('click', (e)=>{
+  $(e.target).parent().trigger("click")
+})
+
 $(".option-side").on("click", (e) => {
   const componentClicked = $(e.target);
   const controlName = componentClicked.attr("aria-controls");
@@ -928,6 +960,8 @@ $(document).on("click", ".btn-remote-kick", function (e) {
   let currentElement = $(e.target);
   const index = currentElement.parent().attr("data-index");
   console.log("kick", index);
+  kickMember(index)
+
 });
 
 $(".username-on-call").on("click", (e) => {
