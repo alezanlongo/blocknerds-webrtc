@@ -448,6 +448,7 @@ class RoomController extends \yii\web\Controller
         if (Yii::$app->request->isAjax && $this->request->get('_pjax') == "#calendar-next-meeting") {
             $subQuery = RoomMember::find()->where(["user_profile_id" => $profile->id])->select(['room_id']);
             $rooms = Room::find()->where(['in', 'id', $subQuery])->select(['meeting_id']);
+
             $nearestMeeting = Meeting::find()
                 ->where(['in', 'id', $rooms])
                 ->andWhere('to_timestamp(scheduled_at+duration) >= NOW()')
@@ -466,13 +467,16 @@ class RoomController extends \yii\web\Controller
                         'url' => Url::to('room/' . $nearestMeeting->room->uuid),
                     ]);
                 } else {
-                    $text = $nearestMeeting->title . ', starts in ' . Carbon::createFromTimestamp($nearestMeeting->scheduled_at)->diffForHumans();
+                    $userMidnightInUTC = Carbon::tomorrow()->setTimezone($profile->timezone); //->timestamp;
+                    if (Carbon::createFromTimestamp($nearestMeeting->scheduled_at)->lessThan($userMidnightInUTC)) {
+                        $text = $nearestMeeting->title . ', starts in ' . Carbon::createFromTimestamp($nearestMeeting->scheduled_at)->diffForHumans();
 
-                    $cardNextOrInProgressMeetingWidget = cardNextOrInProgressMeetingWidget::widget([
-                        'title' => 'Next meeting',
-                        'text' => $text,
-                        'url' => Url::to('room/' . $nearestMeeting->room->uuid),
-                    ]);
+                        $cardNextOrInProgressMeetingWidget = cardNextOrInProgressMeetingWidget::widget([
+                            'title' => 'Next meeting',
+                            'text' => $text,
+                            'url' => Url::to('room/' . $nearestMeeting->room->uuid),
+                        ]);
+                    }
                 }
             }
         }
