@@ -39,7 +39,113 @@ class ApiGenerator extends ParentApiGenerator
         $this->modelNamespace = $this->folderPath.'/'.'models';
         $this->migrationPath = "@".$this->folderPath.'/'.'migrations';
         $modelApiNamespace = $this->folderPath.'/'.'apiModels';
-        $files = parent::generate();
+
+        //$files = parent::generate();
+        $files = [];
+
+        if ($this->generateUrls) {
+            $urls = [];
+            $optionsUrls = [];
+            foreach ($this->generateUrls() as $urlRule) {
+                $urls["{$urlRule['method']} {$urlRule['pattern']}"] = $urlRule['route'];
+                // add options action
+                $parts = explode('/', $urlRule['route']);
+                unset($parts[count($parts) - 1]);
+                $optionsUrls[$urlRule['pattern']] = implode('/', $parts) . '/options';
+            }
+            $urls = array_merge($urls, $optionsUrls);
+            $files[] = new CodeFile(
+                Yii::getAlias($this->urlConfigFile),
+                $this->render('urls.php', [
+                    'urls' => $urls,
+                ])
+            );
+        }
+
+        if ($this->generateControllers) {
+            $controllers = $this->generateControllers();
+            $controllerNamespace = $this->controllerNamespace ?? Yii::$app->controllerNamespace;
+            $controllerPath = $this->getPathFromNamespace($controllerNamespace);
+            foreach ($controllers as $controller => $actions) {
+                $className = \yii\helpers\Inflector::id2camel($controller) . 'Controller';
+                $files[] = new CodeFile(
+                    Yii::getAlias($controllerPath . "/$className.php"),
+                    $this->render('controller.php', [
+                        'className' => $className,
+                        'namespace' => $controllerNamespace,
+                        'actions' => $actions,
+                    ])
+                );
+            }
+        }
+
+        if ($this->generateModels) {
+            $models = $this->generateModels();
+            $modelPath = $this->getPathFromNamespace($this->modelNamespace);
+            foreach ($models as $modelName => $model) {
+                $className = $modelName;
+                $files[] = new CodeFile(
+                    Yii::getAlias("$modelPath/$className.php"),
+                    $this->render('model.php', [
+                        'className' => $className,
+                        'tableName' => $model['tableName'],
+                        'namespace' => $this->modelNamespace,
+                        'description' => $model['description'],
+                        'attributes' => $model['attributes'],
+                        'relations' => $model['relations'],
+                        'extIdField' => $model['extIdField'],
+                    ])
+                );
+                if (!$this->generateModelFaker) {
+                    continue;
+                }
+                $files[] = new CodeFile(
+                    Yii::getAlias("$modelPath/{$className}Faker.php"),
+                    $this->render('faker.php', [
+                        'className' => "{$className}Faker",
+                        'modelClass' => $className,
+                        'namespace' => $this->modelNamespace,
+                        'attributes' => $model['attributes'],
+//                        'relations' => $model['relations'],
+                    ])
+                );
+            }
+        }
+
+        if ($this->generateMigrations) {
+            if (!isset($models)) {
+                $models = $this->generateModels();
+            }
+            $migrationPath = Yii::getAlias($this->migrationPath);
+            $migrationNamespace = $this->migrationNamespace;
+            foreach ($models as $modelName => $model) {
+                // migration files get invalidated directly after generating
+                // if they contain a timestamp
+                // use fixed time here instead
+                if ($migrationNamespace) {
+                    $m = date('ymd000000');
+                    $className = "M{$m}$modelName";
+                } else {
+                    $m = date('ymd_000000');
+                    $className = "m{$m}_$modelName";
+                }
+                $tableName = $model['tableName'];
+
+
+                $files[] = new CodeFile(
+                    Yii::getAlias("$migrationPath/$className.php"),
+                    $this->render('migration.php', [
+                        'className' => $className,
+                        'namespace' => $migrationNamespace,
+                        'tableName' => $tableName,
+                        'attributes' => $model['attributes'],
+                        'relations' => $model['relations'],
+                        'description' => 'Table for ' . $modelName,
+                    ])
+                );
+            }
+        }
+
         if ($this->generateApiModels) {
             $models = $this->generateApiModels();
             $modelPath = $this->getPathFromNamespace($this->folderPath);
