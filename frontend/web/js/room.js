@@ -137,7 +137,7 @@ const initJanus = () => {
             },
             onmessage: (message, jsep) => {
               const event = message.videoroom;
-              console.log("eveeeeenr", event);
+              console.log("eveeeeenr", event, message, jsep);
               if (event) {
                 handleEvent(event, message);
               }
@@ -298,7 +298,6 @@ const handlingDestroyed = () => {
   });
 };
 const handlingEvent = (objMessage) => {
-  $.pjax.reload({ container: "#room-participants-actions", async: false });
   if (objMessage["publishers"]) {
     const list = objMessage["publishers"];
     for (let f in list) {
@@ -343,10 +342,12 @@ const handlingEvent = (objMessage) => {
         break;
       }
     }
+    console.log('Nicholls',remoteFeed)
     if (remoteFeed !== null) {
       $("#remote" + remoteFeed.rfindex)
         .empty()
         .hide();
+      $("#attendee_" + remoteFeed.rfindex).hide();
       $("#videoremote" + remoteFeed.rfindex).empty();
       $(".box" + remoteFeed.rfindex).hide();
       feeds[remoteFeed.rfindex] = null;

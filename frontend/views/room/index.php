@@ -106,7 +106,7 @@ $this->title = 'The Room';
                     <div class="room-videos">
                         <div class="wrapper">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <div class="box<?= $i ?> box d-none <?= $i===0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
+                                <div class="box<?= $i ?> box d-none <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <span class="text-light username-on-call"> </span>
                                         <img src="https://www.uic.mx/posgrados/files/2018/05/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
@@ -124,10 +124,8 @@ $this->title = 'The Room';
                         <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                         <ul class="list-group bg-dark list-attendees">
-                            <?php Pjax::begin(['id' => 'room-participants-actions', "options" => []]); ?>
-                            <?php for ($i = 0; $i < count($in_room_members); $i++) { ?>
-                                <li class="list-group-item bg-dark" id="participant_<?= $in_room_members[$i] ?>" data-id="<?= $in_room_members[$i] ?>" data-index="<?= $i ?>">
-                                <span class="p-1 usernameFeed"></span>
+                            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
+                                <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
                                     <?php if ($is_owner) { ?>
                                         <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone"></i></button> |
                                         <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video"></i></button> |
@@ -135,8 +133,7 @@ $this->title = 'The Room';
                                     <?php } ?>
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
                                 </li>
-                                <?php  } ?>
-                                <?php Pjax::end(); ?>
+                            <?php  } ?>
                         </ul>
                     </div>
                     <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>

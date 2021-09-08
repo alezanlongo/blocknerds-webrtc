@@ -21,6 +21,7 @@ use yii\web\TooManyRequestsHttpException;
 use yii\web\UnprocessableEntityHttpException;
 use common\widgets\cardNextOrInProgressMeeting\cardNextOrInProgressMeetingWidget;
 use yii\helpers\Url;
+use yii\helpers\VarDumper;
 
 class RoomController extends \yii\web\Controller
 {
@@ -128,6 +129,9 @@ class RoomController extends \yii\web\Controller
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
+        // VarDumper::dump( Yii::$app->janusApi->getInRoomMembers($uuid), $depth = 10, $highlight = true);
+        // die;
+
         return $this->render('index', [
             //'token' => Yii::$app->janusApi->createHmacToken(),
             'token' => $token, //storedToken
@@ -145,6 +149,11 @@ class RoomController extends \yii\web\Controller
             'endTime' => $endTime
         ]);
     }
+
+    // private function getOnlineMembers(string $uuid): ?array
+    // {
+    //     # code...
+    // }
 
     public function actionCreate()
     {
