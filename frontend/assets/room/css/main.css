@@ -66,8 +66,6 @@
 .username-on-call:hover {
   cursor: pointer;
   /* font-size: xx-large; */
-
-
 }
 .video-on-call {
   width: 100%;
@@ -149,8 +147,9 @@
 
 .box-preview {
   width: 300px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    margin: 0;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
 }
