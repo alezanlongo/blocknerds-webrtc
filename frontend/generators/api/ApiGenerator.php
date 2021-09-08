@@ -13,6 +13,21 @@ use yii\helpers\StringHelper;
 class ApiGenerator extends ParentApiGenerator
 {
     /**
+     * @inheritdoc
+     */
+    public $generateUrls = false;
+
+    /**
+     * @inheritdoc
+     */
+    public $generateControllers = false;
+
+    /**
+     * @inheritdoc
+     */
+    public $generateModelFaker = false;
+
+    /**
      * @var bool whether to generate Api models from the spec.
      */
     public $generateApiModels = true;
@@ -21,7 +36,6 @@ class ApiGenerator extends ParentApiGenerator
      * @inheritDoc
      */
     public function generate() {
-        // var_dump($this);
         $this->modelNamespace = $this->folderPath.'/'.'models';
         $this->migrationPath = "@".$this->folderPath.'/'.'migrations';
         $modelApiNamespace = $this->folderPath.'/'.'apiModels';
@@ -77,9 +91,14 @@ class ApiGenerator extends ParentApiGenerator
     protected function generateModels()
     {
         $models = [];
+        $externalId = 'externalId';
         foreach ($this->getOpenApi()->components->schemas as $schemaName => $schema) {
             if ($schema instanceof Reference) {
                 $schema = $schema->resolve();
+            }
+            $extIdField = false;
+            if( array_key_exists('x-external-id', $schema->getExtensions()) ) {
+                $extIdField = $schema->getExtensions()['x-external-id'];
             }
             $attributes = [];
             $relations = [];
@@ -93,14 +112,9 @@ class ApiGenerator extends ParentApiGenerator
                 continue;
             }
 
-            $flattenSchema = false;
-            if($schemaExtensions = $schema->getExtensions() ?? false ) {
-                if( array_key_exists('x-flatten', $schemaExtensions) ) {
-                    $flattenSchema = true;
-                }
-            }
-
+            $hasId = false;
             foreach ($schema->properties as $name => $property) {
+                $unique = false;
                 if ($property instanceof Reference) {
                     $ref = $property->getJsonReference()->getJsonPointer()->getPointer();
                     $resolvedProperty = $property->resolve();
@@ -111,7 +125,7 @@ class ApiGenerator extends ParentApiGenerator
                         $type = substr($ref, 20);
 
                         //START FLATTENING
-                        if( $flattenSchema ) {
+                        if( array_key_exists('x-flatten', $schema->getExtensions()) ) {
                             $flattenedAttributes = $this->flattenOneToOneRelation($type);
                             if ( $flattenedAttributes ) {
                                 $attributes = array_merge($attributes, $flattenedAttributes);
@@ -133,6 +147,10 @@ class ApiGenerator extends ParentApiGenerator
                     $type = $this->getSchemaType($property);
                     $dbName = $name;
                     $dbType = $this->getDbType($name, $property);
+                    if( !$hasId and $name === 'id') {
+                        $hasId = true;
+                    }
+                    $unique = array_key_exists('x-unique', $property->getExtensions());
                 }
                 // relation
                 if (is_array($type)) {
@@ -153,8 +171,39 @@ class ApiGenerator extends ParentApiGenerator
                     'readOnly' => $resolvedProperty->readOnly ?? false,
                     'description' => $resolvedProperty->description,
                     'faker' => $this->guessModelFaker($name, $type, $resolvedProperty),
+                    'unique' => $unique,
                 ];
             }
+            if( $hasId ) { //ENQUIRY what happens if the schema has an id and ext_id is set to a different field?
+                $attributes['id']['name'] = $externalId;
+                $attributes['id']['dbType'] = '$this->integer()';//IMPROVEME could be string
+                $attributes['id']['dbName'] = 'external_id';
+                $attributes[$externalId] = $attributes['id'];
+                unset($attributes['id']);
+            } else {
+                $attributes[$externalId] = [
+                    'name' => $externalId,
+                    'type' => 'integer',
+                    'dbType' => '$this->string()',
+                    'dbName' => 'external_id',
+                    'required' => false,
+                    'readOnly' => false,
+                    'description' => 'API Primary Key',
+                    //'faker' => $this->guessModelFaker($name, $type, $resolvedProperty),
+                    'unique' => false,
+                ];
+            }
+            $attributes['id'] = [
+                'name' => 'id',
+                'type' => 'integer',
+                'dbType' => '$this->primaryKey()',
+                'dbName' => 'id',
+                'required' => false,
+                'readOnly' => false,
+                'description' => 'Primary Key',
+                //'faker' => $this->guessModelFaker($name, $type, $resolvedProperty),
+                'unique' => false,
+            ];
             if (!empty($schema->required)) {
                 foreach ($schema->required as $property) {
                     if (!isset($attributes[$property])) {
@@ -163,13 +212,13 @@ class ApiGenerator extends ParentApiGenerator
                     $attributes[$property]['required'] = true;
                 }
             }
-
             $models[$schemaName] = [
                 'name' => $schemaName,
                 'tableName' => '{{%' . Inflector::camel2id(StringHelper::basename(Inflector::pluralize($schemaName)), '_') . '}}',
                 'description' => $schema->description,
                 'attributes' => $attributes,
                 'relations' => $relations,
+                'extIdField' => $extIdField,
             ];
         }
 
@@ -307,17 +356,16 @@ class ApiGenerator extends ParentApiGenerator
         return $flattenedAttributes;
     }
 
+    /**
+     * @inheritdoc
+     */
     private function getPathFromNamespace($namespace)
     {
         return Yii::getAlias('@' . str_replace('\\', '/', $namespace));
     }
 
     /**
-     * Guess faker for attribute.
-     * @param string $name
-     * @param string $type
-     * @return string|null the faker PHP code or null.
-     * @link https://github.com/fzaninotto/Faker#formatters
+     * @inheritdoc
      */
     private function guessModelFaker($name, $type, Schema $property)
     {
@@ -433,6 +481,9 @@ class ApiGenerator extends ParentApiGenerator
         return null;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function autoCompleteData()
     {
         $vendor = Yii::getAlias('@vendor');

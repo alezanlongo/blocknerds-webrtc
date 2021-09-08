@@ -14,7 +14,7 @@ class <?= $className ?> extends \yii\db\Migration
     {
         $this->createTable('<?= $tableName ?>', [
 <?php foreach ($attributes as $attribute): ?>
-            '<?= $attribute['dbName'] ?>' => '<?= $attribute['dbType'] ?>',
+            '<?= $attribute['dbName'] ?>' => <?= $attribute['dbType'] ?><?php if ($attribute['required']): ?>->notNull()<?php endif ?><?php if (isset($attribute['unique']) and $attribute['unique']): ?>->unique()<?php endif ?>,
 <?php endforeach; ?>
         ]);
 
