@@ -299,6 +299,7 @@ const handlingDestroyed = () => {
     window.location.reload();
   });
 };
+
 const handlingEvent = (objMessage) => {
   if (objMessage["publishers"]) {
     const list = objMessage["publishers"];
@@ -873,7 +874,18 @@ const toggleSidebar = (isOpen) => {
   document.getElementById("optionsSidebar").style.width = `${sizeSidebar}px`;
   // document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
 };
-
+$(".icon-menu").on("click", (e) => {
+  const isOpen = Array.from($(".option-side").children()).some((child) =>
+    $(child).hasClass("active")
+  );
+  if(isOpen){
+    const componentClicked = $(e.target).parent();
+    toggleSidebar(isOpen);
+    setTimeout(() => {
+      componentClicked.removeClass("active");
+    }, 10);
+  }
+})
 $(".option-side").on("click", (e) => {
   const componentClicked = $(e.target);
   const controlName = componentClicked.attr("aria-controls");
