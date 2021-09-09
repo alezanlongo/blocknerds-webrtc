@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use DateTime;
 use Carbon\Carbon;
+use common\components\JanusApiComponent;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use common\models\Room;
@@ -22,6 +23,7 @@ use yii\web\UnprocessableEntityHttpException;
 use common\widgets\cardNextOrInProgressMeeting\cardNextOrInProgressMeetingWidget;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
+use yii\web\Response;
 
 class RoomController extends \yii\web\Controller
 {
@@ -124,6 +126,31 @@ class RoomController extends \yii\web\Controller
                 }
                 return true;
             }), "id");
+        }
+
+
+        // \print_r([$this->request->isAjax,$this->request->isPost,$this->request->get('mute', null),null !== $token]);
+        if ($this->request->isAjax && $this->request->isPost && $this->request->get('mute', null) && null !== $token) {
+            if (!$this->request->post('muteTarget', false)) {
+                $this->response->format = Response::FORMAT_JSON;
+                // $myJanusMember = \array_filter($irm, function ($v) use ($token) {
+                //     if (null !== $token && isset($v['token']) && $v['token'] == $token) {
+                //         return true;
+                //     }
+                //     return false;
+                // });
+                // if (empty($myJanusMember)) {
+                //     $this->response->format = Response::FORMAT_JSON;
+                //     $this->response->statusCode = 403;
+                //     return $this->response;
+                // }
+                $this->response->statusCode = 403;
+                //\print_r( $this->request->get('mute'));
+                if (Yii::$app->janusApi->moderateMember($uuid, $token, JanusApiComponent::SOURCE_AUDIO, $this->request->get('mute') == 'true' ? true : false)) {
+                    $this->response->statusCode = 200;
+                }
+                return $this->response;
+            }
         }
 
         $meeting = $room->getMeeting()->one();
