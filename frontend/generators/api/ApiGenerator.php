@@ -31,14 +31,14 @@ class ApiGenerator extends ParentApiGenerator
      * @var bool whether to generate Api models from the spec.
      */
     public $generateApiModels = true;
-    public $folderPath = 'common/components';
+    public $folderPath = 'common\\components';
     /**
      * @inheritDoc
      */
     public function generate() {
-        $this->modelNamespace = $this->folderPath.'/'.'models';
-        $this->migrationPath = "@".$this->folderPath.'/'.'migrations';
-        $modelApiNamespace = $this->folderPath.'/'.'apiModels';
+        $this->modelNamespace = $this->folderPath.'\\'.'models';
+        $modelApiNamespace = $this->folderPath.'\\'.'apiModels';
+        $this->migrationPath = $this->getPathFromNamespace($this->folderPath).'/'.'migrations';
 
         //$files = parent::generate();
         $files = [];
