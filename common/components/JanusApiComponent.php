@@ -27,6 +27,10 @@ class JanusApiComponent extends Component
     private $lastError = null;
     private $adminTokenPrefix = 'adminToken';
 
+    public const SOURCE_AUDIO = 'audio';
+    public const SOURCE_VIDEO = 'video';
+
+
     public function __construct($config = [])
     {
         $this->apiParams = $config;
@@ -179,11 +183,16 @@ class JanusApiComponent extends Component
      * @param bool $apply true(default) fom mute, false unmute
      * @return bool returns true if the action has completed, false if not 
      */
-    public function muteMember(string $roomUuid, $token, bool $apply = true)
+    public function moderateMember(string $roomUuid, $token, string $source = self::SOURCE_AUDIO, bool $apply = true)
     {
+
+        if (!in_array($source, [self::SOURCE_AUDIO, self::SOURCE_VIDEO])) {
+            $this->lastError = "undefined source: $source";
+            return false;
+        }
+
         $this->attach('janus.plugin.videoroom');
         $members = $this->getInRoomMembers($roomUuid);
-        VarDumper::dump($members, 20, true);
         if (false === $members) {
             return false;
         }
@@ -194,7 +203,7 @@ class JanusApiComponent extends Component
         if (null === $memberId) {
             return false;
         }
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['mute' => $apply, 'request' => 'moderate', 'id' => $memberId, 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['mute_' . $source => $apply, 'request' => 'moderate', 'id' => $memberId, 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
 
         if (!$res->isOk) {
             return false;
@@ -207,7 +216,7 @@ class JanusApiComponent extends Component
         return false;
     }
 
-    
+
 
 
     public function createHmacToken()
