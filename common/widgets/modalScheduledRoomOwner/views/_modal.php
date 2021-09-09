@@ -9,7 +9,7 @@ use yii\helpers\Url;
 use yii\web\JsExpression;
 
 $btnOpenMeeting = Html::a(
-    '<i class="fas fa-external-link-alt"></i>',
+    '  <i class="fas text-secondary fa-external-link-alt"></i>',
     'room/' . $uuid,
     [
         'onclick' => 'window.open("/room/' . $uuid . '");return false;'

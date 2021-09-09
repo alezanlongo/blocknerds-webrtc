@@ -54,7 +54,6 @@ class UserController extends Controller
 
     public function actionEditProfile()
     {
-        $this->layout = 'without-home-link';
         $model = new EditProfileForm();
         $imageBack = $model->image;
 

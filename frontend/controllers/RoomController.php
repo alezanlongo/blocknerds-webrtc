@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use DateTime;
 use Carbon\Carbon;
+use yii\helpers\Html;
 use yii\helpers\Json;
 use common\models\Room;
 use common\models\User;
@@ -14,10 +15,13 @@ use common\models\RoomRequest;
 use common\models\UserProfile;
 use common\models\UserSetting;
 use yii\filters\AccessControl;
-use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
+use common\models\RoomMemberRepository;
 use yii\web\TooManyRequestsHttpException;
 use yii\web\UnprocessableEntityHttpException;
+use common\widgets\cardNextOrInProgressMeeting\cardNextOrInProgressMeetingWidget;
+use yii\helpers\Url;
+use yii\helpers\VarDumper;
 
 class RoomController extends \yii\web\Controller
 {
@@ -103,12 +107,23 @@ class RoomController extends \yii\web\Controller
         if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && $room->is_quick) {
             $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
             $token = $userToken->token;
-            $res = Yii::$app->janusApi->addUserToken($uuid, $token);
-            $uTokens = Yii::$app->janusApi->getUsersTokenByRoom($uuid);
+            $uTokens = Yii::$app->janusApi->getMembersTokenByRoom($uuid);
             if (false !== $uTokens && (empty($uTokens) || !\in_array($token, \array_column($uTokens, 'token')))) {
+                $res = Yii::$app->janusApi->addUserToken($uuid, $token);
             }
         }
         if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && !$room->is_quick) {
+        }
+
+        $inRoomMembersIds = [];
+        $irm = Yii::$app->janusApi->getInRoomMembers($uuid);
+        if (!empty($irm)) {
+            $inRoomMembersIds = \array_column(\array_filter($irm, function ($v) use ($token) {
+                if (null !== $token && isset($v['token']) && $v['token'] == $token) {
+                    return false;
+                }
+                return true;
+            }), "id");
         }
 
         $meeting = $room->getMeeting()->one();
@@ -119,6 +134,7 @@ class RoomController extends \yii\web\Controller
             'token' => $token, //storedToken
             'user_profile_id' => $profile->id,
             'limit_members' => $limit_members,
+            'in_room_members' => $inRoomMembersIds,
             'members' => $members,
             'room_id' => $room->id,
             'is_owner' => $is_owner,
@@ -429,10 +445,11 @@ class RoomController extends \yii\web\Controller
         $roomMembers = [];
         $initialView = UserSetting::getSetting($user->id, 'initialView', UserSetting::GROUP_NAME_CALENDAR);
 
-        $btnInProgress = null;
-        if (Yii::$app->request->isAjax && $this->request->get('_pjax') == "#calendar-meeting-in-progress") {
+        $cardNextOrInProgressMeetingWidget = null;
+        if (Yii::$app->request->isAjax && $this->request->get('_pjax') == "#calendar-next-meeting") {
             $subQuery = RoomMember::find()->where(["user_profile_id" => $profile->id])->select(['room_id']);
             $rooms = Room::find()->where(['in', 'id', $subQuery])->select(['meeting_id']);
+
             $nearestMeeting = Meeting::find()
                 ->where(['in', 'id', $rooms])
                 ->andWhere('to_timestamp(scheduled_at+duration) >= NOW()')
@@ -445,13 +462,22 @@ class RoomController extends \yii\web\Controller
                     Carbon::createFromTimestamp($nearestMeeting->scheduled_at),
                     Carbon::createFromTimestamp($nearestMeeting->scheduled_at)->addSeconds($nearestMeeting->duration)
                 )) {
-                    $btnInProgress = Html::a(
-                        'In progress meeting',
-                        'room/' . $nearestMeeting->room->uuid,
-                        [
-                            "class" => "ml-2", "id" => "btnInProgress"
-                        ]
-                    );
+                    $cardNextOrInProgressMeetingWidget = cardNextOrInProgressMeetingWidget::widget([
+                        'title' => 'In progress',
+                        'text' => $nearestMeeting->title . ', started ' . Yii::$app->formatter->format($nearestMeeting->scheduled_at, 'relativeTime'),
+                        'url' => Url::to('room/' . $nearestMeeting->room->uuid),
+                    ]);
+                } else {
+                    $userMidnightInUTC = Carbon::tomorrow()->setTimezone($profile->timezone); //->timestamp;
+                    if (Carbon::createFromTimestamp($nearestMeeting->scheduled_at)->lessThan($userMidnightInUTC)) {
+                        $text = $nearestMeeting->title . ', starts in ' . Carbon::createFromTimestamp($nearestMeeting->scheduled_at)->diffForHumans();
+
+                        $cardNextOrInProgressMeetingWidget = cardNextOrInProgressMeetingWidget::widget([
+                            'title' => 'Next meeting',
+                            'text' => $text,
+                            'url' => Url::to('room/' . $nearestMeeting->room->uuid),
+                        ]);
+                    }
                 }
             }
         }
@@ -469,7 +495,7 @@ class RoomController extends \yii\web\Controller
             'roomSelected' => $roomSelected,
             'roomMembers' => $roomMembers,
             'initialView' => $initialView ? $initialView->value : 'dayGridWeek',
-            'btnInProgress' => $btnInProgress
+            'cardNextOrInProgressMeetingWidget' => $cardNextOrInProgressMeetingWidget
         ]);
     }
 
@@ -492,34 +518,39 @@ class RoomController extends \yii\web\Controller
         return Json::encode($events);
     }
 
-    public function actionTimeExpired()
+    public function actionToggleMedia()
     {
         $uuid = $this->request->post('uuid') ?? null;
-        $user_id = $this->request->post('user_id') ?? null;
+        $profile_id = $this->request->post('user_profile_id') ?? null;
+        $video = $this->request->post('video') ?? null;
+        $audio = $this->request->post('audio') ?? null;
+        
+        $room = Room::find()->where(['uuid' => $uuid])->limit(1)->one();
+        if (!$room) {
+            return throw new NotFoundHttpException("Room not found.");
+        }
+        
+        $profile = UserProfile::find()->where(['id' => $profile_id])->limit(1)->one();
+       
+        if (!$profile) {
+            return throw new NotFoundHttpException("Profile not found.");
+        }
 
-        // $room = $this->joinRequestCheck($uuid, $user_id);
+        $roomMember = RoomMember::find()
+            ->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])
+            ->limit(1)->one();
+
+        if (!$roomMember) {
+            return throw new NotFoundHttpException("Relation not found.");
+        }
 
         $topic = "/room/{$uuid}";
         $response = [
-            'type' => 'request_time_over',
-            // 'user_id' => $user_id,
-        ];
-
-        Yii::$app->mqtt->sendMessage($topic, $response);
-
-        return Json::encode($uuid);
-    }
-
-    public function actionAddTime()
-    {
-        $uuid = $this->request->post('uuid') ?? null;
-        $user_id = $this->request->post('user_id') ?? null;
-
-        // $room = $this->joinRequestCheck($uuid, $user_id);
-
-        $topic = "/room/{$uuid}";
-        $response = [
-            'type' => 'response_time_over_add',
+            'type' => 'request_toggle_media',
+            'profile_id' => $profile_id,
+            'video' => $video,
+            'audio' => $audio,
+            'profile_image' => $roomMember->getUserProfile()->one()->image,
         ];
 
         Yii::$app->mqtt->sendMessage($topic, $response);

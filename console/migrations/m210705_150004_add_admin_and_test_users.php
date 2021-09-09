@@ -18,7 +18,7 @@ class m210705_150004_add_admin_and_test_users extends Migration
             'username' => 'admin',
             'auth_key' =>  Yii::$app->getSecurity()->generateRandomString(),
             'password' => '12345678',
-            'email'    => 'admin@@example.com',
+            'email'    => 'admin@example.com',
             'status' => 10,
             'verification_token' =>  Yii::$app->getSecurity()->generateRandomString(),
             'is_admin' => 1,
@@ -30,7 +30,7 @@ class m210705_150004_add_admin_and_test_users extends Migration
             'username' => 'test',
             'auth_key' =>  Yii::$app->getSecurity()->generateRandomString(),
             'password' => '12345678',
-            'email'    => 'test@@example.com',
+            'email'    => 'test@example.com',
             'status' => 10,
             'verification_token' =>  Yii::$app->getSecurity()->generateRandomString(),
         ]);
@@ -41,7 +41,7 @@ class m210705_150004_add_admin_and_test_users extends Migration
             'username' => 'test1',
             'auth_key' =>  Yii::$app->getSecurity()->generateRandomString(),
             'password' => '12345678',
-            'email'    => 'test1@@example.com',
+            'email'    => 'test1@example.com',
             'status' => 10,
             'verification_token' =>  Yii::$app->getSecurity()->generateRandomString(),
         ]);
@@ -52,7 +52,7 @@ class m210705_150004_add_admin_and_test_users extends Migration
             'username' => 'test2',
             'auth_key' =>  Yii::$app->getSecurity()->generateRandomString(),
             'password' => '12345678',
-            'email'    => 'test2@@example.com',
+            'email'    => 'test2@example.com',
             'status' => 10,
             'verification_token' =>  Yii::$app->getSecurity()->generateRandomString(),
         ]);
@@ -63,7 +63,7 @@ class m210705_150004_add_admin_and_test_users extends Migration
             'username' => 'test3',
             'auth_key' =>  Yii::$app->getSecurity()->generateRandomString(),
             'password' => '12345678',
-            'email'    => 'test3@@example.com',
+            'email'    => 'test3@example.com',
             'status' => 10,
             'verification_token' =>  Yii::$app->getSecurity()->generateRandomString(),
         ]);

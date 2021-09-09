@@ -2,6 +2,7 @@
 /* @var $this yii\web\View */
 
 use yii\web\View;
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 use yii\bootstrap4\Modal;
@@ -11,7 +12,6 @@ use frontend\assets\Datetimepicker\DatetimepickerAsset;
 use common\widgets\modalScheduleRoom\ModalScheduleRoomWidget;
 use common\widgets\modalScheduledRoomOwner\ModalScheduledRoomOwnerWidget;
 use common\widgets\modalScheduledRoomMember\ModalScheduledRoomMemberWidget;
-use yii\helpers\Url;
 
 DatetimepickerAsset::register($this);
 FullcalendarAsset::register($this);
@@ -34,11 +34,13 @@ $this->registerJsVar('roomMaxMembersAllowed', Yii::$app->params['janus.roomMaxMe
 
 $this->title = "Room's calendar";
 
+Pjax::begin(['id' => 'calendar-next-meeting', 'timeout' => false, 'linkSelector' => 'a:not(.target-blank)']);
+echo $cardNextOrInProgressMeetingWidget;
+Pjax::end();
 ?>
 
 <div class="mb-5">
     <?php
-    Pjax::begin(['id' => 'calendar-meeting-in-progress', 'timeout' => false]);
 
     $form = ActiveForm::begin(['action' => 'room/create']);
 
@@ -53,14 +55,8 @@ $this->title = "Room's calendar";
         ]
     );
 
-    echo $btnInProgress;
-
     ActiveForm::end();
-
-    Pjax::end();
     ?>
-
-
 </div>
 
 <div id="calendar" class="text-white"></div>
