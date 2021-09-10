@@ -24,6 +24,7 @@ use common\widgets\cardNextOrInProgressMeeting\cardNextOrInProgressMeetingWidget
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
 use yii\web\Response;
+use yii\web\ServerErrorHttpException;
 
 class RoomController extends \yii\web\Controller
 {
@@ -544,6 +545,26 @@ class RoomController extends \yii\web\Controller
 
         return Json::encode($events);
     }
+    public function actionKickMember()
+    {
+        $profileId = $this->request->post('profile_id');
+        $roomUuid = $this->request->get('uuid');
+        // This is because it's not match same memberId with member token 
+        $memberId = $this->request->post('id'); 
+
+        $roomMember = $this->checkMember($roomUuid, $profileId);
+        if(!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token, $memberId)){
+            return throw new ServerErrorHttpException("Error kicking member of the room");    
+        }
+
+        $roomRequest = RoomRequest::find()->where(['room_id'=>$roomMember->room_id,'user_profile_id'=>$roomMember->user_profile_id])->limit(1)->one();
+        $roomRequest->delete();
+
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return [
+            'status' => 200
+        ];
+    }
 
     public function actionToggleMedia()
     {
@@ -552,24 +573,7 @@ class RoomController extends \yii\web\Controller
         $video = $this->request->post('video') ?? null;
         $audio = $this->request->post('audio') ?? null;
         
-        $room = Room::find()->where(['uuid' => $uuid])->limit(1)->one();
-        if (!$room) {
-            return throw new NotFoundHttpException("Room not found.");
-        }
-        
-        $profile = UserProfile::find()->where(['id' => $profile_id])->limit(1)->one();
-       
-        if (!$profile) {
-            return throw new NotFoundHttpException("Profile not found.");
-        }
-
-        $roomMember = RoomMember::find()
-            ->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])
-            ->limit(1)->one();
-
-        if (!$roomMember) {
-            return throw new NotFoundHttpException("Relation not found.");
-        }
+        $roomMember = $this->checkMember($uuid, $profile_id);
 
         $topic = "/room/{$uuid}";
         $response = [
@@ -583,5 +587,29 @@ class RoomController extends \yii\web\Controller
         Yii::$app->mqtt->sendMessage($topic, $response);
 
         return Json::encode($uuid);
+    }
+
+    private function checkMember(string $roomUuid, string $profileId)
+    {
+        $room = Room::find()->where(['uuid' => $roomUuid])->limit(1)->one();
+        if (!$room) {
+            return throw new NotFoundHttpException("Room not found.");
+        }
+        
+        $profile = UserProfile::find()->where(['id' => $profileId])->limit(1)->one();
+       
+        if (!$profile) {
+            return throw new NotFoundHttpException("Profile not found.");
+        }
+
+        $roomMember = RoomMember::find()
+            ->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])
+            ->limit(1)->one();
+
+        if (!$roomMember) {
+            return throw new NotFoundHttpException("Relation not found.");
+        }
+
+        return $roomMember;
     }
 }

@@ -310,10 +310,15 @@ const handlingEvent = (objMessage) => {
     }
   } else if (objMessage["leaving"]) {
     const leaving = objMessage["leaving"];
-    if(leaving === 'ok' && objMessage["reason"] && objMessage["reason"] === 'kicked'){
+    if (
+      leaving === "ok" &&
+      objMessage["reason"] &&
+      objMessage["reason"] === "kicked"
+    ) {
       // TODO: handle kick
-      console.log('you are kicked')
-    }else{
+      alert("you are kicked");
+      window.location.replace("/");
+    } else {
       let remoteFeed = null;
       for (let i = 1; i < limitMembers; i++) {
         if (feeds[i] && feeds[i].rfid === leaving) {
@@ -374,8 +379,16 @@ const handlingEvent = (objMessage) => {
     } else {
       bootbox.alert(objMessage["error"]);
     }
-  }else if(objMessage['kicked']){
-    console.log('member ', objMessage['kicked'], 'was kicked')
+  } else if (objMessage["kicked"]) {
+    // TODO: reset ui
+    console.log("member ", objMessage["kicked"], "was kicked");
+    const index = getIndexByMemberId(objMessage["kicked"]);
+    if (!index) {
+      return;
+    }
+    $(`.box${index}`).hide();
+    $(`#remotevideo${index}`).empty();
+    $(`#attendee_${index}`).hide();
   }
 };
 const joinMe = () => {
@@ -875,19 +888,14 @@ const kickMember = (index) => {
     if (!remoteHandler) {
       return;
     }
-
-    remoteHandler.send({
-      message: {
-        request: "kick",
-        room: myRoom,
-        id: remoteHandler.rfid,
+    $.post({
+      url: `${myRoom}/kick`,
+      data: { profile_id: remoteHandler.rfuser.idFeed, id: remoteHandler.rfid },
+      cache: false,
+      error: (err) => {
+        console.log(err);
       },
-      success: function (data) {
-        console.log('success', data)
-      },
-      error: function (error) {
-        console.log(error);
-      },
+      success: (data) => console.log("success", data),
     });
   }
 };
@@ -905,18 +913,18 @@ $(".icon-menu").on("click", (e) => {
   const isOpen = Array.from($(".option-side").children()).some((child) =>
     $(child).hasClass("active")
   );
-  if(isOpen){
+  if (isOpen) {
     const componentClicked = $(e.target).parent();
     toggleSidebar(isOpen);
     setTimeout(() => {
       componentClicked.removeClass("active");
     }, 10);
   }
-})
+});
 
-$('.icon-option-member').on('click', (e)=>{
-  $(e.target).parent().trigger("click")
-})
+$(".icon-option-member").on("click", (e) => {
+  $(e.target).parent().trigger("click");
+});
 
 $(".option-side").on("click", (e) => {
   const componentClicked = $(e.target);
@@ -957,11 +965,13 @@ $(document).on("click", ".btn-remote-video", function (e) {
 });
 
 $(document).on("click", ".btn-remote-kick", function (e) {
-  let currentElement = $(e.target);
+  const currentElement = $(e.target);
   const index = currentElement.parent().attr("data-index");
-  console.log("kick", index);
-  kickMember(index)
-
+  if (index) {
+    if (confirm("Are you sure that kick this member?")) {
+      kickMember(index);
+    }
+  }
 });
 
 $(".username-on-call").on("click", (e) => {
@@ -1007,8 +1017,22 @@ const getRemoteProfileToFeed = (index) => {
   if (!feed) return null;
   return feed.rfuser.idFeed;
 };
-const getFeedFromProfileId = (profileId) => {
+const getFeedByProfileId = (profileId) => {
   const feed = feeds.find((fe) => fe?.rfuser?.idFeed === profileId);
   if (!feed) return null;
   return feed;
+};
+const getFeedByMemberId = (id) => {
+  const feed = feeds.find((fe) => fe?.rfid === id);
+  if (!feed) return null;
+  return feed;
+};
+const getIndexByMemberId = (id) => {
+  let index = null;
+  feeds.forEach((feed, i) => {
+    if (feed?.rfid === id) {
+      index = i;
+    }
+  });
+  return index;
 };

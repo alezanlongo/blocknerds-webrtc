@@ -216,7 +216,76 @@ class JanusApiComponent extends Component
         return false;
     }
 
+    private function getMemberRoomToken(string $roomUuid, string $token): ?string
+    {
+        $members = $this->getInRoomMembers($roomUuid);
+        if (false === $members || empty($members)) {
+            return null;
+        }
 
+        return $members[\array_search($token, \array_column($members, 'token'))]['id'] ?? null;
+    }
+
+    public function kickMember(string $roomUuid, string $token, string $memberId = null)
+    {
+        $this->attach('janus.plugin.videoroom');
+        // $memberId = $this->getMemberRoomToken($roomUuid, $token);
+        // if (!$memberId) {
+        //     return false;
+        // }
+        $res = $this->apiCall(
+            'POST',
+            [
+                'janus' => 'message',
+                'body' => [
+                    'request' => 'kick',
+                    'id' => $memberId,
+                    'room' => $roomUuid
+                ],
+                'transaction' => $this->createRandStr(),
+                'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()
+            ],
+            $this->createSession() . '/' . $this->handleID
+        );
+
+        if (!$res->isOk) {
+            return false;
+        }
+
+        $data = $res->getData();
+        if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
+            return true;
+        }
+
+        $this->lastError = $data['plugindata']['data']['error'] ?? null;
+        return false;
+    }
+
+    public function getDataMembers(string $roomUuid)
+    {
+        $this->attach('janus.plugin.videoroom');
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'listparticipants', 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        if (!$res->isOk) {
+            return false;
+        }
+        $members = $res->getData()['plugindata']['data']['participants'] ?? null;
+        // VarDumper::dump( $members, $depth = 10, $highlight = true);
+        // die;
+        $dataMembers = [];
+
+        if (!empty($members)) {
+            foreach ($members as $k => $v) {
+                $userHandle = $this->getUserHandle($v['id']);
+                $dataMembers[] = [
+                    'id' => $userHandle['plugin_specific']['id'],
+                    'display' => $userHandle['plugin_specific']['display'],
+                    'media' => $userHandle['plugin_specific']['media'],
+                ];
+            }
+        }
+
+        return $dataMembers;
+    }
 
 
     public function createHmacToken()
