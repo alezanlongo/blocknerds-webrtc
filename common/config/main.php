@@ -54,7 +54,7 @@ return [
             'adminKey' => 'supersecret',
             'tokenAuthSecret' => 'fcknlorenzo',
             'adminKey' => 'supersecret',
-            'storedAuth' => false
+            'storedAuth' => true
 
         ]
     ],

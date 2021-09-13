@@ -111,12 +111,14 @@ class RoomController extends \yii\web\Controller
             $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
             $token = $userToken->token;
             $uTokens = Yii::$app->janusApi->getMembersTokenByRoom($uuid);
+            // VarDumper::dump( $uTokens, $depth = 10, $highlight = true);
+            // die;
             if (false !== $uTokens && (empty($uTokens) || !\in_array($token, \array_column($uTokens, 'token')))) {
                 $res = Yii::$app->janusApi->addUserToken($uuid, $token);
             }
         }
-        if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && !$room->is_quick) {
-        }
+        // if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && !$room->is_quick) {
+        // }
 
         $inRoomMembersIds = [];
         $irm = Yii::$app->janusApi->getInRoomMembers($uuid);
@@ -549,11 +551,9 @@ class RoomController extends \yii\web\Controller
     {
         $profileId = $this->request->post('profile_id');
         $roomUuid = $this->request->get('uuid');
-        // This is because it's not match same memberId with member token 
-        $memberId = $this->request->post('id'); 
 
         $roomMember = $this->checkMember($roomUuid, $profileId);
-        if(!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token, $memberId)){
+        if(!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token)){
             return throw new ServerErrorHttpException("Error kicking member of the room");    
         }
 
