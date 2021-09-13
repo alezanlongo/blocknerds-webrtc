@@ -890,7 +890,7 @@ const kickMember = (index) => {
     }
     $.post({
       url: `${myRoom}/kick`,
-      data: { profile_id: remoteHandler.rfuser.idFeed, id: remoteHandler.rfid },
+      data: { profile_id: remoteHandler.rfuser.idFeed }, 
       cache: false,
       error: (err) => {
         console.log(err);
