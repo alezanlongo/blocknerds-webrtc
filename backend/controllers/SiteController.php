@@ -9,6 +9,8 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 
+use common\components\Athena\AthenaClient;
+
 /**
  * Site controller
  */
@@ -72,6 +74,18 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+        $service = new AthenaClient();
+
+        $dataResponse = $service->getListDepartment(); var_dump($dataResponse); exit();
+
+        $dataResponse = $service->createPatient([
+            'lastname'      => "Loayza",
+            'firstname'     => "Mauricio",
+            'dob'           => "10/03/2000",
+            'departmentid'  => 1,
+            'email'         => "mauricio@test.test",
+        ]);
+
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
