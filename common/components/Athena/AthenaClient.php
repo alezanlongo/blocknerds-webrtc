@@ -16,12 +16,7 @@ class AthenaClient extends AthenaOauth
         if($dataResponse['success']){
             return $dataResponse['data'];
         }else{
-            if((int)$dataResponse['statusCode'] == 401){
-                $this->Authenticate();
-                return $this->getListDepartment();
-            }else{
-                return $dataResponse['message'];
-            }
+            return $dataResponse['message'];
         }
     }
 
@@ -32,12 +27,7 @@ class AthenaClient extends AthenaOauth
         if($dataResponse['success']){
             return $dataResponse['data'];
         }else{
-            if((int)$dataResponse['statusCode'] == 401){
-                $this->Authenticate();
-                return $this->createPatient($patientInfo);
-            }else{
-                return $dataResponse['message'];
-            }
+            return $dataResponse['message'];
         }
     }
 }
