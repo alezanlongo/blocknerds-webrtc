@@ -119,13 +119,16 @@ $this->title = 'The Room';
             </div>
             <div class="side-content sidebar" id="optionsSidebar">
                 <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
+                    <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
+                        <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
+                    </div>
+
                     <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
                         <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                         <ul class="list-group bg-dark list-attendees">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
+                                <li class="list-group-item list-group-item-light bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
                                     <?php if ($is_owner) { ?>
                                         <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone icon-option-member"></i></button> |
                                         <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video icon-option-member"></i></button> |
@@ -136,7 +139,9 @@ $this->title = 'The Room';
                             <?php  } ?>
                         </ul>
                     </div>
-                    <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
+                    <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">
+                        <?= Html::tag('h3', 'Chat section', ['class' => 'text-center']) ?>
+                    </div>
                 </div>
             </div>
         </div>
