@@ -1,5 +1,4 @@
 <?php
-/* @var $this yii\web\View */
 
 use yii\web\View;
 use yii\helpers\Html;
@@ -12,6 +11,8 @@ use frontend\assets\pahoMqtt\PahoMqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
 use yii\helpers\Url;
 
+
+/** @var \yii\web\View $this */
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
@@ -25,6 +26,7 @@ $this->registerJsVar('isOwner', $is_owner, View::POS_END);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
+$this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
 
 $this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
@@ -110,6 +112,7 @@ $this->title = 'The Room';
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <span class="text-light username-on-call"> </span>
                                         <img src="https://www.uic.mx/posgrados/files/2018/05/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                        <div class="video-mute-icon d-none" style="width: 30px; height:auto; position:absolute"><i class="fa fa-microphone-slash" aria-hidden="true"></i></div>
                                     </div>
                                 </div>
                             <?php } ?>

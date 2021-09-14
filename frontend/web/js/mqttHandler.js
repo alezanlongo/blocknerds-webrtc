@@ -23,16 +23,19 @@ client.onMessageArrived = function (message) {
   //   $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
   // }
   if (objData.type === EVENT_TYPE_TOGGLE_MEDIA) {
-    if(Number(userProfileId) === Number(objData.profile_id)){
+    if (Number(userProfileId) === Number(objData.profile_id)) {
       if (objData.video !== null) {
         handleToggleVideoLocal(objData)
       }
-      
-    }else{
+
+    } else {
       const feed = getFeedFromProfileId(Number(objData.profile_id));
       if (feed) {
         if (objData.video !== null) {
           handleToggleVideoRemote(objData, feed.rfindex);
+        }
+        if (objData.audio !== null) {
+          toggleAudioMuteView(objData, feed.rfindex)
         }
       }
 
@@ -98,7 +101,16 @@ const handleToggleVideoRemote = (objData, index) => {
   }
 };
 
-const handleToggleVideoLocal = (objData) =>{
+function toggleAudioMuteView(objData, index) {
+  let elm = $(`#video-source${index}`);
+  if (objData.audio === "true") {
+    $(".video-mute-icon", elm).removeClass("d-none")
+  } else {
+    $(".video-mute-icon", elm).addClass("d-none")
+  }
+}
+
+const handleToggleVideoLocal = (objData) => {
   const compVideo = $("#myvideo")
   const compImage = $("#img0")
   if (objData.video === "true") {
