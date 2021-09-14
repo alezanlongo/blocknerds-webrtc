@@ -92,7 +92,7 @@ class AthenaOauth
             $dataSession = $dataSession = $this->Authenticate();
             if($dataSession['success']){
                 $interval = time() - strtotime($dataSession['data']['created_time']);
-                if((int)$interval < (int)$dataSession['data']['refresh_token']){
+                if((int)$interval < (int)$dataSession['data']['expires_in']){
                     $session->remove('athenaAuth');
                     $dataSession = $this->Authenticate();
                 }

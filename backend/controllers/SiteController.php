@@ -76,16 +76,17 @@ class SiteController extends Controller
     {
         $service = new AthenaClient();
 
-        $dataResponse = $service->getListDepartment();
-        echo '<pre>'; var_dump($dataResponse); exit();
+        //$dataResponse = $service->getListDepartment();
 
-        /*$dataResponse = $service->createPatient([
+
+        $dataResponse = $service->createPatient([
             'lastname'      => "Loayza",
             'firstname'     => "Mauricio",
             'dob'           => "10/03/2000",
             'departmentid'  => 1,
             'email'         => "mauricio@test.test",
-        ]);*/
+        ]);
+        echo '<pre>'; var_dump($dataResponse); exit();
 
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
