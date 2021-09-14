@@ -121,23 +121,23 @@ const initJanus = () => {
             mediaState: (medium, on) => {
               Janus.log(
                 "Janus " +
-                  (on ? "started" : "stopped") +
-                  " receiving our " +
-                  medium
+                (on ? "started" : "stopped") +
+                " receiving our " +
+                medium
               );
             },
             webrtcState: (on) => {
               Janus.log(
                 "Janus says our WebRTC PeerConnection is " +
-                  (on ? "up" : "down") +
-                  " now"
+                (on ? "up" : "down") +
+                " now"
               );
               $(`#video-source0`).parent().parent().unblock();
               if (!on) return;
             },
             onmessage: (message, jsep) => {
               const event = message.videoroom;
-              console.log("eveeeeenr", event);
+              console.log("eveeeeenr", message);
               if (event) {
                 handleEvent(event, message);
               }
@@ -158,9 +158,9 @@ const initJanus = () => {
               $("#myvideo").get(0).muted = "muted";
               if (
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  ICE_CONNECTION_STATE_COMPLETED &&
+                ICE_CONNECTION_STATE_COMPLETED &&
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  ICE_CONNECTION_STATE_CONNECTED
+                ICE_CONNECTION_STATE_CONNECTED
               ) {
                 $(`#video-source0`)
                   .parent()
@@ -183,9 +183,9 @@ const initJanus = () => {
                 if ($("#video-source .no-video-container").length === 0) {
                   $(`#video-source0`).append(
                     '<div class="no-video-container">' +
-                      '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-                      '<span class="no-video-text">No webcam available</span>' +
-                      "</div>"
+                    '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
+                    '<span class="no-video-text">No webcam available</span>' +
+                    "</div>"
                   );
                 }
               } else {
@@ -287,6 +287,7 @@ const handlingJoined = (objMessage) => {
       const display = publishersList[f]["display"];
       const audio = publishersList[f]["audio_codec"];
       const video = publishersList[f]["video_codec"];
+      console.log("ale joined", publishersList[f])
       newRemoteFeed(id, display, audio, video);
     }
   }
@@ -306,6 +307,8 @@ const handlingEvent = (objMessage) => {
       const display = list[f]["display"];
       const audio = list[f]["audio_codec"];
       const video = list[f]["video_codec"];
+      console.log("ale event", list[f])
+
       newRemoteFeed(id, display, audio, video);
     }
   } else if (objMessage["leaving"]) {
@@ -357,13 +360,13 @@ const handlingEvent = (objMessage) => {
       // This is a "no such room" error: give a more meaningful description
       bootbox.alert(
         "<p>Apparently room <code>" +
-          room_uuid +
-          "</code> (the one this demo uses as a test room) " +
-          "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
-          "configuration file? If not, make sure you copy the details of room <code>" +
-          room_uuid +
-          "</code> " +
-          "from that sample in your current configuration file, then restart Janus and try again."
+        room_uuid +
+        "</code> (the one this demo uses as a test room) " +
+        "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
+        "configuration file? If not, make sure you copy the details of room <code>" +
+        room_uuid +
+        "</code> " +
+        "from that sample in your current configuration file, then restart Janus and try again."
       );
     } else {
       bootbox.alert(objMessage["error"]);
@@ -438,10 +441,10 @@ function newRemoteFeed(id, display, audio, video) {
       remoteFeed.simulcastStarted = false;
       Janus.log(
         "Plugin attached! (" +
-          remoteFeed.getPlugin() +
-          ", id=" +
-          remoteFeed.getId() +
-          ")"
+        remoteFeed.getPlugin() +
+        ", id=" +
+        remoteFeed.getId() +
+        ")"
       );
       Janus.log("  -- This is a subscriber");
       let subscribe = {
@@ -463,8 +466,8 @@ function newRemoteFeed(id, display, audio, video) {
         if (video) video = video.toUpperCase();
         toastr.warning(
           "Publisher is using " +
-            video +
-            ", but Safari doesn't support it: disabling video"
+          video +
+          ", but Safari doesn't support it: disabling video"
         );
         subscribe["offer_video"] = false;
       }
@@ -507,11 +510,11 @@ function newRemoteFeed(id, display, audio, video) {
           }
           Janus.log(
             "Successfully attached to feed " +
-              remoteFeed.rfid +
-              " (" +
-              remoteFeed.rfdisplay +
-              ") in room " +
-              msg["room"]
+            remoteFeed.rfid +
+            " (" +
+            remoteFeed.rfdisplay +
+            ") in room " +
+            msg["room"]
           );
         } else if (event === EVENT) {
           // Check if we got a simulcast-related event from this publisher
@@ -555,18 +558,18 @@ function newRemoteFeed(id, display, audio, video) {
     iceState: function (state) {
       Janus.log(
         "ICE state of this WebRTC PeerConnection (feed #" +
-          remoteFeed.rfindex +
-          ") changed to " +
-          state
+        remoteFeed.rfindex +
+        ") changed to " +
+        state
       );
     },
     webrtcState: function (on) {
       Janus.log(
         "Janus says this WebRTC PeerConnection (feed #" +
-          remoteFeed.rfindex +
-          ") is " +
-          (on ? "up" : "down") +
-          " now"
+        remoteFeed.rfindex +
+        ") is " +
+        (on ? "up" : "down") +
+        " now"
       );
     },
     onlocalstream: function (stream) {
@@ -580,25 +583,26 @@ function newRemoteFeed(id, display, audio, video) {
         // No remote video yet
         $("#video-source" + remoteFeed.rfindex).append(
           '<video class="rounded centered" id="waitingvideo' +
-            remoteFeed.rfindex +
-            '" width="100%" height="100%" />'
-        );
-        $("#video-source" + remoteFeed.rfindex).append(
-          '<video class="rounded centered relative hide" id="remotevideo' +
+          remoteFeed.rfindex +
+          '" width="100%" height="100%" />'
+          );
+          $("#video-source" + remoteFeed.rfindex).append(
+            '<video class="rounded centered relative hide" id="remotevideo' +
             remoteFeed.rfindex +
             '" width="100%" height="100%" autoplay playsinline/>'
-        );
-        $(`#video-source${remoteFeed.rfindex} h1`).text(
-          feeds[remoteFeed.rfindex].rfuser.usernameFeed
-        );
-        // $("#video-source" + remoteFeed.rfindex).append(
-        //   '<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">' +
-        //     feeds[remoteFeed.rfindex].rfuser.usernameFeed +
+            );
+            $(`#video-source${remoteFeed.rfindex} h1`).text(
+              feeds[remoteFeed.rfindex].rfuser.usernameFeed
+              );
+              // $("#video-source" + remoteFeed.rfindex).append(
+                //   '<h1 class="text-light " style="position: absolute; top: 0px; left: 0px; margin: 25px;">' +
+                //     feeds[remoteFeed.rfindex].rfuser.usernameFeed +
         //     "</h1>"
         // );
         addNewAttendee(remoteFeed);
-
+        
         // Show the video, hide the spinner and show the resolution when we get a playing event
+        irmStatus.forEach((v) => { if (v.id == remoteFeed.rfid) { if (v.mute_audio === true) {$(".video-mute-icon", $("#video-source" + remoteFeed.rfindex)).removeClass("d-none") } } })
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
           if (remoteFeed.spinner) remoteFeed.spinner.stop();
           remoteFeed.spinner = null;
@@ -614,6 +618,8 @@ function newRemoteFeed(id, display, audio, video) {
         $("#remotevideo" + remoteFeed.rfindex).get(0),
         stream
       );
+
+
       const videoTracks = stream.getVideoTracks();
       if (!videoTracks || videoTracks.length === 0) {
         // No remote video
@@ -624,16 +630,16 @@ function newRemoteFeed(id, display, audio, video) {
         ) {
           $("#video-source" + remoteFeed.rfindex).append(
             '<div class="no-video-container">' +
-              '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-              '<span class="no-video-text">No remote video available</span>' +
-              "</div>"
+            '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
+            '<span class="no-video-text">No remote video available</span>' +
+            "</div>"
           );
         }
       } else {
         $(
           "#video-source" + remoteFeed.rfindex + " .no-video-container"
-        ).remove();
-        $("#remotevideo" + remoteFeed.rfindex)
+          ).remove();
+          $("#remotevideo" + remoteFeed.rfindex)
           .removeClass("hide")
           .show();
       }
@@ -687,11 +693,38 @@ function unpublishOwnFeed() {
 }
 
 function toggleVideo() {
-  let noVideo = pluginHandler.isVideoMuted();
-  Janus.log((noVideo ? "No video" : "Video") + " local stream...");
-  if (noVideo) pluginHandler.unmuteVideo();
-  else pluginHandler.muteVideo();
+  let muted = pluginHandler.isVideoMuted();
+
+
+  Janus.log((muted ? "No video" : "Video") + " local stream...");
+  if (muted) {
+    pluginHandler.unmuteVideo();
+    //pluginHandler.send({ message: { "request": "configure", "video": true } });
+  } else {
+    pluginHandler.muteVideo();
+    // pluginHandler.send({ message: { "request": "configure", "video": false } });
+  }
   muted = pluginHandler.isVideoMuted();
+  $.post({
+    url: "/room/toggle-media",
+    data: { uuid: myRoom, user_profile_id: userProfileId, video: muted },
+    cache: false,
+    error: (err) => {
+      return;
+    },
+  });
+
+  // pluginHandler.createOffer({
+  //   media: { removeVideo: true },
+  //   success: (res) => { console.log(res) },
+  //   error: (err) => { console.log(err) }
+  // })
+  // pluginHandler.createOffer({
+  //   media: { replaceVideo: true },
+  //   success: (res) => { console.log(res) },
+  //   error: (err) => { console.log(err) }
+  // })
+
   // const compVideo = $("#myvideo")
   // const compImage = $("#img0")
   // if (muted) {
@@ -707,28 +740,40 @@ function toggleVideo() {
   //   compImage.addClass("d-none").hide();
   //   compVideo.removeClass("d-none").show();
   // }
-  $.post({
-    url: "/room/toggle-media",
-    data: { uuid: myRoom, user_profile_id: userProfileId, video: muted },
-    cache: false,
-    error: (err) => {
-      console.log(err);
-    },
-  });
+
 }
 
 function toggleMute() {
   let muted = pluginHandler.isAudioMuted();
+
   Janus.log((muted ? "Unmuting" : "Muting") + " local stream...");
-  if (muted) pluginHandler.unmuteAudio();
-  else pluginHandler.muteAudio();
+  if (muted) {
+    pluginHandler.unmuteAudio();
+    //    pluginHandler.send({ message: { "request": "configure", audio: false } });
+
+  }
+  else {
+    pluginHandler.muteAudio();
+    //    pluginHandler.send({ message: { "request": "configure", audio: true } });
+  }
   muted = pluginHandler.isAudioMuted();
+
+  $.post({
+    url: "/room/toggle-media",
+    data: { uuid: myRoom, user_profile_id: userProfileId, audio: muted },
+    cache: false,
+    error: (err) => {
+      return;
+    },
+  });
+
   // $("#mute").html(muted ? "Unmute" : "Mute");
   if (muted) {
     $("#mute > i").removeClass("fa-microphone").addClass("fa-microphone-slash");
   } else {
     $("#mute > i").removeClass("fa-microphone-slash").addClass("fa-microphone");
   }
+
 }
 
 ////////////////////////////////////////////////////////////

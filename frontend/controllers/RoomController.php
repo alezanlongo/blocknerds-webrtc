@@ -22,6 +22,9 @@ use yii\web\TooManyRequestsHttpException;
 use yii\web\UnprocessableEntityHttpException;
 use common\widgets\cardNextOrInProgressMeeting\cardNextOrInProgressMeetingWidget;
 use yii\helpers\Url;
+use yii\helpers\VarDumper;
+use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\Response;
 
 class RoomController extends \yii\web\Controller
@@ -89,6 +92,10 @@ class RoomController extends \yii\web\Controller
             ->andWhere(['room_id' => $room->id])
             ->select('user_profile_id');
 
+        if ($is_allowed || $is_owner) {
+            // $mutedSource = RoomMe
+        }
+
         $usersIds = UserProfile::find()->where(['in', 'id', $profileIds])
             ->select('user_id');
 
@@ -127,30 +134,18 @@ class RoomController extends \yii\web\Controller
             }), "id");
         }
 
-
-        // \print_r([$this->request->isAjax,$this->request->isPost,$this->request->get('mute', null),null !== $token]);
-        if ($this->request->isAjax && $this->request->isPost && $this->request->get('mute', null) && null !== $token) {
-            if (!$this->request->post('muteTarget', false)) {
-                $this->response->format = Response::FORMAT_JSON;
-                // $myJanusMember = \array_filter($irm, function ($v) use ($token) {
-                //     if (null !== $token && isset($v['token']) && $v['token'] == $token) {
-                //         return true;
-                //     }
-                //     return false;
-                // });
-                // if (empty($myJanusMember)) {
-                //     $this->response->format = Response::FORMAT_JSON;
-                //     $this->response->statusCode = 403;
-                //     return $this->response;
-                // }
-                $this->response->statusCode = 403;
-                //\print_r( $this->request->get('mute'));
-                if (Yii::$app->janusApi->moderateMember($uuid, $token, JanusApiComponent::SOURCE_AUDIO, $this->request->get('mute') == 'true' ? true : false)) {
-                    $this->response->statusCode = 200;
+        if (!empty($irm)) {
+            $sourceStatus = RoomMember::find()->select(['mute_audio', 'mute_video', 'token'])->where(['token' => array_column($irm, 'token')])->asArray()->all();
+            \array_walk($irm, function (&$i) use ($sourceStatus) {
+                $idx = \array_search($i['token'], array_column($sourceStatus, 'token'));
+                if (false !== $idx) {
+                    $i['mute_audio'] = $sourceStatus[$idx]['mute_audio'];
+                    $i['mute_video'] = $sourceStatus[$idx]['mute_video'];
                 }
-                return $this->response;
-            }
+            });
         }
+
+
 
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
@@ -161,6 +156,7 @@ class RoomController extends \yii\web\Controller
             'user_profile_id' => $profile->id,
             'limit_members' => $limit_members,
             'in_room_members' => $inRoomMembersIds,
+            'in_room_members_source_status' => $irm,
             'members' => $members,
             'room_id' => $room->id,
             'is_owner' => $is_owner,
@@ -172,6 +168,67 @@ class RoomController extends \yii\web\Controller
             'endTime' => $endTime
         ]);
     }
+
+
+    /**
+     * 
+     * @param string $roomUuid id of the room
+     * @param string $userToken userToken into the room
+     * @param string $source audio/video, default audio
+     * @param bool $mute true to apply, false to unmute
+     * @return void httpStatus code 200 if everything was fine, 503 if janus fails
+     */
+    public function actionModerateMember(string $roomUuid, string $userToken)
+    {
+        $this->response->format = Response::FORMAT_JSON;
+        $arrSources = [JanusApiComponent::SOURCE_AUDIO, JanusApiComponent::SOURCE_VIDEO];
+
+        if (!$this->request->isAjax || $this->request->isPost) {
+            throw new NotFoundHttpException("page not found");
+        }
+
+        if (null === $this->request->post('source') || !\in_array($this->request->post('source'), $arrSources)) {
+            throw new BadRequestHttpException("invalid source");
+        }
+
+        if (null === $this->request->post('mute') || \in_array($this->request->post('mute'), ['true', 'false', true, false])) {
+            throw new BadRequestHttpException('invalid mute');
+        }
+
+        $user = Yii::$app->user->identity;
+        if (!$user) {
+            throw new ForbiddenHttpException();
+        }
+        $room = Room::find()->where(['uuid' => $roomUuid])->limit(1)->one();
+        if (!$room) {
+            throw new NotFoundHttpException("Room not found.");
+        }
+
+        $meeting = $room->getMeeting()->one();
+
+        if (!$meeting) {
+            throw new NotFoundHttpException("Meeting not found.");
+        }
+
+        $user = Yii::$app->user->identity;
+        $profile = $user->getUserProfile()->one();
+        if ($profile->id != $meeting->owner_id) {
+            throw new ForbiddenHttpException("Unauthorized request");
+        }
+        $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
+        $token = $userToken->token;
+
+        if (null === $token) {
+            throw new ForbiddenHttpException("Unauthorized request");
+        }
+        $this->response->statusCode = 503;
+
+        if (Yii::$app->janusApi->moderateMember($roomUuid, $token, $this->request->post('source'), \in_array($this->request->post('mute'), ['true', true]) ? true : false)) {
+            $this->response->statusCode = 200;
+        }
+        return $this->response;
+    }
+
 
     public function actionCreate()
     {
@@ -577,6 +634,7 @@ class RoomController extends \yii\web\Controller
 
     public function actionToggleMedia()
     {
+        $this->response->format = Response::FORMAT_JSON;
         $uuid = $this->request->post('uuid') ?? null;
         $profile_id = $this->request->post('user_profile_id') ?? null;
         $video = $this->request->post('video') ?? null;
@@ -587,11 +645,14 @@ class RoomController extends \yii\web\Controller
             return throw new NotFoundHttpException("Room not found.");
         }
 
-        $profile = Room::find()->where(['id' => $profile_id])->limit(1)->one();
-        if (!$profile) {
-            return throw new NotFoundHttpException("Profile not found.");
-        }
+        // $profile = Room::find()->where(['id' => $profile_id])->limit(1)->one();
+        // if (Yii::$app->getUser()->getUserProfile()->id) {
+        // }
+        // if (!$profile) {
+        //     return throw new NotFoundHttpException("Profile not found.");
+        // }
 
+        $profile = UserProfile::findOne(['user_id' => Yii::$app->getUser()->id]);
         $roomMember = RoomMember::find()
             ->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])
             ->limit(1)->one();
@@ -599,6 +660,29 @@ class RoomController extends \yii\web\Controller
         if (!$roomMember) {
             return throw new NotFoundHttpException("Relation not found.");
         }
+
+        if (null !== $audio && $roomMember->moderate_audio) {
+            $this->response->statusCode = 503;
+            $this->response->data = "Moderated source";
+            return $this->response;
+        }
+
+        if (null !== $audio && !$roomMember->moderate_audio) {
+            $roomMember->mute_audio = \in_array($audio, ['true', 1]);
+            $roomMember->update(false);
+        }
+
+        if (null !== $video && $roomMember->moderate_video) {
+            $this->response->statusCode = 503;
+            $this->response->data = "Moderated source";
+            return $this->response;
+        }
+
+        if (null !== $video && !$roomMember->moderate_video) {
+            $roomMember->mute_video = \in_array($video, ['true', 1]);
+            $roomMember->update(false);
+        }
+
 
         $topic = "/room/{$uuid}";
         $response = [

@@ -1,5 +1,4 @@
 <?php
-/* @var $this yii\web\View */
 
 use yii\web\View;
 use yii\helpers\Html;
@@ -12,6 +11,8 @@ use frontend\assets\pahoMqtt\PahoMqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
 use yii\helpers\Url;
 
+
+/** @var \yii\web\View $this */
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
@@ -25,6 +26,7 @@ $this->registerJsVar('isOwner', $is_owner, View::POS_END);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
+$this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
 
 $this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
@@ -106,10 +108,11 @@ $this->title = 'The Room';
                     <div class="room-videos">
                         <div class="wrapper">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <div class="box<?= $i ?> box d-none <?= $i===0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
+                                <div class="box<?= $i ?> box d-none <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <h1 class="text-light username-on-call"> </h1>
                                         <img src="https://www.uic.mx/posgrados/files/2018/05/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                        <div class="video-mute-icon d-none" style="width: 30px; height:auto; position:absolute"><i class="fa fa-microphone-slash" aria-hidden="true"></i></div>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -127,7 +130,7 @@ $this->title = 'The Room';
                             <?php Pjax::begin(['id' => 'room-participants-actions', "options" => []]); ?>
                             <?php for ($i = 0; $i < count($in_room_members); $i++) { ?>
                                 <li class="list-group-item bg-dark" id="participant_<?= $in_room_members[$i] ?>" data-id="<?= $in_room_members[$i] ?>" data-index="<?= $i ?>">
-                                <span class="p-1 usernameFeed"></span>
+                                    <span class="p-1 usernameFeed"></span>
                                     <?php if ($is_owner) { ?>
                                         <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone"></i></button> |
                                         <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video"></i></button> |
@@ -135,8 +138,8 @@ $this->title = 'The Room';
                                     <?php } ?>
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
                                 </li>
-                                <?php  } ?>
-                                <?php Pjax::end(); ?>
+                            <?php  } ?>
+                            <?php Pjax::end(); ?>
                         </ul>
                     </div>
                     <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
