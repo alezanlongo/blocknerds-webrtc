@@ -3,19 +3,18 @@
 namespace frontend\controllers;
 
 use Yii;
-use frontend\AthenaClient;
 
 class PatientController extends \yii\web\Controller
 {
-    private $client;
+    private $component;
 
-    function __construct($id, $module, AthenaClient $client)
+    function __construct($id, $module)
     {
         parent::__construct($id, $module);
-        $this->client = $client;
+        $this->component = Yii::$app->athenaComponent;
     }
     public function actionIndex()
     {
-        echo $this->client->postClient();
+        echo $this->component->postClient();
     }
 }
