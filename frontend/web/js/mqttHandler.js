@@ -1,7 +1,7 @@
 const EVENT_TYPE_REQUEST_JOIN = "request_join";
 const EVENT_TYPE_RESPONSE_JOIN = "response_join";
 const EVENT_TYPE_TOGGLE_MUTE = "toggle_mute_remote";
-const EVENT_TYPE_TOGGLE_MEDIA = "request_toggle_media";
+const EVENT_TYPE_TOGGLE_MEDIA = "request_toggle_media";  
 const wsbroker = "localhost"; // mqtt websocket enabled broker
 const wsport = 15675; // port for above
 const client = new Paho.MQTT.Client(
@@ -29,7 +29,7 @@ client.onMessageArrived = function (message) {
       }
 
     } else {
-      const feed = getFeedFromProfileId(Number(objData.profile_id));
+      const feed = getFeedByProfileId(Number(objData.profile_id));
       if (feed) {
         if (objData.video !== null) {
           handleToggleVideoRemote(objData, feed.rfindex);
