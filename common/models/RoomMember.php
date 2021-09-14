@@ -11,6 +11,10 @@ use yii\behaviors\TimestampBehavior;
  * @property int $room_id
  * @property int $user_profile_id
  * @property string $token
+ * @property int $mute_audio
+ * @property int $mute_video
+ * @property int $moderate_audio
+ * @property int $moderate_video
  * @property int $created_at
  * @property int $updated_at
  *
@@ -61,6 +65,10 @@ class RoomMember extends \yii\db\ActiveRecord
             'room_id' => 'Room ID',
             'user_profile_id' => 'User Profile ID',
             'token' => 'Token',
+            'mute_audio'=>'Muted audio',
+            'mute_video'=>'Muted video',
+            'moderate_audio'=>'Moderated audio',
+            'moderate_video'=>'Moderated video',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];

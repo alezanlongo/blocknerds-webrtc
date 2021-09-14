@@ -1,5 +1,4 @@
 <?php
-/* @var $this yii\web\View */
 
 use yii\web\View;
 use yii\helpers\Html;
@@ -12,6 +11,8 @@ use frontend\assets\pahoMqtt\PahoMqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
 use yii\helpers\Url;
 
+
+/** @var \yii\web\View $this */
 JanusAsset::register($this);
 $this->registerAssetBundle(PahoMqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
@@ -25,6 +26,7 @@ $this->registerJsVar('isOwner', $is_owner, View::POS_END);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
+$this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
 
 $this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
@@ -110,6 +112,7 @@ $this->title = 'The Room';
                                     <div class="content-video" id="video-source<?= $i ?>">
                                         <span class="text-light username-on-call"> </span>
                                         <img src="https://www.uic.mx/posgrados/files/2018/05/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                        <div class="video-mute-icon d-none" style="width: 30px; height:auto; position:absolute"><i class="fa fa-microphone-slash" aria-hidden="true"></i></div>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -119,13 +122,16 @@ $this->title = 'The Room';
             </div>
             <div class="side-content sidebar" id="optionsSidebar">
                 <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">Settings section</div>
+                    <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
+                        <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
+                    </div>
+
                     <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
                         <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                         <ul class="list-group bg-dark list-attendees">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <li class="list-group-item bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
+                                <li class="list-group-item list-group-item-light bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
                                     <?php if ($is_owner) { ?>
                                         <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone icon-option-member"></i></button> |
                                         <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video icon-option-member"></i></button> |
@@ -136,7 +142,9 @@ $this->title = 'The Room';
                             <?php  } ?>
                         </ul>
                     </div>
-                    <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">Chat section</div>
+                    <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">
+                        <?= Html::tag('h3', 'Chat section', ['class' => 'text-center']) ?>
+                    </div>
                 </div>
             </div>
         </div>

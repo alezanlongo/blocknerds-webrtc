@@ -3,7 +3,7 @@
 use common\models\User;
 use kartik\select2\Select2;
 use yii\widgets\ActiveForm;
-use yii\bootstrap4\Modal;
+use yii\bootstrap5\Modal;
 use yii\helpers\Html;
 use yii\web\JsExpression;
 

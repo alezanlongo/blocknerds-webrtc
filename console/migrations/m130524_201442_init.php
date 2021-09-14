@@ -132,6 +132,10 @@ class m130524_201442_init extends Migration
             'user_profile_id' => $this->integer()->notNull(),
             'token' => 'uuid DEFAULT uuid_generate_v4() UNIQUE NOT NULL',
             'PRIMARY KEY(room_id, user_profile_id)',
+            'mute_audio' => $this->boolean()->notNull()->defaultValue(false),
+            'mute_video' => $this->boolean()->notNull()->defaultValue(false),
+            'moderate_audio' => $this->boolean()->notNull()->defaultValue(false),
+            'moderate_video' => $this->boolean()->notNull()->defaultValue(false),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);

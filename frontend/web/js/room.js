@@ -50,7 +50,7 @@ let bitrateTimer = [];
 $(document).ready(function () {
   connectMQTT();
   handleCountdown(endTime);
-
+  
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
     return;
@@ -58,7 +58,7 @@ $(document).ready(function () {
   if (isOwner && countRequest > 0) {
     $("#pendingRequests").modal("show");
   }
-
+  
   if (isOwner || isAllowed) {
     initJanus();
   }
@@ -121,16 +121,16 @@ const initJanus = () => {
             mediaState: (medium, on) => {
               Janus.log(
                 "Janus " +
-                  (on ? "started" : "stopped") +
-                  " receiving our " +
-                  medium
+                (on ? "started" : "stopped") +
+                " receiving our " +
+                medium
               );
             },
             webrtcState: (on) => {
               Janus.log(
                 "Janus says our WebRTC PeerConnection is " +
-                  (on ? "up" : "down") +
-                  " now"
+                (on ? "up" : "down") +
+                " now"
               );
               $(`#video-source0`).parent().parent().unblock();
               if (!on) return;
@@ -158,9 +158,9 @@ const initJanus = () => {
               $("#myvideo").get(0).muted = "muted";
               if (
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  ICE_CONNECTION_STATE_COMPLETED &&
+                ICE_CONNECTION_STATE_COMPLETED &&
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  ICE_CONNECTION_STATE_CONNECTED
+                ICE_CONNECTION_STATE_CONNECTED
               ) {
                 $(`#video-source0`)
                   .parent()
@@ -183,9 +183,9 @@ const initJanus = () => {
                 if ($("#video-source .no-video-container").length === 0) {
                   $(`#video-source0`).append(
                     '<div class="no-video-container">' +
-                      '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-                      '<span class="no-video-text">No webcam available</span>' +
-                      "</div>"
+                    '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
+                    '<span class="no-video-text">No webcam available</span>' +
+                    "</div>"
                   );
                 }
               } else {
@@ -287,6 +287,7 @@ const handlingJoined = (objMessage) => {
       const display = publishersList[f]["display"];
       const audio = publishersList[f]["audio_codec"];
       const video = publishersList[f]["video_codec"];
+      console.log("ale joined", publishersList[f])
       newRemoteFeed(id, display, audio, video);
     }
   }
@@ -306,14 +307,21 @@ const handlingEvent = (objMessage) => {
       const display = list[f]["display"];
       const audio = list[f]["audio_codec"];
       const video = list[f]["video_codec"];
+      console.log("ale event", list[f])
+
       newRemoteFeed(id, display, audio, video);
     }
   } else if (objMessage["leaving"]) {
     const leaving = objMessage["leaving"];
-    if(leaving === 'ok' && objMessage["reason"] && objMessage["reason"] === 'kicked'){
+    if (
+      leaving === "ok" &&
+      objMessage["reason"] &&
+      objMessage["reason"] === "kicked"
+    ) {
       // TODO: handle kick
-      console.log('you are kicked')
-    }else{
+      alert("you are kicked");
+      window.location.replace("/");
+    } else {
       let remoteFeed = null;
       for (let i = 1; i < limitMembers; i++) {
         if (feeds[i] && feeds[i].rfid === leaving) {
@@ -374,8 +382,16 @@ const handlingEvent = (objMessage) => {
     } else {
       bootbox.alert(objMessage["error"]);
     }
-  }else if(objMessage['kicked']){
-    console.log('member ', objMessage['kicked'], 'was kicked')
+  } else if (objMessage["kicked"]) {
+    // TODO: reset ui
+    console.log("member ", objMessage["kicked"], "was kicked");
+    const index = getIndexByMemberId(objMessage["kicked"]);
+    if (!index) {
+      return;
+    }
+    $(`.box${index}`).hide();
+    $(`#remotevideo${index}`).empty();
+    $(`#attendee_${index}`).hide();
   }
 };
 const joinMe = () => {
@@ -447,10 +463,10 @@ function newRemoteFeed(id, display, audio, video) {
       remoteFeed.simulcastStarted = false;
       Janus.log(
         "Plugin attached! (" +
-          remoteFeed.getPlugin() +
-          ", id=" +
-          remoteFeed.getId() +
-          ")"
+        remoteFeed.getPlugin() +
+        ", id=" +
+        remoteFeed.getId() +
+        ")"
       );
       Janus.log("  -- This is a subscriber");
       let subscribe = {
@@ -472,8 +488,8 @@ function newRemoteFeed(id, display, audio, video) {
         if (video) video = video.toUpperCase();
         toastr.warning(
           "Publisher is using " +
-            video +
-            ", but Safari doesn't support it: disabling video"
+          video +
+          ", but Safari doesn't support it: disabling video"
         );
         subscribe["offer_video"] = false;
       }
@@ -516,11 +532,11 @@ function newRemoteFeed(id, display, audio, video) {
           }
           Janus.log(
             "Successfully attached to feed " +
-              remoteFeed.rfid +
-              " (" +
-              remoteFeed.rfdisplay +
-              ") in room " +
-              msg["room"]
+            remoteFeed.rfid +
+            " (" +
+            remoteFeed.rfdisplay +
+            ") in room " +
+            msg["room"]
           );
         } else if (event === EVENT) {
           // Check if we got a simulcast-related event from this publisher
@@ -564,18 +580,18 @@ function newRemoteFeed(id, display, audio, video) {
     iceState: function (state) {
       Janus.log(
         "ICE state of this WebRTC PeerConnection (feed #" +
-          remoteFeed.rfindex +
-          ") changed to " +
-          state
+        remoteFeed.rfindex +
+        ") changed to " +
+        state
       );
     },
     webrtcState: function (on) {
       Janus.log(
         "Janus says this WebRTC PeerConnection (feed #" +
-          remoteFeed.rfindex +
-          ") is " +
-          (on ? "up" : "down") +
-          " now"
+        remoteFeed.rfindex +
+        ") is " +
+        (on ? "up" : "down") +
+        " now"
       );
     },
     onlocalstream: function (stream) {
@@ -589,11 +605,11 @@ function newRemoteFeed(id, display, audio, video) {
         // No remote video yet
         $("#video-source" + remoteFeed.rfindex).append(
           '<video class="rounded centered" id="waitingvideo' +
-            remoteFeed.rfindex +
-            '" width="100%" height="100%" />'
-        );
-        $("#video-source" + remoteFeed.rfindex).append(
-          '<video class="rounded centered relative hide" id="remotevideo' +
+          remoteFeed.rfindex +
+          '" width="100%" height="100%" />'
+          );
+          $("#video-source" + remoteFeed.rfindex).append(
+            '<video class="rounded centered relative hide" id="remotevideo' +
             remoteFeed.rfindex +
             '" width="100%" height="100%" autoplay playsinline/>'
         );
@@ -606,8 +622,9 @@ function newRemoteFeed(id, display, audio, video) {
         //     "</h1>"
         // );
         addNewAttendee(remoteFeed);
-
+        
         // Show the video, hide the spinner and show the resolution when we get a playing event
+        irmStatus.forEach((v) => { if (v.id == remoteFeed.rfid) { if (v.mute_audio === true) {$(".video-mute-icon", $("#video-source" + remoteFeed.rfindex)).removeClass("d-none") } } })
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
           if (remoteFeed.spinner) remoteFeed.spinner.stop();
           remoteFeed.spinner = null;
@@ -623,6 +640,8 @@ function newRemoteFeed(id, display, audio, video) {
         $("#remotevideo" + remoteFeed.rfindex).get(0),
         stream
       );
+
+
       const videoTracks = stream.getVideoTracks();
       if (!videoTracks || videoTracks.length === 0) {
         // No remote video
@@ -633,16 +652,16 @@ function newRemoteFeed(id, display, audio, video) {
         ) {
           $("#video-source" + remoteFeed.rfindex).append(
             '<div class="no-video-container">' +
-              '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-              '<span class="no-video-text">No remote video available</span>' +
-              "</div>"
+            '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
+            '<span class="no-video-text">No remote video available</span>' +
+            "</div>"
           );
         }
       } else {
         $(
           "#video-source" + remoteFeed.rfindex + " .no-video-container"
-        ).remove();
-        $("#remotevideo" + remoteFeed.rfindex)
+          ).remove();
+          $("#remotevideo" + remoteFeed.rfindex)
           .removeClass("hide")
           .show();
       }
@@ -696,11 +715,38 @@ function unpublishOwnFeed() {
 }
 
 function toggleVideo() {
-  let noVideo = pluginHandler.isVideoMuted();
-  Janus.log((noVideo ? "No video" : "Video") + " local stream...");
-  if (noVideo) pluginHandler.unmuteVideo();
-  else pluginHandler.muteVideo();
+  let muted = pluginHandler.isVideoMuted();
+
+
+  Janus.log((muted ? "No video" : "Video") + " local stream...");
+  if (muted) {
+    pluginHandler.unmuteVideo();
+    //pluginHandler.send({ message: { "request": "configure", "video": true } });
+  } else {
+    pluginHandler.muteVideo();
+    // pluginHandler.send({ message: { "request": "configure", "video": false } });
+  }
   muted = pluginHandler.isVideoMuted();
+  $.post({
+    url: "/room/toggle-media",
+    data: { uuid: myRoom, user_profile_id: userProfileId, video: muted },
+    cache: false,
+    error: (err) => {
+      return;
+    },
+  });
+
+  // pluginHandler.createOffer({
+  //   media: { removeVideo: true },
+  //   success: (res) => { console.log(res) },
+  //   error: (err) => { console.log(err) }
+  // })
+  // pluginHandler.createOffer({
+  //   media: { replaceVideo: true },
+  //   success: (res) => { console.log(res) },
+  //   error: (err) => { console.log(err) }
+  // })
+
   // const compVideo = $("#myvideo")
   // const compImage = $("#img0")
   // if (muted) {
@@ -716,28 +762,40 @@ function toggleVideo() {
   //   compImage.addClass("d-none").hide();
   //   compVideo.removeClass("d-none").show();
   // }
-  $.post({
-    url: "/room/toggle-media",
-    data: { uuid: myRoom, user_profile_id: userProfileId, video: muted },
-    cache: false,
-    error: (err) => {
-      console.log(err);
-    },
-  });
+
 }
 
 function toggleMute() {
   let muted = pluginHandler.isAudioMuted();
+
   Janus.log((muted ? "Unmuting" : "Muting") + " local stream...");
-  if (muted) pluginHandler.unmuteAudio();
-  else pluginHandler.muteAudio();
+  if (muted) {
+    pluginHandler.unmuteAudio();
+    //    pluginHandler.send({ message: { "request": "configure", audio: false } });
+
+  }
+  else {
+    pluginHandler.muteAudio();
+    //    pluginHandler.send({ message: { "request": "configure", audio: true } });
+  }
   muted = pluginHandler.isAudioMuted();
+
+  $.post({
+    url: "/room/toggle-media",
+    data: { uuid: myRoom, user_profile_id: userProfileId, audio: muted },
+    cache: false,
+    error: (err) => {
+      return;
+    },
+  });
+
   // $("#mute").html(muted ? "Unmute" : "Mute");
   if (muted) {
     $("#mute > i").removeClass("fa-microphone").addClass("fa-microphone-slash");
   } else {
     $("#mute > i").removeClass("fa-microphone-slash").addClass("fa-microphone");
   }
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -821,53 +879,53 @@ const pinBehavior = (list, index, width = "100%", height = "90vh") => {
   });
 };
 
-const muteMember = (index) => {
-  if (isOwner) {
-    let remoteHandler = feeds[index];
-    if (!remoteHandler) {
-      return;
-    }
-    // let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute";
-    let btnRemoteMute = $(
-      `#attendee_${remoteHandler.rfindex} .btn-remote-mute > i`
-    );
-    let isMuted = btnRemoteMute.hasClass("fa-microphone");
-    console.log("NB > isMuted", isMuted);
+// const muteMember = (index) => {
+//   if (isOwner) {
+//     let remoteHandler = feeds[index];
+//     if (!remoteHandler) {
+//       return;
+//     }
+//     // let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute";
+//     let btnRemoteMute = $(
+//       `#attendee_${remoteHandler.rfindex} .btn-remote-mute > i`
+//     );
+//     let isMuted = btnRemoteMute.hasClass("fa-microphone");
+//     console.log("NB > isMuted", isMuted);
 
-    remoteHandler.send({
-      message: {
-        request: REQUEST_MODERATE,
-        room: myRoom,
-        id: remoteHandler.rfid,
-        mute_audio: isMuted,
-      },
-      success: function (data) {
-        if (data.videoroom === "success") {
-          // $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(isMuted ? "Unmute" : "Mute");
-          if (isMuted) {
-            console.log("NB > IS MUTED");
-            btnRemoteMute
-              .removeClass("fa-microphone")
-              .addClass("fa-microphone-slash");
-          } else {
-            console.log("NB > NOT MUTED");
-            btnRemoteMute
-              .removeClass("fa-microphone-slash")
-              .addClass("fa-microphone");
-          }
+//     remoteHandler.send({
+//       message: {
+//         request: REQUEST_MODERATE,
+//         room: myRoom,
+//         id: remoteHandler.rfid,
+//         mute_audio: isMuted,
+//       },
+//       success: function (data) {
+//         if (data.videoroom === "success") {
+//           // $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(isMuted ? "Unmute" : "Mute");
+//           if (isMuted) {
+//             console.log("NB > IS MUTED");
+//             btnRemoteMute
+//               .removeClass("fa-microphone")
+//               .addClass("fa-microphone-slash");
+//           } else {
+//             console.log("NB > NOT MUTED");
+//             btnRemoteMute
+//               .removeClass("fa-microphone-slash")
+//               .addClass("fa-microphone");
+//           }
 
-          sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
-            user_profile_id: remoteHandler.rfuser.idFeed,
-            isMuted,
-          });
-        }
-      },
-      error: function (error) {
-        console.log(error);
-      },
-    });
-  }
-};
+//           sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
+//             user_profile_id: remoteHandler.rfuser.idFeed,
+//             isMuted,
+//           });
+//         }
+//       },
+//       error: function (error) {
+//         console.log(error);
+//       },
+//     });
+//   }
+// };
 
 const kickMember = (index) => {
   if (isOwner) {
@@ -875,19 +933,14 @@ const kickMember = (index) => {
     if (!remoteHandler) {
       return;
     }
-
-    remoteHandler.send({
-      message: {
-        request: "kick",
-        room: myRoom,
-        id: remoteHandler.rfid,
+    $.post({
+      url: `${myRoom}/kick`,
+      data: { profile_id: remoteHandler.rfuser.idFeed }, 
+      cache: false,
+      error: (err) => {
+        console.log(err);
       },
-      success: function (data) {
-        console.log('success', data)
-      },
-      error: function (error) {
-        console.log(error);
-      },
+      success: (data) => console.log("success", data),
     });
   }
 };
@@ -905,18 +958,18 @@ $(".icon-menu").on("click", (e) => {
   const isOpen = Array.from($(".option-side").children()).some((child) =>
     $(child).hasClass("active")
   );
-  if(isOpen){
+  if (isOpen) {
     const componentClicked = $(e.target).parent();
     toggleSidebar(isOpen);
     setTimeout(() => {
       componentClicked.removeClass("active");
     }, 10);
   }
-})
+});
 
-$('.icon-option-member').on('click', (e)=>{
-  $(e.target).parent().trigger("click")
-})
+$(".icon-option-member").on("click", (e) => {
+  $(e.target).parent().trigger("click");
+});
 
 $(".option-side").on("click", (e) => {
   const componentClicked = $(e.target);
@@ -957,11 +1010,13 @@ $(document).on("click", ".btn-remote-video", function (e) {
 });
 
 $(document).on("click", ".btn-remote-kick", function (e) {
-  let currentElement = $(e.target);
+  const currentElement = $(e.target);
   const index = currentElement.parent().attr("data-index");
-  console.log("kick", index);
-  kickMember(index)
-
+  if (index) {
+    if (confirm("Are you sure that kick this member?")) {
+      kickMember(index);
+    }
+  }
 });
 
 $(".username-on-call").on("click", (e) => {
@@ -1007,8 +1062,22 @@ const getRemoteProfileToFeed = (index) => {
   if (!feed) return null;
   return feed.rfuser.idFeed;
 };
-const getFeedFromProfileId = (profileId) => {
+const getFeedByProfileId = (profileId) => {
   const feed = feeds.find((fe) => fe?.rfuser?.idFeed === profileId);
   if (!feed) return null;
   return feed;
+};
+const getFeedByMemberId = (id) => {
+  const feed = feeds.find((fe) => fe?.rfid === id);
+  if (!feed) return null;
+  return feed;
+};
+const getIndexByMemberId = (id) => {
+  let index = null;
+  feeds.forEach((feed, i) => {
+    if (feed?.rfid === id) {
+      index = i;
+    }
+  });
+  return index;
 };
