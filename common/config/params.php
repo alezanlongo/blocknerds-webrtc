@@ -7,5 +7,5 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
     'janus.roomMaxMembersAllowed' => 9,
-    'bsVersion' => '4.x',
+    'bsVersion' => '5.x',
 ];
