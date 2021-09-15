@@ -168,8 +168,8 @@ class RoomController extends \yii\web\Controller
             'request' => $request,
             'requests' => $requests,
             'endTime' => $endTime,
-            'own_mute_audio' => $ownSourceStatus['mute_audio'],
-            'own_mute_video' => $ownSourceStatus['mute_video'],
+            'own_mute_audio' => $ownSourceStatus['mute_audio'] ?? false,
+            'own_mute_video' => $ownSourceStatus['mute_video'] ?? false,
 
         ]);
     }
