@@ -180,11 +180,13 @@ class ApiGenerator extends ParentApiGenerator
 
         $clientEndPoints = $this->generateClients();
         $modelPath = $this->getPathFromNamespace($this->folderPath);
+        $component = explode('\\', $this->folderPath);
+        $component = $component[count($component) - 1];
         $files[] = new CodeFile(
-            Yii::getAlias("$modelPath/Athena/AthenaClient.php"), // fix me, ask Ricardo
+            Yii::getAlias("$modelPath/{$component}Client.php"), // fix me, ask Ricardo
             $this->render('client.php', [
-                'component'         => 'Athena',
-                'className'         => 'AthenaClient', // fix me, ask Ricardo
+                'component'         => $component,
+                'className'         => $component.'Client', // fix me, ask Ricardo
                 'namespace'         => $this->folderPath,
                 'clientEndPoints'   => $clientEndPoints,
             ])
