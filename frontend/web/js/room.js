@@ -631,7 +631,14 @@ function newRemoteFeed(id, display, audio, video) {
         addNewAttendee(remoteFeed);
         
         // Show the video, hide the spinner and show the resolution when we get a playing event
-        irmStatus.forEach((v) => { if (v.id == remoteFeed.rfid) { if (v.mute_audio === true) {$(".video-mute-icon", $("#video-source" + remoteFeed.rfindex)).removeClass("d-none") } } })
+        irmStatus.forEach((v) => { 
+          console.log("nicholls",v)
+          if (v.id == remoteFeed.rfid) { 
+            if (v.mute_audio === true) {
+              $(".video-mute-icon", $("#video-source" + remoteFeed.rfindex)).removeClass("d-none") 
+            } 
+          } 
+        })
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
           if (remoteFeed.spinner) remoteFeed.spinner.stop();
           remoteFeed.spinner = null;

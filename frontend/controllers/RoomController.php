@@ -148,7 +148,6 @@ class RoomController extends \yii\web\Controller
         $ownSourceStatus = RoomMember::find()->select(['mute_audio', 'mute_video'])
         ->where(['room_id' => $room->id,'user_profile_id' => $profile->id])
         ->asArray()->one();
-     
 
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
