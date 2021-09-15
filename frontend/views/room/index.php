@@ -18,6 +18,8 @@ $this->registerAssetBundle(PahoMqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
 
 $this->registerJsVar('limitMembers', $limit_members, View::POS_END);
+$this->registerJsVar('own_mute_audio', $own_mute_audio, View::POS_END);
+$this->registerJsVar('own_mute_video', $own_mute_video, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myRoom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);

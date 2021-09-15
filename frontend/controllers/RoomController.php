@@ -117,8 +117,6 @@ class RoomController extends \yii\web\Controller
             $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
             $token = $userToken->token;
             $uTokens = Yii::$app->janusApi->getMembersTokenByRoom($uuid);
-            // VarDumper::dump( $uTokens, $depth = 10, $highlight = true);
-            // die;
             if (false !== $uTokens && (empty($uTokens) || !\in_array($token, \array_column($uTokens, 'token')))) {
                 $res = Yii::$app->janusApi->addUserToken($uuid, $token);
             }
@@ -136,7 +134,6 @@ class RoomController extends \yii\web\Controller
                 return true;
             }), "id");
         }
-
         if (!empty($irm)) {
             $sourceStatus = RoomMember::find()->select(['mute_audio', 'mute_video', 'token'])->where(['token' => array_column($irm, 'token')])->asArray()->all();
             \array_walk($irm, function (&$i) use ($sourceStatus) {
@@ -147,8 +144,11 @@ class RoomController extends \yii\web\Controller
                 }
             });
         }
-
-
+        // get own source status
+        $ownSourceStatus = RoomMember::find()->select(['mute_audio', 'mute_video'])
+        ->where(['room_id' => $room->id,'user_profile_id' => $profile->id])
+        ->asArray()->one();
+     
 
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
@@ -168,7 +168,10 @@ class RoomController extends \yii\web\Controller
             'uuid' => $uuid,
             'request' => $request,
             'requests' => $requests,
-            'endTime' => $endTime
+            'endTime' => $endTime,
+            'own_mute_audio' => $ownSourceStatus['mute_audio'],
+            'own_mute_video' => $ownSourceStatus['mute_video'],
+
         ]);
     }
 

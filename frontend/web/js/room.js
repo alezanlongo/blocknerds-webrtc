@@ -192,6 +192,13 @@ const initJanus = () => {
                 $("#video-source .no-video-container").remove();
                 $("#myvideo").removeClass("hide").show();
               }
+              if(own_mute_audio){
+                $("#mute > i").removeClass("fa-microphone").addClass("fa-microphone-slash");
+                pluginHandler.muteAudio();
+              }else{
+                pluginHandler.unmuteAudio();
+                $("#mute > i").removeClass("fa-microphone-slash").addClass("fa-microphone");
+              }
             },
             onremotestream: (stream) => {
               console.log(stream, "stream");
@@ -400,7 +407,7 @@ const joinMe = () => {
     room: myRoom,
     ptype: PUBLISH_TYPE_PUBLISHER,
     display: `${username}_${userProfileId}`,
-    // data: true,
+    data: true,
   };
   pluginHandler.send({ message: register });
 };
@@ -412,7 +419,7 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       videoRecv: false,
       audioSend: useAudio,
       videoSend: useVideo,
-      // data:true,
+      data:true,
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
