@@ -886,53 +886,54 @@ const pinBehavior = (list, index, width = "100%", height = "90vh") => {
   });
 };
 
-// const muteMember = (index) => {
-//   if (isOwner) {
-//     let remoteHandler = feeds[index];
-//     if (!remoteHandler) {
-//       return;
-//     }
-//     // let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute";
-//     let btnRemoteMute = $(
-//       `#attendee_${remoteHandler.rfindex} .btn-remote-mute > i`
-//     );
-//     let isMuted = btnRemoteMute.hasClass("fa-microphone");
-//     console.log("NB > isMuted", isMuted);
+const muteMember = (index) => {
+  if (isOwner) {
+    let remoteHandler = feeds[index];
+    if (!remoteHandler) {
+      console.log('handler not found', index)
+      return;
+    }
+    // let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute";
+    let btnRemoteMute = $(
+      `#attendee_${remoteHandler.rfindex} .btn-remote-mute > i`
+    );
+    let isMuted = btnRemoteMute.hasClass("fa-microphone");
+    console.log("NB > isMuted", isMuted);
 
-//     remoteHandler.send({
-//       message: {
-//         request: REQUEST_MODERATE,
-//         room: myRoom,
-//         id: remoteHandler.rfid,
-//         mute_audio: isMuted,
-//       },
-//       success: function (data) {
-//         if (data.videoroom === "success") {
-//           // $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(isMuted ? "Unmute" : "Mute");
-//           if (isMuted) {
-//             console.log("NB > IS MUTED");
-//             btnRemoteMute
-//               .removeClass("fa-microphone")
-//               .addClass("fa-microphone-slash");
-//           } else {
-//             console.log("NB > NOT MUTED");
-//             btnRemoteMute
-//               .removeClass("fa-microphone-slash")
-//               .addClass("fa-microphone");
-//           }
+    remoteHandler.send({
+      message: {
+        request: REQUEST_MODERATE,
+        room: myRoom,
+        id: remoteHandler.rfid,
+        mute_audio: isMuted,
+      },
+      success: function (data) {
+        if (data.videoroom === "success") {
+          // $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(isMuted ? "Unmute" : "Mute");
+          if (isMuted) {
+            console.log("NB > IS MUTED");
+            btnRemoteMute
+              .removeClass("fa-microphone")
+              .addClass("fa-microphone-slash");
+          } else {
+            console.log("NB > NOT MUTED");
+            btnRemoteMute
+              .removeClass("fa-microphone-slash")
+              .addClass("fa-microphone");
+          }
 
-//           sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
-//             user_profile_id: remoteHandler.rfuser.idFeed,
-//             isMuted,
-//           });
-//         }
-//       },
-//       error: function (error) {
-//         console.log(error);
-//       },
-//     });
-//   }
-// };
+          sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
+            user_profile_id: remoteHandler.rfuser.idFeed,
+            isMuted,
+          });
+        }
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  }
+};
 
 const kickMember = (index) => {
   if (isOwner) {
@@ -1004,10 +1005,8 @@ const addNewAttendee = (feed) => {
 };
 
 $(document).on("click", ".btn-remote-mute", function (e) {
-  let currentElement = $(e.target);
-  const index = currentElement.parent().attr("data-index");
-  const id = currentElement.parent().attr("data-id");
-  muteMember(id);
+  const index = $(e.target).parent().attr("data-index");
+  if (index) muteMember(index);
 });
 
 $(document).on("click", ".btn-remote-video", function (e) {
