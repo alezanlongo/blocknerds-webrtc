@@ -76,7 +76,8 @@ class SiteController extends Controller
     {
         $service = new AthenaClient();
 
-        //$dataResponse = $service->getListDepartment();
+        $dataResponse = $service->getDepartment(21);
+        echo "<pre>"; var_dump($dataResponse); exit();
 
 
         $dataResponse = $service->createPatient([

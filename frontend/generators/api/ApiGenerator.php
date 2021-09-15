@@ -178,6 +178,18 @@ class ApiGenerator extends ParentApiGenerator
             }
         }
 
+        $clientEndPoints = $this->generateClients();
+        $modelPath = $this->getPathFromNamespace($this->folderPath);
+        $files[] = new CodeFile(
+            Yii::getAlias("$modelPath/AthenaClient.php"), // fix me, ask Ricardo
+            $this->render('client.php', [
+                'component'         => 'Athena',
+                'className'         => 'AthenaClient', // fix me, ask Ricardo
+                'namespace'         => $modelApiNamespace,
+                'clientEndPoints'   => $clientEndPoints,
+            ])
+        );
+
         return $files;
     }
 
@@ -331,6 +343,52 @@ class ApiGenerator extends ParentApiGenerator
         // TODO generate hasMany relations and inverse relations
 
         return $models;
+    }
+
+
+    protected function generateClients()
+    {
+        $arrayClient = [];
+        foreach ($this->getOpenApi()->paths as $pathName => $path) {
+            $arrPathName = explode("/", $pathName);
+            $finalPathName = $arrPathName[(count($arrPathName) - 1)];
+
+            foreach ($path->getOperations() as $verb => $operation){
+                $arrPath = [];
+                foreach ($operation->parameters as $parameter){
+                    if($parameter->in == 'path'){
+                        array_push($arrPath, $parameter->name);
+                    }
+                }
+
+                foreach ($operation->responses->getResponses() as $responseCode => $response){
+                    foreach ($response->content as $responseType => $responseItem){
+                        $flagList = NULL;
+                        if(get_class($responseItem->schema) == Reference::class){
+                            $flagList = FALSE;
+                            $arrSchema = explode("/", $responseItem->schema->getReference());
+                        }else if(get_class($responseItem->schema) == Schema::class){
+                            $flagList = TRUE;
+                            $arrSchema = explode("/", $responseItem->schema->items->getReference());
+                        }
+
+                        
+
+                        array_push($arrayClient, [
+                            'pathname'      => $pathName,
+                            'finalPathName' => $finalPathName,
+                            'verb'          => $verb,
+                            'parameters'    => $arrPath,
+                            'operationId'   => $operation->operationId,
+                            'schema'        => $arrSchema[(count($arrSchema) - 1)],
+                            'flagList'      => $flagList
+                        ]);//var_dump($arrayClient); exit();
+                    }
+                }
+            }
+        }
+
+        return $arrayClient;
     }
 
     protected function generateApiModels()
