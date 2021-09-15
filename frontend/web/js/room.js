@@ -1014,13 +1014,13 @@ const addNewAttendee = (feed) => {
 };
 
 $(document).on("click", ".btn-remote-mute", function (e) {
-  const index = $(e.target).parent().attr("data-index");
+  const index = $(e.target).parent().parent().attr("data-index");
   if (index) muteMember(index);
 });
 
 $(document).on("click", ".btn-remote-video", function (e) {
   let currentElement = $(e.target);
-  const index = currentElement.parent().attr("data-index");
+  const index = currentElement.parent().parent().attr("data-index");
   console.log("video", index);
 });
 
