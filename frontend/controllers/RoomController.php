@@ -178,7 +178,7 @@ class RoomController extends \yii\web\Controller
     /**
      * 
      * @param string $roomUuid id of the room
-     * @param string $userToken userToken into the room
+     * @param string $roomMember userToken into the room
      * @param string $source audio/video, default audio
      * @param bool $mute true to apply, false to unmute
      * @return void httpStatus code 200 if everything was fine, 503 if janus fails
@@ -220,16 +220,24 @@ class RoomController extends \yii\web\Controller
         if ($profile->id != $meeting->owner_id) {
             throw new ForbiddenHttpException("Unauthorized request");
         }
-        $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
-        $token = $userToken->token;
+        $roomMember = RoomMember::find()->where(['token' => $userToken, 'room_id' => $room->id])->limit(1)->one();
+        $token = $roomMember->token;
 
         if (null === $token) {
             throw new ForbiddenHttpException("Unauthorized request");
         }
         $this->response->statusCode = 503;
-
-        if (Yii::$app->janusApi->moderateMember($roomUuid, $token, $this->request->post('source'), \in_array($this->request->post('mute'), ['true', true]) ? true : false)) {
+        $action = \in_array($this->request->post('mute'), ['true', 1]) ? true : false;
+        if (Yii::$app->janusApi->moderateMember($roomUuid, $token, $this->request->post('source'), $action)) {
             $this->response->statusCode = 200;
+            if ($this->request->post('source') == JanusApiComponent::SOURCE_AUDIO) {
+                $roomMember->mute_audio = $action;
+                $roomMember->moderate_audio = $action;
+            } else {
+                $roomMember->mute_video = $action;
+                $roomMember->moderate_video = $action;
+            }
+            $roomMember->update(false);
         }
         return $this->response;
     }
