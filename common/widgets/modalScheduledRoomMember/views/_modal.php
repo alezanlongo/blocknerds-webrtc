@@ -1,7 +1,7 @@
 <?php
 
 use yii\widgets\ActiveForm;
-use yii\bootstrap4\Modal;
+use yii\bootstrap5\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 

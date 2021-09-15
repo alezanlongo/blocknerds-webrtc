@@ -1,7 +1,7 @@
 const EVENT_TYPE_REQUEST_JOIN = "request_join";
 const EVENT_TYPE_RESPONSE_JOIN = "response_join";
 const EVENT_TYPE_TOGGLE_MUTE = "toggle_mute_remote";
-const EVENT_TYPE_TOGGLE_MEDIA = "request_toggle_media";
+const EVENT_TYPE_TOGGLE_MEDIA = "request_toggle_media";  
 const wsbroker = "localhost"; // mqtt websocket enabled broker
 const wsport = 15675; // port for above
 const client = new Paho.MQTT.Client(
@@ -23,16 +23,19 @@ client.onMessageArrived = function (message) {
   //   $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
   // }
   if (objData.type === EVENT_TYPE_TOGGLE_MEDIA) {
-    if(Number(userProfileId) === Number(objData.profile_id)){
+    if (Number(userProfileId) === Number(objData.profile_id)) {
       if (objData.video !== null) {
         handleToggleVideoLocal(objData)
       }
-      
-    }else{
-      const feed = getFeedFromProfileId(Number(objData.profile_id));
+
+    } else {
+      const feed = getFeedByProfileId(Number(objData.profile_id));
       if (feed) {
         if (objData.video !== null) {
           handleToggleVideoRemote(objData, feed.rfindex);
+        }
+        if (objData.audio !== null) {
+          toggleAudioMuteView(objData, feed.rfindex)
         }
       }
 
@@ -98,7 +101,16 @@ const handleToggleVideoRemote = (objData, index) => {
   }
 };
 
-const handleToggleVideoLocal = (objData) =>{
+function toggleAudioMuteView(objData, index) {
+  let elm = $(`#video-source${index}`);
+  if (objData.audio === "true") {
+    $(".video-mute-icon", elm).removeClass("d-none")
+  } else {
+    $(".video-mute-icon", elm).addClass("d-none")
+  }
+}
+
+const handleToggleVideoLocal = (objData) => {
   const compVideo = $("#myvideo")
   const compImage = $("#img0")
   if (objData.video === "true") {
