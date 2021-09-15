@@ -635,7 +635,9 @@ function newRemoteFeed(id, display, audio, video) {
           console.log("nicholls",v)
           if (v.id == remoteFeed.rfid) { 
             if (v.mute_audio === true) {
-              $(".video-mute-icon", $("#video-source" + remoteFeed.rfindex)).removeClass("d-none") 
+              console.log('nicholls','muteeeeed')
+              $(".video-mute-icon", $(`#video-source${remoteFeed.rfindex}`)).removeClass("d-none") 
+              $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`)).removeClass("fa-microphone").addClass("fa-microphone-slash")
             } 
           } 
         })
