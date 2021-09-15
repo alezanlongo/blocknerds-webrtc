@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var calendarEl = document.getElementById('calendar');
   calendar = new FullCalendar.Calendar(calendarEl, {
     timeZone: 'UTC',
-    aspectRatio: 3,
+    contentHeight: 'auto',
+    handleWindowResize: true,
     initialView: initialView,
     headerToolbar: { center: 'timeGridDay,timeGridWeek,dayGridMonth,listWeek' },
     events: "room/calendar/events/" + user_profile_id,
