@@ -615,15 +615,22 @@ class RoomController extends \yii\web\Controller
     }
     public function actionKickMember()
     {
-        $profileId = $this->request->post('profile_id');
+        $profileId = $this->request->post('profileId');
+        $memberId = $this->request->post('memberId');
         $roomUuid = $this->request->get('uuid');
 
         $roomMember = $this->checkMember($roomUuid, $profileId);
-        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token)) {
+        $room = Room::find()->where(['uuid' => $roomUuid])->limit(1)->one();
+
+        if($room->getOwner()->user_id !== Yii::$app->getUser()->getId()){
+            return throw new ServerErrorHttpException("Only owner of the room is allowed.");
+        }
+
+        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token, $memberId)) {
             return throw new ServerErrorHttpException("Error kicking member of the room");
         }
 
-        $roomRequest = RoomRequest::find()->where(['room_id' => $roomMember->room_id, 'user_profile_id' => $roomMember->user_profile_id])->limit(1)->one();
+        $roomRequest = RoomRequest::find()->where(['room_id' => $room->id, 'user_profile_id' => $profileId])->limit(1)->one();
         $roomRequest->delete();
 
         Yii::$app->response->format = Response::FORMAT_JSON;

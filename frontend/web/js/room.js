@@ -952,7 +952,7 @@ const kickMember = (index) => {
     }
     $.post({
       url: `${myRoom}/kick`,
-      data: { profile_id: remoteHandler.rfuser.idFeed }, 
+      data: { profileId: remoteHandler.rfuser.idFeed, memberId: remoteHandler.rfid }, 
       cache: false,
       error: (err) => {
         console.log(err);
@@ -1026,7 +1026,7 @@ $(document).on("click", ".btn-remote-video", function (e) {
 
 $(document).on("click", ".btn-remote-kick", function (e) {
   const currentElement = $(e.target);
-  const index = currentElement.parent().attr("data-index");
+  const index = currentElement.parent().parent().attr("data-index");
   if (index) {
     if (confirm("Are you sure that kick this member?")) {
       kickMember(index);
