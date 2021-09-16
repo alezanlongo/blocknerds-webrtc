@@ -975,6 +975,7 @@ $(".icon-menu").on("click", (e) => {
   const isOpen = Array.from($(".option-side").children()).some((child) =>
     $(child).hasClass("active")
   );
+  console.log('Nicholls', 'icon side', isOpen)
   if (isOpen) {
     const componentClicked = $(e.target).parent();
     toggleSidebar(isOpen);
@@ -989,6 +990,7 @@ $(".icon-option-member").on("click", (e) => {
 });
 
 $(".option-side").on("click", (e) => {
+  console.log('Nicholls', 'option side')
   const componentClicked = $(e.target);
   const controlName = componentClicked.attr("aria-controls");
   const isOpen = Array.from($(".option-side").children()).some((child) =>

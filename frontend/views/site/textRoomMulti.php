@@ -2,7 +2,7 @@
 
 use frontend\assets\Janus\JanusAsset;
 use frontend\assets\Janus\JanusTextRoomMultiAsset;
-use yii\bootstrap4\ActiveForm;
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use yii\web\View;
 
