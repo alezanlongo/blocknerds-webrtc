@@ -22,12 +22,12 @@ class AppAsset extends AssetBundle
         'rmrevin\yii\fontawesome\AssetBundle'
     ];
 
-    public function init()
-    {
-        parent::init();
-        // resetting BootstrapAsset to not load own css files
-        Yii::$app->assetManager->bundles['yii\\bootstrap5\\BootstrapAsset'] = [
-            'css' => []
-        ];
-    }
+    // public function init()
+    // {
+    //     parent::init();
+    //     // resetting BootstrapAsset to not load own css files
+    //     Yii::$app->assetManager->bundles['yii\\bootstrap5\\BootstrapAsset'] = [
+    //         'css' => []
+    //     ];
+    // }
 }
