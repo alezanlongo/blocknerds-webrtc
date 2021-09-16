@@ -18,6 +18,8 @@ $this->registerAssetBundle(PahoMqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
 
 $this->registerJsVar('limitMembers', $limit_members, View::POS_END);
+$this->registerJsVar('own_mute_audio', $own_mute_audio, View::POS_END);
+$this->registerJsVar('own_mute_video', $own_mute_video, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myRoom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
@@ -131,13 +133,15 @@ $this->title = 'The Room';
 
                         <ul class="list-group bg-dark list-attendees">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <li class="list-group-item list-group-item-light bg-dark d-none" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                                    <?php if ($is_owner) { ?>
-                                        <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone icon-option-member"></i></button> |
-                                        <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video icon-option-member"></i></button> |
-                                        <button class="btn btn-default text-light btn-remote-kick"><i class="fas fa-user-times icon-option-member"></i></button>
-                                    <?php } ?>
+                                <li class="list-group-item list-group-item-light bg-dark d-none position-relative" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
+                                    <?php if ($is_owner) { ?>
+                                        <div class="position-absolute top-0 end-0">
+                                            <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone icon-option-member"></i></button> |
+                                            <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video icon-option-member"></i></button> |
+                                            <button class="btn btn-default text-light btn-remote-kick"><i class="fas fa-user-times icon-option-member"></i></button>
+                                        </div>
+                                    <?php } ?>
                                 </li>
                             <?php  } ?>
                         </ul>

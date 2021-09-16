@@ -102,11 +102,14 @@ const handleToggleVideoRemote = (objData, index) => {
 };
 
 function toggleAudioMuteView(objData, index) {
-  let elm = $(`#video-source${index}`);
+  const elm = $(`#video-source${index}`);
+  const participantComponent = $(`#attendee_${index}`);
   if (objData.audio === "true") {
     $(".video-mute-icon", elm).removeClass("d-none")
+    $(".btn-remote-mute > i", participantComponent).removeClass("fa-microphone").addClass("fa-microphone-slash")
   } else {
     $(".video-mute-icon", elm).addClass("d-none")
+    $(".btn-remote-mute > i", participantComponent).removeClass("fa-microphone-slash").addClass("fa-microphone")
   }
 }
 

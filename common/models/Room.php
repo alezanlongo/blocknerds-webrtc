@@ -83,6 +83,12 @@ class Room extends \yii\db\ActiveRecord
         return $this->hasOne(Meeting::class, ['id' => 'meeting_id']);
     }
 
+    public function getOwner()
+    {
+        $meeting = $this->getMeeting()->limit(1)->one();
+        return $meeting->getOwner()->limit(1)->one();
+    }
+
     /**
      * Gets query for [[RoomMembers]].
      *

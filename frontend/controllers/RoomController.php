@@ -117,8 +117,6 @@ class RoomController extends \yii\web\Controller
             $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
             $token = $userToken->token;
             $uTokens = Yii::$app->janusApi->getMembersTokenByRoom($uuid);
-            // VarDumper::dump( $uTokens, $depth = 10, $highlight = true);
-            // die;
             if (false !== $uTokens && (empty($uTokens) || !\in_array($token, \array_column($uTokens, 'token')))) {
                 $res = Yii::$app->janusApi->addUserToken($uuid, $token);
             }
@@ -136,7 +134,6 @@ class RoomController extends \yii\web\Controller
                 return true;
             }), "id");
         }
-
         if (!empty($irm)) {
             $sourceStatus = RoomMember::find()->select(['mute_audio', 'mute_video', 'token'])->where(['token' => array_column($irm, 'token')])->asArray()->all();
             \array_walk($irm, function (&$i) use ($sourceStatus) {
@@ -147,8 +144,10 @@ class RoomController extends \yii\web\Controller
                 }
             });
         }
-
-
+        // get own source status
+        $ownSourceStatus = RoomMember::find()->select(['mute_audio', 'mute_video'])
+        ->where(['room_id' => $room->id,'user_profile_id' => $profile->id])
+        ->asArray()->one();
 
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
@@ -168,7 +167,10 @@ class RoomController extends \yii\web\Controller
             'uuid' => $uuid,
             'request' => $request,
             'requests' => $requests,
-            'endTime' => $endTime
+            'endTime' => $endTime,
+            'own_mute_audio' => $ownSourceStatus['mute_audio'] ?? false,
+            'own_mute_video' => $ownSourceStatus['mute_video'] ?? false,
+
         ]);
     }
 
@@ -176,7 +178,7 @@ class RoomController extends \yii\web\Controller
     /**
      * 
      * @param string $roomUuid id of the room
-     * @param string $userToken userToken into the room
+     * @param string $roomMember userToken into the room
      * @param string $source audio/video, default audio
      * @param bool $mute true to apply, false to unmute
      * @return void httpStatus code 200 if everything was fine, 503 if janus fails
@@ -218,16 +220,24 @@ class RoomController extends \yii\web\Controller
         if ($profile->id != $meeting->owner_id) {
             throw new ForbiddenHttpException("Unauthorized request");
         }
-        $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
-        $token = $userToken->token;
+        $roomMember = RoomMember::find()->where(['token' => $userToken, 'room_id' => $room->id])->limit(1)->one();
+        $token = $roomMember->token;
 
         if (null === $token) {
             throw new ForbiddenHttpException("Unauthorized request");
         }
         $this->response->statusCode = 503;
-
-        if (Yii::$app->janusApi->moderateMember($roomUuid, $token, $this->request->post('source'), \in_array($this->request->post('mute'), ['true', true]) ? true : false)) {
+        $action = \in_array($this->request->post('mute'), ['true', 1]) ? true : false;
+        if (Yii::$app->janusApi->moderateMember($roomUuid, $token, $this->request->post('source'), $action)) {
             $this->response->statusCode = 200;
+            if ($this->request->post('source') == JanusApiComponent::SOURCE_AUDIO) {
+                $roomMember->mute_audio = $action;
+                $roomMember->moderate_audio = $action;
+            } else {
+                $roomMember->mute_video = $action;
+                $roomMember->moderate_video = $action;
+            }
+            $roomMember->update(false);
         }
         return $this->response;
     }
@@ -605,15 +615,22 @@ class RoomController extends \yii\web\Controller
     }
     public function actionKickMember()
     {
-        $profileId = $this->request->post('profile_id');
+        $profileId = $this->request->post('profileId');
+        $memberId = $this->request->post('memberId');
         $roomUuid = $this->request->get('uuid');
 
         $roomMember = $this->checkMember($roomUuid, $profileId);
-        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token)) {
+        $room = Room::find()->where(['uuid' => $roomUuid])->limit(1)->one();
+
+        if($room->getOwner()->user_id !== Yii::$app->getUser()->getId()){
+            return throw new ServerErrorHttpException("Only owner of the room is allowed.");
+        }
+
+        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token, $memberId)) {
             return throw new ServerErrorHttpException("Error kicking member of the room");
         }
 
-        $roomRequest = RoomRequest::find()->where(['room_id' => $roomMember->room_id, 'user_profile_id' => $roomMember->user_profile_id])->limit(1)->one();
+        $roomRequest = RoomRequest::find()->where(['room_id' => $room->id, 'user_profile_id' => $profileId])->limit(1)->one();
         $roomRequest->delete();
 
         Yii::$app->response->format = Response::FORMAT_JSON;

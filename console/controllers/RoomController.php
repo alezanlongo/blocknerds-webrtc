@@ -6,7 +6,9 @@ use common\components\janusApi\JanusCommonException;
 use common\components\JanusApiComponent;
 use common\models\Meeting;
 use common\models\Room;
+use common\models\RoomMember;
 use common\models\RoomMemberRepository;
+use common\models\RoomRequest;
 use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -72,12 +74,18 @@ class RoomController extends Controller
         $owner = RoomMemberRepository::getOwnerByRoom($roomUuid);
         /** @var JanusApiComponent $janus */
         $janus = Yii::$app->janusApi;
+        /** @var RoomMember $m */
+        $uTokens = $janus->getMembersTokenByRoom($roomUuid);
         foreach ($members as $m) {
-            $janus->addUserToken($roomUuid, $m->token);
-            if ($m->user_profile_id == $owner->owner_id) {
+            if (false !== $uTokens && !\in_array($m->token, \array_column($uTokens, 'token'))) {
+                $janus->addUserToken($roomUuid, $m->token);
+                $rr = new RoomRequest();
+                $rr->user_profile_id = $m->user_profile_id;
+                $rr->room_id = $m->room_id;
+                $rr->status = RoomRequest::STATUS_ALLOW;
+                $rr->attempts = 1;
+                $rr->save(false);
             }
-        }
-        if (!empty($members)) {
         }
     }
 }
