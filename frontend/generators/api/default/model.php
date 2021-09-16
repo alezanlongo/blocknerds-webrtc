@@ -1,11 +1,11 @@
 <?= '<?php' ?>
 
-
 namespace <?= $namespace ?>;
+
+use yii\helpers\ArrayHelper;
 
 /**
  * <?= str_replace("\n", "\n * ", trim($description)) ?>
-
  *
 <?php foreach ($attributes as $attribute): ?>
  * @property <?= $attribute['type'] ?? 'mixed' ?> $<?= str_replace("\n", "\n * ", rtrim($attribute['name'] . ' ' . $attribute['description'])) ?>
@@ -91,9 +91,9 @@ class <?= $className ?> extends \yii\db\ActiveRecord
 
 <?php foreach ($attributes as $attribute): ?>
 <?php if( $extIdField == $attribute['name'] ): ?>
-        $this->externalId = ArrayHelper::getValue($obj, '<?= str_replace('__', '.', $attribute['name']) ?>');
+        $this->externalId = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>');
 <?php elseif($attribute['name'] != 'externalId'): ?>
-        $this-><?= $attribute['name'] ?> = ArrayHelper::getValue($obj, '<?= str_replace('__', '.', $attribute['name']) ?>');
+        $this-><?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>');
 <?php endif; ?>
 <?php endforeach; ?>
 
