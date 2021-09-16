@@ -13,7 +13,8 @@ class UserProfileAsset extends \yii\web\AssetBundle
         'js/profile.js',
     ];
     public $depends = [
-        'yii\web\JqueryAsset'
+        'yii\web\JqueryAsset',
+        'yii\bootstrap5\BootstrapAsset',
     ];
     public $publishOptions = [
         'forceCopy' => true,

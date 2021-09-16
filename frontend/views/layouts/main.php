@@ -63,7 +63,7 @@ AppAsset::register($this);
         }
 
         echo Nav::widget([
-            'options' => ['class' => 'navbar-nav ml-auto'],
+            'options' => ['class' => 'navbar-nav', 'style' => 'margin-left: auto'],
             'items' => $menuItems,
         ]);
         NavBar::end();
