@@ -716,4 +716,40 @@ class ApiGenerator extends ParentApiGenerator
         ];
     }
 
+    /**
+     * @param string $name
+     * @param Schema $schema
+     * @return string
+     */
+    protected function getDbType($name, $schema)
+    {
+        if ($name === 'id') {
+            return '$this->primaryKey()';
+        }
+
+        switch ($schema->type) {
+            case 'string':
+                if (isset($schema->maxLength)) {
+                    return '$this->string(' . ((int) $schema->maxLength) . ')';
+                }
+                return '$this->string()';
+            case 'integer':
+                return '$this->integer()';
+            case 'boolean':
+                return '$this->boolean()';
+            case 'number': // can be double and float
+                return '$this->float()';//$schema->format ?? 'float';
+//            case 'array':
+        // TODO array might refer to has_many relation
+//                if (isset($schema->items) && $schema->items instanceof Reference) {
+//                    $ref = $schema->items->getJsonReference()->getJsonPointer()->getPointer();
+//                    if (strpos($ref, '/components/schemas/') === 0) {
+//                        return substr($ref, 20) . '[]';
+//                    }
+//                }
+//                // no break here
+            default:
+                return '$this->string()';
+        }
+    }
 }

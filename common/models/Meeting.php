@@ -82,4 +82,9 @@ class Meeting extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Room::class, ['meeting_id' => 'id']);
     }
+
+    public function getOwner()
+    {
+        return $this->hasOne(UserProfile::class, ['id' => 'owner_id']);
+    }
 }
