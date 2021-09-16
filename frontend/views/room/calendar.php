@@ -5,7 +5,7 @@ use yii\web\View;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
-use yii\bootstrap4\Modal;
+use yii\bootstrap5\Modal;
 use yii\widgets\ActiveForm;
 use frontend\assets\Fullcalendar\FullcalendarAsset;
 use frontend\assets\Datetimepicker\DatetimepickerAsset;
