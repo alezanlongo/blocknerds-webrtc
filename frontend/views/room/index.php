@@ -64,30 +64,30 @@ $this->title = 'The Room';
             </div>
             <div class="options-tab d-flex ">
                 <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
-                    <li class="nav-item option-side" role="presentation">
+                    <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
                         <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog icon-menu"></i></a>
                     </li>
-                    <li class="nav-item option-side" role="presentation">
+                    <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Participant">
                         <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></a>
                     </li>
-                    <li class="nav-item option-side" role="presentation">
+                    <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
                         <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments icon-menu"></i></a>
                     </li>
-                    <li class="nav-item ml-3">
+                    <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle audio">
                         <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
                             'id' => "mute",
                             "class" => "btn btn-default text-white",
                             'onclick' => "toggleMute()"
                         ]) ?>
                     </li>
-                    <li class="nav-item ml-3">
+                    <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle video">
                         <?= Html::tag('button', '<i class="fas fa-video icon-menu"></i>', [
                             'id' => "no-video",
                             "class" => "btn btn-default text-white",
                             'onclick' => "toggleVideo()"
                         ]) ?>
                     </li>
-                    <li class="nav-item ml-3">
+                    <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Leave">
                         <?= Html::tag('button', 'Leave', ["class" => "btn btn-danger btn-leave"]) ?>
                     </li>
                 </ul>
@@ -137,9 +137,12 @@ $this->title = 'The Room';
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
                                     <?php if ($is_owner) { ?>
                                         <div class="position-absolute top-0 end-0">
-                                            <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone icon-option-member"></i></button> |
-                                            <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video icon-option-member"></i></button> |
-                                            <button class="btn btn-default text-light btn-remote-kick"><i class="fas fa-user-times icon-option-member"></i></button>
+                                            <button class="btn btn-default text-light btn-remote-mute" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                                <i class="fas fa-microphone icon-option-member"></i></button> |
+                                            <button class="btn btn-default text-light btn-remote-video" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                                <i class="fas fa-video icon-option-member"></i></button> |
+                                            <button class="btn btn-default text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
+                                                <i class="fas fa-user-times icon-option-member"></i></button>
                                         </div>
                                     <?php } ?>
                                 </li>
