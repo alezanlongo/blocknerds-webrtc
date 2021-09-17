@@ -105,13 +105,13 @@ $this->title = 'The Room';
                     </div>
                 </div>
             </div>
-            <div class="row row-cols-3 row-cols-md-3 row-cols-lg-3 g-3 justify-content-center boxes">
+            <div class="row row-cols-3 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center boxes">
                 <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                     <div class="col box<?= $i ?> m-0 p-0 box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" id="img<?= $i ?>">
                         <div class="card" style="background-color: transparent !important;">
                             <div class="content-video" id="video-source<?= $i ?>">
                                 <span class="text-light username-on-call"> </span>
-                                <img src="/assets/default-user.png" alt="" width="99%" height="99%" id="img<?= $i ?>" class="img-profile-preview ">
+                                <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
                                 <div class="video-mute-icon d-none" style="position:absolute; padding: 10px">
                                     <i class="fa fa-microphone-slash" aria-hidden="true"></i>
                                 </div>
