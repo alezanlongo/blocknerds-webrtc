@@ -93,7 +93,7 @@ $this->title = 'The Room';
                 </ul>
             </div>
         </div>
-        <div class="room-content mt-5" id="main">
+        <div class="room-content mt-100" id="main">
             <div class="room">
                 <? if ($is_owner || $is_allowed) { ?>
                     <div class="join-again d-none">
@@ -108,13 +108,17 @@ $this->title = 'The Room';
                         </div>
                     </div>
                     <div class="room-videos">
-                        <div class="wrapper">
+                        <div class="row row-cols-3 row-cols-md-3 row-cols-lg-3 g-3 justify-content-center mt-10">
                             <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <div class="box<?= $i ?> box d-none <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
-                                    <div class="content-video" id="video-source<?= $i ?>">
-                                        <span class="text-light username-on-call"> </span>
-                                        <img src="https://www.uic.mx/posgrados/files/2018/05/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
-                                        <div class="video-mute-icon d-none" style="width: 30px; height:auto; position:absolute"><i class="fa fa-microphone-slash" aria-hidden="true"></i></div>
+                                <div class="col box<?= $i ?> box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" id="img<?= $i ?>">
+                                    <div class="card" style="background-color: transparent !important;">
+                                        <div class="content-video" id="video-source<?= $i ?>">
+                                            <span class="text-light username-on-call"> </span>
+                                            <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                            <div class="video-mute-icon d-none" style="position:absolute; padding: 10px">
+                                                <i class="fa fa-microphone-slash" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             <?php } ?>

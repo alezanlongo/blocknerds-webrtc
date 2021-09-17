@@ -635,21 +635,14 @@ function newRemoteFeed(id, display, audio, video) {
         addNewAttendee(remoteFeed);
 
         // Show the video, hide the spinner and show the resolution when we get a playing event
-        irmStatus.forEach((v) => {
-          console.log("nicholls", v);
-          if (v.id == remoteFeed.rfid) {
+        irmStatus.forEach((v) => { 
+          if (v.id == remoteFeed.rfid) { 
             if (v.mute_audio === true) {
-              console.log("nicholls", "muteeeeed");
-              $(
-                ".video-mute-icon",
-                $(`#video-source${remoteFeed.rfindex}`)
-              ).removeClass("d-none");
-              $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`))
-                .removeClass("fa-microphone")
-                .addClass("fa-microphone-slash");
-            }
-          }
-        });
+              $(".video-mute-icon", $(`#video-source${remoteFeed.rfindex}`)).removeClass("d-none") 
+              $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`)).removeClass("fa-microphone").addClass("fa-microphone-slash")
+            } 
+          } 
+        })
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
           if (remoteFeed.spinner) remoteFeed.spinner.stop();
           remoteFeed.spinner = null;
@@ -1065,7 +1058,7 @@ $(document).on("click", ".btn-remote-kick", function (e) {
 
 $(".username-on-call").on("click", (e) => {
   const modalInfoComponent = $("#modalInfoUser");
-  const indexClicked = Number($(e.target).parent().parent().attr("data-id"));
+  const indexClicked = Number($(e.target).parent().parent().parent().attr("data-id"));
 
   const profile_id =
     indexClicked === 0 ? userProfileId : getRemoteProfileToFeed(indexClicked);
