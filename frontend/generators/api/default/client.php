@@ -29,11 +29,9 @@ $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
 //$path = str_replace('{practiceid}', Yii::$app->params['practiceID'], $path);
 ?>
         $path = '<?= $path ?>';
-
-        foreach($queryParams as $parameter => $paramValue){
-            $path = str_replace('{'.$parameter.'}', $paramValue, $path);
-        }
-        //FIXME: add exception
+<?php foreach ($endpoint['parameters'] as $parameter): ?>
+        $path = str_replace('{<?= $parameter ?>}', $<?= $parameter ?>, $path);
+<?php endforeach;?>
 
         $dataResponse = $this->callMethod($path, '<?= $endpoint['verb'] ?>' , $<?= $paramMethodName; ?>);
         if($dataResponse['success']){
