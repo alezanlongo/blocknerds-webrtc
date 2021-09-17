@@ -60,7 +60,7 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
-    initJanus();
+    // initJanus();
   }
 });
 
@@ -965,18 +965,17 @@ const kickMember = (index) => {
 ///////////////////////// HANDLING SIDEBAR
 ////////////////////////////////////////////////////////////////////////////////
 let targetActive = null;
-$(".option-side").on("click", (e) => {
-  const hrefControl = $(e.target).attr("data-bs-target");
-  console.log(hrefControl)
-  if ($("#pills-tabContent").css("display") === "none") {
-    $("#pills-tabContent").css("display", "block");
-  } else {
-    if (targetActive === hrefControl) {
-      $("#pills-tabContent").css("display", "none");
+$('.option-side').on('click', (e) => {
+    const hrefControl = $(e.target).attr('data-bs-target');
+    if ($('#pills-tabContent').css('display') === 'none') {
+        $('#pills-tabContent').css('display', 'block')
     } else {
-      targetActive = hrefControl;
+        if (targetActive === hrefControl) {
+            $('#pills-tabContent').css('display', 'none')
+        } else {
+            targetActive = hrefControl
+        }
     }
-  }
 });
 // const toggleSidebar = (isOpen) => {
 //   const sizeSidebar = isOpen ? 0 : 350;
