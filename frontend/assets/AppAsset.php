@@ -26,7 +26,7 @@ class AppAsset extends AssetBundle
     {
         parent::init();
         // resetting BootstrapAsset to not load own css files
-        Yii::$app->assetManager->bundles['yii\\bootstrap4\\BootstrapAsset'] = [
+        Yii::$app->assetManager->bundles['yii\\bootstrap5\\BootstrapAsset'] = [
             'css' => []
         ];
     }

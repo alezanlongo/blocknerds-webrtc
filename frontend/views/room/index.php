@@ -3,7 +3,7 @@
 use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
-use yii\bootstrap4\Modal;
+use yii\bootstrap5\Modal;
 use common\models\RoomRequest;
 use frontend\assets\room\RoomAsset;
 use frontend\assets\Janus\JanusAsset;

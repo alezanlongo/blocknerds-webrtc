@@ -9,14 +9,20 @@ use yii\base\Model;
 
 class <?= $className ?> extends \common\components\<?= $component ?>\AthenaOauth
 {
-    <?php /*foreach ($clientEndPoints as $clientEndPoint => $endpoint): ?>
-        <?php if(strpos($endpoint['finalPathName'], "{") == FALSE): ?>
-        const URL_SERVICE_<?= strtoupper($endpoint['finalPathName']) ?> = "<?= $endpoint['finalPathName'] ?>";
-        <?php endif; ?>
-    <?php endforeach;*/ ?>
-<?php foreach ($clientEndPoints as $clientEndPoint => $endpoint): ?>
+<?php foreach ($clientEndPoints as $clientEndPoint => $endpoint):?>
+<?php $paramMethodName = (in_array($endpoint['verb'], ['get', 'delete']))?"query":"payload"; ?>
+    /**
+<?php foreach ($endpoint['parameters'] as $parameter):?>
+     * @param <?= $parameter; ?>
 
-    public function <?= $endpoint['operationId'] ?>(array $queryParams = [], array $payload = [])
+<?php endforeach;?>
+     * @return <?= $endpoint['schema']; ?>
+
+     */
+    public function <?= $endpoint['operationId'] ?>(<?php
+foreach ($endpoint['parameters'] as $parameter):
+    echo "\$".$parameter.", ";
+endforeach;?>array $<?= $paramMethodName; ?> = [])
     {
 <?php
 $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
