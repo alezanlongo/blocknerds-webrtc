@@ -41,7 +41,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostPatient200Response'
+                object: array
+                items:
+                  $ref: '#/components/schemas/PostPatient200Response'
       requestBody:
         content:
           application/x-www-form-urlencoded:
