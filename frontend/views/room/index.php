@@ -62,16 +62,16 @@ $this->title = 'The Room';
             <div class=" flex-grow-1 text-center">
                 <span class="spanCountdown h4"></span>
             </div>
-            <div class="options-tab d-flex ">
+            <div class="options-tab">
                 <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
                     <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
-                        <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog icon-menu"></i></a>
+                        <a class="nav-link" id="pills-settings-tab" data-bs-toggle="pill" data-bs-target="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog icon-menu"></i></a>
                     </li>
                     <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Participant">
-                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></a>
+                        <a class="nav-link" id="pills-attendees-tab" data-bs-toggle="pill" data-bs-target="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></a>
                     </li>
                     <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
-                        <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments icon-menu"></i></a>
+                        <a class="nav-link" id="pills-chat-tab" data-bs-toggle="pill" data-bs-target="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments icon-menu"></i></a>
                     </li>
                     <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle audio">
                         <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
@@ -122,7 +122,8 @@ $this->title = 'The Room';
                     </div>
                 <? } ?>
             </div>
-            <div class="side-content sidebar" id="optionsSidebar">
+           
+            <div class="side-content sidebar " id="optionsSidebar">
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
                         <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
