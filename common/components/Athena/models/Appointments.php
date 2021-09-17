@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property object $appointmentids An hash of appointment IDs to the time requested.
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
@@ -29,8 +29,8 @@ class Appointments extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentids = ArrayHelper::getValue($obj, 'appointmentids');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->appointmentids = ArrayHelper::getValue($apiObject, 'appointmentids');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $balance Balance for this provider group.
  * @property string $cleanbalance Indicates whether the balance is associated with a contract, payment plan, or collections agency.
  * @property string $collectionsbalance The outstanding amount associated with a collections agency.
@@ -42,14 +42,14 @@ class BalanceItem extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->balance = ArrayHelper::getValue($obj, 'balance');
-        $this->cleanbalance = ArrayHelper::getValue($obj, 'cleanbalance');
-        $this->collectionsbalance = ArrayHelper::getValue($obj, 'collectionsbalance');
-        $this->contracts = ArrayHelper::getValue($obj, 'contracts');
-        $this->departmentids = ArrayHelper::getValue($obj, 'departmentids');
-        $this->paymentplanbalance = ArrayHelper::getValue($obj, 'paymentplanbalance');
-        $this->providergroupid = ArrayHelper::getValue($obj, 'providergroupid');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->balance = ArrayHelper::getValue($apiObject, 'balance');
+        $this->cleanbalance = ArrayHelper::getValue($apiObject, 'cleanbalance');
+        $this->collectionsbalance = ArrayHelper::getValue($apiObject, 'collectionsbalance');
+        $this->contracts = ArrayHelper::getValue($apiObject, 'contracts');
+        $this->departmentids = ArrayHelper::getValue($apiObject, 'departmentids');
+        $this->paymentplanbalance = ArrayHelper::getValue($apiObject, 'paymentplanbalance');
+        $this->providergroupid = ArrayHelper::getValue($apiObject, 'providergroupid');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

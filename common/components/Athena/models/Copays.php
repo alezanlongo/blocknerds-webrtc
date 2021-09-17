@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $copayamount The amount of the copay.
  * @property float $copaytype What the copay amount applies to.
  * @property integer $externalId API Primary Key
@@ -32,9 +32,9 @@ class Copays extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->copayamount = ArrayHelper::getValue($obj, 'copayamount');
-        $this->copaytype = ArrayHelper::getValue($obj, 'copaytype');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->copayamount = ArrayHelper::getValue($apiObject, 'copayamount');
+        $this->copaytype = ArrayHelper::getValue($apiObject, 'copaytype');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

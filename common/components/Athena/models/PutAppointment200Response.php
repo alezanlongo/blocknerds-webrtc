@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $appointmentcopay Detailed information about the copay for this appointment.  Gives more detail than the COPAY field.  Note: this information is not yet available in all practices, we are rolling this out slowly.
  * @property string $appointmentid Appointment ID of the booked appointment
  * @property string $appointmentstatus The athenaNet appointment status. There are several possible statuses.  x=cancelled. f=future. (It can include appointments where were never checked in, even if the appointment date is in the past. It is up to a practice to cancel appointments as a no show when appropriate to do so.)  o=open. 2=checked in. 3=checked out. 4=charge entered (i.e. a past appointment).
@@ -63,40 +63,40 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentcopay = ArrayHelper::getValue($obj, 'appointmentcopay');
-        $this->appointmentid = ArrayHelper::getValue($obj, 'appointmentid');
-        $this->appointmentstatus = ArrayHelper::getValue($obj, 'appointmentstatus');
-        $this->appointmenttype = ArrayHelper::getValue($obj, 'appointmenttype');
-        $this->appointmenttypeid = ArrayHelper::getValue($obj, 'appointmenttypeid');
-        $this->chargeentrynotrequired = ArrayHelper::getValue($obj, 'chargeentrynotrequired');
-        $this->chargeentrynotrequiredreason = ArrayHelper::getValue($obj, 'chargeentrynotrequiredreason');
-        $this->claims = ArrayHelper::getValue($obj, 'claims');
-        $this->copay = ArrayHelper::getValue($obj, 'copay');
-        $this->date = ArrayHelper::getValue($obj, 'date');
-        $this->departmentid = ArrayHelper::getValue($obj, 'departmentid');
-        $this->duration = ArrayHelper::getValue($obj, 'duration');
-        $this->encounterid = ArrayHelper::getValue($obj, 'encounterid');
-        $this->encounterprep = ArrayHelper::getValue($obj, 'encounterprep');
-        $this->encounterstate = ArrayHelper::getValue($obj, 'encounterstate');
-        $this->encounterstatus = ArrayHelper::getValue($obj, 'encounterstatus');
-        $this->frozenyn = ArrayHelper::getValue($obj, 'frozenyn');
-        $this->hl7providerid = ArrayHelper::getValue($obj, 'hl7providerid');
-        $this->insurances = ArrayHelper::getValue($obj, 'insurances');
-        $this->patient = ArrayHelper::getValue($obj, 'patient');
-        $this->patientappointmenttypename = ArrayHelper::getValue($obj, 'patientappointmenttypename');
-        $this->patientid = ArrayHelper::getValue($obj, 'patientid');
-        $this->patientlocationid = ArrayHelper::getValue($obj, 'patientlocationid');
-        $this->providerid = ArrayHelper::getValue($obj, 'providerid');
-        $this->referringproviderid = ArrayHelper::getValue($obj, 'referringproviderid');
-        $this->renderingproviderid = ArrayHelper::getValue($obj, 'renderingproviderid');
-        $this->rescheduledappointmentid = ArrayHelper::getValue($obj, 'rescheduledappointmentid');
-        $this->startcheckin = ArrayHelper::getValue($obj, 'startcheckin');
-        $this->starttime = ArrayHelper::getValue($obj, 'starttime');
-        $this->stopcheckin = ArrayHelper::getValue($obj, 'stopcheckin');
-        $this->supervisingproviderid = ArrayHelper::getValue($obj, 'supervisingproviderid');
-        $this->urgentyn = ArrayHelper::getValue($obj, 'urgentyn');
-        $this->useexpectedprocedurecodes = ArrayHelper::getValue($obj, 'useexpectedprocedurecodes');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay');
+        $this->appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid');
+        $this->appointmentstatus = ArrayHelper::getValue($apiObject, 'appointmentstatus');
+        $this->appointmenttype = ArrayHelper::getValue($apiObject, 'appointmenttype');
+        $this->appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid');
+        $this->chargeentrynotrequired = ArrayHelper::getValue($apiObject, 'chargeentrynotrequired');
+        $this->chargeentrynotrequiredreason = ArrayHelper::getValue($apiObject, 'chargeentrynotrequiredreason');
+        $this->claims = ArrayHelper::getValue($apiObject, 'claims');
+        $this->copay = ArrayHelper::getValue($apiObject, 'copay');
+        $this->date = ArrayHelper::getValue($apiObject, 'date');
+        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
+        $this->duration = ArrayHelper::getValue($apiObject, 'duration');
+        $this->encounterid = ArrayHelper::getValue($apiObject, 'encounterid');
+        $this->encounterprep = ArrayHelper::getValue($apiObject, 'encounterprep');
+        $this->encounterstate = ArrayHelper::getValue($apiObject, 'encounterstate');
+        $this->encounterstatus = ArrayHelper::getValue($apiObject, 'encounterstatus');
+        $this->frozenyn = ArrayHelper::getValue($apiObject, 'frozenyn');
+        $this->hl7providerid = ArrayHelper::getValue($apiObject, 'hl7providerid');
+        $this->insurances = ArrayHelper::getValue($apiObject, 'insurances');
+        $this->patient = ArrayHelper::getValue($apiObject, 'patient');
+        $this->patientappointmenttypename = ArrayHelper::getValue($apiObject, 'patientappointmenttypename');
+        $this->patientid = ArrayHelper::getValue($apiObject, 'patientid');
+        $this->patientlocationid = ArrayHelper::getValue($apiObject, 'patientlocationid');
+        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
+        $this->referringproviderid = ArrayHelper::getValue($apiObject, 'referringproviderid');
+        $this->renderingproviderid = ArrayHelper::getValue($apiObject, 'renderingproviderid');
+        $this->rescheduledappointmentid = ArrayHelper::getValue($apiObject, 'rescheduledappointmentid');
+        $this->startcheckin = ArrayHelper::getValue($apiObject, 'startcheckin');
+        $this->starttime = ArrayHelper::getValue($apiObject, 'starttime');
+        $this->stopcheckin = ArrayHelper::getValue($apiObject, 'stopcheckin');
+        $this->supervisingproviderid = ArrayHelper::getValue($apiObject, 'supervisingproviderid');
+        $this->urgentyn = ArrayHelper::getValue($apiObject, 'urgentyn');
+        $this->useexpectedprocedurecodes = ArrayHelper::getValue($apiObject, 'useexpectedprocedurecodes');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

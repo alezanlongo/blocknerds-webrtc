@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use Yii;
+use common\components\Athena\models\Patient;
 
 class PatientController extends \yii\web\Controller
 {
@@ -12,9 +13,21 @@ class PatientController extends \yii\web\Controller
     {
         parent::__construct($id, $module);
         $this->component = Yii::$app->athenaComponent;
+        $this->component->setPracticeid(195900);
     }
     public function actionIndex()
     {
-        echo $this->component->postClient();
+        $model = new Patient;
+
+        if ($model->load(Yii::$app->request->post())) {
+            $this->component->createPatient(
+                $model
+            );
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+            'departments' => $this->component->getDepartments(true),
+        ]);
     }
 }
