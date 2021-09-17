@@ -297,7 +297,7 @@ class ApiGenerator extends ParentApiGenerator
             if( $hasId ) { //ENQUIRY what happens if the schema has an id and ext_id is set to a different field?
                 $attributes['id']['name'] = $externalId;
                 $attributes['id']['dbType'] = '$this->integer()';//IMPROVEME could be string
-                $attributes['id']['dbName'] = 'external_id';
+                $attributes['id']['dbName'] = $externalId;
                 $attributes[$externalId] = $attributes['id'];
                 unset($attributes['id']);
             } else {
@@ -305,7 +305,7 @@ class ApiGenerator extends ParentApiGenerator
                     'name' => $externalId,
                     'type' => 'integer',
                     'dbType' => '$this->string()',
-                    'dbName' => 'external_id',
+                    'dbName' => $externalId,
                     'required' => false,
                     'readOnly' => false,
                     'description' => 'API Primary Key',

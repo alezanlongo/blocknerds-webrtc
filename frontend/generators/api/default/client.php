@@ -35,7 +35,7 @@ $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
         }
         //FIXME: add exception
 
-        $dataResponse = $this->callMethod($path, '<?= $endpoint['verb'] ?>' , $payload);
+        $dataResponse = $this->callMethod($path, '<?= $endpoint['verb'] ?>' , $<?= $paramMethodName; ?>);
         if($dataResponse['success']){
 <?php if($endpoint['flagList'] === TRUE): ?>
  $dataApiModel = [];
