@@ -27,7 +27,7 @@
 .sidebar {
   height: 100%;
   float: left;
-  width: 30%;
+  width: 25%;
   display: none;
   transition: 0.5s;
   background-color: #111;

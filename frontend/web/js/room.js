@@ -635,14 +635,19 @@ function newRemoteFeed(id, display, audio, video) {
         addNewAttendee(remoteFeed);
 
         // Show the video, hide the spinner and show the resolution when we get a playing event
-        irmStatus.forEach((v) => { 
-          if (v.id == remoteFeed.rfid) { 
+        irmStatus.forEach((v) => {
+          if (v.id == remoteFeed.rfid) {
             if (v.mute_audio === true) {
-              $(".video-mute-icon", $(`#video-source${remoteFeed.rfindex}`)).removeClass("d-none") 
-              $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`)).removeClass("fa-microphone").addClass("fa-microphone-slash")
-            } 
-          } 
-        })
+              $(
+                ".video-mute-icon",
+                $(`#video-source${remoteFeed.rfindex}`)
+              ).removeClass("d-none");
+              $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`))
+                .removeClass("fa-microphone")
+                .addClass("fa-microphone-slash");
+            }
+          }
+        });
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
           if (remoteFeed.spinner) remoteFeed.spinner.stop();
           remoteFeed.spinner = null;
@@ -965,62 +970,31 @@ const kickMember = (index) => {
 ///////////////////////// HANDLING SIDEBAR
 ////////////////////////////////////////////////////////////////////////////////
 let targetActive = null;
-$('.option-side').on('click', (e) => {
-    const hrefControl = $(e.target).attr('data-bs-target');
-    if ($('#pills-tabContent').css('display') === 'none') {
-        $('#pills-tabContent').css('display', 'block')
+$(".option-side").on("click", (e) => {
+  const hrefControl =
+    $(e.target).attr("data-bs-target") ||
+    $(e.target).find("button").attr("data-bs-target");
+  if ($("#pills-tabContent").css("display") === "none") {
+    $("#pills-tabContent").css("display", "block");
+  } else {
+    if (targetActive === hrefControl) {
+      $("#pills-tabContent").css("display", "none");
+      setTimeout(() => {
+        $(`${hrefControl}-tab`).removeClass("active");
+        targetActive = null;
+      }, 10);
     } else {
-        if (targetActive === hrefControl) {
-            $('#pills-tabContent').css('display', 'none')
-        } else {
-            targetActive = hrefControl
-        }
+      if (hrefControl) {
+        targetActive = hrefControl;
+      }
     }
+  }
 });
-// const toggleSidebar = (isOpen) => {
-//   const sizeSidebar = isOpen ? 0 : 350;
-
-//   document.getElementById("optionsSidebar").style.width = `${sizeSidebar}px !important`;
-//   // document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
-// };
-// $(".icon-menu").on("click", (e) => {
-//   // const isOpen = Array.from($(".option-side").children()).some((child) =>
-//   //   $(child).hasClass("active")
-//   // );
-//   console.log('Nicholls', 'icon side')
-//   // $(".option-side").trigger("click");
-//   // if (isOpen) {
-//   //   const componentClicked = $(e.target).parent();
-//   //   toggleSidebar(isOpen);
-//   //   setTimeout(() => {
-//   //     componentClicked.removeClass("active");
-//   //   }, 10);
-//   // }
-// });
-
-// $(".option-side").on("click", (e) => {
-//   const componentClicked = $(e.target);
-//   const controlName = componentClicked.attr("aria-controls");
-//   const isOpen = Array.from($(".option-side").children()).some((child) =>
-//   $(child).hasClass("active")
-//   );
-//   console.log('Nicholls', 'option side ', controlName, isOpen)
-//   document.getElementById("optionsSidebar").style.display = "block";
-//   if ($(`#${controlName}`).hasClass("active")) {
-//     document.getElementById("optionsSidebar").style.display = "none";
-//     setTimeout(() => {
-//       componentClicked.removeClass("active");
-//     }, 10);
-//     }
-//   // if (!isOpen) {
-//   //   toggleSidebar(isOpen);
-//   // } else if ($(`#${controlName}`).hasClass("active")) {
-//   //   toggleSidebar(isOpen);
-//   //   // setTimeout(() => {
-//   //   //   componentClicked.removeClass("active");
-//   //   // }, 10);
-//   // }
-// });
+$(".option-side .icon-menu").on("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  $(e.target).parent().parent().trigger("click");
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////// HANDLING SIDEBAR -> ATTENDEES
@@ -1057,7 +1031,9 @@ $(document).on("click", ".btn-remote-kick", function (e) {
 
 $(".username-on-call").on("click", (e) => {
   const modalInfoComponent = $("#modalInfoUser");
-  const indexClicked = Number($(e.target).parent().parent().parent().attr("data-id"));
+  const indexClicked = Number(
+    $(e.target).parent().parent().parent().attr("data-id")
+  );
 
   const profile_id =
     indexClicked === 0 ? userProfileId : getRemoteProfileToFeed(indexClicked);
