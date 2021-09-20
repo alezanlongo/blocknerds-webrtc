@@ -732,15 +732,11 @@ function toggleVideo() {
 
   Janus.log((muted ? "No video" : "Video") + " local stream...");
   if (muted) {
-    $('#video-source0 video').removeClass('d-none').show()
     //pluginHandler.send({ message: { "request": "configure", "video": true } });
     pluginHandler.unmuteVideo();
-    $('#img0').addClass('d-none').hide()
   } else {
-    $('#video-source0 video').addClass('d-none').hide()
     // pluginHandler.send({ message: { "request": "configure", "video": false } });
     pluginHandler.muteVideo();
-    $('#img0').removeClass('d-none').show()
   }
   muted = pluginHandler.isVideoMuted();
   $.post({
@@ -751,33 +747,6 @@ function toggleVideo() {
       return;
     },
   });
-
-  // pluginHandler.createOffer({
-  //   media: { removeVideo: true },
-  //   success: (res) => { console.log(res) },
-  //   error: (err) => { console.log(err) }
-  // })
-  // pluginHandler.createOffer({
-  //   media: { replaceVideo: true },
-  //   success: (res) => { console.log(res) },
-  //   error: (err) => { console.log(err) }
-  // })
-
-  // const compVideo = $("#myvideo")
-  // const compImage = $("#img0")
-  // if (muted) {
-  //   $("#no-video > i").removeClass("fa-video").addClass("fa-video-slash");
-  //   const width = compVideo.width();
-  //   const height = compVideo.height();
-  //   compImage.width(width);
-  //   compImage.height(height);
-  //   compImage.removeClass("d-none").show();
-  //   compVideo.addClass("d-none").hide();
-  // } else {
-  //   $("#no-video > i").removeClass("fa-video-slash").addClass("fa-video");
-  //   compImage.addClass("d-none").hide();
-  //   compVideo.removeClass("d-none").show();
-  // }
 }
 
 function toggleMute() {
