@@ -1456,6 +1456,12 @@ components:
         zip:
           description: Patient's zip.  Matching occurs on first 5 characters.
           type: string
+      required:
+        - firstname
+        - lastname
+        - dob
+        - departmentid
+        - email
     Department:
       properties:
         address:

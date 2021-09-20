@@ -51,7 +51,9 @@ class AthenaComponent extends Component
                 $this->practiceid,
                 $patient->toArray()
             );
-        var_dump($patientModelApi);die;
-        return $patientModelApi;
+
+        $patient->externalId = $patientModelApi[0]->patientid;
+
+        return $patient;
     }
 }

@@ -20,9 +20,12 @@ class PatientController extends \yii\web\Controller
         $model = new Patient;
 
         if ($model->load(Yii::$app->request->post())) {
-            $this->component->createPatient(
+            $model = $this->component->createPatient(
                 $model
             );
+
+            $model->save();
+
         }
 
         return $this->render('create', [
