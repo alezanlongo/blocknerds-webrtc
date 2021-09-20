@@ -24,7 +24,7 @@ $this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myRoom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
-$this->registerJsVar('isOwner', $is_owner, View::POS_END);
+$this->registerJsVar('isOwner', $is_owner, View::POS_BEGIN);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
@@ -57,101 +57,103 @@ $this->title = 'The Room';
 ?>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
-    <div class="main-content">
-        <div class="header-content d-flex pt-3 pr-3 pl-3 fixed-top">
-            <div class=" flex-grow-1 text-center">
-                <span class="spanCountdown h4"></span>
-            </div>
-            <div class="options-tab d-flex ">
-                <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
-                    <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-settings-tab" data-toggle="pill" href="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog icon-menu"></i></a>
-                    </li>
-                    <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-attendees-tab" data-toggle="pill" href="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></a>
-                    </li>
-                    <li class="nav-item option-side" role="presentation">
-                        <a class="nav-link" id="pills-chat-tab" data-toggle="pill" href="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments icon-menu"></i></a>
-                    </li>
-                    <li class="nav-item ml-3">
-                        <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
-                            'id' => "mute",
-                            "class" => "btn btn-default text-white",
-                            'onclick' => "toggleMute()"
-                        ]) ?>
-                    </li>
-                    <li class="nav-item ml-3">
-                        <?= Html::tag('button', '<i class="fas fa-video icon-menu"></i>', [
-                            'id' => "no-video",
-                            "class" => "btn btn-default text-white",
-                            'onclick' => "toggleVideo()"
-                        ]) ?>
-                    </li>
-                    <li class="nav-item ml-3">
-                        <?= Html::tag('button', 'Leave', ["class" => "btn btn-danger btn-leave"]) ?>
-                    </li>
-                </ul>
-            </div>
+    <div class="header-nav fix-top pb-0 ">
+        <div class=" flex-grow-1 text-center">
+            <span class="spanCountdown h4"></span>
         </div>
-        <div class="room-content mt-5" id="main">
-            <div class="room">
-                <? if ($is_owner || $is_allowed) { ?>
-                    <div class="join-again d-none">
-                        <div class="card">
-                            <div class="card-title">
-                                <?= Html::tag("h4", "You left of the room") ?>
-                            </div>
-                            <div class="card-body">
-                                <?= Html::tag("button", "Join again",  ["class" => "btn btn-primary btn-join-again"]) ?>
-                                <?= Html::a('Go home', ['/'], ['class' => 'btn btn-default text-white']) ?>
-                            </div>
-                        </div>
+        <div class="options-tab">
+            <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
+                <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
+                    <button class="nav-link" id="pills-settings-tab" data-bs-toggle="pill" data-bs-target="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog icon-menu"></i></button>
+                </li>
+                <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Participant">
+                    <button class="nav-link" id="pills-attendees-tab" data-bs-toggle="pill" data-bs-target="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></button>
+                </li>
+                <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
+                    <button class="nav-link" id="pills-chat-tab" data-bs-toggle="pill" data-bs-target="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments icon-menu"></i></button>
+                </li>
+                <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle audio">
+                    <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
+                        'id' => "mute",
+                        "class" => "btn btn-default text-white",
+                        'onclick' => "toggleMute()"
+                    ]) ?>
+                </li>
+                <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle video">
+                    <?= Html::tag('button', '<i class="fas fa-video icon-menu"></i>', [
+                        'id' => "no-video",
+                        "class" => "btn btn-default text-white",
+                        'onclick' => "toggleVideo()"
+                    ]) ?>
+                </li>
+                <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Leave">
+                    <?= Html::tag('button', 'Leave', ["class" => "btn btn-danger btn-leave"]) ?>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="main-content d-flex">
+        <? if ($is_owner || $is_allowed) { ?>
+            <div class="join-again d-none">
+                <div class="card">
+                    <div class="card-title">
+                        <?= Html::tag("h4", "You left of the room") ?>
                     </div>
-                    <div class="room-videos">
-                        <div class="wrapper">
-                            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <div class="box<?= $i ?> box d-none <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
-                                    <div class="content-video" id="video-source<?= $i ?>">
-                                        <span class="text-light username-on-call"> </span>
-                                        <img src="https://www.uic.mx/posgrados/files/2018/05/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
-                                        <div class="video-mute-icon d-none" style="width: 30px; height:auto; position:absolute"><i class="fa fa-microphone-slash" aria-hidden="true"></i></div>
-                                    </div>
-                                </div>
-                            <?php } ?>
-                        </div>
-                    </div>
-                <? } ?>
-            </div>
-            <div class="side-content sidebar" id="optionsSidebar">
-                <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
-                        <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
-                    </div>
-
-                    <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
-                        <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
-
-                        <ul class="list-group bg-dark list-attendees">
-                            <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                                <li class="list-group-item list-group-item-light bg-dark d-none position-relative" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                                    <span class="p-1 usernameFeed<?= $i ?>"></span>
-                                    <?php if ($is_owner) { ?>
-                                        <div class="position-absolute top-0 end-0">
-                                            <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone icon-option-member"></i></button> |
-                                            <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video icon-option-member"></i></button> |
-                                            <button class="btn btn-default text-light btn-remote-kick"><i class="fas fa-user-times icon-option-member"></i></button>
-                                        </div>
-                                    <?php } ?>
-                                </li>
-                            <?php  } ?>
-                        </ul>
-                    </div>
-                    <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">
-                        <?= Html::tag('h3', 'Chat section', ['class' => 'text-center']) ?>
+                    <div class="card-body">
+                        <?= Html::tag("button", "Join again",  ["class" => "btn btn-primary btn-join-again"]) ?>
+                        <?= Html::a('Go home', ['/'], ['class' => 'btn btn-default text-white']) ?>
                     </div>
                 </div>
             </div>
+            <div class="row row-cols-3 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center boxes">
+                <?php for ($i = 0; $i < $limit_members; $i++) { ?>
+                    <div class="col box<?= $i ?> m-0 p-0 box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" >
+                        <div class="card" style="background-color: transparent !important;">
+                            <div class="content-video card-body p-0" id="video-source<?= $i ?>">
+                                <div class="video-mute-icon d-none ">
+                                    <i class="fa fa-microphone-slash" aria-hidden="true"></i>
+                                </div>
+                                <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                <span class="text-light username-on-call"> </span>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
+        <? } ?>
+        <div class="tab-content sidebar" id="pills-tabContent">
+            <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
+                <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
+            </div>
+            <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
+                <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
+
+                <ul class="list-group bg-dark list-attendees">
+                    <li class="list-group-item list-group-item-light bg-dark position-relative">
+                        <span class="p-1 username-member" onclick="loadAndOpenModalInfo(0)"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
+                    </li>
+                    <?php for ($i = 0; $i < $limit_members; $i++) { ?>
+                        <li class="list-group-item list-group-item-light bg-dark d-none position-relative" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
+                            <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"></span>
+                            <?php if ($is_owner) { ?>
+                                <div class="position-absolute top-0 end-0">
+                                    <button class="btn btn-default text-light btn-remote-mute" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio" onclick="moderateAudioToggle(this,<?=$i?>)">
+                                        <i class="fas fa-microphone icon-option-member"></i></button> |
+                                    <button class="btn btn-default text-light btn-remote-video" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                        <i class="fas fa-video icon-option-member"></i></button> |
+                                    <button class="btn btn-default text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
+                                        <i class="fas fa-user-times icon-option-member"></i></button>
+                                </div>
+                            <?php } ?>
+                        </li>
+                    <?php  } ?>
+                </ul>
+            </div>
+            <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">
+                <?= Html::tag('h3', 'Chat section', ['class' => 'text-center']) ?>
+            </div>
         </div>
+
     </div>
 <? endif ?>
 

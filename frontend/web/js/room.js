@@ -50,7 +50,7 @@ let bitrateTimer = [];
 $(document).ready(function () {
   connectMQTT();
   handleCountdown(endTime);
-  
+
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
     return;
@@ -58,7 +58,7 @@ $(document).ready(function () {
   if (isOwner && countRequest > 0) {
     $("#pendingRequests").modal("show");
   }
-  
+
   if (isOwner || isAllowed) {
     initJanus();
   }
@@ -68,8 +68,9 @@ $(".btn-leave").on("click", () => {
   unpublishOwnFeed();
 });
 $(".btn-join-again").on("click", () => {
-  $(".room-videos").show();
-  $(".header-content").show();
+  $(".header-nav").show();
+  $(".boxes").show();
+  $(".sidebar").show();
   $(".join-again").hide();
   publishOwnFeed(true);
 });
@@ -192,12 +193,16 @@ const initJanus = () => {
                 $("#video-source .no-video-container").remove();
                 $("#myvideo").removeClass("hide").show();
               }
-              if(own_mute_audio){
-                $("#mute > i").removeClass("fa-microphone").addClass("fa-microphone-slash");
+              if (own_mute_audio) {
+                $("#mute > i")
+                  .removeClass("fa-microphone")
+                  .addClass("fa-microphone-slash");
                 pluginHandler.muteAudio();
-              }else{
+              } else {
                 pluginHandler.unmuteAudio();
-                $("#mute > i").removeClass("fa-microphone-slash").addClass("fa-microphone");
+                $("#mute > i")
+                  .removeClass("fa-microphone-slash")
+                  .addClass("fa-microphone");
               }
             },
             onremotestream: (stream) => {
@@ -208,19 +213,10 @@ const initJanus = () => {
                 " ::: Got a cleanup notification: we are unpublished now :::"
               );
               myStream = null;
-              // alert("do someting else after to go")
-              $(".room-videos").hide();
-              $(".header-content").attr("style", "display:none !important");
-              // $(".header-content").addClass('d-none')
+              $(".header-nav").hide();
+              $(".boxes").hide();
+              $(".sidebar").hide();
               $(".join-again").removeClass("d-none").show();
-
-              // $(`#video-source0`).html(
-              //   '<button id="publish" class="btn btn-primary">Publish</button>'
-              // );
-              // $("#publish").click(function () {
-              //   publishOwnFeed(true);
-              // });
-              // $(`#video-source0`).parent().parent().unblock();
             },
           });
         },
@@ -294,7 +290,7 @@ const handlingJoined = (objMessage) => {
       const display = publishersList[f]["display"];
       const audio = publishersList[f]["audio_codec"];
       const video = publishersList[f]["video_codec"];
-      console.log("ale joined", publishersList[f])
+      console.log("ale joined", publishersList[f]);
       newRemoteFeed(id, display, audio, video);
     }
   }
@@ -314,7 +310,6 @@ const handlingEvent = (objMessage) => {
       const display = list[f]["display"];
       const audio = list[f]["audio_codec"];
       const video = list[f]["video_codec"];
-      console.log("ale event", list[f])
 
       newRemoteFeed(id, display, audio, video);
     }
@@ -378,13 +373,13 @@ const handlingEvent = (objMessage) => {
       // This is a "no such room" error: give a more meaningful description
       bootbox.alert(
         "<p>Apparently room <code>" +
-          myRoom +
-          "</code> (the one this demo uses as a test room) " +
-          "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
-          "configuration file? If not, make sure you copy the details of room <code>" +
-          myRoom +
-          "</code> " +
-          "from that sample in your current configuration file, then restart Janus and try again."
+        myRoom +
+        "</code> (the one this demo uses as a test room) " +
+        "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
+        "configuration file? If not, make sure you copy the details of room <code>" +
+        myRoom +
+        "</code> " +
+        "from that sample in your current configuration file, then restart Janus and try again."
       );
     } else {
       bootbox.alert(objMessage["error"]);
@@ -419,7 +414,7 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       videoRecv: false,
       audioSend: useAudio,
       videoSend: useVideo,
-      data:true,
+      data: true,
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
@@ -614,11 +609,11 @@ function newRemoteFeed(id, display, audio, video) {
           '<video class="rounded centered" id="waitingvideo' +
           remoteFeed.rfindex +
           '" width="100%" height="100%" />'
-          );
-          $("#video-source" + remoteFeed.rfindex).append(
-            '<video class="rounded centered relative hide" id="remotevideo' +
-            remoteFeed.rfindex +
-            '" width="100%" height="100%" autoplay playsinline/>'
+        );
+        $("#video-source" + remoteFeed.rfindex).append(
+          '<video class="rounded centered relative hide" id="remotevideo' +
+          remoteFeed.rfindex +
+          '" width="100%" height="100%" autoplay playsinline/>'
         );
         $(`#video-source${remoteFeed.rfindex} .username-on-call`).text(
           feeds[remoteFeed.rfindex].rfuser.usernameFeed
@@ -629,18 +624,21 @@ function newRemoteFeed(id, display, audio, video) {
         //     "</h1>"
         // );
         addNewAttendee(remoteFeed);
-        
+
         // Show the video, hide the spinner and show the resolution when we get a playing event
-        irmStatus.forEach((v) => { 
-          console.log("nicholls",v)
-          if (v.id == remoteFeed.rfid) { 
+        irmStatus.forEach((v) => {
+          if (v.id == remoteFeed.rfid) {
             if (v.mute_audio === true) {
-              console.log('nicholls','muteeeeed')
-              $(".video-mute-icon", $(`#video-source${remoteFeed.rfindex}`)).removeClass("d-none") 
-              $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`)).removeClass("fa-microphone").addClass("fa-microphone-slash")
-            } 
-          } 
-        })
+              $(
+                ".video-mute-icon",
+                $(`#video-source${remoteFeed.rfindex}`)
+              ).removeClass("d-none");
+              $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`))
+                .removeClass("fa-microphone")
+                .addClass("fa-microphone-slash");
+            }
+          }
+        });
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
           if (remoteFeed.spinner) remoteFeed.spinner.stop();
           remoteFeed.spinner = null;
@@ -656,7 +654,6 @@ function newRemoteFeed(id, display, audio, video) {
         $("#remotevideo" + remoteFeed.rfindex).get(0),
         stream
       );
-
 
       const videoTracks = stream.getVideoTracks();
       if (!videoTracks || videoTracks.length === 0) {
@@ -676,8 +673,8 @@ function newRemoteFeed(id, display, audio, video) {
       } else {
         $(
           "#video-source" + remoteFeed.rfindex + " .no-video-container"
-          ).remove();
-          $("#remotevideo" + remoteFeed.rfindex)
+        ).remove();
+        $("#remotevideo" + remoteFeed.rfindex)
           .removeClass("hide")
           .show();
       }
@@ -733,14 +730,13 @@ function unpublishOwnFeed() {
 function toggleVideo() {
   let muted = pluginHandler.isVideoMuted();
 
-
   Janus.log((muted ? "No video" : "Video") + " local stream...");
   if (muted) {
-    pluginHandler.unmuteVideo();
     //pluginHandler.send({ message: { "request": "configure", "video": true } });
+    pluginHandler.unmuteVideo();
   } else {
-    pluginHandler.muteVideo();
     // pluginHandler.send({ message: { "request": "configure", "video": false } });
+    pluginHandler.muteVideo();
   }
   muted = pluginHandler.isVideoMuted();
   $.post({
@@ -751,34 +747,6 @@ function toggleVideo() {
       return;
     },
   });
-
-  // pluginHandler.createOffer({
-  //   media: { removeVideo: true },
-  //   success: (res) => { console.log(res) },
-  //   error: (err) => { console.log(err) }
-  // })
-  // pluginHandler.createOffer({
-  //   media: { replaceVideo: true },
-  //   success: (res) => { console.log(res) },
-  //   error: (err) => { console.log(err) }
-  // })
-
-  // const compVideo = $("#myvideo")
-  // const compImage = $("#img0")
-  // if (muted) {
-  //   $("#no-video > i").removeClass("fa-video").addClass("fa-video-slash");
-  //   const width = compVideo.width();
-  //   const height = compVideo.height();
-  //   compImage.width(width);
-  //   compImage.height(height);
-  //   compImage.removeClass("d-none").show();
-  //   compVideo.addClass("d-none").hide();
-  // } else {
-  //   $("#no-video > i").removeClass("fa-video-slash").addClass("fa-video");
-  //   compImage.addClass("d-none").hide();
-  //   compVideo.removeClass("d-none").show();
-  // }
-
 }
 
 function toggleMute() {
@@ -788,9 +756,7 @@ function toggleMute() {
   if (muted) {
     pluginHandler.unmuteAudio();
     //    pluginHandler.send({ message: { "request": "configure", audio: false } });
-
-  }
-  else {
+  } else {
     pluginHandler.muteAudio();
     //    pluginHandler.send({ message: { "request": "configure", audio: true } });
   }
@@ -811,7 +777,6 @@ function toggleMute() {
   } else {
     $("#mute > i").removeClass("fa-microphone-slash").addClass("fa-microphone");
   }
-
 }
 
 ////////////////////////////////////////////////////////////
@@ -895,54 +860,69 @@ const pinBehavior = (list, index, width = "100%", height = "90vh") => {
   });
 };
 
-const muteMember = (index) => {
-  if (isOwner) {
-    let remoteHandler = feeds[index];
-    if (!remoteHandler) {
-      console.log('handler not found', index)
-      return;
-    }
-    // let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute";
-    let btnRemoteMute = $(
-      `#attendee_${remoteHandler.rfindex} .btn-remote-mute > i`
-    );
-    let isMuted = btnRemoteMute.hasClass("fa-microphone");
-    console.log("NB > isMuted", isMuted);
+let moderateRequest = [];
 
-    remoteHandler.send({
-      message: {
-        request: REQUEST_MODERATE,
-        room: myRoom,
-        id: remoteHandler.rfid,
-        mute_audio: isMuted,
-      },
-      success: function (data) {
-        if (data.videoroom === "success") {
-          // $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(isMuted ? "Unmute" : "Mute");
-          if (isMuted) {
-            console.log("NB > IS MUTED");
-            btnRemoteMute
-              .removeClass("fa-microphone")
-              .addClass("fa-microphone-slash");
-          } else {
-            console.log("NB > NOT MUTED");
-            btnRemoteMute
-              .removeClass("fa-microphone-slash")
-              .addClass("fa-microphone");
-          }
-
-          sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
-            user_profile_id: remoteHandler.rfuser.idFeed,
-            isMuted,
-          });
-        }
-      },
-      error: function (error) {
-        console.log(error);
-      },
-    });
+function moderateAudioToggle(elm, idx) {
+  if (!isOwner) {
+    return
   }
-};
+  if (typeof moderateRequest[idx + "audio"] !== "undefined") {
+    return;
+  }
+  let muted = null;
+  if (elm.querySelector("i").classList.contains("fa-microphone")) {
+    muted = false
+  } else {
+    muted = true
+  }
+  let fnOnSuccess = function (res) {
+    if (res.moderate_audio === true) {
+      elm.querySelector("i").classList.add("fa-microphone-slash")
+      elm.querySelector("i").classList.remove("fa-microphone")
+    } else {
+      elm.querySelector("i").classList.add("fa-microphone")
+      elm.querySelector("i").classList.remove("fa-microphone-slash")
+    }
+  }
+
+  moderateMember(idx, 'audio', !muted, fnOnSuccess)
+}
+
+
+function moderateMember(idx, source, mute = true, onSuccess) {
+
+  let remoteHandler = feeds[idx];
+  if (!remoteHandler) {
+    return false;
+  }
+  sourceAvailb = ['audio', 'video'];
+
+  if (sourceAvailb.indexOf(source) < 0) {
+    return false;
+  }
+
+  if (moderateRequest.indexOf((idx + source)) >= 0) {
+    return false;
+  }
+  moderateRequest.push(idx + source);
+  $.post({
+    url: `/room-moderate/${myRoom}/` + remoteHandler.rfuser.idFeed,
+    data: { source: source, mute: mute },
+    success: (res) => {
+      onSuccess(res)
+      let mIdx = moderateRequest.indexOf((idx + source))
+      if (mIdx > -1) {
+        moderateRequest.splice(mIdx, 1)
+      }
+    },
+    error: (err) => {
+      let mIdx = moderateRequest.indexOf((idx + source))
+      if (mIdx > -1) {
+        moderateRequest.splice(mIdx, 1)
+      }
+    }
+  });
+}
 
 const kickMember = (index) => {
   if (isOwner) {
@@ -952,7 +932,10 @@ const kickMember = (index) => {
     }
     $.post({
       url: `${myRoom}/kick`,
-      data: { profileId: remoteHandler.rfuser.idFeed, memberId: remoteHandler.rfid }, 
+      data: {
+        profileId: remoteHandler.rfuser.idFeed,
+        memberId: remoteHandler.rfid,
+      },
       cache: false,
       error: (err) => {
         console.log(err);
@@ -965,46 +948,31 @@ const kickMember = (index) => {
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////// HANDLING SIDEBAR
 ////////////////////////////////////////////////////////////////////////////////
-const toggleSidebar = (isOpen) => {
-  const sizeSidebar = isOpen ? 0 : 350;
-
-  document.getElementById("optionsSidebar").style.width = `${sizeSidebar}px`;
-  // document.getElementById("main").style.marginRight = `${sizeSidebar}px`;
-};
-$(".icon-menu").on("click", (e) => {
-  const isOpen = Array.from($(".option-side").children()).some((child) =>
-    $(child).hasClass("active")
-  );
-  console.log('Nicholls', 'icon side', isOpen)
-  if (isOpen) {
-    const componentClicked = $(e.target).parent();
-    toggleSidebar(isOpen);
-    setTimeout(() => {
-      componentClicked.removeClass("active");
-    }, 10);
-  }
-});
-
-$(".icon-option-member").on("click", (e) => {
-  $(e.target).parent().trigger("click");
-});
-
+let targetActive = null;
 $(".option-side").on("click", (e) => {
-  console.log('Nicholls', 'option side')
-  const componentClicked = $(e.target);
-  const controlName = componentClicked.attr("aria-controls");
-  const isOpen = Array.from($(".option-side").children()).some((child) =>
-    $(child).hasClass("active")
-  );
-
-  if (!isOpen) {
-    toggleSidebar(isOpen);
-  } else if ($(`#${controlName}`).hasClass("active")) {
-    toggleSidebar(isOpen);
-    setTimeout(() => {
-      componentClicked.removeClass("active");
-    }, 10);
+  const hrefControl =
+    $(e.target).attr("data-bs-target") ||
+    $(e.target).find("button").attr("data-bs-target");
+  if ($("#pills-tabContent").css("display") === "none") {
+    $("#pills-tabContent").css("display", "block");
+  } else {
+    if (targetActive === hrefControl) {
+      $("#pills-tabContent").css("display", "none");
+      setTimeout(() => {
+        $(`${hrefControl}-tab`).removeClass("active");
+        targetActive = null;
+      }, 10);
+    } else {
+      if (hrefControl) {
+        targetActive = hrefControl;
+      }
+    }
   }
+});
+$(".option-side .icon-menu").on("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  $(e.target).parent().parent().trigger("click");
 });
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1013,11 +981,14 @@ $(".option-side").on("click", (e) => {
 const addNewAttendee = (feed) => {
   $(`#attendee_${feed.rfindex}`).removeClass("d-none").show();
   $(`span.usernameFeed${feed.rfindex}`).text(feed.rfuser.usernameFeed);
+  // $(`span.usernameFeed${feed.rfindex}`).on("click", (e) => {
+  //   const indexClicked = Number($(e.target).parent().attr("data-index"))
+  //   loadAndOpenModalInfo(indexClicked)
+  // });
 };
 
-$(document).on("click", ".btn-remote-mute", function (e) {
-  const index = $(e.target).parent().parent().attr("data-index");
-  if (index) muteMember(index);
+$(".icon-option-member").on("click", (e) => {
+  $(e.target).parent().trigger("click");
 });
 
 $(document).on("click", ".btn-remote-video", function (e) {
@@ -1037,9 +1008,13 @@ $(document).on("click", ".btn-remote-kick", function (e) {
 });
 
 $(".username-on-call").on("click", (e) => {
-  const modalInfoComponent = $("#modalInfoUser");
-  const indexClicked = Number($(e.target).parent().parent().attr("data-id"));
+  const indexClicked = Number(
+    $(e.target).parent().parent().parent().attr("data-id")
+  );
+  loadAndOpenModalInfo(indexClicked);
+});
 
+const loadAndOpenModalInfo = (indexClicked) => {
   const profile_id =
     indexClicked === 0 ? userProfileId : getRemoteProfileToFeed(indexClicked);
 
@@ -1047,6 +1022,7 @@ $(".username-on-call").on("click", (e) => {
     // TODO:  what happen?
     return;
   }
+  const modalInfoComponent = $("#modalInfoUser");
   $.get(`/user/get-profile/${profile_id}`)
     .then((resp) => {
       const { data } = resp;
@@ -1072,7 +1048,7 @@ $(".username-on-call").on("click", (e) => {
     .catch((err) => console.log(err));
 
   modalInfoComponent.modal("show");
-});
+};
 
 const getRemoteProfileToFeed = (index) => {
   const feed = feeds[index];

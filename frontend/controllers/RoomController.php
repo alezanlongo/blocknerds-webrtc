@@ -146,8 +146,8 @@ class RoomController extends \yii\web\Controller
         }
         // get own source status
         $ownSourceStatus = RoomMember::find()->select(['mute_audio', 'mute_video'])
-        ->where(['room_id' => $room->id,'user_profile_id' => $profile->id])
-        ->asArray()->one();
+            ->where(['room_id' => $room->id, 'user_profile_id' => $profile->id])
+            ->asArray()->one();
 
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
@@ -178,25 +178,22 @@ class RoomController extends \yii\web\Controller
     /**
      * 
      * @param string $roomUuid id of the room
-     * @param string $roomMember userToken into the room
-     * @param string $source audio/video, default audio
-     * @param bool $mute true to apply, false to unmute
+     * @param string $profileId userToken into the room
      * @return void httpStatus code 200 if everything was fine, 503 if janus fails
      */
-    public function actionModerateMember(string $roomUuid, string $userToken)
+    public function actionModerateMember(string $roomUuid, string $profileId)
     {
         $this->response->format = Response::FORMAT_JSON;
         $arrSources = [JanusApiComponent::SOURCE_AUDIO, JanusApiComponent::SOURCE_VIDEO];
 
-        if (!$this->request->isAjax || $this->request->isPost) {
+        if (!$this->request->isAjax || !$this->request->isPost) {
             throw new NotFoundHttpException("page not found");
         }
-
         if (null === $this->request->post('source') || !\in_array($this->request->post('source'), $arrSources)) {
             throw new BadRequestHttpException("invalid source");
         }
-
-        if (null === $this->request->post('mute') || \in_array($this->request->post('mute'), ['true', 'false', true, false])) {
+        
+        if (null === $this->request->post('mute') || !\in_array($this->request->post('mute'), ['true', 'false', true, false])) {
             throw new BadRequestHttpException('invalid mute');
         }
 
@@ -220,7 +217,7 @@ class RoomController extends \yii\web\Controller
         if ($profile->id != $meeting->owner_id) {
             throw new ForbiddenHttpException("Unauthorized request");
         }
-        $roomMember = RoomMember::find()->where(['token' => $userToken, 'room_id' => $room->id])->limit(1)->one();
+        $roomMember = RoomMember::find()->where(['user_profile_id' => $profileId, 'room_id' => $room->id])->limit(1)->one();
         $token = $roomMember->token;
 
         if (null === $token) {
@@ -238,6 +235,7 @@ class RoomController extends \yii\web\Controller
                 $roomMember->moderate_video = $action;
             }
             $roomMember->update(false);
+            $this->response->data = ['moderate_audio' => $roomMember->moderate_audio, 'moderate_video' => $roomMember->moderate_video];
         }
         return $this->response;
     }
@@ -590,7 +588,7 @@ class RoomController extends \yii\web\Controller
             'user_profile_id' => $profile->id,
             'roomSelected' => $roomSelected,
             'roomMembers' => $roomMembers,
-            'initialView' => $initialView ? $initialView->value : 'dayGridWeek',
+            'initialView' => $initialView ? $initialView->value : 'timeGridWeek',
             'cardNextOrInProgressMeetingWidget' => $cardNextOrInProgressMeetingWidget
         ]);
     }
@@ -622,7 +620,7 @@ class RoomController extends \yii\web\Controller
         $roomMember = $this->checkMember($roomUuid, $profileId);
         $room = Room::find()->where(['uuid' => $roomUuid])->limit(1)->one();
 
-        if($room->getOwner()->user_id !== Yii::$app->getUser()->getId()){
+        if ($room->getOwner()->user_id !== Yii::$app->getUser()->getId()) {
             return throw new ServerErrorHttpException("Only owner of the room is allowed.");
         }
 
@@ -632,6 +630,7 @@ class RoomController extends \yii\web\Controller
 
         $roomRequest = RoomRequest::find()->where(['room_id' => $room->id, 'user_profile_id' => $profileId])->limit(1)->one();
         $roomRequest->delete();
+        $roomMember->delete();
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         return [
@@ -699,9 +698,9 @@ class RoomController extends \yii\web\Controller
             return throw new NotFoundHttpException("Profile not found.");
         }
 
-        $profile = UserProfile::findOne(['user_id' => Yii::$app->getUser()->id]);
+        // $profile = UserProfile::findOne(['user_id' => Yii::$app->getUser()->id]);
         $roomMember = RoomMember::find()
-            ->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])
+            ->where(['user_profile_id' => $profileId, 'room_id' => $room->id])
             ->limit(1)->one();
 
         if (!$roomMember) {
