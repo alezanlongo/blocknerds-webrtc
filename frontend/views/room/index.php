@@ -129,6 +129,9 @@ $this->title = 'The Room';
                 <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                 <ul class="list-group bg-dark list-attendees">
+                    <li class="list-group-item list-group-item-light bg-dark position-relative">
+                        <span class="p-1"><?= Yii::$app->getUser()->getIdentity()->username ?></span>
+                    </li>
                     <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                         <li class="list-group-item list-group-item-light bg-dark d-none position-relative" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
                             <span class="p-1 usernameFeed<?= $i ?>"></span>
