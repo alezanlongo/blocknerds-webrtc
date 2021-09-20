@@ -24,7 +24,7 @@ $this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myRoom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
-$this->registerJsVar('isOwner', $is_owner, View::POS_END);
+$this->registerJsVar('isOwner', $is_owner, View::POS_BEGIN);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
@@ -137,7 +137,7 @@ $this->title = 'The Room';
                                     <span class="p-1 usernameFeed<?= $i ?>"></span>
                                     <?php if ($is_owner) { ?>
                                         <div class="position-absolute top-0 end-0">
-                                            <button class="btn btn-default text-light btn-remote-mute"><i class="fas fa-microphone icon-option-member"></i></button> |
+                                            <button class="btn btn-default text-light btn-remote-mute", onclick="moderateAudioToggle(this,<?=$i?>)"><i class="fas fa-microphone icon-option-member"></i></button> |
                                             <button class="btn btn-default text-light btn-remote-video"><i class="fas fa-video icon-option-member"></i></button> |
                                             <button class="btn btn-default text-light btn-remote-kick"><i class="fas fa-user-times icon-option-member"></i></button>
                                         </div>
