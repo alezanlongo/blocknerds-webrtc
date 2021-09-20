@@ -3,6 +3,7 @@
 use yii\log\FileTarget;
 
 return [
+    'name' => 'WebRTC Project',
     'bootstrap' => [
         // 'queue', // The component registers its own console commands
     ],
