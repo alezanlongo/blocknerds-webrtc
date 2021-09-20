@@ -966,6 +966,10 @@ $(".option-side .icon-menu").on("click", (e) => {
 const addNewAttendee = (feed) => {
   $(`#attendee_${feed.rfindex}`).removeClass("d-none").show();
   $(`span.usernameFeed${feed.rfindex}`).text(feed.rfuser.usernameFeed);
+  // $(`span.usernameFeed${feed.rfindex}`).on("click", (e) => {
+  //   const indexClicked = Number($(e.target).parent().attr("data-index"))
+  //   loadAndOpenModalInfo(indexClicked)
+  // });
 };
 
 $(".icon-option-member").on("click", (e) => {
@@ -994,11 +998,13 @@ $(document).on("click", ".btn-remote-kick", function (e) {
 });
 
 $(".username-on-call").on("click", (e) => {
-  const modalInfoComponent = $("#modalInfoUser");
   const indexClicked = Number(
     $(e.target).parent().parent().parent().attr("data-id")
   );
+  loadAndOpenModalInfo(indexClicked);
+});
 
+const loadAndOpenModalInfo = (indexClicked) => {
   const profile_id =
     indexClicked === 0 ? userProfileId : getRemoteProfileToFeed(indexClicked);
 
@@ -1006,6 +1012,7 @@ $(".username-on-call").on("click", (e) => {
     // TODO:  what happen?
     return;
   }
+  const modalInfoComponent = $("#modalInfoUser");
   $.get(`/user/get-profile/${profile_id}`)
     .then((resp) => {
       const { data } = resp;
@@ -1031,7 +1038,7 @@ $(".username-on-call").on("click", (e) => {
     .catch((err) => console.log(err));
 
   modalInfoComponent.modal("show");
-});
+};
 
 const getRemoteProfileToFeed = (index) => {
   const feed = feeds[index];

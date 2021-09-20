@@ -130,11 +130,11 @@ $this->title = 'The Room';
 
                 <ul class="list-group bg-dark list-attendees">
                     <li class="list-group-item list-group-item-light bg-dark position-relative">
-                        <span class="p-1"><?= Yii::$app->getUser()->getIdentity()->username ?></span>
+                        <span class="p-1 username-member" onclick="loadAndOpenModalInfo(0)"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
                     </li>
                     <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                         <li class="list-group-item list-group-item-light bg-dark d-none position-relative" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                            <span class="p-1 usernameFeed<?= $i ?>"></span>
+                            <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"></span>
                             <?php if ($is_owner) { ?>
                                 <div class="position-absolute top-0 end-0">
                                     <button class="btn btn-default text-light btn-remote-mute" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
