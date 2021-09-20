@@ -632,6 +632,7 @@ class RoomController extends \yii\web\Controller
 
         $roomRequest = RoomRequest::find()->where(['room_id' => $room->id, 'user_profile_id' => $profileId])->limit(1)->one();
         $roomRequest->delete();
+        $roomMember->delete();
 
         Yii::$app->response->format = Response::FORMAT_JSON;
         return [
@@ -699,9 +700,9 @@ class RoomController extends \yii\web\Controller
             return throw new NotFoundHttpException("Profile not found.");
         }
 
-        $profile = UserProfile::findOne(['user_id' => Yii::$app->getUser()->id]);
+        // $profile = UserProfile::findOne(['user_id' => Yii::$app->getUser()->id]);
         $roomMember = RoomMember::find()
-            ->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])
+            ->where(['user_profile_id' => $profileId, 'room_id' => $room->id])
             ->limit(1)->one();
 
         if (!$roomMember) {
