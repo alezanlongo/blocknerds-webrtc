@@ -590,7 +590,7 @@ class RoomController extends \yii\web\Controller
             'user_profile_id' => $profile->id,
             'roomSelected' => $roomSelected,
             'roomMembers' => $roomMembers,
-            'initialView' => $initialView ? $initialView->value : 'dayGridWeek',
+            'initialView' => $initialView ? $initialView->value : 'timeGridWeek',
             'cardNextOrInProgressMeetingWidget' => $cardNextOrInProgressMeetingWidget
         ]);
     }
