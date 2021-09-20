@@ -68,8 +68,9 @@ $(".btn-leave").on("click", () => {
   unpublishOwnFeed();
 });
 $(".btn-join-again").on("click", () => {
-  $(".room-videos").show();
-  $(".header-content").show();
+  $(".header-nav").show();
+  $(".boxes").show();
+  $(".sidebar").show();
   $(".join-again").hide();
   publishOwnFeed(true);
 });
@@ -212,19 +213,10 @@ const initJanus = () => {
                 " ::: Got a cleanup notification: we are unpublished now :::"
               );
               myStream = null;
-              // alert("do someting else after to go")
-              $(".room-videos").hide();
-              $(".header-content").attr("style", "display:none !important");
-              // $(".header-content").addClass('d-none')
+              $(".header-nav").hide();
+              $(".boxes").hide();
+              $(".sidebar").hide();
               $(".join-again").removeClass("d-none").show();
-
-              // $(`#video-source0`).html(
-              //   '<button id="publish" class="btn btn-primary">Publish</button>'
-              // );
-              // $("#publish").click(function () {
-              //   publishOwnFeed(true);
-              // });
-              // $(`#video-source0`).parent().parent().unblock();
             },
           });
         },
@@ -318,7 +310,6 @@ const handlingEvent = (objMessage) => {
       const display = list[f]["display"];
       const audio = list[f]["audio_codec"];
       const video = list[f]["video_codec"];
-      console.log("ale event", list[f]);
 
       newRemoteFeed(id, display, audio, video);
     }
