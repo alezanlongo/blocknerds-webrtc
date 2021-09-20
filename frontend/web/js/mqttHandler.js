@@ -116,6 +116,7 @@ function toggleAudioMuteView(objData, index) {
 const handleToggleVideoLocal = (objData) => {
   const compVideo = $("#myvideo")
   const compImage = $("#img0")
+  console.log(objData)
   if (objData.video === "true") {
     $("#no-video > i").removeClass("fa-video").addClass("fa-video-slash");
     if (objData.profile_image !== null) {

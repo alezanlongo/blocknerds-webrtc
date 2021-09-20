@@ -36,9 +36,9 @@
 .box .card {
   border: 0;
 }
-@media (max-width: 600px) {
+@media (max-width: 1000px) {
   .sidebar {
-    width: 40%;
+    width: 45%;
   }
 }
 
@@ -56,7 +56,7 @@
   position: absolute;
   bottom: 0px;
   left: 0px;
-  margin: 25px;
+  /* margin: 25px; */
   z-index: 999;
   font-size: xx-large;
 }
@@ -67,8 +67,12 @@
   width: 100%;
   height: auto;
 }
+/* .box {
+  height: auto !important;
+} */
 .box-preview {
   width: 300px !important;
+  height: auto !important;
   position: absolute;
   z-index: 9999;
   bottom: 0;
@@ -92,4 +96,12 @@
 .join-again .card {
   color: #fafafa;
   background-color: transparent;
+}
+.video-mute-icon {
+  position: absolute;
+    top: 0;
+    left: 0;
+}
+.username-member:hover {
+  cursor: pointer;
 }

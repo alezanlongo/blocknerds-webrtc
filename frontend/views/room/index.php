@@ -24,7 +24,7 @@ $this->registerJsVar('countRequest', count($requests), View::POS_END);
 $this->registerJsVar('myRoom', $uuid, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
-$this->registerJsVar('isOwner', $is_owner, View::POS_END);
+$this->registerJsVar('isOwner', $is_owner, View::POS_BEGIN);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
@@ -92,7 +92,7 @@ $this->title = 'The Room';
             </ul>
         </div>
     </div>
-    <div class="main-content d-flex" >
+    <div class="main-content d-flex">
         <? if ($is_owner || $is_allowed) { ?>
             <div class="join-again d-none">
                 <div class="card">
@@ -107,14 +107,14 @@ $this->title = 'The Room';
             </div>
             <div class="row row-cols-3 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center boxes">
                 <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                    <div class="col box<?= $i ?> m-0 p-0 box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" id="img<?= $i ?>">
+                    <div class="col box<?= $i ?> m-0 p-0 box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" >
                         <div class="card" style="background-color: transparent !important;">
-                            <div class="content-video" id="video-source<?= $i ?>">
-                                <span class="text-light username-on-call"> </span>
-                                <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
-                                <div class="video-mute-icon d-none" style="position:absolute; padding: 10px">
+                            <div class="content-video card-body p-0" id="video-source<?= $i ?>">
+                                <div class="video-mute-icon d-none ">
                                     <i class="fa fa-microphone-slash" aria-hidden="true"></i>
                                 </div>
+                                <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                <span class="text-light username-on-call"> </span>
                             </div>
                         </div>
                     </div>
@@ -129,12 +129,15 @@ $this->title = 'The Room';
                 <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                 <ul class="list-group bg-dark list-attendees">
+                    <li class="list-group-item list-group-item-light bg-dark position-relative">
+                        <span class="p-1 username-member" onclick="loadAndOpenModalInfo(0)"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
+                    </li>
                     <?php for ($i = 0; $i < $limit_members; $i++) { ?>
                         <li class="list-group-item list-group-item-light bg-dark d-none position-relative" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                            <span class="p-1 usernameFeed<?= $i ?>"></span>
+                            <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"></span>
                             <?php if ($is_owner) { ?>
                                 <div class="position-absolute top-0 end-0">
-                                    <button class="btn btn-default text-light btn-remote-mute" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                    <button class="btn btn-default text-light btn-remote-mute" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio" onclick="moderateAudioToggle(this,<?=$i?>)">
                                         <i class="fas fa-microphone icon-option-member"></i></button> |
                                     <button class="btn btn-default text-light btn-remote-video" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
                                         <i class="fas fa-video icon-option-member"></i></button> |

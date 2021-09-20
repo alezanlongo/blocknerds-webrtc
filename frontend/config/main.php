@@ -49,7 +49,7 @@ return [
                 'GET room/calendar' => 'room/calendar',
                 'GET room/calendar/events/<id>' => 'room/fetch-calendar-events',
                 'GET room/<uuid>' => 'room',
-                'POST room/<uuid>/mute'=>'room',
+                'POST room-moderate/<roomUuid>/<profileId>' => 'room/moderate-member',
                 'POST room/<uuid>/kick'=>'room/kick-member',
                 'POST room/join/request' => 'room/join-request',
                 'POST room/time/expired' => 'room/time-expired',
