@@ -732,11 +732,15 @@ function toggleVideo() {
 
   Janus.log((muted ? "No video" : "Video") + " local stream...");
   if (muted) {
-    pluginHandler.unmuteVideo();
+    $('#video-source0 video').removeClass('d-none').show()
     //pluginHandler.send({ message: { "request": "configure", "video": true } });
+    pluginHandler.unmuteVideo();
+    $('#img0').addClass('d-none').hide()
   } else {
-    pluginHandler.muteVideo();
+    $('#video-source0 video').addClass('d-none').hide()
     // pluginHandler.send({ message: { "request": "configure", "video": false } });
+    pluginHandler.muteVideo();
+    $('#img0').removeClass('d-none').show()
   }
   muted = pluginHandler.isVideoMuted();
   $.post({
