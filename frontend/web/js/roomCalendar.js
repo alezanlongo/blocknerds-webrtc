@@ -74,13 +74,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   setInterval(() => { $.pjax.reload({ container: "#calendar-next-meeting" }) }, 2500);
 
-  $('.fc-listWeek-button, .fc-dayGridMonth-button, .fc-dayGridWeek-button').click(function (e) {
+  $('.fc-timeGridDay-button, .fc-timeGridWeek-button, .fc-dayGridMonth-button, .fc-listWeek-button').click(function (e) {
 
-    var initialView = 'listWeek';
-    if (this.className.includes('dayGridMonth')) {
+    var initialView = 'timeGridDay';
+    if (this.className.includes('timeGridWeek')) {
+      initialView = 'timeGridWeek';
+    } else if (this.className.includes('dayGridMonth')) {
       initialView = 'dayGridMonth';
-    } else if (this.className.includes('dayGridWeek')) {
-      initialView = 'dayGridWeek';
+    } else if (this.className.includes('listWeek')) {
+      initialView = 'listWeek';
     }
 
     $.post("room/calendar", { initialView });
