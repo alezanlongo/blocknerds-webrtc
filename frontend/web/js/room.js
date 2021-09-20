@@ -727,15 +727,13 @@ function unpublishOwnFeed() {
   pluginHandler.send({ message: unpublish });
 }
 
-function toggleVideo() {
+function toggleVideo(forceMute = null) {
   let muted = pluginHandler.isVideoMuted();
 
   Janus.log((muted ? "No video" : "Video") + " local stream...");
-  if (muted) {
-    //pluginHandler.send({ message: { "request": "configure", "video": true } });
+  if (muted && forceMute === null || forceMute === false) {
     pluginHandler.unmuteVideo();
-  } else {
-    // pluginHandler.send({ message: { "request": "configure", "video": false } });
+  } else if (!muted && forceMute === null || forceMute === true) {
     pluginHandler.muteVideo();
   }
   muted = pluginHandler.isVideoMuted();
@@ -749,16 +747,14 @@ function toggleVideo() {
   });
 }
 
-function toggleMute() {
+function toggleMute(forceMute = null) {
   let muted = pluginHandler.isAudioMuted();
 
   Janus.log((muted ? "Unmuting" : "Muting") + " local stream...");
-  if (muted) {
+  if (muted && forceMute === null || forceMute === false) {
     pluginHandler.unmuteAudio();
-    //    pluginHandler.send({ message: { "request": "configure", audio: false } });
-  } else {
+  } else if (!muted && forceMute === null || forceMute === true) {
     pluginHandler.muteAudio();
-    //    pluginHandler.send({ message: { "request": "configure", audio: true } });
   }
   muted = pluginHandler.isAudioMuted();
 
@@ -863,10 +859,11 @@ const pinBehavior = (list, index, width = "100%", height = "90vh") => {
 let moderateRequest = [];
 
 function moderateAudioToggle(elm, idx) {
+
   if (!isOwner) {
     return
   }
-  if (typeof moderateRequest[idx + "audio"] !== "undefined") {
+  if (moderateRequest.indexOf((idx + "audio")) >= 0) {
     return;
   }
   let muted = null;
@@ -888,6 +885,31 @@ function moderateAudioToggle(elm, idx) {
   moderateMember(idx, 'audio', !muted, fnOnSuccess)
 }
 
+function moderateVideoToggle(elm, idx) {
+  if (!isOwner) {
+    return
+  }
+  if (moderateRequest.indexOf((idx + "video")) >= 0) {
+    return;
+  }
+  let muted = null;
+  if (elm.querySelector("i").classList.contains("fa-video")) {
+    muted = false
+  } else {
+    muted = true
+  }
+  let fnOnSuccess = function (res) {
+    if (res.moderate_video === true) {
+      elm.querySelector("i").classList.add("fa-video-slash")
+      elm.querySelector("i").classList.remove("fa-video")
+    } else {
+      elm.querySelector("i").classList.add("fa-video")
+      elm.querySelector("i").classList.remove("fa-video-slash")
+    }
+  }
+
+  moderateMember(idx, 'video', !muted, fnOnSuccess)
+}
 
 function moderateMember(idx, source, mute = true, onSuccess) {
 

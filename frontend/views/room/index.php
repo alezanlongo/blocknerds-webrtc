@@ -137,9 +137,9 @@ $this->title = 'The Room';
                             <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"></span>
                             <?php if ($is_owner) { ?>
                                 <div class="position-absolute top-0 end-0">
-                                    <button class="btn btn-default text-light btn-remote-mute" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio" onclick="moderateAudioToggle(this,<?=$i?>)">
+                                    <button class="btn btn-default text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?=$i?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
                                         <i class="fas fa-microphone icon-option-member"></i></button> |
-                                    <button class="btn btn-default text-light btn-remote-video" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                    <button class="btn btn-default text-light btn-remote-video"  onclick="moderateVideoToggle(this,<?=$i?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
                                         <i class="fas fa-video icon-option-member"></i></button> |
                                     <button class="btn btn-default text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
                                         <i class="fas fa-user-times icon-option-member"></i></button>
