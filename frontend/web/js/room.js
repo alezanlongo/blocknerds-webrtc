@@ -50,7 +50,7 @@ let bitrateTimer = [];
 $(document).ready(function () {
   connectMQTT();
   handleCountdown(endTime);
-  
+
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
     return;
@@ -58,7 +58,7 @@ $(document).ready(function () {
   if (isOwner && countRequest > 0) {
     $("#pendingRequests").modal("show");
   }
-  
+
   if (isOwner || isAllowed) {
     initJanus();
   }
@@ -192,10 +192,10 @@ const initJanus = () => {
                 $("#video-source .no-video-container").remove();
                 $("#myvideo").removeClass("hide").show();
               }
-              if(own_mute_audio){
+              if (own_mute_audio) {
                 $("#mute > i").removeClass("fa-microphone").addClass("fa-microphone-slash");
                 pluginHandler.muteAudio();
-              }else{
+              } else {
                 pluginHandler.unmuteAudio();
                 $("#mute > i").removeClass("fa-microphone-slash").addClass("fa-microphone");
               }
@@ -378,13 +378,13 @@ const handlingEvent = (objMessage) => {
       // This is a "no such room" error: give a more meaningful description
       bootbox.alert(
         "<p>Apparently room <code>" +
-          myRoom +
-          "</code> (the one this demo uses as a test room) " +
-          "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
-          "configuration file? If not, make sure you copy the details of room <code>" +
-          myRoom +
-          "</code> " +
-          "from that sample in your current configuration file, then restart Janus and try again."
+        myRoom +
+        "</code> (the one this demo uses as a test room) " +
+        "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
+        "configuration file? If not, make sure you copy the details of room <code>" +
+        myRoom +
+        "</code> " +
+        "from that sample in your current configuration file, then restart Janus and try again."
       );
     } else {
       bootbox.alert(objMessage["error"]);
@@ -419,7 +419,7 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       videoRecv: false,
       audioSend: useAudio,
       videoSend: useVideo,
-      data:true,
+      data: true,
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
@@ -614,11 +614,11 @@ function newRemoteFeed(id, display, audio, video) {
           '<video class="rounded centered" id="waitingvideo' +
           remoteFeed.rfindex +
           '" width="100%" height="100%" />'
-          );
-          $("#video-source" + remoteFeed.rfindex).append(
-            '<video class="rounded centered relative hide" id="remotevideo' +
-            remoteFeed.rfindex +
-            '" width="100%" height="100%" autoplay playsinline/>'
+        );
+        $("#video-source" + remoteFeed.rfindex).append(
+          '<video class="rounded centered relative hide" id="remotevideo' +
+          remoteFeed.rfindex +
+          '" width="100%" height="100%" autoplay playsinline/>'
         );
         $(`#video-source${remoteFeed.rfindex} .username-on-call`).text(
           feeds[remoteFeed.rfindex].rfuser.usernameFeed
@@ -629,17 +629,17 @@ function newRemoteFeed(id, display, audio, video) {
         //     "</h1>"
         // );
         addNewAttendee(remoteFeed);
-        
+
         // Show the video, hide the spinner and show the resolution when we get a playing event
-        irmStatus.forEach((v) => { 
-          console.log("nicholls",v)
-          if (v.id == remoteFeed.rfid) { 
+        irmStatus.forEach((v) => {
+          console.log("nicholls", v)
+          if (v.id == remoteFeed.rfid) {
             if (v.mute_audio === true) {
-              console.log('nicholls','muteeeeed')
-              $(".video-mute-icon", $(`#video-source${remoteFeed.rfindex}`)).removeClass("d-none") 
+              console.log('nicholls', 'muteeeeed')
+              $(".video-mute-icon", $(`#video-source${remoteFeed.rfindex}`)).removeClass("d-none")
               $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`)).removeClass("fa-microphone").addClass("fa-microphone-slash")
-            } 
-          } 
+            }
+          }
         })
         $("#remotevideo" + remoteFeed.rfindex).bind("playing", function () {
           if (remoteFeed.spinner) remoteFeed.spinner.stop();
@@ -676,8 +676,8 @@ function newRemoteFeed(id, display, audio, video) {
       } else {
         $(
           "#video-source" + remoteFeed.rfindex + " .no-video-container"
-          ).remove();
-          $("#remotevideo" + remoteFeed.rfindex)
+        ).remove();
+        $("#remotevideo" + remoteFeed.rfindex)
           .removeClass("hide")
           .show();
       }
@@ -895,54 +895,69 @@ const pinBehavior = (list, index, width = "100%", height = "90vh") => {
   });
 };
 
-const muteMember = (index) => {
-  if (isOwner) {
-    let remoteHandler = feeds[index];
-    if (!remoteHandler) {
-      console.log('handler not found', index)
-      return;
-    }
-    // let isMuted = $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text() === "Mute";
-    let btnRemoteMute = $(
-      `#attendee_${remoteHandler.rfindex} .btn-remote-mute > i`
-    );
-    let isMuted = btnRemoteMute.hasClass("fa-microphone");
-    console.log("NB > isMuted", isMuted);
+let moderateRequest = [];
 
-    remoteHandler.send({
-      message: {
-        request: REQUEST_MODERATE,
-        room: myRoom,
-        id: remoteHandler.rfid,
-        mute_audio: isMuted,
-      },
-      success: function (data) {
-        if (data.videoroom === "success") {
-          // $(`#attendee_${remoteHandler.rfindex} .btn-remote-mute`).text(isMuted ? "Unmute" : "Mute");
-          if (isMuted) {
-            console.log("NB > IS MUTED");
-            btnRemoteMute
-              .removeClass("fa-microphone")
-              .addClass("fa-microphone-slash");
-          } else {
-            console.log("NB > NOT MUTED");
-            btnRemoteMute
-              .removeClass("fa-microphone-slash")
-              .addClass("fa-microphone");
-          }
-
-          sendMessageMQTT(EVENT_TYPE_TOGGLE_MUTE, {
-            user_profile_id: remoteHandler.rfuser.idFeed,
-            isMuted,
-          });
-        }
-      },
-      error: function (error) {
-        console.log(error);
-      },
-    });
+function moderateAudioToggle(elm, idx) {
+  if (!isOwner) {
+    return
   }
-};
+  if (typeof moderateRequest[idx + "audio"] !== "undefined") {
+    return;
+  }
+  let muted = null;
+  if (elm.querySelector("i").classList.contains("fa-microphone")) {
+    muted = false
+  } else {
+    muted = true
+  }
+  let fnOnSuccess = function (res) {
+    if (res.moderate_audio === true) {
+      elm.querySelector("i").classList.add("fa-microphone-slash")
+      elm.querySelector("i").classList.remove("fa-microphone")
+    } else {
+      elm.querySelector("i").classList.add("fa-microphone")
+      elm.querySelector("i").classList.remove("fa-microphone-slash")
+    }
+  }
+
+  moderateMember(idx, 'audio', !muted, fnOnSuccess)
+}
+
+
+function moderateMember(idx, source, mute = true, onSuccess) {
+
+  let remoteHandler = feeds[idx];
+  if (!remoteHandler) {
+    return false;
+  }
+  sourceAvailb = ['audio', 'video'];
+
+  if (sourceAvailb.indexOf(source) < 0) {
+    return false;
+  }
+
+  if (moderateRequest.indexOf((idx + source)) >= 0) {
+    return false;
+  }
+  moderateRequest.push(idx + source);
+  $.post({
+    url: `/room-moderate/${myRoom}/` + remoteHandler.rfuser.idFeed,
+    data: { source: source, mute: mute },
+    success: (res) => {
+      onSuccess(res)
+      let mIdx = moderateRequest.indexOf((idx + source))
+      if (mIdx > -1) {
+        moderateRequest.splice(mIdx, 1)
+      }
+    },
+    error: (err) => {
+      let mIdx = moderateRequest.indexOf((idx + source))
+      if (mIdx > -1) {
+        moderateRequest.splice(mIdx, 1)
+      }
+    }
+  });
+}
 
 const kickMember = (index) => {
   if (isOwner) {
@@ -952,7 +967,7 @@ const kickMember = (index) => {
     }
     $.post({
       url: `${myRoom}/kick`,
-      data: { profileId: remoteHandler.rfuser.idFeed, memberId: remoteHandler.rfid }, 
+      data: { profileId: remoteHandler.rfuser.idFeed, memberId: remoteHandler.rfid },
       cache: false,
       error: (err) => {
         console.log(err);
@@ -1013,10 +1028,10 @@ const addNewAttendee = (feed) => {
   $(`span.usernameFeed${feed.rfindex}`).text(feed.rfuser.usernameFeed);
 };
 
-$(document).on("click", ".btn-remote-mute", function (e) {
-  const index = $(e.target).parent().parent().attr("data-index");
-  if (index) muteMember(index);
-});
+// $(document).on("click", ".btn-remote-mute", function (e) {
+//   const index = $(e.target).parent().parent().attr("data-index");
+//   if (index) muteMember(index);
+// });
 
 $(document).on("click", ".btn-remote-video", function (e) {
   let currentElement = $(e.target);
