@@ -745,6 +745,11 @@ function toggleVideo(forceMute = null) {
       return;
     },
   });
+   if (muted) {
+    $("#no-video > i").removeClass("fa-video").addClass("fa-video-slash");
+  } else {
+    $("#no-video > i").removeClass("fa-video-slash").addClass("fa-video");
+  }
 }
 
 function toggleMute(forceMute = null) {

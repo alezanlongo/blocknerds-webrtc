@@ -18,6 +18,7 @@ client.onConnectionLost = function (responseObject) {
 
 client.onMessageArrived = function (message) {
   const objData = JSON.parse(message.payloadString);
+  console.log(objData)
 
   // if (objData.type === EVENT_TYPE_TOGGLE_MUTE && userProfileId === objData.data.user_profile_id) {
   //   $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
@@ -39,7 +40,7 @@ client.onMessageArrived = function (message) {
       toggleVideo(true)
       let elmMuteBtn = document.getElementById("no-video")
       elmMuteBtn.disabled = true;
-    } else if (objData.moderate_audio === false && objData.moderate_video_change === true) {
+    } else if (objData.moderate_video === false && objData.moderate_video_change === true) {
       toggleVideo(true)
       let elmMuteBtn = document.getElementById("no-video")
       elmMuteBtn.disabled = false;
