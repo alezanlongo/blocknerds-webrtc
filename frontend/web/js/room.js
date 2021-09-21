@@ -196,16 +196,11 @@ const initJanus = () => {
                 $("#myvideo").removeClass("hide").show();
               }
               if (own_mute_audio) {
-                $("#mute > i")
-                  .removeClass("fa-microphone")
-                  .addClass("fa-microphone-slash");
-                pluginHandler.muteAudio();
-              } else {
-                pluginHandler.unmuteAudio();
-                $("#mute > i")
-                  .removeClass("fa-microphone-slash")
-                  .addClass("fa-microphone");
+                toggleMute(true)
               }
+              if (own_mute_video) {
+                toggleVideo(true)
+              } 
             },
             onremotestream: (stream) => {
               console.log(stream, "stream");
