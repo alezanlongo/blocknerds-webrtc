@@ -71,7 +71,7 @@ $(".btn-join-again").on("click", () => {
   $(".header-nav").show();
   $(".boxes").show();
   $(".sidebar").hide();
-  resetTabOnSidebar()
+  resetTabOnSidebar();
 
   $(".join-again").hide();
   publishOwnFeed(true);
@@ -196,11 +196,11 @@ const initJanus = () => {
                 $("#myvideo").removeClass("hide").show();
               }
               if (own_mute_audio) {
-                toggleMute(true)
+                toggleMute(true);
               }
               if (own_mute_video) {
-                toggleVideo(true)
-              } 
+                toggleVideo(true);
+              }
             },
             onremotestream: (stream) => {
               console.log(stream, "stream");
@@ -624,7 +624,7 @@ function newRemoteFeed(id, display, audio, video) {
 
         // Show the video, hide the spinner and show the resolution when we get a playing event
         irmStatus.forEach((v) => {
-          if (v.id == remoteFeed.rfid) {
+          if (v.id === remoteFeed.rfid) {
             if (v.mute_audio === true) {
               $(
                 ".video-mute-icon",
@@ -633,6 +633,12 @@ function newRemoteFeed(id, display, audio, video) {
               $(".btn-remote-mute > i", $(`#attendee_${remoteFeed.rfindex}`))
                 .removeClass("fa-microphone")
                 .addClass("fa-microphone-slash");
+            }
+            if (v.mute_video === true) {
+              handleToggleVideoRemote(
+                { ...v, video: "true", profile_image: null },
+                remoteFeed.rfindex
+              );
             }
           }
         });
@@ -979,7 +985,7 @@ $(".option-side").on("click", (e) => {
     $("#pills-tabContent").css("display", "block");
   } else {
     if (targetActive === hrefControl) {
-      resetTabOnSidebar()
+      resetTabOnSidebar();
     } else {
       if (hrefControl) {
         targetActive = hrefControl;
