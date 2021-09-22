@@ -5,7 +5,7 @@ namespace common\components;
 use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\models\Department;
-use common\components\Athena\models\PostPatient200Response;
+use common\components\Athena\models\Patient;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -44,6 +44,10 @@ class AthenaComponent extends Component
         return $departmentsModels;
     }
 
+    /**
+     * @return Patient
+     */
+
     public function createPatient($patient)
     {
         $patientModelApi =
@@ -52,8 +56,27 @@ class AthenaComponent extends Component
                 $patient->toArray()
             );
 
-        $patient->externalId = $patientModelApi[0]->patientid;
+        return $this->retrievePatient($patientModelApi[0]->patientid);
+    }
 
-        return $patient;
+    /**
+     * @return Patient
+     */
+    public function retrievePatient($patientid)
+    {
+        $patientModelApi = $this->client->getPracticeidPatientsPatientid(
+            $this->practiceid,
+            $patientid
+        );
+
+        $patient = Patient::find()
+            ->where(['externalId' => $patientid])
+            ->one();
+
+        if (!$patient) {
+            return Patient::createFromApiObject($patientModelApi);
+        }
+
+        return $patient->loadApiObject($patientModelApi);
     }
 }
