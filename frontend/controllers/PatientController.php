@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\Athena\models\Patient;
+use yii\data\ActiveDataProvider;
 
 class PatientController extends \yii\web\Controller
 {
@@ -15,7 +16,29 @@ class PatientController extends \yii\web\Controller
         $this->component = Yii::$app->athenaComponent;
         $this->component->setPracticeid(195900);
     }
+
+    /**
+     * Lists all Patient models.
+     * @return mixed
+     */
     public function actionIndex()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Patient::find(),
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Creates a new Patient model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+
+    public function actionCreate()
     {
         $model = new Patient;
 
