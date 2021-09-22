@@ -278,7 +278,7 @@ class Patient extends \yii\db\ActiveRecord
         $this->notes = ArrayHelper::getValue($apiObject, 'notes');
         $this->occupationcode = ArrayHelper::getValue($apiObject, 'occupationcode');
         $this->onlinestatementonlyyn = ArrayHelper::getValue($apiObject, 'onlinestatementonlyyn');
-        $this->patientid = ArrayHelper::getValue($apiObject, 'patientid');
+        $this->externalId = ArrayHelper::getValue($apiObject, 'patientid');
         $this->patientphotourl = ArrayHelper::getValue($apiObject, 'patientphotourl');
         $this->patientphotoyn = ArrayHelper::getValue($apiObject, 'patientphotoyn');
         $this->portalaccessgiven = ArrayHelper::getValue($apiObject, 'portalaccessgiven');
@@ -310,11 +310,11 @@ class Patient extends \yii\db\ActiveRecord
         $this->veteran = ArrayHelper::getValue($apiObject, 'veteran');
         $this->workphone = ArrayHelper::getValue($apiObject, 'workphone');
         $this->zip = ArrayHelper::getValue($apiObject, 'zip');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        // $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }
-    
+
     public static function createFromApiObject($apiObject) {
         $model = new self();
 
