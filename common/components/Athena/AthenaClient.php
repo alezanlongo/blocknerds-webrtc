@@ -31,6 +31,24 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
+     * @param patientid
+     * @return Patient
+     */
+    public function getPracticeidPatientsPatientid($practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PatientApi($dataResponse['data'][0]);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
      * @return Department
      */
     public function getPracticeidDepartments($practiceid, array $query = [])
