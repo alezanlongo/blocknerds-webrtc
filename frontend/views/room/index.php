@@ -106,15 +106,15 @@ $this->title = 'The Room';
                 </div>
             </div>
             <div class="h-100 w-100 d-flex flex-wrap justify-content-center align-items-center row row-cols-4 ">
+                <!-- flex-fill flex-sm-fill flex-md-fill flex-lg-fill  -->
                 <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                    <!-- flex-fill flex-sm-fill flex-md-fill flex-lg-fill  -->
                     <div class=" box<?= $i ?> m-0 p-0 box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" >
                         <div class="card" style="background-color: transparent !important;">
                             <div class="content-video card-body p-0" id="video-source<?= $i ?>">
                                 <div class="video-mute-icon d-none ">
                                     <i class="fa fa-microphone-slash" aria-hidden="true"></i>
                                 </div>
-                                <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview ">
                                 <span class="text-light username-on-call"> </span>
                             </div>
                         </div>

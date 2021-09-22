@@ -60,7 +60,7 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
-    initJanus();
+    // initJanus();
   }
 });
 
