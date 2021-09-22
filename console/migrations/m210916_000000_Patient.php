@@ -12,7 +12,7 @@ class m210916_000000_Patient extends \yii\db\Migration
             'address2' => $this->string(),
             'agriculturalworker' => $this->string(),
             'agriculturalworkertype' => $this->string(),
-            'balances' => $this->string(),
+            'balances' => $this->json(),
             'caresummarydeliverypreference' => $this->string(),
             'city' => $this->string(),
             'claimbalancedetails' => $this->string(),
