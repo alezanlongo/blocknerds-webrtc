@@ -105,9 +105,10 @@ $this->title = 'The Room';
                     </div>
                 </div>
             </div>
-            <div class="row row-cols-3 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center boxes">
+            <div class="h-100 w-100 d-flex flex-wrap justify-content-center align-items-center row row-cols-4 ">
                 <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                    <div class="col box<?= $i ?> m-0 p-0 box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" >
+                    <!-- flex-fill flex-sm-fill flex-md-fill flex-lg-fill  -->
+                    <div class=" box<?= $i ?> m-0 p-0 box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" >
                         <div class="card" style="background-color: transparent !important;">
                             <div class="content-video card-body p-0" id="video-source<?= $i ?>">
                                 <div class="video-mute-icon d-none ">

@@ -67,9 +67,10 @@
   width: 100%;
   height: auto;
 }
-/* .box {
-  height: auto !important;
-} */
+.box {
+  /* height: auto !important; */
+  max-height: 30% !important;
+}
 .box-preview {
   width: 300px !important;
   height: auto !important;
