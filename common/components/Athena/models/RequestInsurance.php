@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property int $departmentid If set, we will use the department id in an attempt to add to the local patient.
  * @property string $expirationdate Set the date that the insurance will expire. This is usually a date within the next year and not in the past.
  * @property string $insuranceidnumber The insurance policy ID number (as presented on the insurance card itself).
@@ -58,34 +58,34 @@ class RequestInsurance extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->departmentid = ArrayHelper::getValue($obj, 'departmentid');
-        $this->expirationdate = ArrayHelper::getValue($obj, 'expirationdate');
-        $this->insuranceidnumber = ArrayHelper::getValue($obj, 'insuranceidnumber');
-        $this->insurancepackageid = ArrayHelper::getValue($obj, 'insurancepackageid');
-        $this->insurancephone = ArrayHelper::getValue($obj, 'insurancephone');
-        $this->insurancepolicyholder = ArrayHelper::getValue($obj, 'insurancepolicyholder');
-        $this->insurancepolicyholderaddress1 = ArrayHelper::getValue($obj, 'insurancepolicyholderaddress1');
-        $this->insurancepolicyholderaddress2 = ArrayHelper::getValue($obj, 'insurancepolicyholderaddress2');
-        $this->insurancepolicyholdercity = ArrayHelper::getValue($obj, 'insurancepolicyholdercity');
-        $this->insurancepolicyholdercountrycode = ArrayHelper::getValue($obj, 'insurancepolicyholdercountrycode');
-        $this->insurancepolicyholdercountryiso3166 = ArrayHelper::getValue($obj, 'insurancepolicyholdercountryiso3166');
-        $this->insurancepolicyholderdob = ArrayHelper::getValue($obj, 'insurancepolicyholderdob');
-        $this->insurancepolicyholderfirstname = ArrayHelper::getValue($obj, 'insurancepolicyholderfirstname');
-        $this->insurancepolicyholderlastname = ArrayHelper::getValue($obj, 'insurancepolicyholderlastname');
-        $this->insurancepolicyholdermiddlename = ArrayHelper::getValue($obj, 'insurancepolicyholdermiddlename');
-        $this->insurancepolicyholdersex = ArrayHelper::getValue($obj, 'insurancepolicyholdersex');
-        $this->insurancepolicyholderssn = ArrayHelper::getValue($obj, 'insurancepolicyholderssn');
-        $this->insurancepolicyholderstate = ArrayHelper::getValue($obj, 'insurancepolicyholderstate');
-        $this->insurancepolicyholdersuffix = ArrayHelper::getValue($obj, 'insurancepolicyholdersuffix');
-        $this->insurancepolicyholderzip = ArrayHelper::getValue($obj, 'insurancepolicyholderzip');
-        $this->insuredentitytypeid = ArrayHelper::getValue($obj, 'insuredentitytypeid');
-        $this->issuedate = ArrayHelper::getValue($obj, 'issuedate');
-        $this->policynumber = ArrayHelper::getValue($obj, 'policynumber');
-        $this->relationshiptoinsuredid = ArrayHelper::getValue($obj, 'relationshiptoinsuredid');
-        $this->sequencenumber = ArrayHelper::getValue($obj, 'sequencenumber');
-        $this->updateappointments = ArrayHelper::getValue($obj, 'updateappointments');
-        $this->validateinsuranceidnumber = ArrayHelper::getValue($obj, 'validateinsuranceidnumber');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
+        $this->expirationdate = ArrayHelper::getValue($apiObject, 'expirationdate');
+        $this->insuranceidnumber = ArrayHelper::getValue($apiObject, 'insuranceidnumber');
+        $this->insurancepackageid = ArrayHelper::getValue($apiObject, 'insurancepackageid');
+        $this->insurancephone = ArrayHelper::getValue($apiObject, 'insurancephone');
+        $this->insurancepolicyholder = ArrayHelper::getValue($apiObject, 'insurancepolicyholder');
+        $this->insurancepolicyholderaddress1 = ArrayHelper::getValue($apiObject, 'insurancepolicyholderaddress1');
+        $this->insurancepolicyholderaddress2 = ArrayHelper::getValue($apiObject, 'insurancepolicyholderaddress2');
+        $this->insurancepolicyholdercity = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercity');
+        $this->insurancepolicyholdercountrycode = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercountrycode');
+        $this->insurancepolicyholdercountryiso3166 = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercountryiso3166');
+        $this->insurancepolicyholderdob = ArrayHelper::getValue($apiObject, 'insurancepolicyholderdob');
+        $this->insurancepolicyholderfirstname = ArrayHelper::getValue($apiObject, 'insurancepolicyholderfirstname');
+        $this->insurancepolicyholderlastname = ArrayHelper::getValue($apiObject, 'insurancepolicyholderlastname');
+        $this->insurancepolicyholdermiddlename = ArrayHelper::getValue($apiObject, 'insurancepolicyholdermiddlename');
+        $this->insurancepolicyholdersex = ArrayHelper::getValue($apiObject, 'insurancepolicyholdersex');
+        $this->insurancepolicyholderssn = ArrayHelper::getValue($apiObject, 'insurancepolicyholderssn');
+        $this->insurancepolicyholderstate = ArrayHelper::getValue($apiObject, 'insurancepolicyholderstate');
+        $this->insurancepolicyholdersuffix = ArrayHelper::getValue($apiObject, 'insurancepolicyholdersuffix');
+        $this->insurancepolicyholderzip = ArrayHelper::getValue($apiObject, 'insurancepolicyholderzip');
+        $this->insuredentitytypeid = ArrayHelper::getValue($apiObject, 'insuredentitytypeid');
+        $this->issuedate = ArrayHelper::getValue($apiObject, 'issuedate');
+        $this->policynumber = ArrayHelper::getValue($apiObject, 'policynumber');
+        $this->relationshiptoinsuredid = ArrayHelper::getValue($apiObject, 'relationshiptoinsuredid');
+        $this->sequencenumber = ArrayHelper::getValue($apiObject, 'sequencenumber');
+        $this->updateappointments = ArrayHelper::getValue($apiObject, 'updateappointments');
+        $this->validateinsuranceidnumber = ArrayHelper::getValue($apiObject, 'validateinsuranceidnumber');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

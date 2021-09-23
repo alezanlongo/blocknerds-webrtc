@@ -57,6 +57,15 @@ class EncounterApi extends Model
     public $stage;
     public $status;
 
+    public function __construct(array $data)
+    {
+        foreach ($data as $key => $value){
+            if(property_exists($this, $key)){
+                $this->{$key} = $value;
+            }
+        }
+    }
+
     public function rules()
     {
         return [

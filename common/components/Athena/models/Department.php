@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $address The address for this department.
  * @property string $address2 The address (line 2) for this department.
  * @property string $chartsharinggroupid The chart sharing group ID puts departments (that are enabled for Clinicals) into groups with regards to clinical information. Any chart related GET calls with department IDs that are in the same chart sharing group generally return the same set of information. For example, if department IDs 1 and 2 are in chart sharing group 1000 and department IDs 20 and 21 are in chart sharing group 2000, the allergies endpoint for department ID 1 or 2 will return the same set of data, and using department IDs 20 and 21 may return a different set of allergies. Most commonly, this is used to ensure mental health and other sensitive charts remain separate from other data.
@@ -63,41 +63,41 @@ class Department extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->address = ArrayHelper::getValue($obj, 'address');
-        $this->address2 = ArrayHelper::getValue($obj, 'address2');
-        $this->chartsharinggroupid = ArrayHelper::getValue($obj, 'chartsharinggroupid');
-        $this->city = ArrayHelper::getValue($obj, 'city');
-        $this->clinicalproviderfax = ArrayHelper::getValue($obj, 'clinicalproviderfax');
-        $this->clinicals = ArrayHelper::getValue($obj, 'clinicals');
-        $this->communicatorbrandid = ArrayHelper::getValue($obj, 'communicatorbrandid');
-        $this->creditcardtypes = ArrayHelper::getValue($obj, 'creditcardtypes');
-        $this->departmentid = ArrayHelper::getValue($obj, 'departmentid');
-        $this->doesnotobservedst = ArrayHelper::getValue($obj, 'doesnotobservedst');
-        $this->ecommercecreditcardtypes = ArrayHelper::getValue($obj, 'ecommercecreditcardtypes');
-        $this->fax = ArrayHelper::getValue($obj, 'fax');
-        $this->ishospitaldepartment = ArrayHelper::getValue($obj, 'ishospitaldepartment');
-        $this->latitude = ArrayHelper::getValue($obj, 'latitude');
-        $this->longitude = ArrayHelper::getValue($obj, 'longitude');
-        $this->medicationhistoryconsent = ArrayHelper::getValue($obj, 'medicationhistoryconsent');
-        $this->name = ArrayHelper::getValue($obj, 'name');
-        $this->oneyearcontractmax = ArrayHelper::getValue($obj, 'oneyearcontractmax');
-        $this->patientdepartmentname = ArrayHelper::getValue($obj, 'patientdepartmentname');
-        $this->phone = ArrayHelper::getValue($obj, 'phone');
-        $this->placeofservicefacility = ArrayHelper::getValue($obj, 'placeofservicefacility');
-        $this->placeofservicetypeid = ArrayHelper::getValue($obj, 'placeofservicetypeid');
-        $this->placeofservicetypename = ArrayHelper::getValue($obj, 'placeofservicetypename');
-        $this->portalurl = ArrayHelper::getValue($obj, 'portalurl');
-        $this->providergroupid = ArrayHelper::getValue($obj, 'providergroupid');
-        $this->providergroupname = ArrayHelper::getValue($obj, 'providergroupname');
-        $this->providerlist = ArrayHelper::getValue($obj, 'providerlist');
-        $this->servicedepartment = ArrayHelper::getValue($obj, 'servicedepartment');
-        $this->singleappointmentcontractmax = ArrayHelper::getValue($obj, 'singleappointmentcontractmax');
-        $this->state = ArrayHelper::getValue($obj, 'state');
-        $this->timezone = ArrayHelper::getValue($obj, 'timezone');
-        $this->timezonename = ArrayHelper::getValue($obj, 'timezonename');
-        $this->timezoneoffset = ArrayHelper::getValue($obj, 'timezoneoffset');
-        $this->zip = ArrayHelper::getValue($obj, 'zip');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->address = ArrayHelper::getValue($apiObject, 'address');
+        $this->address2 = ArrayHelper::getValue($apiObject, 'address2');
+        $this->chartsharinggroupid = ArrayHelper::getValue($apiObject, 'chartsharinggroupid');
+        $this->city = ArrayHelper::getValue($apiObject, 'city');
+        $this->clinicalproviderfax = ArrayHelper::getValue($apiObject, 'clinicalproviderfax');
+        $this->clinicals = ArrayHelper::getValue($apiObject, 'clinicals');
+        $this->communicatorbrandid = ArrayHelper::getValue($apiObject, 'communicatorbrandid');
+        $this->creditcardtypes = ArrayHelper::getValue($apiObject, 'creditcardtypes');
+        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
+        $this->doesnotobservedst = ArrayHelper::getValue($apiObject, 'doesnotobservedst');
+        $this->ecommercecreditcardtypes = ArrayHelper::getValue($apiObject, 'ecommercecreditcardtypes');
+        $this->fax = ArrayHelper::getValue($apiObject, 'fax');
+        $this->ishospitaldepartment = ArrayHelper::getValue($apiObject, 'ishospitaldepartment');
+        $this->latitude = ArrayHelper::getValue($apiObject, 'latitude');
+        $this->longitude = ArrayHelper::getValue($apiObject, 'longitude');
+        $this->medicationhistoryconsent = ArrayHelper::getValue($apiObject, 'medicationhistoryconsent');
+        $this->name = ArrayHelper::getValue($apiObject, 'name');
+        $this->oneyearcontractmax = ArrayHelper::getValue($apiObject, 'oneyearcontractmax');
+        $this->patientdepartmentname = ArrayHelper::getValue($apiObject, 'patientdepartmentname');
+        $this->phone = ArrayHelper::getValue($apiObject, 'phone');
+        $this->placeofservicefacility = ArrayHelper::getValue($apiObject, 'placeofservicefacility');
+        $this->placeofservicetypeid = ArrayHelper::getValue($apiObject, 'placeofservicetypeid');
+        $this->placeofservicetypename = ArrayHelper::getValue($apiObject, 'placeofservicetypename');
+        $this->portalurl = ArrayHelper::getValue($apiObject, 'portalurl');
+        $this->providergroupid = ArrayHelper::getValue($apiObject, 'providergroupid');
+        $this->providergroupname = ArrayHelper::getValue($apiObject, 'providergroupname');
+        $this->providerlist = ArrayHelper::getValue($apiObject, 'providerlist');
+        $this->servicedepartment = ArrayHelper::getValue($apiObject, 'servicedepartment');
+        $this->singleappointmentcontractmax = ArrayHelper::getValue($apiObject, 'singleappointmentcontractmax');
+        $this->state = ArrayHelper::getValue($apiObject, 'state');
+        $this->timezone = ArrayHelper::getValue($apiObject, 'timezone');
+        $this->timezonename = ArrayHelper::getValue($apiObject, 'timezonename');
+        $this->timezoneoffset = ArrayHelper::getValue($apiObject, 'timezoneoffset');
+        $this->zip = ArrayHelper::getValue($apiObject, 'zip');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

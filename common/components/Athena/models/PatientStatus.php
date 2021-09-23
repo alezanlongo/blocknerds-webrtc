@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $patientstatusname The patient status name
  * @property int $patientstatusid The patient status ID.
  * @property integer $externalId API Primary Key
@@ -32,9 +32,9 @@ class PatientStatus extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->patientstatusname = ArrayHelper::getValue($obj, 'patientstatusname');
-        $this->patientstatusid = ArrayHelper::getValue($obj, 'patientstatusid');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->patientstatusname = ArrayHelper::getValue($apiObject, 'patientstatusname');
+        $this->patientstatusid = ArrayHelper::getValue($apiObject, 'patientstatusid');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

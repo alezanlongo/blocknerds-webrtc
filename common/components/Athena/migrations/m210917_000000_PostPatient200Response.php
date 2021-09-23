@@ -3,14 +3,14 @@
 /**
  * Table for PostPatient200Response
  */
-class m210909_000000_PostPatient200Response extends \yii\db\Migration
+class m210917_000000_PostPatient200Response extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%post_patient200_responses}}', [
-            'errormessage' => text,
-            'patientid' => text,
-            'external_id' => $this->string(),
+            'errormessage' => $this->string(),
+            'patientid' => $this->string(),
+            'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 

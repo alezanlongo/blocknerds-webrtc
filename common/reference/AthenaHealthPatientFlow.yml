@@ -41,14 +41,168 @@ paths:
           content:
             application/json:
               schema:
-                object: array
-                items:
+                type: array
+                items: 
                   $ref: '#/components/schemas/PostPatient200Response'
       requestBody:
         content:
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Patient'
+  /v1/{practiceid}/patients/{patientid}:
+    get:
+      summary: Get specific patient record
+      description: >-
+        Retrieves data of a specific patient Note: This endpoint may rely on
+        specific settings to be enabled in athenaNet Production to function
+        properly that are not required in other environments. Please see <a
+        href="https://docs.athenahealth.com/api/resources/best-practices-and-troubleshooting#Handling_Beta_APIs">Permissioned
+        Rollout of APIs</a> for more information if you are experiencing issues.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            Include an array of all departments the patient is a part of along
+            with all statuses for those departments.
+          in: query
+          name: showallpatientdepartmentstatus
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will show full SSN instead of a masked number.
+          in: query
+          name: showfullssn
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will show local patient id.
+          in: query
+          name: showlocalpatientid
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            If set, validate that the session user has access to the patient
+            record. May only be used in conjunction with INTERNALUSE and
+            SESSIONUSER, and DEPARTMENTID. DEPARTMENTID is required because user
+            access is department-specific. If the user does not have access to
+            the patient record, returns a 403 error.
+          in: query
+          name: checkuseraccess
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            If set, will return local patient id tied to the passed in
+            DepartmentID.
+          in: query
+          name: limitlocalpatientid
+          required: false
+          schema:
+            type: boolean
+        - description: Include patient insurance information.
+          in: query
+          name: showinsurance
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will include portal enrollment status in response.
+          in: query
+          name: showportalstatus
+          required: false
+          schema:
+            type: boolean
+        - description: Show detailed information on patient balances.
+          in: query
+          name: showbalancedetails
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Set to true to allow ability to find patients with record
+            restrictions and blocked patients. This should only be used when
+            there is no reflection to the patient at all that a match was found
+            or not found.
+          in: query
+          name: ignorerestrictions
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            If set, will show the previous patient ID this patient was merged
+            from.
+          in: query
+          name: showpreviouspatientids
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Include information on claims where there is no outstanding patient
+            balance. (Only to be used when showbalancedetails is selected.)
+          in: query
+          name: showallclaims
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            This is the ID for the department of the patient you are
+            retrieving.  If you are calling this on an enterprise practice with
+            multiple financial groups (also called "provider groups"), this will
+            ensure you are retrieving the correct patient and not a copy that is
+            in a different department.
+          in: query
+          name: departmentid
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            Use 2015 Ed. CEHRT compliant strings for describing gender identity
+            and sexual orientation.
+          in: query
+          name: show2015edcehrtvalues
+          required: false
+          schema:
+            type: boolean
+        - description: Include custom fields for the patient.
+          in: query
+          name: showcustomfields
+          required: false
+          schema:
+            type: boolean
+        - description: User name of the patient in the third party application.
+          in: query
+          name: THIRDPARTYUSERNAME
+          required: false
+          schema:
+            type: string
+        - description: >-
+            When 'true' is passed we will collect relevant data and store in our
+            database.
+          in: query
+          name: PATIENTFACINGCALL
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+          description: Success
+      operationId: getPracticeidPatientsPatientid
+      tags:
+        - Patient
   /v1/{practiceid}/departments:
     get:
       summary: Get list of all departments
@@ -136,7 +290,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Insurance'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Insurance'
 
           description: Success
       operationId: postPracticeidPatientsPatientidInsurances
@@ -377,7 +533,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Appointments'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointments'
           description: Success
       operationId: postPracticeidAppointmentsOpen
       requestBody:
@@ -509,7 +667,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Encounter'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Encounter'
           description: Success
       operationId: getPracticeidChartPatientidEncounters
       tags:
@@ -544,7 +704,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PutEncounter200Response'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PutEncounter200Response'
           description: Success
       operationId: putPracticeidChartEncounterEncounterid
       requestBody:
@@ -658,7 +820,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PutAppointment200Response'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PutAppointment200Response'
           description: Success
       operationId: putPracticeidAppointmentsAppointmentid
       requestBody:
@@ -672,6 +836,7 @@ paths:
 components:
   schemas:
     PostPatient200Response:
+      x-external-id: patientid
       type: object
       properties:
         errormessage:
@@ -681,6 +846,7 @@ components:
           description: Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
           type: string
     contractItem:
+      x-external-id: contractid
       type: object
       properties:
         availablebalance:
@@ -693,6 +859,7 @@ components:
           description: The maximum allowed amount for this contract.
           type: string
     BalanceItem:
+      x-external-id: balanceid
       type: object
       properties:
         balance:
@@ -735,6 +902,7 @@ components:
           type: string
       type: object
     InsurancePatient:
+      x-external-id: insuranceid
       properties:
         adjusterfax:
           description: CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
@@ -958,7 +1126,14 @@ components:
           type: string
       type: object
     Patient:
+      x-external-id: patientid
       type: object
+      required:
+        - firstname
+        - lastname
+        - dob
+        - departmentid
+        - email
       properties:
         address1:
           description: Patient's address - 1st line
@@ -1457,6 +1632,7 @@ components:
           description: Patient's zip.  Matching occurs on first 5 characters.
           type: string
     Department:
+      x-external-id: departmentid
       properties:
         address:
           description: The address for this department.
@@ -1582,6 +1758,8 @@ components:
           type: string
       type: object
     Copays:
+      x-external-id: copayid
+      type: object
       properties:
         copayamount:
           description: The amount of the copay.
@@ -1589,8 +1767,8 @@ components:
         copaytype:
           description: What the copay amount applies to.
           type: number
-      type: object
     Insurance:
+      x-external-id: insuranceid
       properties:
         adjusterfax:
           description: >-
@@ -1907,6 +2085,7 @@ components:
           type: string
       type: object
     RequestInsurance:
+      x-external-id: insuranceid
       properties:
         departmentid:
           description: >-
@@ -2045,6 +2224,7 @@ components:
         - insurancepackageid
       type: object
     insurancePackages:
+      x-external-id: insuranceid
       properties:
         addresslist:
           description: >-
@@ -2066,6 +2246,7 @@ components:
           type: string
       type: object
     Provider:
+      x-external-id: providerid
       properties:
         acceptingnewpatientsyn:
           description: >-
@@ -2218,12 +2399,14 @@ components:
           type: integer
       type: object
     Appointments:
+      x-external-id: appointmentid
       type: object
       properties:
         appointmentids:
           type: object
           description: An hash of appointment IDs to the time requested.
     RequestCreateAppointment:
+      x-external-id: appointmentid
       properties:
         appointmentdate:
           description: The appointment date for the new open appointment slot (mm/dd/yyyy).
@@ -2252,6 +2435,7 @@ components:
         - providerid
       type: object
     Checkin:
+      x-external-id: checkinid
       type: object
       properties:
         message:
@@ -2272,6 +2456,7 @@ components:
             - true
           type: string
     Diagnoses:
+      x-external-id: diagnosisid
       properties:
         description:
           description: Brief description for this SNOMED Code
@@ -2302,6 +2487,7 @@ components:
           type: integer
       type: object
     Encounter:
+      x-external-id: encounterid
       type: object
       properties:
         appointmentid:
@@ -2378,6 +2564,7 @@ components:
             INCLUDEALLSTATUSES flag to see others.
           type: string
     PutEncounter200Response:
+      x-external-id: encounterid
       type: object
       properties:
         errormessage:
@@ -2393,6 +2580,7 @@ components:
             - true
           type: string
     PatientLocation:
+      x-external-id: patientid
       type: object
       properties:
         defaultoncheckin:
@@ -2411,6 +2599,7 @@ components:
           type: integer
           description: Athena patient location ID
     PatientStatus:
+      x-external-id: patientid
       type: object
       properties:
         patientstatusname:
@@ -2420,6 +2609,7 @@ components:
           type: integer
           description: The patient status ID.
     PutAppointment200Response:
+      x-external-id: apointmentid
       type: object
       properties:
         appointmentcopay:
@@ -3031,6 +3221,7 @@ components:
             type: object
           type: array
     Appointment:
+      x-external-id: apointmentid
       required:
         - patientid
       type: object

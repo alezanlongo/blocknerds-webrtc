@@ -3,15 +3,15 @@
 /**
  * Table for customfield
  */
-class m210909_000000_customfield extends \yii\db\Migration
+class m210917_000000_customfield extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%customfields}}', [
-            'customfieldid' => text,
-            'customfieldvalue' => text,
-            'optionid' => text,
-            'external_id' => $this->string(),
+            'customfieldid' => $this->string(),
+            'customfieldvalue' => $this->string(),
+            'optionid' => $this->string(),
+            'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 

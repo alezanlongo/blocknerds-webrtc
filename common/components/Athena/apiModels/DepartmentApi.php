@@ -81,9 +81,6 @@ class DepartmentApi extends Model
     public $timezoneoffset;
     public $zip;
 
-    /**
-     * DepartmentApi constructor.
-     */
     public function __construct(array $data)
     {
         foreach ($data as $key => $value){
@@ -92,7 +89,6 @@ class DepartmentApi extends Model
             }
         }
     }
-
 
     public function rules()
     {

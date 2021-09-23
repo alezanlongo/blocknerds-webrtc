@@ -3,16 +3,16 @@
 /**
  * Table for insurancePackages
  */
-class m210909_000000_insurancePackages extends \yii\db\Migration
+class m210917_000000_insurancePackages extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%insurance_packages}}', [
-            'addresslist' => text,
-            'affiliations' => text,
-            'insurancepackageid' => integer,
-            'insuranceplanname' => text,
-            'external_id' => $this->string(),
+            'addresslist' => $this->string(),
+            'affiliations' => $this->string(),
+            'insurancepackageid' => $this->integer(),
+            'insuranceplanname' => $this->string(),
+            'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 

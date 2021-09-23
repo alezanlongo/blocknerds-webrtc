@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property int $appointmenttypeid The appointment type to be booked.  This field should never be used for booking appointments for web-based scheduling. The use of this field is reserved for digital check-in (aka "kiosk") or an application used by practice staff.  One of this or reasonid is required.
  * @property string $bookingnote A note from the patient about why this appointment is being booked
  * @property int $departmentid The athenaNet department ID.
@@ -41,17 +41,17 @@ class Appointment extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmenttypeid = ArrayHelper::getValue($obj, 'appointmenttypeid');
-        $this->bookingnote = ArrayHelper::getValue($obj, 'bookingnote');
-        $this->departmentid = ArrayHelper::getValue($obj, 'departmentid');
-        $this->donotsendconfirmationemail = ArrayHelper::getValue($obj, 'donotsendconfirmationemail');
-        $this->ignoreschedulablepermission = ArrayHelper::getValue($obj, 'ignoreschedulablepermission');
-        $this->insuranceinfo = ArrayHelper::getValue($obj, 'insuranceinfo');
-        $this->nopatientcase = ArrayHelper::getValue($obj, 'nopatientcase');
-        $this->patientid = ArrayHelper::getValue($obj, 'patientid');
-        $this->reasonid = ArrayHelper::getValue($obj, 'reasonid');
-        $this->urgentyn = ArrayHelper::getValue($obj, 'urgentyn');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid');
+        $this->bookingnote = ArrayHelper::getValue($apiObject, 'bookingnote');
+        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
+        $this->donotsendconfirmationemail = ArrayHelper::getValue($apiObject, 'donotsendconfirmationemail');
+        $this->ignoreschedulablepermission = ArrayHelper::getValue($apiObject, 'ignoreschedulablepermission');
+        $this->insuranceinfo = ArrayHelper::getValue($apiObject, 'insuranceinfo');
+        $this->nopatientcase = ArrayHelper::getValue($apiObject, 'nopatientcase');
+        $this->patientid = ArrayHelper::getValue($apiObject, 'patientid');
+        $this->reasonid = ArrayHelper::getValue($apiObject, 'reasonid');
+        $this->urgentyn = ArrayHelper::getValue($apiObject, 'urgentyn');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

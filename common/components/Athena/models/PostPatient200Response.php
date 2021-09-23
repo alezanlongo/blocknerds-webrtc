@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $errormessage Error message will be returned if show error message flag is set to true and patient match found.
  * @property string $patientid Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
  * @property integer $externalId API Primary Key
@@ -31,9 +31,9 @@ class PostPatient200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->errormessage = ArrayHelper::getValue($obj, 'errormessage');
-        $this->patientid = ArrayHelper::getValue($obj, 'patientid');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->errormessage = ArrayHelper::getValue($apiObject, 'errormessage');
+        $this->patientid = ArrayHelper::getValue($apiObject, 'patientid');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

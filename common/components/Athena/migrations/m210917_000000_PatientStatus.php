@@ -3,14 +3,14 @@
 /**
  * Table for PatientStatus
  */
-class m210909_000000_PatientStatus extends \yii\db\Migration
+class m210917_000000_PatientStatus extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%patient_statuses}}', [
-            'patientstatusname' => text,
-            'patientstatusid' => integer,
-            'external_id' => $this->string(),
+            'patientstatusname' => $this->string(),
+            'patientstatusid' => $this->integer(),
+            'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 

@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $acceptingnewpatientsyn Indicates whether the provider is accepting new patients. This field is currently only for informational purposes, and does not drive any athenaNet functionality.
  * @property string $ansinamecode This is the ANSI name with ANSI code for this provider's specialty.
  * @property string $ansispecialtycode This is the ANSI code for this provider's specialty.
@@ -59,36 +59,36 @@ class Provider extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->acceptingnewpatientsyn = ArrayHelper::getValue($obj, 'acceptingnewpatientsyn');
-        $this->ansinamecode = ArrayHelper::getValue($obj, 'ansinamecode');
-        $this->ansispecialtycode = ArrayHelper::getValue($obj, 'ansispecialtycode');
-        $this->billable = ArrayHelper::getValue($obj, 'billable');
-        $this->createencounteroncheckinyn = ArrayHelper::getValue($obj, 'createencounteroncheckinyn');
-        $this->createencounterprovideridlist = ArrayHelper::getValue($obj, 'createencounterprovideridlist');
-        $this->displayname = ArrayHelper::getValue($obj, 'displayname');
-        $this->entitytype = ArrayHelper::getValue($obj, 'entitytype');
-        $this->federalidnumber = ArrayHelper::getValue($obj, 'federalidnumber');
-        $this->firstname = ArrayHelper::getValue($obj, 'firstname');
-        $this->hideinportalyn = ArrayHelper::getValue($obj, 'hideinportalyn');
-        $this->homedepartment = ArrayHelper::getValue($obj, 'homedepartment');
-        $this->lastname = ArrayHelper::getValue($obj, 'lastname');
-        $this->npi = ArrayHelper::getValue($obj, 'npi');
-        $this->otherprovideridlist = ArrayHelper::getValue($obj, 'otherprovideridlist');
-        $this->personalpronouns = ArrayHelper::getValue($obj, 'personalpronouns');
-        $this->providergrouplist = ArrayHelper::getValue($obj, 'providergrouplist');
-        $this->providerid = ArrayHelper::getValue($obj, 'providerid');
-        $this->providertype = ArrayHelper::getValue($obj, 'providertype');
-        $this->providertypeid = ArrayHelper::getValue($obj, 'providertypeid');
-        $this->providerusername = ArrayHelper::getValue($obj, 'providerusername');
-        $this->scheduleresourcetype = ArrayHelper::getValue($obj, 'scheduleresourcetype');
-        $this->schedulingname = ArrayHelper::getValue($obj, 'schedulingname');
-        $this->sex = ArrayHelper::getValue($obj, 'sex');
-        $this->specialty = ArrayHelper::getValue($obj, 'specialty');
-        $this->specialtyid = ArrayHelper::getValue($obj, 'specialtyid');
-        $this->supervisingproviderid = ArrayHelper::getValue($obj, 'supervisingproviderid');
-        $this->supervisingproviderusername = ArrayHelper::getValue($obj, 'supervisingproviderusername');
-        $this->usualdepartmentid = ArrayHelper::getValue($obj, 'usualdepartmentid');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->acceptingnewpatientsyn = ArrayHelper::getValue($apiObject, 'acceptingnewpatientsyn');
+        $this->ansinamecode = ArrayHelper::getValue($apiObject, 'ansinamecode');
+        $this->ansispecialtycode = ArrayHelper::getValue($apiObject, 'ansispecialtycode');
+        $this->billable = ArrayHelper::getValue($apiObject, 'billable');
+        $this->createencounteroncheckinyn = ArrayHelper::getValue($apiObject, 'createencounteroncheckinyn');
+        $this->createencounterprovideridlist = ArrayHelper::getValue($apiObject, 'createencounterprovideridlist');
+        $this->displayname = ArrayHelper::getValue($apiObject, 'displayname');
+        $this->entitytype = ArrayHelper::getValue($apiObject, 'entitytype');
+        $this->federalidnumber = ArrayHelper::getValue($apiObject, 'federalidnumber');
+        $this->firstname = ArrayHelper::getValue($apiObject, 'firstname');
+        $this->hideinportalyn = ArrayHelper::getValue($apiObject, 'hideinportalyn');
+        $this->homedepartment = ArrayHelper::getValue($apiObject, 'homedepartment');
+        $this->lastname = ArrayHelper::getValue($apiObject, 'lastname');
+        $this->npi = ArrayHelper::getValue($apiObject, 'npi');
+        $this->otherprovideridlist = ArrayHelper::getValue($apiObject, 'otherprovideridlist');
+        $this->personalpronouns = ArrayHelper::getValue($apiObject, 'personalpronouns');
+        $this->providergrouplist = ArrayHelper::getValue($apiObject, 'providergrouplist');
+        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
+        $this->providertype = ArrayHelper::getValue($apiObject, 'providertype');
+        $this->providertypeid = ArrayHelper::getValue($apiObject, 'providertypeid');
+        $this->providerusername = ArrayHelper::getValue($apiObject, 'providerusername');
+        $this->scheduleresourcetype = ArrayHelper::getValue($apiObject, 'scheduleresourcetype');
+        $this->schedulingname = ArrayHelper::getValue($apiObject, 'schedulingname');
+        $this->sex = ArrayHelper::getValue($apiObject, 'sex');
+        $this->specialty = ArrayHelper::getValue($apiObject, 'specialty');
+        $this->specialtyid = ArrayHelper::getValue($apiObject, 'specialtyid');
+        $this->supervisingproviderid = ArrayHelper::getValue($apiObject, 'supervisingproviderid');
+        $this->supervisingproviderusername = ArrayHelper::getValue($apiObject, 'supervisingproviderusername');
+        $this->usualdepartmentid = ArrayHelper::getValue($apiObject, 'usualdepartmentid');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

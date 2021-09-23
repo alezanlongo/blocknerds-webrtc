@@ -3,14 +3,14 @@
 /**
  * Table for Checkin
  */
-class m210909_000000_Checkin extends \yii\db\Migration
+class m210917_000000_Checkin extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%checkins}}', [
-            'message' => text,
-            'success' => text,
-            'external_id' => $this->string(),
+            'message' => $this->string(),
+            'success' => $this->string(),
+            'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 

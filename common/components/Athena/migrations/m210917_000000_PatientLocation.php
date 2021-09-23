@@ -3,15 +3,15 @@
 /**
  * Table for PatientLocation
  */
-class m210909_000000_PatientLocation extends \yii\db\Migration
+class m210917_000000_PatientLocation extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%patient_locations}}', [
-            'defaultoncheckin' => text,
-            'name' => text,
-            'patientlocationid' => integer,
-            'external_id' => $this->string(),
+            'defaultoncheckin' => $this->string(),
+            'name' => $this->string(),
+            'patientlocationid' => $this->integer(),
+            'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 

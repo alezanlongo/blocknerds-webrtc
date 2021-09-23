@@ -3,15 +3,15 @@
 /**
  * Table for contractItem
  */
-class m210909_000000_contractItem extends \yii\db\Migration
+class m210917_000000_contractItem extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%contract_items}}', [
-            'availablebalance' => text,
-            'contractclass' => text,
-            'maxamount' => text,
-            'external_id' => $this->string(),
+            'availablebalance' => $this->string(),
+            'contractclass' => $this->string(),
+            'maxamount' => $this->string(),
+            'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 

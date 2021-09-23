@@ -23,6 +23,15 @@ class DiagnosesApi extends Model
     public $note;
     public $snomedcode;
 
+    public function __construct(array $data)
+    {
+        foreach ($data as $key => $value){
+            if(property_exists($this, $key)){
+                $this->{$key} = $value;
+            }
+        }
+    }
+
     public function rules()
     {
         return [
