@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $customfieldid Corresponds to the /customfields customfieldid.
  * @property string $customfieldvalue For a non-select custom field, the value.
  * @property string $optionid For a select custom field, the selectid value (from /customfield's selectlist).
@@ -32,10 +32,10 @@ class customfield extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->customfieldid = ArrayHelper::getValue($obj, 'customfieldid');
-        $this->customfieldvalue = ArrayHelper::getValue($obj, 'customfieldvalue');
-        $this->optionid = ArrayHelper::getValue($obj, 'optionid');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->customfieldid = ArrayHelper::getValue($apiObject, 'customfieldid');
+        $this->customfieldvalue = ArrayHelper::getValue($apiObject, 'customfieldvalue');
+        $this->optionid = ArrayHelper::getValue($apiObject, 'optionid');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

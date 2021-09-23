@@ -17,6 +17,15 @@ class CheckinApi extends Model
     public $message;
     public $success;
 
+    public function __construct(array $data)
+    {
+        foreach ($data as $key => $value){
+            if(property_exists($this, $key)){
+                $this->{$key} = $value;
+            }
+        }
+    }
+
     public function rules()
     {
         return [

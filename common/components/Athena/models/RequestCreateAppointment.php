@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property string $appointmentdate The appointment date for the new open appointment slot (mm/dd/yyyy).
  * @property array $appointmenttime The time (hh24:mi) for the new appointment slot.  Multiple times (either as a comma delimited list or multiple POSTed values) are allowed.  24 hour time.
  * @property int $appointmenttypeid The appointment type ID to be created.  Either this or a reason must be provided.
@@ -37,13 +37,13 @@ class RequestCreateAppointment extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentdate = ArrayHelper::getValue($obj, 'appointmentdate');
-        $this->appointmenttime = ArrayHelper::getValue($obj, 'appointmenttime');
-        $this->appointmenttypeid = ArrayHelper::getValue($obj, 'appointmenttypeid');
-        $this->departmentid = ArrayHelper::getValue($obj, 'departmentid');
-        $this->providerid = ArrayHelper::getValue($obj, 'providerid');
-        $this->reasonid = ArrayHelper::getValue($obj, 'reasonid');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->appointmentdate = ArrayHelper::getValue($apiObject, 'appointmentdate');
+        $this->appointmenttime = ArrayHelper::getValue($apiObject, 'appointmenttime');
+        $this->appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid');
+        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
+        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
+        $this->reasonid = ArrayHelper::getValue($apiObject, 'reasonid');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

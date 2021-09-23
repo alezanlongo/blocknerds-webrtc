@@ -57,6 +57,9 @@ return [
             'adminKey' => 'supersecret',
             'storedAuth' => true
 
-        ]
+        ],
+        'athenaComponent' => [
+            'class' => common\components\AthenaComponent::class,
+        ],
     ],
 ];

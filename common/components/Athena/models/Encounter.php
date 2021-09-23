@@ -1,10 +1,10 @@
 <?php
-
 namespace common\components\Athena\models;
 
+use yii\helpers\ArrayHelper;
+
 /**
- * 
- *
+ *  *
  * @property int $appointmentid Athena appointment ID resulting in this encounter
  * @property string $closeddate date when this encounter was closed
  * @property string $closeduser Username of the provider who closed this encounter
@@ -56,28 +56,28 @@ class Encounter extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentid = ArrayHelper::getValue($obj, 'appointmentid');
-        $this->closeddate = ArrayHelper::getValue($obj, 'closeddate');
-        $this->closeduser = ArrayHelper::getValue($obj, 'closeduser');
-        $this->departmentid = ArrayHelper::getValue($obj, 'departmentid');
-        $this->diagnoses = ArrayHelper::getValue($obj, 'diagnoses');
-        $this->encounterdate = ArrayHelper::getValue($obj, 'encounterdate');
-        $this->encounterid = ArrayHelper::getValue($obj, 'encounterid');
-        $this->encountertype = ArrayHelper::getValue($obj, 'encountertype');
-        $this->encountervisitname = ArrayHelper::getValue($obj, 'encountervisitname');
-        $this->lastreopened = ArrayHelper::getValue($obj, 'lastreopened');
-        $this->lastupdated = ArrayHelper::getValue($obj, 'lastupdated');
-        $this->patientlocation = ArrayHelper::getValue($obj, 'patientlocation');
-        $this->patientlocationid = ArrayHelper::getValue($obj, 'patientlocationid');
-        $this->patientstatus = ArrayHelper::getValue($obj, 'patientstatus');
-        $this->patientstatusid = ArrayHelper::getValue($obj, 'patientstatusid');
-        $this->providerfirstname = ArrayHelper::getValue($obj, 'providerfirstname');
-        $this->providerid = ArrayHelper::getValue($obj, 'providerid');
-        $this->providerlastname = ArrayHelper::getValue($obj, 'providerlastname');
-        $this->providerphone = ArrayHelper::getValue($obj, 'providerphone');
-        $this->stage = ArrayHelper::getValue($obj, 'stage');
-        $this->status = ArrayHelper::getValue($obj, 'status');
-        $this->id = ArrayHelper::getValue($obj, 'id');
+        $this->appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid');
+        $this->closeddate = ArrayHelper::getValue($apiObject, 'closeddate');
+        $this->closeduser = ArrayHelper::getValue($apiObject, 'closeduser');
+        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
+        $this->diagnoses = ArrayHelper::getValue($apiObject, 'diagnoses');
+        $this->encounterdate = ArrayHelper::getValue($apiObject, 'encounterdate');
+        $this->encounterid = ArrayHelper::getValue($apiObject, 'encounterid');
+        $this->encountertype = ArrayHelper::getValue($apiObject, 'encountertype');
+        $this->encountervisitname = ArrayHelper::getValue($apiObject, 'encountervisitname');
+        $this->lastreopened = ArrayHelper::getValue($apiObject, 'lastreopened');
+        $this->lastupdated = ArrayHelper::getValue($apiObject, 'lastupdated');
+        $this->patientlocation = ArrayHelper::getValue($apiObject, 'patientlocation');
+        $this->patientlocationid = ArrayHelper::getValue($apiObject, 'patientlocationid');
+        $this->patientstatus = ArrayHelper::getValue($apiObject, 'patientstatus');
+        $this->patientstatusid = ArrayHelper::getValue($apiObject, 'patientstatusid');
+        $this->providerfirstname = ArrayHelper::getValue($apiObject, 'providerfirstname');
+        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
+        $this->providerlastname = ArrayHelper::getValue($apiObject, 'providerlastname');
+        $this->providerphone = ArrayHelper::getValue($apiObject, 'providerphone');
+        $this->stage = ArrayHelper::getValue($apiObject, 'stage');
+        $this->status = ArrayHelper::getValue($apiObject, 'status');
+        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }
