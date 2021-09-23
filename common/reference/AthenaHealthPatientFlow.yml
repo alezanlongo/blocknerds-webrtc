@@ -49,6 +49,160 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/Patient'
+  /v1/{practiceid}/patients/{patientid}:
+    get:
+      summary: Get specific patient record
+      description: >-
+        Retrieves data of a specific patient Note: This endpoint may rely on
+        specific settings to be enabled in athenaNet Production to function
+        properly that are not required in other environments. Please see <a
+        href="https://docs.athenahealth.com/api/resources/best-practices-and-troubleshooting#Handling_Beta_APIs">Permissioned
+        Rollout of APIs</a> for more information if you are experiencing issues.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            Include an array of all departments the patient is a part of along
+            with all statuses for those departments.
+          in: query
+          name: showallpatientdepartmentstatus
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will show full SSN instead of a masked number.
+          in: query
+          name: showfullssn
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will show local patient id.
+          in: query
+          name: showlocalpatientid
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            If set, validate that the session user has access to the patient
+            record. May only be used in conjunction with INTERNALUSE and
+            SESSIONUSER, and DEPARTMENTID. DEPARTMENTID is required because user
+            access is department-specific. If the user does not have access to
+            the patient record, returns a 403 error.
+          in: query
+          name: checkuseraccess
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            If set, will return local patient id tied to the passed in
+            DepartmentID.
+          in: query
+          name: limitlocalpatientid
+          required: false
+          schema:
+            type: boolean
+        - description: Include patient insurance information.
+          in: query
+          name: showinsurance
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will include portal enrollment status in response.
+          in: query
+          name: showportalstatus
+          required: false
+          schema:
+            type: boolean
+        - description: Show detailed information on patient balances.
+          in: query
+          name: showbalancedetails
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Set to true to allow ability to find patients with record
+            restrictions and blocked patients. This should only be used when
+            there is no reflection to the patient at all that a match was found
+            or not found.
+          in: query
+          name: ignorerestrictions
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            If set, will show the previous patient ID this patient was merged
+            from.
+          in: query
+          name: showpreviouspatientids
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Include information on claims where there is no outstanding patient
+            balance. (Only to be used when showbalancedetails is selected.)
+          in: query
+          name: showallclaims
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            This is the ID for the department of the patient you are
+            retrieving.  If you are calling this on an enterprise practice with
+            multiple financial groups (also called "provider groups"), this will
+            ensure you are retrieving the correct patient and not a copy that is
+            in a different department.
+          in: query
+          name: departmentid
+          required: false
+          schema:
+            type: integer
+        - description: >-
+            Use 2015 Ed. CEHRT compliant strings for describing gender identity
+            and sexual orientation.
+          in: query
+          name: show2015edcehrtvalues
+          required: false
+          schema:
+            type: boolean
+        - description: Include custom fields for the patient.
+          in: query
+          name: showcustomfields
+          required: false
+          schema:
+            type: boolean
+        - description: User name of the patient in the third party application.
+          in: query
+          name: THIRDPARTYUSERNAME
+          required: false
+          schema:
+            type: string
+        - description: >-
+            When 'true' is passed we will collect relevant data and store in our
+            database.
+          in: query
+          name: PATIENTFACINGCALL
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+          description: Success
+      operationId: getPracticeidPatientsPatientid
+      tags:
+        - Patient
   /v1/{practiceid}/departments:
     get:
       summary: Get list of all departments
@@ -974,6 +1128,12 @@ components:
     Patient:
       x-external-id: patientid
       type: object
+      required:
+        - firstname
+        - lastname
+        - dob
+        - departmentid
+        - email
       properties:
         address1:
           description: Patient's address - 1st line
