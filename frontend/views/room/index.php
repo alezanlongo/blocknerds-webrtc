@@ -120,7 +120,7 @@ $this->title = 'The Room';
                                     <div class="video-mute-icon d-none ">
                                         <i class="fa fa-microphone-slash" aria-hidden="true"></i>
                                     </div>
-                                    <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img0" class="img-profile-preview d-none">
+                                    <img src="/img/default-user.png" alt="" width="100%" height="100%" id="img0" class="img-profile-preview d-none">
                                     <span class="text-light username-on-call"> </span>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@ $this->title = 'The Room';
                                     <div class="video-mute-icon d-none ">
                                         <i class="fa fa-microphone-slash" aria-hidden="true"></i>
                                     </div>
-                                    <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                    <img src="/img/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
                                     <span class="text-light username-on-call"> </span>
                                 </div>
                             </div>
