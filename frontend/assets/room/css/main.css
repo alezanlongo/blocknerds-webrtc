@@ -23,7 +23,19 @@
   margin: 0 auto !important;
     /* padding: 0 2%; */
 }
-
+#containerBoxes {
+  display: flex;
+  align-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  top: 0px;
+  right: 0px;
+}
 .sidebar {
   height: 100%;
   float: left;
@@ -69,7 +81,16 @@
 }
 .box {
   /* height: auto !important; */
-  max-height: 30% !important;
+  /* max-height: 30% !important; */
+  position: relative;
+  vertical-align: middle;
+  align-self: center;
+  border-radius: 10px;
+  overflow: hidden;
+  display: inline-block;
+  /* box-shadow: 0px 12px 22px rgba(0, 0, 0, 0.4); */
+  /* background: #fff; */
+  animation: show 0.4s ease;
 }
 .box-preview {
   width: 300px !important;
