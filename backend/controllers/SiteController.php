@@ -83,7 +83,7 @@ class SiteController extends Controller
         $dataResponse = $service->createPatient([
             'lastname'      => "Loayza",
             'firstname'     => "Mauricio",
-            //'dob'           => "10/03/2000",
+            'dob'           => "10/03/2000",
             'departmentid'  => 1,
             'email'         => "mauricio@test.test",
         ]);
