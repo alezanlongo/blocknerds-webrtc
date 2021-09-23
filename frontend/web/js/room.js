@@ -64,6 +64,7 @@ $(document).ready(function () {
   }
 });
 
+
 $(".btn-leave").on("click", () => {
   unpublishOwnFeed();
 });
@@ -244,6 +245,7 @@ const handleEvent = (witchEvent, objMessage) => {
     default:
       break;
   }
+  dish()
 };
 const handleJsep = (objMessage, jsep) => {
   pluginHandler.handleRemoteJsep({ jsep });
@@ -270,7 +272,6 @@ const handleJsep = (objMessage, jsep) => {
 };
 
 const handlingJoined = (objMessage) => {
-  //console.log(objMessage);
   const myId = objMessage["id"];
   my_private_id = objMessage["private_id"];
   const publishersList = objMessage["publishers"];
@@ -287,7 +288,6 @@ const handlingJoined = (objMessage) => {
       const display = publishersList[f]["display"];
       const audio = publishersList[f]["audio_codec"];
       const video = publishersList[f]["video_codec"];
-      console.log("ale joined", publishersList[f]);
       newRemoteFeed(id, display, audio, video);
     }
   }
@@ -332,6 +332,7 @@ const handlingEvent = (objMessage) => {
         $("#remote" + remoteFeed.rfindex)
           .empty()
           .hide();
+          $(".box" + remoteFeed.rfindex).hide();
         $("#videoremote" + remoteFeed.rfindex).empty();
         // $(`.box${remoteFeed.rfindex}`).hide();
         // $(`.box${remoteFeed.rfindex} h1`).text("");
@@ -348,6 +349,7 @@ const handlingEvent = (objMessage) => {
       pluginHandler.hangup();
       return;
     }
+    
     let remoteFeed = null;
     for (let i = 1; i < limitMembers; i++) {
       if (feeds[i] && feeds[i].rfid === unpublished) {
@@ -363,6 +365,7 @@ const handlingEvent = (objMessage) => {
       $("#videoremote" + remoteFeed.rfindex).empty();
       $(".box" + remoteFeed.rfindex).hide();
       feeds[remoteFeed.rfindex] = null;
+      
       remoteFeed.detach();
     }
   } else if (objMessage["error"]) {
@@ -560,6 +563,7 @@ function newRemoteFeed(id, display, audio, video) {
           // What has just happened?
         }
       }
+     
       if (jsep) {
         // Answer and attach
         remoteFeed.createAnswer({
@@ -601,6 +605,7 @@ function newRemoteFeed(id, display, audio, video) {
       let addButtons = false;
       if ($("#remotevideo" + remoteFeed.rfindex).length === 0) {
         addButtons = true;
+        
         // No remote video yet
         $("#video-source" + remoteFeed.rfindex).append(
           '<video class="rounded centered" id="waitingvideo' +
@@ -706,6 +711,7 @@ function newRemoteFeed(id, display, audio, video) {
               .show();
         }, 1000);
       }
+      dish()
     },
     oncleanup: function () {
       Janus.log(" ::: Got a cleanup notification (remote feed " + id + ") :::");
@@ -721,6 +727,7 @@ function newRemoteFeed(id, display, audio, video) {
       bitrateTimer[remoteFeed.rfindex] = null;
       remoteFeed.simulcastStarted = false;
       $("#simulcast" + remoteFeed.rfindex).remove();
+      dish()
     },
   });
 }
@@ -983,6 +990,7 @@ $(".option-side").on("click", (e) => {
     $(e.target).find("button").attr("data-bs-target");
   if ($("#pills-tabContent").css("display") === "none") {
     $("#pills-tabContent").css("display", "block");
+    dish()
   } else {
     if (targetActive === hrefControl) {
       resetTabOnSidebar();
@@ -998,6 +1006,7 @@ const resetTabOnSidebar = () => {
   setTimeout(() => {
     $(`.nav-link`).removeClass("active");
     targetActive = null;
+    dish()
   }, 10);
 };
 $(".option-side .icon-menu").on("click", (e) => {
@@ -1012,20 +1021,10 @@ $(".option-side .icon-menu").on("click", (e) => {
 const addNewAttendee = (feed) => {
   $(`#attendee_${feed.rfindex}`).removeClass("d-none").show();
   $(`span.usernameFeed${feed.rfindex}`).text(feed.rfuser.usernameFeed);
-  // $(`span.usernameFeed${feed.rfindex}`).on("click", (e) => {
-  //   const indexClicked = Number($(e.target).parent().attr("data-index"))
-  //   loadAndOpenModalInfo(indexClicked)
-  // });
 };
 
 $(".icon-option-member").on("click", (e) => {
   $(e.target).parent().trigger("click");
-});
-
-$(document).on("click", ".btn-remote-video", function (e) {
-  let currentElement = $(e.target);
-  const index = currentElement.parent().parent().attr("data-index");
-  console.log("video", index);
 });
 
 $(document).on("click", ".btn-remote-kick", function (e) {

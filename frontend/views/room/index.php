@@ -112,11 +112,22 @@ $this->title = 'The Room';
                     </div>
                 </div>
             </div>
-            <div class="boxes">
+            <div class="boxes" >
                 <div id="containerBoxes">
-                    <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                        <div class=" box<?= $i ?> box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>">
+                <div class=" box0 box box-preview" data-id="0">
                             <div class="card" style="background-color: transparent !important;">
+                                <div class="content-video card-body p-0" id="video-source0">
+                                    <div class="video-mute-icon d-none ">
+                                        <i class="fa fa-microphone-slash" aria-hidden="true"></i>
+                                    </div>
+                                    <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img0" class="img-profile-preview d-none">
+                                    <span class="text-light username-on-call"> </span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php for ($i = 1; $i < $limit_members; $i++) { ?>
+                        <div class=" box<?= $i ?> box d-none" data-id="<?= $i ?>">
+                            <div class="card w-100 h-100" style="background-color: transparent !important;">
                                 <div class="content-video card-body p-0" id="video-source<?= $i ?>">
                                     <div class="video-mute-icon d-none ">
                                         <i class="fa fa-microphone-slash" aria-hidden="true"></i>
