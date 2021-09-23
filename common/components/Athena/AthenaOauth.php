@@ -27,10 +27,12 @@ class AthenaOauth
             'type'          => 'AthenaToken',
             'practiceId' => Yii::$app->params['practiceID'],
         ])->one();
-        if(!is_null($configurationModel) && $expired){
-            $configurationModel->content = json_encode($this->callAuthenticateAthena());
-            $configurationModel->save();
-        }else if($expired){
+        if(!is_null($configurationModel)){
+            if($expired){
+                $configurationModel->content = json_encode($this->callAuthenticateAthena());
+                $configurationModel->save();
+            }
+        }else{
             $configurationModel = new Configuration;
             $configurationModel->type = "AthenaToken";
             $configurationModel->content = json_encode($this->callAuthenticateAthena());
