@@ -42,7 +42,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items:
+                items: 
                   $ref: '#/components/schemas/PostPatient200Response'
       requestBody:
         content:
@@ -290,7 +290,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Insurance'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Insurance'
 
           description: Success
       operationId: postPracticeidPatientsPatientidInsurances
@@ -531,7 +533,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Appointments'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointments'
           description: Success
       operationId: postPracticeidAppointmentsOpen
       requestBody:
@@ -663,7 +667,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Encounter'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Encounter'
           description: Success
       operationId: getPracticeidChartPatientidEncounters
       tags:
@@ -698,7 +704,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PutEncounter200Response'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PutEncounter200Response'
           description: Success
       operationId: putPracticeidChartEncounterEncounterid
       requestBody:
@@ -812,7 +820,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PutAppointment200Response'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PutAppointment200Response'
           description: Success
       operationId: putPracticeidAppointmentsAppointmentid
       requestBody:
@@ -826,6 +836,7 @@ paths:
 components:
   schemas:
     PostPatient200Response:
+      x-external-id: patientid
       type: object
       properties:
         errormessage:
@@ -835,6 +846,7 @@ components:
           description: Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
           type: string
     contractItem:
+      x-external-id: contractid
       type: object
       properties:
         availablebalance:
@@ -847,6 +859,7 @@ components:
           description: The maximum allowed amount for this contract.
           type: string
     BalanceItem:
+      x-external-id: balanceid
       type: object
       properties:
         balance:
@@ -889,6 +902,7 @@ components:
           type: string
       type: object
     InsurancePatient:
+      x-external-id: insuranceid
       properties:
         adjusterfax:
           description: CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
@@ -1112,8 +1126,14 @@ components:
           type: string
       type: object
     Patient:
-      type: object
       x-external-id: patientid
+      type: object
+      required:
+        - firstname
+        - lastname
+        - dob
+        - departmentid
+        - email
       properties:
         address1:
           description: Patient's address - 1st line
@@ -1611,13 +1631,8 @@ components:
         zip:
           description: Patient's zip.  Matching occurs on first 5 characters.
           type: string
-      required:
-        - firstname
-        - lastname
-        - dob
-        - departmentid
-        - email
     Department:
+      x-external-id: departmentid
       properties:
         address:
           description: The address for this department.
@@ -1743,6 +1758,8 @@ components:
           type: string
       type: object
     Copays:
+      x-external-id: copayid
+      type: object
       properties:
         copayamount:
           description: The amount of the copay.
@@ -1750,8 +1767,8 @@ components:
         copaytype:
           description: What the copay amount applies to.
           type: number
-      type: object
     Insurance:
+      x-external-id: insuranceid
       properties:
         adjusterfax:
           description: >-
@@ -2068,6 +2085,7 @@ components:
           type: string
       type: object
     RequestInsurance:
+      x-external-id: insuranceid
       properties:
         departmentid:
           description: >-
@@ -2206,6 +2224,7 @@ components:
         - insurancepackageid
       type: object
     insurancePackages:
+      x-external-id: insuranceid
       properties:
         addresslist:
           description: >-
@@ -2227,6 +2246,7 @@ components:
           type: string
       type: object
     Provider:
+      x-external-id: providerid
       properties:
         acceptingnewpatientsyn:
           description: >-
@@ -2379,12 +2399,14 @@ components:
           type: integer
       type: object
     Appointments:
+      x-external-id: appointmentid
       type: object
       properties:
         appointmentids:
           type: object
           description: An hash of appointment IDs to the time requested.
     RequestCreateAppointment:
+      x-external-id: appointmentid
       properties:
         appointmentdate:
           description: The appointment date for the new open appointment slot (mm/dd/yyyy).
@@ -2413,6 +2435,7 @@ components:
         - providerid
       type: object
     Checkin:
+      x-external-id: checkinid
       type: object
       properties:
         message:
@@ -2433,6 +2456,7 @@ components:
             - true
           type: string
     Diagnoses:
+      x-external-id: diagnosisid
       properties:
         description:
           description: Brief description for this SNOMED Code
@@ -2463,6 +2487,7 @@ components:
           type: integer
       type: object
     Encounter:
+      x-external-id: encounterid
       type: object
       properties:
         appointmentid:
@@ -2539,6 +2564,7 @@ components:
             INCLUDEALLSTATUSES flag to see others.
           type: string
     PutEncounter200Response:
+      x-external-id: encounterid
       type: object
       properties:
         errormessage:
@@ -2554,6 +2580,7 @@ components:
             - true
           type: string
     PatientLocation:
+      x-external-id: patientid
       type: object
       properties:
         defaultoncheckin:
@@ -2572,6 +2599,7 @@ components:
           type: integer
           description: Athena patient location ID
     PatientStatus:
+      x-external-id: patientid
       type: object
       properties:
         patientstatusname:
@@ -2581,6 +2609,7 @@ components:
           type: integer
           description: The patient status ID.
     PutAppointment200Response:
+      x-external-id: apointmentid
       type: object
       properties:
         appointmentcopay:
@@ -3192,6 +3221,7 @@ components:
             type: object
           type: array
     Appointment:
+      x-external-id: apointmentid
       required:
         - patientid
       type: object
