@@ -42,7 +42,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items: 
+                items:
                   $ref: '#/components/schemas/PostPatient200Response'
       requestBody:
         content:
@@ -506,7 +506,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Provider'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
           description: Success
       operationId: getPracticeidProviders
       tags:

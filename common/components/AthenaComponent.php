@@ -6,6 +6,7 @@ use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Patient;
+use common\components\Athena\models\Provider;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -78,5 +79,26 @@ class AthenaComponent extends Component
         }
 
         return $patient->loadApiObject($patientModelApi);
+    }
+
+    public function getProviders($flatten = false)
+    {
+        $providersModelsApi = $this->client->getPracticeidProviders($this->practiceid
+        );
+
+        $providersModels = [];
+
+        foreach ($providersModelsApi as $providersModelApi) {
+            $providersModels[] =
+                Provider::createFromApiObject(
+                    $providersModelApi
+                );
+        }
+
+        if ($flatten) {
+            return array_column($providersModels, 'displayname', 'externalId');
+        }
+
+        return $providersModels;
     }
 }

@@ -76,7 +76,7 @@ class Provider extends \yii\db\ActiveRecord
         $this->otherprovideridlist = ArrayHelper::getValue($apiObject, 'otherprovideridlist');
         $this->personalpronouns = ArrayHelper::getValue($apiObject, 'personalpronouns');
         $this->providergrouplist = ArrayHelper::getValue($apiObject, 'providergrouplist');
-        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
+        $this->externalId = ArrayHelper::getValue($apiObject, 'providerid');
         $this->providertype = ArrayHelper::getValue($apiObject, 'providertype');
         $this->providertypeid = ArrayHelper::getValue($apiObject, 'providertypeid');
         $this->providerusername = ArrayHelper::getValue($apiObject, 'providerusername');

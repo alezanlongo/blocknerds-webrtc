@@ -81,7 +81,12 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\InsuranceApi($dataResponse['data']);
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['insurances'])) ? $dataResponse['data']['insurances'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\InsuranceApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }
@@ -113,7 +118,12 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\ProviderApi($dataResponse['data'][0]);
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['providers'])) ? $dataResponse['data']['providers'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\ProviderApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }
@@ -129,7 +139,12 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\AppointmentsApi($dataResponse['data']);
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['open'])) ? $dataResponse['data']['open'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\AppointmentsApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }
@@ -165,7 +180,12 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\EncounterApi($dataResponse['data'][0]);
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['encounters'])) ? $dataResponse['data']['encounters'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\EncounterApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }
@@ -183,7 +203,12 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'put' , $body);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\PutEncounter200ResponseApi($dataResponse['data']);
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['{encounterid}'])) ? $dataResponse['data']['{encounterid}'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\PutEncounter200ResponseApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }
@@ -233,7 +258,12 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'put' , $body);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\PutAppointment200ResponseApi($dataResponse['data']);
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['{appointmentid}'])) ? $dataResponse['data']['{appointmentid}'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\PutAppointment200ResponseApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }
