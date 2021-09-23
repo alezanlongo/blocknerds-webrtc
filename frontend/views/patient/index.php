@@ -25,6 +25,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
+            'id',
+            'externalId',
             'departmentid',
             'dob',
             'email:email',
@@ -33,8 +35,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'primarydepartmentid',
             'registrationdate',
             'status',
-            'externalId',
-            'id',
             [
              'class' => 'yii\grid\ActionColumn',
              'template' => '{view}',
