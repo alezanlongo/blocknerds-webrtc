@@ -192,7 +192,7 @@ class RoomController extends \yii\web\Controller
         if (null === $this->request->post('source') || !\in_array($this->request->post('source'), $arrSources)) {
             throw new BadRequestHttpException("invalid source");
         }
-        
+
         if (null === $this->request->post('mute') || !\in_array($this->request->post('mute'), ['true', 'false', true, false])) {
             throw new BadRequestHttpException('invalid mute');
         }
@@ -227,6 +227,9 @@ class RoomController extends \yii\web\Controller
         $action = \in_array($this->request->post('mute'), ['true', 1]) ? true : false;
         if (Yii::$app->janusApi->moderateMember($roomUuid, $token, $this->request->post('source'), $action)) {
             $this->response->statusCode = 200;
+            $curr_moderate_audio = $roomMember->moderate_audio;
+            $curr_moderate_video = $roomMember->moderate_video;
+
             if ($this->request->post('source') == JanusApiComponent::SOURCE_AUDIO) {
                 $roomMember->mute_audio = $action;
                 $roomMember->moderate_audio = $action;
@@ -235,7 +238,18 @@ class RoomController extends \yii\web\Controller
                 $roomMember->moderate_video = $action;
             }
             $roomMember->update(false);
-            $this->response->data = ['moderate_audio' => $roomMember->moderate_audio, 'moderate_video' => $roomMember->moderate_video];
+            $this->response->data = ['moderate_audio' => $roomMember->moderate_audio, 'moderate_audio_change' => $curr_moderate_audio !== $roomMember->moderate_audio, 'moderate_video' => $roomMember->moderate_video, 'moderate_video_change' => $curr_moderate_video !== $roomMember->moderate_video];
+            $topic = "/room/{$roomUuid}";
+            $mqttResponse = [
+                'type' => 'moderate_user_source',
+                'profile_id' => $profileId,
+                'moderate_audio' => $roomMember->moderate_audio,
+                'moderate_audio_change' => $curr_moderate_audio !== $roomMember->moderate_audio,
+                'moderate_video' => $roomMember->moderate_video,
+                'moderate_video_change' => $curr_moderate_video !== $roomMember->moderate_video
+            ];
+
+            Yii::$app->mqtt->sendMessage($topic, $mqttResponse);
         }
         return $this->response;
     }
