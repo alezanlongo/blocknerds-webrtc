@@ -35,7 +35,9 @@ class <?= $className ?> extends \yii\db\ActiveRecord
         if ($attribute['required']) {
             $requiredAttributes[$attribute['name']] = $attribute['name'];
         }
+
         switch ($attribute['type']) {
+            case 'int':
             case 'integer':
                 $integerAttributes[$attribute['name']] = $attribute['name'];
                 break;
