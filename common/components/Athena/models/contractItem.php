@@ -32,10 +32,21 @@ class contractItem extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->availablebalance = ArrayHelper::getValue($apiObject, 'availablebalance');
-        $this->contractclass = ArrayHelper::getValue($apiObject, 'contractclass');
-        $this->maxamount = ArrayHelper::getValue($apiObject, 'maxamount');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($availablebalance = ArrayHelper::getValue($apiObject, 'availablebalance')) {
+            $this->availablebalance = $availablebalance;
+        }
+        if($contractclass = ArrayHelper::getValue($apiObject, 'contractclass')) {
+            $this->contractclass = $contractclass;
+        }
+        if($maxamount = ArrayHelper::getValue($apiObject, 'maxamount')) {
+            $this->maxamount = $maxamount;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

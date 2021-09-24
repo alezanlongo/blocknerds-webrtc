@@ -63,40 +63,111 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay');
-        $this->appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid');
-        $this->appointmentstatus = ArrayHelper::getValue($apiObject, 'appointmentstatus');
-        $this->appointmenttype = ArrayHelper::getValue($apiObject, 'appointmenttype');
-        $this->appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid');
-        $this->chargeentrynotrequired = ArrayHelper::getValue($apiObject, 'chargeentrynotrequired');
-        $this->chargeentrynotrequiredreason = ArrayHelper::getValue($apiObject, 'chargeentrynotrequiredreason');
-        $this->claims = ArrayHelper::getValue($apiObject, 'claims');
-        $this->copay = ArrayHelper::getValue($apiObject, 'copay');
-        $this->date = ArrayHelper::getValue($apiObject, 'date');
-        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
-        $this->duration = ArrayHelper::getValue($apiObject, 'duration');
-        $this->encounterid = ArrayHelper::getValue($apiObject, 'encounterid');
-        $this->encounterprep = ArrayHelper::getValue($apiObject, 'encounterprep');
-        $this->encounterstate = ArrayHelper::getValue($apiObject, 'encounterstate');
-        $this->encounterstatus = ArrayHelper::getValue($apiObject, 'encounterstatus');
-        $this->frozenyn = ArrayHelper::getValue($apiObject, 'frozenyn');
-        $this->hl7providerid = ArrayHelper::getValue($apiObject, 'hl7providerid');
-        $this->insurances = ArrayHelper::getValue($apiObject, 'insurances');
-        $this->patient = ArrayHelper::getValue($apiObject, 'patient');
-        $this->patientappointmenttypename = ArrayHelper::getValue($apiObject, 'patientappointmenttypename');
-        $this->patientid = ArrayHelper::getValue($apiObject, 'patientid');
-        $this->patientlocationid = ArrayHelper::getValue($apiObject, 'patientlocationid');
-        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
-        $this->referringproviderid = ArrayHelper::getValue($apiObject, 'referringproviderid');
-        $this->renderingproviderid = ArrayHelper::getValue($apiObject, 'renderingproviderid');
-        $this->rescheduledappointmentid = ArrayHelper::getValue($apiObject, 'rescheduledappointmentid');
-        $this->startcheckin = ArrayHelper::getValue($apiObject, 'startcheckin');
-        $this->starttime = ArrayHelper::getValue($apiObject, 'starttime');
-        $this->stopcheckin = ArrayHelper::getValue($apiObject, 'stopcheckin');
-        $this->supervisingproviderid = ArrayHelper::getValue($apiObject, 'supervisingproviderid');
-        $this->urgentyn = ArrayHelper::getValue($apiObject, 'urgentyn');
-        $this->useexpectedprocedurecodes = ArrayHelper::getValue($apiObject, 'useexpectedprocedurecodes');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay')) {
+            $this->appointmentcopay = $appointmentcopay;
+        }
+        if($appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid')) {
+            $this->appointmentid = $appointmentid;
+        }
+        if($appointmentstatus = ArrayHelper::getValue($apiObject, 'appointmentstatus')) {
+            $this->appointmentstatus = $appointmentstatus;
+        }
+        if($appointmenttype = ArrayHelper::getValue($apiObject, 'appointmenttype')) {
+            $this->appointmenttype = $appointmenttype;
+        }
+        if($appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid')) {
+            $this->appointmenttypeid = $appointmenttypeid;
+        }
+        if($chargeentrynotrequired = ArrayHelper::getValue($apiObject, 'chargeentrynotrequired')) {
+            $this->chargeentrynotrequired = $chargeentrynotrequired;
+        }
+        if($chargeentrynotrequiredreason = ArrayHelper::getValue($apiObject, 'chargeentrynotrequiredreason')) {
+            $this->chargeentrynotrequiredreason = $chargeentrynotrequiredreason;
+        }
+        if($claims = ArrayHelper::getValue($apiObject, 'claims')) {
+            $this->claims = $claims;
+        }
+        if($copay = ArrayHelper::getValue($apiObject, 'copay')) {
+            $this->copay = $copay;
+        }
+        if($date = ArrayHelper::getValue($apiObject, 'date')) {
+            $this->date = $date;
+        }
+        if($departmentid = ArrayHelper::getValue($apiObject, 'departmentid')) {
+            $this->departmentid = $departmentid;
+        }
+        if($duration = ArrayHelper::getValue($apiObject, 'duration')) {
+            $this->duration = $duration;
+        }
+        if($encounterid = ArrayHelper::getValue($apiObject, 'encounterid')) {
+            $this->encounterid = $encounterid;
+        }
+        if($encounterprep = ArrayHelper::getValue($apiObject, 'encounterprep')) {
+            $this->encounterprep = $encounterprep;
+        }
+        if($encounterstate = ArrayHelper::getValue($apiObject, 'encounterstate')) {
+            $this->encounterstate = $encounterstate;
+        }
+        if($encounterstatus = ArrayHelper::getValue($apiObject, 'encounterstatus')) {
+            $this->encounterstatus = $encounterstatus;
+        }
+        if($frozenyn = ArrayHelper::getValue($apiObject, 'frozenyn')) {
+            $this->frozenyn = $frozenyn;
+        }
+        if($hl7providerid = ArrayHelper::getValue($apiObject, 'hl7providerid')) {
+            $this->hl7providerid = $hl7providerid;
+        }
+        if($insurances = ArrayHelper::getValue($apiObject, 'insurances')) {
+            $this->insurances = $insurances;
+        }
+        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
+            $this->patient = $patient;
+        }
+        if($patientappointmenttypename = ArrayHelper::getValue($apiObject, 'patientappointmenttypename')) {
+            $this->patientappointmenttypename = $patientappointmenttypename;
+        }
+        if($patientid = ArrayHelper::getValue($apiObject, 'patientid')) {
+            $this->patientid = $patientid;
+        }
+        if($patientlocationid = ArrayHelper::getValue($apiObject, 'patientlocationid')) {
+            $this->patientlocationid = $patientlocationid;
+        }
+        if($providerid = ArrayHelper::getValue($apiObject, 'providerid')) {
+            $this->providerid = $providerid;
+        }
+        if($referringproviderid = ArrayHelper::getValue($apiObject, 'referringproviderid')) {
+            $this->referringproviderid = $referringproviderid;
+        }
+        if($renderingproviderid = ArrayHelper::getValue($apiObject, 'renderingproviderid')) {
+            $this->renderingproviderid = $renderingproviderid;
+        }
+        if($rescheduledappointmentid = ArrayHelper::getValue($apiObject, 'rescheduledappointmentid')) {
+            $this->rescheduledappointmentid = $rescheduledappointmentid;
+        }
+        if($startcheckin = ArrayHelper::getValue($apiObject, 'startcheckin')) {
+            $this->startcheckin = $startcheckin;
+        }
+        if($starttime = ArrayHelper::getValue($apiObject, 'starttime')) {
+            $this->starttime = $starttime;
+        }
+        if($stopcheckin = ArrayHelper::getValue($apiObject, 'stopcheckin')) {
+            $this->stopcheckin = $stopcheckin;
+        }
+        if($supervisingproviderid = ArrayHelper::getValue($apiObject, 'supervisingproviderid')) {
+            $this->supervisingproviderid = $supervisingproviderid;
+        }
+        if($urgentyn = ArrayHelper::getValue($apiObject, 'urgentyn')) {
+            $this->urgentyn = $urgentyn;
+        }
+        if($useexpectedprocedurecodes = ArrayHelper::getValue($apiObject, 'useexpectedprocedurecodes')) {
+            $this->useexpectedprocedurecodes = $useexpectedprocedurecodes;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

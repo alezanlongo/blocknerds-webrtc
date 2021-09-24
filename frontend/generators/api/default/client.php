@@ -43,7 +43,7 @@ $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
             }
             return $dataApiModel;
 <?php elseif($endpoint['flagList'] === FALSE): ?>
-            return new \common\components\<?= $component ?>\apiModels\<?= $endpoint['schema'] ?>Api($dataResponse['data']<?php if($endpoint['verb'] === 'get'): ?>[0]<?php endif; ?>);
+            return new \common\components\<?= $component ?>\apiModels\<?= $endpoint['schema'] ?>Api($dataResponse['data']);
 <?php endif; ?>
         }else{
             return $dataResponse['message'];

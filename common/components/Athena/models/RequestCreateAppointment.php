@@ -37,13 +37,30 @@ class RequestCreateAppointment extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentdate = ArrayHelper::getValue($apiObject, 'appointmentdate');
-        $this->appointmenttime = ArrayHelper::getValue($apiObject, 'appointmenttime');
-        $this->appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid');
-        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
-        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
-        $this->reasonid = ArrayHelper::getValue($apiObject, 'reasonid');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($appointmentdate = ArrayHelper::getValue($apiObject, 'appointmentdate')) {
+            $this->appointmentdate = $appointmentdate;
+        }
+        if($appointmenttime = ArrayHelper::getValue($apiObject, 'appointmenttime')) {
+            $this->appointmenttime = $appointmenttime;
+        }
+        if($appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid')) {
+            $this->appointmenttypeid = $appointmenttypeid;
+        }
+        if($departmentid = ArrayHelper::getValue($apiObject, 'departmentid')) {
+            $this->departmentid = $departmentid;
+        }
+        if($providerid = ArrayHelper::getValue($apiObject, 'providerid')) {
+            $this->providerid = $providerid;
+        }
+        if($reasonid = ArrayHelper::getValue($apiObject, 'reasonid')) {
+            $this->reasonid = $reasonid;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

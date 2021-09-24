@@ -98,75 +98,219 @@ class InsurancePatient extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->adjusterfax = ArrayHelper::getValue($apiObject, 'adjusterfax');
-        $this->adjusterfirstname = ArrayHelper::getValue($apiObject, 'adjusterfirstname');
-        $this->adjusterlastname = ArrayHelper::getValue($apiObject, 'adjusterlastname');
-        $this->adjusterphone = ArrayHelper::getValue($apiObject, 'adjusterphone');
-        $this->anotherpartyresponsibleyn = ArrayHelper::getValue($apiObject, 'anotherpartyresponsibleyn');
-        $this->autoaccidentstate = ArrayHelper::getValue($apiObject, 'autoaccidentstate');
-        $this->cancelled = ArrayHelper::getValue($apiObject, 'cancelled');
-        $this->caseinjurydate = ArrayHelper::getValue($apiObject, 'caseinjurydate');
-        $this->casepolicytypename = ArrayHelper::getValue($apiObject, 'casepolicytypename');
-        $this->ccmstatusid = ArrayHelper::getValue($apiObject, 'ccmstatusid');
-        $this->ccmstatusname = ArrayHelper::getValue($apiObject, 'ccmstatusname');
-        $this->coinsurancepercent = ArrayHelper::getValue($apiObject, 'coinsurancepercent');
-        $this->copays = ArrayHelper::getValue($apiObject, 'copays');
-        $this->descriptionofinjury = ArrayHelper::getValue($apiObject, 'descriptionofinjury');
-        $this->eligibilitylastchecked = ArrayHelper::getValue($apiObject, 'eligibilitylastchecked');
-        $this->eligibilitymessage = ArrayHelper::getValue($apiObject, 'eligibilitymessage');
-        $this->eligibilityreason = ArrayHelper::getValue($apiObject, 'eligibilityreason');
-        $this->eligibilitystatus = ArrayHelper::getValue($apiObject, 'eligibilitystatus');
-        $this->employerid = ArrayHelper::getValue($apiObject, 'employerid');
-        $this->expirationdate = ArrayHelper::getValue($apiObject, 'expirationdate');
-        $this->icd10codes = ArrayHelper::getValue($apiObject, 'icd10codes');
-        $this->icd9codes = ArrayHelper::getValue($apiObject, 'icd9codes');
-        $this->injuredbodypart = ArrayHelper::getValue($apiObject, 'injuredbodypart');
-        $this->insuranceclaimnumber = ArrayHelper::getValue($apiObject, 'insuranceclaimnumber');
-        $this->insuranceid = ArrayHelper::getValue($apiObject, 'insuranceid');
-        $this->insuranceidnumber = ArrayHelper::getValue($apiObject, 'insuranceidnumber');
-        $this->insurancepackageaddress1 = ArrayHelper::getValue($apiObject, 'insurancepackageaddress1');
-        $this->insurancepackageaddress2 = ArrayHelper::getValue($apiObject, 'insurancepackageaddress2');
-        $this->insurancepackagecity = ArrayHelper::getValue($apiObject, 'insurancepackagecity');
-        $this->insurancepackageid = ArrayHelper::getValue($apiObject, 'insurancepackageid');
-        $this->insurancepackagestate = ArrayHelper::getValue($apiObject, 'insurancepackagestate');
-        $this->insurancepackagezip = ArrayHelper::getValue($apiObject, 'insurancepackagezip');
-        $this->insurancephone = ArrayHelper::getValue($apiObject, 'insurancephone');
-        $this->insuranceplandisplayname = ArrayHelper::getValue($apiObject, 'insuranceplandisplayname');
-        $this->insuranceplanname = ArrayHelper::getValue($apiObject, 'insuranceplanname');
-        $this->insurancepolicyholder = ArrayHelper::getValue($apiObject, 'insurancepolicyholder');
-        $this->insurancepolicyholderaddress1 = ArrayHelper::getValue($apiObject, 'insurancepolicyholderaddress1');
-        $this->insurancepolicyholderaddress2 = ArrayHelper::getValue($apiObject, 'insurancepolicyholderaddress2');
-        $this->insurancepolicyholdercity = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercity');
-        $this->insurancepolicyholdercountrycode = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercountrycode');
-        $this->insurancepolicyholdercountryiso3166 = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercountryiso3166');
-        $this->insurancepolicyholderdob = ArrayHelper::getValue($apiObject, 'insurancepolicyholderdob');
-        $this->insurancepolicyholderfirstname = ArrayHelper::getValue($apiObject, 'insurancepolicyholderfirstname');
-        $this->insurancepolicyholderlastname = ArrayHelper::getValue($apiObject, 'insurancepolicyholderlastname');
-        $this->insurancepolicyholdermiddlename = ArrayHelper::getValue($apiObject, 'insurancepolicyholdermiddlename');
-        $this->insurancepolicyholdersex = ArrayHelper::getValue($apiObject, 'insurancepolicyholdersex');
-        $this->insurancepolicyholderssn = ArrayHelper::getValue($apiObject, 'insurancepolicyholderssn');
-        $this->insurancepolicyholderstate = ArrayHelper::getValue($apiObject, 'insurancepolicyholderstate');
-        $this->insurancepolicyholdersuffix = ArrayHelper::getValue($apiObject, 'insurancepolicyholdersuffix');
-        $this->insurancepolicyholderzip = ArrayHelper::getValue($apiObject, 'insurancepolicyholderzip');
-        $this->insurancetype = ArrayHelper::getValue($apiObject, 'insurancetype');
-        $this->insuredentitytypeid = ArrayHelper::getValue($apiObject, 'insuredentitytypeid');
-        $this->insuredpcp = ArrayHelper::getValue($apiObject, 'insuredpcp');
-        $this->insuredpcpnpi = ArrayHelper::getValue($apiObject, 'insuredpcpnpi');
-        $this->ircid = ArrayHelper::getValue($apiObject, 'ircid');
-        $this->ircname = ArrayHelper::getValue($apiObject, 'ircname');
-        $this->issuedate = ArrayHelper::getValue($apiObject, 'issuedate');
-        $this->policynumber = ArrayHelper::getValue($apiObject, 'policynumber');
-        $this->relatedtoautoaccidentyn = ArrayHelper::getValue($apiObject, 'relatedtoautoaccidentyn');
-        $this->relatedtoemploymentyn = ArrayHelper::getValue($apiObject, 'relatedtoemploymentyn');
-        $this->relatedtootheraccidentyn = ArrayHelper::getValue($apiObject, 'relatedtootheraccidentyn');
-        $this->relationshiptoinsured = ArrayHelper::getValue($apiObject, 'relationshiptoinsured');
-        $this->relationshiptoinsuredid = ArrayHelper::getValue($apiObject, 'relationshiptoinsuredid');
-        $this->repricername = ArrayHelper::getValue($apiObject, 'repricername');
-        $this->repricerphone = ArrayHelper::getValue($apiObject, 'repricerphone');
-        $this->sequencenumber = ArrayHelper::getValue($apiObject, 'sequencenumber');
-        $this->slidingfeeplanid = ArrayHelper::getValue($apiObject, 'slidingfeeplanid');
-        $this->stateofreportedinjury = ArrayHelper::getValue($apiObject, 'stateofreportedinjury');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($adjusterfax = ArrayHelper::getValue($apiObject, 'adjusterfax')) {
+            $this->adjusterfax = $adjusterfax;
+        }
+        if($adjusterfirstname = ArrayHelper::getValue($apiObject, 'adjusterfirstname')) {
+            $this->adjusterfirstname = $adjusterfirstname;
+        }
+        if($adjusterlastname = ArrayHelper::getValue($apiObject, 'adjusterlastname')) {
+            $this->adjusterlastname = $adjusterlastname;
+        }
+        if($adjusterphone = ArrayHelper::getValue($apiObject, 'adjusterphone')) {
+            $this->adjusterphone = $adjusterphone;
+        }
+        if($anotherpartyresponsibleyn = ArrayHelper::getValue($apiObject, 'anotherpartyresponsibleyn')) {
+            $this->anotherpartyresponsibleyn = $anotherpartyresponsibleyn;
+        }
+        if($autoaccidentstate = ArrayHelper::getValue($apiObject, 'autoaccidentstate')) {
+            $this->autoaccidentstate = $autoaccidentstate;
+        }
+        if($cancelled = ArrayHelper::getValue($apiObject, 'cancelled')) {
+            $this->cancelled = $cancelled;
+        }
+        if($caseinjurydate = ArrayHelper::getValue($apiObject, 'caseinjurydate')) {
+            $this->caseinjurydate = $caseinjurydate;
+        }
+        if($casepolicytypename = ArrayHelper::getValue($apiObject, 'casepolicytypename')) {
+            $this->casepolicytypename = $casepolicytypename;
+        }
+        if($ccmstatusid = ArrayHelper::getValue($apiObject, 'ccmstatusid')) {
+            $this->ccmstatusid = $ccmstatusid;
+        }
+        if($ccmstatusname = ArrayHelper::getValue($apiObject, 'ccmstatusname')) {
+            $this->ccmstatusname = $ccmstatusname;
+        }
+        if($coinsurancepercent = ArrayHelper::getValue($apiObject, 'coinsurancepercent')) {
+            $this->coinsurancepercent = $coinsurancepercent;
+        }
+        if($copays = ArrayHelper::getValue($apiObject, 'copays')) {
+            $this->copays = $copays;
+        }
+        if($descriptionofinjury = ArrayHelper::getValue($apiObject, 'descriptionofinjury')) {
+            $this->descriptionofinjury = $descriptionofinjury;
+        }
+        if($eligibilitylastchecked = ArrayHelper::getValue($apiObject, 'eligibilitylastchecked')) {
+            $this->eligibilitylastchecked = $eligibilitylastchecked;
+        }
+        if($eligibilitymessage = ArrayHelper::getValue($apiObject, 'eligibilitymessage')) {
+            $this->eligibilitymessage = $eligibilitymessage;
+        }
+        if($eligibilityreason = ArrayHelper::getValue($apiObject, 'eligibilityreason')) {
+            $this->eligibilityreason = $eligibilityreason;
+        }
+        if($eligibilitystatus = ArrayHelper::getValue($apiObject, 'eligibilitystatus')) {
+            $this->eligibilitystatus = $eligibilitystatus;
+        }
+        if($employerid = ArrayHelper::getValue($apiObject, 'employerid')) {
+            $this->employerid = $employerid;
+        }
+        if($expirationdate = ArrayHelper::getValue($apiObject, 'expirationdate')) {
+            $this->expirationdate = $expirationdate;
+        }
+        if($icd10codes = ArrayHelper::getValue($apiObject, 'icd10codes')) {
+            $this->icd10codes = $icd10codes;
+        }
+        if($icd9codes = ArrayHelper::getValue($apiObject, 'icd9codes')) {
+            $this->icd9codes = $icd9codes;
+        }
+        if($injuredbodypart = ArrayHelper::getValue($apiObject, 'injuredbodypart')) {
+            $this->injuredbodypart = $injuredbodypart;
+        }
+        if($insuranceclaimnumber = ArrayHelper::getValue($apiObject, 'insuranceclaimnumber')) {
+            $this->insuranceclaimnumber = $insuranceclaimnumber;
+        }
+        if($insuranceid = ArrayHelper::getValue($apiObject, 'insuranceid')) {
+            $this->insuranceid = $insuranceid;
+        }
+        if($insuranceid = ArrayHelper::getValue($apiObject, 'insuranceid')) {
+            $this->externalId = $insuranceid;
+        }
+        if($insuranceidnumber = ArrayHelper::getValue($apiObject, 'insuranceidnumber')) {
+            $this->insuranceidnumber = $insuranceidnumber;
+        }
+        if($insurancepackageaddress1 = ArrayHelper::getValue($apiObject, 'insurancepackageaddress1')) {
+            $this->insurancepackageaddress1 = $insurancepackageaddress1;
+        }
+        if($insurancepackageaddress2 = ArrayHelper::getValue($apiObject, 'insurancepackageaddress2')) {
+            $this->insurancepackageaddress2 = $insurancepackageaddress2;
+        }
+        if($insurancepackagecity = ArrayHelper::getValue($apiObject, 'insurancepackagecity')) {
+            $this->insurancepackagecity = $insurancepackagecity;
+        }
+        if($insurancepackageid = ArrayHelper::getValue($apiObject, 'insurancepackageid')) {
+            $this->insurancepackageid = $insurancepackageid;
+        }
+        if($insurancepackagestate = ArrayHelper::getValue($apiObject, 'insurancepackagestate')) {
+            $this->insurancepackagestate = $insurancepackagestate;
+        }
+        if($insurancepackagezip = ArrayHelper::getValue($apiObject, 'insurancepackagezip')) {
+            $this->insurancepackagezip = $insurancepackagezip;
+        }
+        if($insurancephone = ArrayHelper::getValue($apiObject, 'insurancephone')) {
+            $this->insurancephone = $insurancephone;
+        }
+        if($insuranceplandisplayname = ArrayHelper::getValue($apiObject, 'insuranceplandisplayname')) {
+            $this->insuranceplandisplayname = $insuranceplandisplayname;
+        }
+        if($insuranceplanname = ArrayHelper::getValue($apiObject, 'insuranceplanname')) {
+            $this->insuranceplanname = $insuranceplanname;
+        }
+        if($insurancepolicyholder = ArrayHelper::getValue($apiObject, 'insurancepolicyholder')) {
+            $this->insurancepolicyholder = $insurancepolicyholder;
+        }
+        if($insurancepolicyholderaddress1 = ArrayHelper::getValue($apiObject, 'insurancepolicyholderaddress1')) {
+            $this->insurancepolicyholderaddress1 = $insurancepolicyholderaddress1;
+        }
+        if($insurancepolicyholderaddress2 = ArrayHelper::getValue($apiObject, 'insurancepolicyholderaddress2')) {
+            $this->insurancepolicyholderaddress2 = $insurancepolicyholderaddress2;
+        }
+        if($insurancepolicyholdercity = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercity')) {
+            $this->insurancepolicyholdercity = $insurancepolicyholdercity;
+        }
+        if($insurancepolicyholdercountrycode = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercountrycode')) {
+            $this->insurancepolicyholdercountrycode = $insurancepolicyholdercountrycode;
+        }
+        if($insurancepolicyholdercountryiso3166 = ArrayHelper::getValue($apiObject, 'insurancepolicyholdercountryiso3166')) {
+            $this->insurancepolicyholdercountryiso3166 = $insurancepolicyholdercountryiso3166;
+        }
+        if($insurancepolicyholderdob = ArrayHelper::getValue($apiObject, 'insurancepolicyholderdob')) {
+            $this->insurancepolicyholderdob = $insurancepolicyholderdob;
+        }
+        if($insurancepolicyholderfirstname = ArrayHelper::getValue($apiObject, 'insurancepolicyholderfirstname')) {
+            $this->insurancepolicyholderfirstname = $insurancepolicyholderfirstname;
+        }
+        if($insurancepolicyholderlastname = ArrayHelper::getValue($apiObject, 'insurancepolicyholderlastname')) {
+            $this->insurancepolicyholderlastname = $insurancepolicyholderlastname;
+        }
+        if($insurancepolicyholdermiddlename = ArrayHelper::getValue($apiObject, 'insurancepolicyholdermiddlename')) {
+            $this->insurancepolicyholdermiddlename = $insurancepolicyholdermiddlename;
+        }
+        if($insurancepolicyholdersex = ArrayHelper::getValue($apiObject, 'insurancepolicyholdersex')) {
+            $this->insurancepolicyholdersex = $insurancepolicyholdersex;
+        }
+        if($insurancepolicyholderssn = ArrayHelper::getValue($apiObject, 'insurancepolicyholderssn')) {
+            $this->insurancepolicyholderssn = $insurancepolicyholderssn;
+        }
+        if($insurancepolicyholderstate = ArrayHelper::getValue($apiObject, 'insurancepolicyholderstate')) {
+            $this->insurancepolicyholderstate = $insurancepolicyholderstate;
+        }
+        if($insurancepolicyholdersuffix = ArrayHelper::getValue($apiObject, 'insurancepolicyholdersuffix')) {
+            $this->insurancepolicyholdersuffix = $insurancepolicyholdersuffix;
+        }
+        if($insurancepolicyholderzip = ArrayHelper::getValue($apiObject, 'insurancepolicyholderzip')) {
+            $this->insurancepolicyholderzip = $insurancepolicyholderzip;
+        }
+        if($insurancetype = ArrayHelper::getValue($apiObject, 'insurancetype')) {
+            $this->insurancetype = $insurancetype;
+        }
+        if($insuredentitytypeid = ArrayHelper::getValue($apiObject, 'insuredentitytypeid')) {
+            $this->insuredentitytypeid = $insuredentitytypeid;
+        }
+        if($insuredpcp = ArrayHelper::getValue($apiObject, 'insuredpcp')) {
+            $this->insuredpcp = $insuredpcp;
+        }
+        if($insuredpcpnpi = ArrayHelper::getValue($apiObject, 'insuredpcpnpi')) {
+            $this->insuredpcpnpi = $insuredpcpnpi;
+        }
+        if($ircid = ArrayHelper::getValue($apiObject, 'ircid')) {
+            $this->ircid = $ircid;
+        }
+        if($ircname = ArrayHelper::getValue($apiObject, 'ircname')) {
+            $this->ircname = $ircname;
+        }
+        if($issuedate = ArrayHelper::getValue($apiObject, 'issuedate')) {
+            $this->issuedate = $issuedate;
+        }
+        if($policynumber = ArrayHelper::getValue($apiObject, 'policynumber')) {
+            $this->policynumber = $policynumber;
+        }
+        if($relatedtoautoaccidentyn = ArrayHelper::getValue($apiObject, 'relatedtoautoaccidentyn')) {
+            $this->relatedtoautoaccidentyn = $relatedtoautoaccidentyn;
+        }
+        if($relatedtoemploymentyn = ArrayHelper::getValue($apiObject, 'relatedtoemploymentyn')) {
+            $this->relatedtoemploymentyn = $relatedtoemploymentyn;
+        }
+        if($relatedtootheraccidentyn = ArrayHelper::getValue($apiObject, 'relatedtootheraccidentyn')) {
+            $this->relatedtootheraccidentyn = $relatedtootheraccidentyn;
+        }
+        if($relationshiptoinsured = ArrayHelper::getValue($apiObject, 'relationshiptoinsured')) {
+            $this->relationshiptoinsured = $relationshiptoinsured;
+        }
+        if($relationshiptoinsuredid = ArrayHelper::getValue($apiObject, 'relationshiptoinsuredid')) {
+            $this->relationshiptoinsuredid = $relationshiptoinsuredid;
+        }
+        if($repricername = ArrayHelper::getValue($apiObject, 'repricername')) {
+            $this->repricername = $repricername;
+        }
+        if($repricerphone = ArrayHelper::getValue($apiObject, 'repricerphone')) {
+            $this->repricerphone = $repricerphone;
+        }
+        if($sequencenumber = ArrayHelper::getValue($apiObject, 'sequencenumber')) {
+            $this->sequencenumber = $sequencenumber;
+        }
+        if($slidingfeeplanid = ArrayHelper::getValue($apiObject, 'slidingfeeplanid')) {
+            $this->slidingfeeplanid = $slidingfeeplanid;
+        }
+        if($stateofreportedinjury = ArrayHelper::getValue($apiObject, 'stateofreportedinjury')) {
+            $this->stateofreportedinjury = $stateofreportedinjury;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

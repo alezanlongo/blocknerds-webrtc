@@ -59,36 +59,102 @@ class Provider extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->acceptingnewpatientsyn = ArrayHelper::getValue($apiObject, 'acceptingnewpatientsyn');
-        $this->ansinamecode = ArrayHelper::getValue($apiObject, 'ansinamecode');
-        $this->ansispecialtycode = ArrayHelper::getValue($apiObject, 'ansispecialtycode');
-        $this->billable = ArrayHelper::getValue($apiObject, 'billable');
-        $this->createencounteroncheckinyn = ArrayHelper::getValue($apiObject, 'createencounteroncheckinyn');
-        $this->createencounterprovideridlist = ArrayHelper::getValue($apiObject, 'createencounterprovideridlist');
-        $this->displayname = ArrayHelper::getValue($apiObject, 'displayname');
-        $this->entitytype = ArrayHelper::getValue($apiObject, 'entitytype');
-        $this->federalidnumber = ArrayHelper::getValue($apiObject, 'federalidnumber');
-        $this->firstname = ArrayHelper::getValue($apiObject, 'firstname');
-        $this->hideinportalyn = ArrayHelper::getValue($apiObject, 'hideinportalyn');
-        $this->homedepartment = ArrayHelper::getValue($apiObject, 'homedepartment');
-        $this->lastname = ArrayHelper::getValue($apiObject, 'lastname');
-        $this->npi = ArrayHelper::getValue($apiObject, 'npi');
-        $this->otherprovideridlist = ArrayHelper::getValue($apiObject, 'otherprovideridlist');
-        $this->personalpronouns = ArrayHelper::getValue($apiObject, 'personalpronouns');
-        $this->providergrouplist = ArrayHelper::getValue($apiObject, 'providergrouplist');
-        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
-        $this->providertype = ArrayHelper::getValue($apiObject, 'providertype');
-        $this->providertypeid = ArrayHelper::getValue($apiObject, 'providertypeid');
-        $this->providerusername = ArrayHelper::getValue($apiObject, 'providerusername');
-        $this->scheduleresourcetype = ArrayHelper::getValue($apiObject, 'scheduleresourcetype');
-        $this->schedulingname = ArrayHelper::getValue($apiObject, 'schedulingname');
-        $this->sex = ArrayHelper::getValue($apiObject, 'sex');
-        $this->specialty = ArrayHelper::getValue($apiObject, 'specialty');
-        $this->specialtyid = ArrayHelper::getValue($apiObject, 'specialtyid');
-        $this->supervisingproviderid = ArrayHelper::getValue($apiObject, 'supervisingproviderid');
-        $this->supervisingproviderusername = ArrayHelper::getValue($apiObject, 'supervisingproviderusername');
-        $this->usualdepartmentid = ArrayHelper::getValue($apiObject, 'usualdepartmentid');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($acceptingnewpatientsyn = ArrayHelper::getValue($apiObject, 'acceptingnewpatientsyn')) {
+            $this->acceptingnewpatientsyn = $acceptingnewpatientsyn;
+        }
+        if($ansinamecode = ArrayHelper::getValue($apiObject, 'ansinamecode')) {
+            $this->ansinamecode = $ansinamecode;
+        }
+        if($ansispecialtycode = ArrayHelper::getValue($apiObject, 'ansispecialtycode')) {
+            $this->ansispecialtycode = $ansispecialtycode;
+        }
+        if($billable = ArrayHelper::getValue($apiObject, 'billable')) {
+            $this->billable = $billable;
+        }
+        if($createencounteroncheckinyn = ArrayHelper::getValue($apiObject, 'createencounteroncheckinyn')) {
+            $this->createencounteroncheckinyn = $createencounteroncheckinyn;
+        }
+        if($createencounterprovideridlist = ArrayHelper::getValue($apiObject, 'createencounterprovideridlist')) {
+            $this->createencounterprovideridlist = $createencounterprovideridlist;
+        }
+        if($displayname = ArrayHelper::getValue($apiObject, 'displayname')) {
+            $this->displayname = $displayname;
+        }
+        if($entitytype = ArrayHelper::getValue($apiObject, 'entitytype')) {
+            $this->entitytype = $entitytype;
+        }
+        if($federalidnumber = ArrayHelper::getValue($apiObject, 'federalidnumber')) {
+            $this->federalidnumber = $federalidnumber;
+        }
+        if($firstname = ArrayHelper::getValue($apiObject, 'firstname')) {
+            $this->firstname = $firstname;
+        }
+        if($hideinportalyn = ArrayHelper::getValue($apiObject, 'hideinportalyn')) {
+            $this->hideinportalyn = $hideinportalyn;
+        }
+        if($homedepartment = ArrayHelper::getValue($apiObject, 'homedepartment')) {
+            $this->homedepartment = $homedepartment;
+        }
+        if($lastname = ArrayHelper::getValue($apiObject, 'lastname')) {
+            $this->lastname = $lastname;
+        }
+        if($npi = ArrayHelper::getValue($apiObject, 'npi')) {
+            $this->npi = $npi;
+        }
+        if($otherprovideridlist = ArrayHelper::getValue($apiObject, 'otherprovideridlist')) {
+            $this->otherprovideridlist = $otherprovideridlist;
+        }
+        if($personalpronouns = ArrayHelper::getValue($apiObject, 'personalpronouns')) {
+            $this->personalpronouns = $personalpronouns;
+        }
+        if($providergrouplist = ArrayHelper::getValue($apiObject, 'providergrouplist')) {
+            $this->providergrouplist = $providergrouplist;
+        }
+        if($providerid = ArrayHelper::getValue($apiObject, 'providerid')) {
+            $this->providerid = $providerid;
+        }
+        if($providerid = ArrayHelper::getValue($apiObject, 'providerid')) {
+            $this->externalId = $providerid;
+        }
+        if($providertype = ArrayHelper::getValue($apiObject, 'providertype')) {
+            $this->providertype = $providertype;
+        }
+        if($providertypeid = ArrayHelper::getValue($apiObject, 'providertypeid')) {
+            $this->providertypeid = $providertypeid;
+        }
+        if($providerusername = ArrayHelper::getValue($apiObject, 'providerusername')) {
+            $this->providerusername = $providerusername;
+        }
+        if($scheduleresourcetype = ArrayHelper::getValue($apiObject, 'scheduleresourcetype')) {
+            $this->scheduleresourcetype = $scheduleresourcetype;
+        }
+        if($schedulingname = ArrayHelper::getValue($apiObject, 'schedulingname')) {
+            $this->schedulingname = $schedulingname;
+        }
+        if($sex = ArrayHelper::getValue($apiObject, 'sex')) {
+            $this->sex = $sex;
+        }
+        if($specialty = ArrayHelper::getValue($apiObject, 'specialty')) {
+            $this->specialty = $specialty;
+        }
+        if($specialtyid = ArrayHelper::getValue($apiObject, 'specialtyid')) {
+            $this->specialtyid = $specialtyid;
+        }
+        if($supervisingproviderid = ArrayHelper::getValue($apiObject, 'supervisingproviderid')) {
+            $this->supervisingproviderid = $supervisingproviderid;
+        }
+        if($supervisingproviderusername = ArrayHelper::getValue($apiObject, 'supervisingproviderusername')) {
+            $this->supervisingproviderusername = $supervisingproviderusername;
+        }
+        if($usualdepartmentid = ArrayHelper::getValue($apiObject, 'usualdepartmentid')) {
+            $this->usualdepartmentid = $usualdepartmentid;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

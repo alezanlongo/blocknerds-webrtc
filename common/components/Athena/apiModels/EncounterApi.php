@@ -78,7 +78,7 @@ class EncounterApi extends Model
         parent::init();
         if (!empty($this->diagnoses) && is_array($this->diagnoses)) {
             $this->_diagnosesAr = $this->diagnoses;
-            $this->diagnoses = new Diagnoses($this->_diagnosesAr);
+            $this->diagnoses = new DiagnosesApi($this->_diagnosesAr);
         }
     }
 

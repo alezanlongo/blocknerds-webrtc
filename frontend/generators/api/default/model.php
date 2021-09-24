@@ -90,9 +90,13 @@ class <?= $className ?> extends \yii\db\ActiveRecord
             return null;
 
 <?php foreach ($attributes as $attribute): ?>
-        $this-><?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>');
+        if($<?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>')) {
+            $this-><?= $attribute['name'] ?> = $<?= $attribute['name'] ?>;
+        }
 <?php if( $extIdField == $attribute['name'] ): ?>
-        $this->externalId = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>');
+        if($<?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>')) {
+            $this->externalId = $<?= $attribute['name'] ?>;
+        }
 <?php endif; ?>
 <?php endforeach; ?>
 

@@ -15,6 +15,7 @@ use yii\base\Model;
  * @property string $departmentids Comma separated list of department IDs that belong to this group
  * @property string $paymentplanbalance The outstanding amount associated with a payment plan.
  * @property int $providergroupid Athena ID for this financial group.
+ * @property Patient $patient
  */
 class BalanceItemApi extends Model
 {
@@ -28,6 +29,7 @@ class BalanceItemApi extends Model
     public $departmentids;
     public $paymentplanbalance;
     public $providergroupid;
+    public $patient;
 
     public function __construct(array $data)
     {
@@ -50,7 +52,7 @@ class BalanceItemApi extends Model
         parent::init();
         if (!empty($this->contracts) && is_array($this->contracts)) {
             $this->_contractsAr = $this->contracts;
-            $this->contracts = new contractItem($this->_contractsAr);
+            $this->contracts = new contractItemApi($this->_contractsAr);
         }
     }
 
