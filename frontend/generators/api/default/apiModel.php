@@ -80,7 +80,7 @@ class <?= $className ?> extends Model
 ?>
         if (!empty($this-><?= $attribute['name'] ?>) && is_array($this-><?= $attribute['name'] ?>)) {
             $this->_<?= $attribute['name'] ?>Ar = $this-><?= $attribute['name'] ?>;
-            $this-><?= $attribute['name'] ?> = new <?= str_replace('[]', '', $attribute['type']) ?>($this->_<?= $attribute['name'] ?>Ar);
+            $this-><?= $attribute['name'] ?> = new <?= str_replace('[]', '', $attribute['type'].'Api') ?>($this->_<?= $attribute['name'] ?>Ar);
         }
 <?php
         }//-foreach

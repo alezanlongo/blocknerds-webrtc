@@ -32,9 +32,18 @@ class Copays extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->copayamount = ArrayHelper::getValue($apiObject, 'copayamount');
-        $this->copaytype = ArrayHelper::getValue($apiObject, 'copaytype');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($copayamount = ArrayHelper::getValue($apiObject, 'copayamount')) {
+            $this->copayamount = $copayamount;
+        }
+        if($copaytype = ArrayHelper::getValue($apiObject, 'copaytype')) {
+            $this->copaytype = $copaytype;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

@@ -32,10 +32,21 @@ class customfield extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->customfieldid = ArrayHelper::getValue($apiObject, 'customfieldid');
-        $this->customfieldvalue = ArrayHelper::getValue($apiObject, 'customfieldvalue');
-        $this->optionid = ArrayHelper::getValue($apiObject, 'optionid');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($customfieldid = ArrayHelper::getValue($apiObject, 'customfieldid')) {
+            $this->customfieldid = $customfieldid;
+        }
+        if($customfieldvalue = ArrayHelper::getValue($apiObject, 'customfieldvalue')) {
+            $this->customfieldvalue = $customfieldvalue;
+        }
+        if($optionid = ArrayHelper::getValue($apiObject, 'optionid')) {
+            $this->optionid = $optionid;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

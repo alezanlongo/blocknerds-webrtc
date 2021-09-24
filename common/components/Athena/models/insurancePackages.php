@@ -34,11 +34,24 @@ class insurancePackages extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->addresslist = ArrayHelper::getValue($apiObject, 'addresslist');
-        $this->affiliations = ArrayHelper::getValue($apiObject, 'affiliations');
-        $this->insurancepackageid = ArrayHelper::getValue($apiObject, 'insurancepackageid');
-        $this->insuranceplanname = ArrayHelper::getValue($apiObject, 'insuranceplanname');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($addresslist = ArrayHelper::getValue($apiObject, 'addresslist')) {
+            $this->addresslist = $addresslist;
+        }
+        if($affiliations = ArrayHelper::getValue($apiObject, 'affiliations')) {
+            $this->affiliations = $affiliations;
+        }
+        if($insurancepackageid = ArrayHelper::getValue($apiObject, 'insurancepackageid')) {
+            $this->insurancepackageid = $insurancepackageid;
+        }
+        if($insuranceplanname = ArrayHelper::getValue($apiObject, 'insuranceplanname')) {
+            $this->insuranceplanname = $insuranceplanname;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }
