@@ -682,7 +682,6 @@ paths:
 components:
   schemas:
     PostPatient200Response:
-      x-external-id: patientid
       type: object
       properties:
         errormessage:
@@ -692,7 +691,7 @@ components:
           description: Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
           type: string
     contractItem:
-      x-external-id: contractid
+      x-external-id: contractitemid
       type: object
       properties:
         availablebalance:
@@ -705,7 +704,7 @@ components:
           description: The maximum allowed amount for this contract.
           type: string
     BalanceItem:
-      x-external-id: balanceid
+      x-external-id: balanceitemid
       type: object
       properties:
         balance:
@@ -2064,7 +2063,7 @@ components:
         - insurancepackageid
       type: object
     insurancePackages:
-      x-external-id: insuranceid
+      x-external-id: insurancepackageid
       properties:
         addresslist:
           description: >-
@@ -2404,7 +2403,6 @@ components:
             INCLUDEALLSTATUSES flag to see others.
           type: string
     PutEncounter200Response:
-      x-external-id: encounterid
       type: object
       properties:
         errormessage:
@@ -2420,7 +2418,7 @@ components:
             - true
           type: string
     PatientLocation:
-      x-external-id: patientid
+      x-external-id: patientlocationid
       type: object
       properties:
         defaultoncheckin:
@@ -2439,7 +2437,7 @@ components:
           type: integer
           description: Athena patient location ID
     PatientStatus:
-      x-external-id: patientid
+      x-external-id: patientstatusid
       type: object
       properties:
         patientstatusname:
@@ -2449,7 +2447,6 @@ components:
           type: integer
           description: The patient status ID.
     PutAppointment200Response:
-      x-external-id: apointmentid
       type: object
       properties:
         appointmentcopay:
