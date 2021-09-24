@@ -63,41 +63,117 @@ class Department extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->address = ArrayHelper::getValue($apiObject, 'address');
-        $this->address2 = ArrayHelper::getValue($apiObject, 'address2');
-        $this->chartsharinggroupid = ArrayHelper::getValue($apiObject, 'chartsharinggroupid');
-        $this->city = ArrayHelper::getValue($apiObject, 'city');
-        $this->clinicalproviderfax = ArrayHelper::getValue($apiObject, 'clinicalproviderfax');
-        $this->clinicals = ArrayHelper::getValue($apiObject, 'clinicals');
-        $this->communicatorbrandid = ArrayHelper::getValue($apiObject, 'communicatorbrandid');
-        $this->creditcardtypes = ArrayHelper::getValue($apiObject, 'creditcardtypes');
-        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
-        $this->doesnotobservedst = ArrayHelper::getValue($apiObject, 'doesnotobservedst');
-        $this->ecommercecreditcardtypes = ArrayHelper::getValue($apiObject, 'ecommercecreditcardtypes');
-        $this->fax = ArrayHelper::getValue($apiObject, 'fax');
-        $this->ishospitaldepartment = ArrayHelper::getValue($apiObject, 'ishospitaldepartment');
-        $this->latitude = ArrayHelper::getValue($apiObject, 'latitude');
-        $this->longitude = ArrayHelper::getValue($apiObject, 'longitude');
-        $this->medicationhistoryconsent = ArrayHelper::getValue($apiObject, 'medicationhistoryconsent');
-        $this->name = ArrayHelper::getValue($apiObject, 'name');
-        $this->oneyearcontractmax = ArrayHelper::getValue($apiObject, 'oneyearcontractmax');
-        $this->patientdepartmentname = ArrayHelper::getValue($apiObject, 'patientdepartmentname');
-        $this->phone = ArrayHelper::getValue($apiObject, 'phone');
-        $this->placeofservicefacility = ArrayHelper::getValue($apiObject, 'placeofservicefacility');
-        $this->placeofservicetypeid = ArrayHelper::getValue($apiObject, 'placeofservicetypeid');
-        $this->placeofservicetypename = ArrayHelper::getValue($apiObject, 'placeofservicetypename');
-        $this->portalurl = ArrayHelper::getValue($apiObject, 'portalurl');
-        $this->providergroupid = ArrayHelper::getValue($apiObject, 'providergroupid');
-        $this->providergroupname = ArrayHelper::getValue($apiObject, 'providergroupname');
-        $this->providerlist = ArrayHelper::getValue($apiObject, 'providerlist');
-        $this->servicedepartment = ArrayHelper::getValue($apiObject, 'servicedepartment');
-        $this->singleappointmentcontractmax = ArrayHelper::getValue($apiObject, 'singleappointmentcontractmax');
-        $this->state = ArrayHelper::getValue($apiObject, 'state');
-        $this->timezone = ArrayHelper::getValue($apiObject, 'timezone');
-        $this->timezonename = ArrayHelper::getValue($apiObject, 'timezonename');
-        $this->timezoneoffset = ArrayHelper::getValue($apiObject, 'timezoneoffset');
-        $this->zip = ArrayHelper::getValue($apiObject, 'zip');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($address = ArrayHelper::getValue($apiObject, 'address')) {
+            $this->address = $address;
+        }
+        if($address2 = ArrayHelper::getValue($apiObject, 'address2')) {
+            $this->address2 = $address2;
+        }
+        if($chartsharinggroupid = ArrayHelper::getValue($apiObject, 'chartsharinggroupid')) {
+            $this->chartsharinggroupid = $chartsharinggroupid;
+        }
+        if($city = ArrayHelper::getValue($apiObject, 'city')) {
+            $this->city = $city;
+        }
+        if($clinicalproviderfax = ArrayHelper::getValue($apiObject, 'clinicalproviderfax')) {
+            $this->clinicalproviderfax = $clinicalproviderfax;
+        }
+        if($clinicals = ArrayHelper::getValue($apiObject, 'clinicals')) {
+            $this->clinicals = $clinicals;
+        }
+        if($communicatorbrandid = ArrayHelper::getValue($apiObject, 'communicatorbrandid')) {
+            $this->communicatorbrandid = $communicatorbrandid;
+        }
+        if($creditcardtypes = ArrayHelper::getValue($apiObject, 'creditcardtypes')) {
+            $this->creditcardtypes = $creditcardtypes;
+        }
+        if($departmentid = ArrayHelper::getValue($apiObject, 'departmentid')) {
+            $this->departmentid = $departmentid;
+        }
+        if($departmentid = ArrayHelper::getValue($apiObject, 'departmentid')) {
+            $this->externalId = $departmentid;
+        }
+        if($doesnotobservedst = ArrayHelper::getValue($apiObject, 'doesnotobservedst')) {
+            $this->doesnotobservedst = $doesnotobservedst;
+        }
+        if($ecommercecreditcardtypes = ArrayHelper::getValue($apiObject, 'ecommercecreditcardtypes')) {
+            $this->ecommercecreditcardtypes = $ecommercecreditcardtypes;
+        }
+        if($fax = ArrayHelper::getValue($apiObject, 'fax')) {
+            $this->fax = $fax;
+        }
+        if($ishospitaldepartment = ArrayHelper::getValue($apiObject, 'ishospitaldepartment')) {
+            $this->ishospitaldepartment = $ishospitaldepartment;
+        }
+        if($latitude = ArrayHelper::getValue($apiObject, 'latitude')) {
+            $this->latitude = $latitude;
+        }
+        if($longitude = ArrayHelper::getValue($apiObject, 'longitude')) {
+            $this->longitude = $longitude;
+        }
+        if($medicationhistoryconsent = ArrayHelper::getValue($apiObject, 'medicationhistoryconsent')) {
+            $this->medicationhistoryconsent = $medicationhistoryconsent;
+        }
+        if($name = ArrayHelper::getValue($apiObject, 'name')) {
+            $this->name = $name;
+        }
+        if($oneyearcontractmax = ArrayHelper::getValue($apiObject, 'oneyearcontractmax')) {
+            $this->oneyearcontractmax = $oneyearcontractmax;
+        }
+        if($patientdepartmentname = ArrayHelper::getValue($apiObject, 'patientdepartmentname')) {
+            $this->patientdepartmentname = $patientdepartmentname;
+        }
+        if($phone = ArrayHelper::getValue($apiObject, 'phone')) {
+            $this->phone = $phone;
+        }
+        if($placeofservicefacility = ArrayHelper::getValue($apiObject, 'placeofservicefacility')) {
+            $this->placeofservicefacility = $placeofservicefacility;
+        }
+        if($placeofservicetypeid = ArrayHelper::getValue($apiObject, 'placeofservicetypeid')) {
+            $this->placeofservicetypeid = $placeofservicetypeid;
+        }
+        if($placeofservicetypename = ArrayHelper::getValue($apiObject, 'placeofservicetypename')) {
+            $this->placeofservicetypename = $placeofservicetypename;
+        }
+        if($portalurl = ArrayHelper::getValue($apiObject, 'portalurl')) {
+            $this->portalurl = $portalurl;
+        }
+        if($providergroupid = ArrayHelper::getValue($apiObject, 'providergroupid')) {
+            $this->providergroupid = $providergroupid;
+        }
+        if($providergroupname = ArrayHelper::getValue($apiObject, 'providergroupname')) {
+            $this->providergroupname = $providergroupname;
+        }
+        if($providerlist = ArrayHelper::getValue($apiObject, 'providerlist')) {
+            $this->providerlist = $providerlist;
+        }
+        if($servicedepartment = ArrayHelper::getValue($apiObject, 'servicedepartment')) {
+            $this->servicedepartment = $servicedepartment;
+        }
+        if($singleappointmentcontractmax = ArrayHelper::getValue($apiObject, 'singleappointmentcontractmax')) {
+            $this->singleappointmentcontractmax = $singleappointmentcontractmax;
+        }
+        if($state = ArrayHelper::getValue($apiObject, 'state')) {
+            $this->state = $state;
+        }
+        if($timezone = ArrayHelper::getValue($apiObject, 'timezone')) {
+            $this->timezone = $timezone;
+        }
+        if($timezonename = ArrayHelper::getValue($apiObject, 'timezonename')) {
+            $this->timezonename = $timezonename;
+        }
+        if($timezoneoffset = ArrayHelper::getValue($apiObject, 'timezoneoffset')) {
+            $this->timezoneoffset = $timezoneoffset;
+        }
+        if($zip = ArrayHelper::getValue($apiObject, 'zip')) {
+            $this->zip = $zip;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

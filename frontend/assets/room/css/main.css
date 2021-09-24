@@ -21,9 +21,20 @@
   position: relative;
   width: 90% !important;
   margin: 0 auto !important;
-    /* padding: 0 2%; */
 }
-
+#containerBoxes {
+  display: flex;
+  align-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  top: 0px;
+  right: 0px;
+}
 .sidebar {
   height: 100%;
   float: left;
@@ -56,9 +67,11 @@
   position: absolute;
   bottom: 0px;
   left: 0px;
-  /* margin: 25px; */
+  padding: 2%;
   z-index: 999;
-  font-size: xx-large;
+  font-size: 1rem;
+  text-transform: uppercase;
+  font-weight: 300;
 }
 .username-on-call:hover {
   cursor: pointer;
@@ -67,18 +80,27 @@
   width: 100%;
   height: auto;
 }
-/* .box {
-  height: auto !important;
-} */
+.box {
+  position: relative;
+  vertical-align: middle;
+  align-self: center;
+  border-radius: 10px;
+  overflow: hidden;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  animation: show 0.4s ease;
+}
 .box-preview {
-  width: 300px !important;
+  /* width: 300px !important;
   height: auto !important;
   position: absolute;
   z-index: 9999;
   bottom: 0;
   right: 0;
   margin: 0;
-  padding: 0;
+  padding: 0; */
+  display: block;
 }
 .icon-profile {
   font-size: 150px;

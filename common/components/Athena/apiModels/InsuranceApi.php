@@ -172,7 +172,7 @@ class InsuranceApi extends Model
         parent::init();
         if (!empty($this->copays) && is_array($this->copays)) {
             $this->_copaysAr = $this->copays;
-            $this->copays = new Copays($this->_copaysAr);
+            $this->copays = new CopaysApi($this->_copaysAr);
         }
     }
 

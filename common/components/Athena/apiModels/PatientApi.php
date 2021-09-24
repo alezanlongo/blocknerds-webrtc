@@ -305,15 +305,15 @@ class PatientApi extends Model
         parent::init();
         if (!empty($this->balances) && is_array($this->balances)) {
             $this->_balancesAr = $this->balances;
-            $this->balances = new BalanceItem($this->_balancesAr);
+            $this->balances = new BalanceItemApi($this->_balancesAr);
         }
         if (!empty($this->customfields) && is_array($this->customfields)) {
             $this->_customfieldsAr = $this->customfields;
-            $this->customfields = new customfield($this->_customfieldsAr);
+            $this->customfields = new customfieldApi($this->_customfieldsAr);
         }
         if (!empty($this->insurances) && is_array($this->insurances)) {
             $this->_insurancesAr = $this->insurances;
-            $this->insurances = new InsurancePatient($this->_insurancesAr);
+            $this->insurances = new InsurancePatientApi($this->_insurancesAr);
         }
     }
 

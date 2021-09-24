@@ -41,17 +41,42 @@ class Appointment extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid');
-        $this->bookingnote = ArrayHelper::getValue($apiObject, 'bookingnote');
-        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
-        $this->donotsendconfirmationemail = ArrayHelper::getValue($apiObject, 'donotsendconfirmationemail');
-        $this->ignoreschedulablepermission = ArrayHelper::getValue($apiObject, 'ignoreschedulablepermission');
-        $this->insuranceinfo = ArrayHelper::getValue($apiObject, 'insuranceinfo');
-        $this->nopatientcase = ArrayHelper::getValue($apiObject, 'nopatientcase');
-        $this->patientid = ArrayHelper::getValue($apiObject, 'patientid');
-        $this->reasonid = ArrayHelper::getValue($apiObject, 'reasonid');
-        $this->urgentyn = ArrayHelper::getValue($apiObject, 'urgentyn');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid')) {
+            $this->appointmenttypeid = $appointmenttypeid;
+        }
+        if($bookingnote = ArrayHelper::getValue($apiObject, 'bookingnote')) {
+            $this->bookingnote = $bookingnote;
+        }
+        if($departmentid = ArrayHelper::getValue($apiObject, 'departmentid')) {
+            $this->departmentid = $departmentid;
+        }
+        if($donotsendconfirmationemail = ArrayHelper::getValue($apiObject, 'donotsendconfirmationemail')) {
+            $this->donotsendconfirmationemail = $donotsendconfirmationemail;
+        }
+        if($ignoreschedulablepermission = ArrayHelper::getValue($apiObject, 'ignoreschedulablepermission')) {
+            $this->ignoreschedulablepermission = $ignoreschedulablepermission;
+        }
+        if($insuranceinfo = ArrayHelper::getValue($apiObject, 'insuranceinfo')) {
+            $this->insuranceinfo = $insuranceinfo;
+        }
+        if($nopatientcase = ArrayHelper::getValue($apiObject, 'nopatientcase')) {
+            $this->nopatientcase = $nopatientcase;
+        }
+        if($patientid = ArrayHelper::getValue($apiObject, 'patientid')) {
+            $this->patientid = $patientid;
+        }
+        if($reasonid = ArrayHelper::getValue($apiObject, 'reasonid')) {
+            $this->reasonid = $reasonid;
+        }
+        if($urgentyn = ArrayHelper::getValue($apiObject, 'urgentyn')) {
+            $this->urgentyn = $urgentyn;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

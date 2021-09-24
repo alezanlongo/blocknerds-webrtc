@@ -52,6 +52,13 @@ $this->registerJsFile(
         'position' => View::POS_END
     ]
 );
+$this->registerJsFile(
+    Yii::$app->request->BaseUrl . '/js/boxesHandler.js',
+    [
+        'depends' => "yii\web\JqueryAsset",
+        'position' => View::POS_END
+    ]
+);
 
 $this->title = 'The Room';
 ?>
@@ -105,20 +112,33 @@ $this->title = 'The Room';
                     </div>
                 </div>
             </div>
-            <div class="row row-cols-3 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center boxes">
-                <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                    <div class="col box<?= $i ?> m-0 p-0 box <?= $i === 0 ? "box-preview" : '' ?>" data-id="<?= $i ?>" >
-                        <div class="card" style="background-color: transparent !important;">
-                            <div class="content-video card-body p-0" id="video-source<?= $i ?>">
-                                <div class="video-mute-icon d-none ">
-                                    <i class="fa fa-microphone-slash" aria-hidden="true"></i>
+            <div class="boxes" >
+                <div id="containerBoxes">
+                <div class=" box0 box box-preview" data-id="0">
+                            <div class="card" style="background-color: transparent !important;">
+                                <div class="content-video card-body p-0" id="video-source0">
+                                    <div class="video-mute-icon d-none ">
+                                        <i class="fa fa-microphone-slash" aria-hidden="true"></i>
+                                    </div>
+                                    <img src="/img/default-user.png" alt="" width="100%" height="100%" id="img0" class="img-profile-preview d-none">
+                                    <span class="text-light username-on-call"> </span>
                                 </div>
-                                <img src="/assets/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
-                                <span class="text-light username-on-call"> </span>
                             </div>
                         </div>
-                    </div>
-                <?php } ?>
+                    <?php for ($i = 1; $i < $limit_members; $i++) { ?>
+                        <div class=" box<?= $i ?> box d-none" data-id="<?= $i ?>">
+                            <div class="card w-100 h-100" style="background-color: transparent !important;">
+                                <div class="content-video card-body p-0" id="video-source<?= $i ?>">
+                                    <div class="video-mute-icon d-none ">
+                                        <i class="fa fa-microphone-slash" aria-hidden="true"></i>
+                                    </div>
+                                    <img src="/img/default-user.png" alt="" width="100%" height="100%" id="img<?= $i ?>" class="img-profile-preview d-none">
+                                    <span class="text-light username-on-call"> </span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
         <? } ?>
         <div class="tab-content sidebar" id="pills-tabContent">
@@ -137,9 +157,9 @@ $this->title = 'The Room';
                             <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"></span>
                             <?php if ($is_owner) { ?>
                                 <div class="position-absolute top-0 end-0">
-                                    <button class="btn btn-default text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?=$i?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                    <button class="btn btn-default text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
                                         <i class="fas fa-microphone icon-option-member"></i></button> |
-                                    <button class="btn btn-default text-light btn-remote-video"  onclick="moderateVideoToggle(this,<?=$i?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
+                                    <button class="btn btn-default text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
                                         <i class="fas fa-video icon-option-member"></i></button> |
                                     <button class="btn btn-default text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
                                         <i class="fas fa-user-times icon-option-member"></i></button>

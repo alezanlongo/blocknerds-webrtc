@@ -12,6 +12,7 @@ use yii\helpers\ArrayHelper;
  * @property string $departmentids Comma separated list of department IDs that belong to this group
  * @property string $paymentplanbalance The outstanding amount associated with a payment plan.
  * @property int $providergroupid Athena ID for this financial group.
+ * @property Patient $patient
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
@@ -37,19 +38,46 @@ class BalanceItem extends \yii\db\ActiveRecord
         return $this->hasMany(contractItem::class, ['balance_item_id' => 'id']);
     }
 
+    public function getPatient()
+    {
+        return $this->hasOne(Patient::class, ['id' => 'patient_id']);
+    }
+
 
     public function loadApiObject($apiObject) {
         if(empty($apiObject))
             return null;
 
-        $this->balance = ArrayHelper::getValue($apiObject, 'balance');
-        $this->cleanbalance = ArrayHelper::getValue($apiObject, 'cleanbalance');
-        $this->collectionsbalance = ArrayHelper::getValue($apiObject, 'collectionsbalance');
-        $this->contracts = ArrayHelper::getValue($apiObject, 'contracts');
-        $this->departmentids = ArrayHelper::getValue($apiObject, 'departmentids');
-        $this->paymentplanbalance = ArrayHelper::getValue($apiObject, 'paymentplanbalance');
-        $this->providergroupid = ArrayHelper::getValue($apiObject, 'providergroupid');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($balance = ArrayHelper::getValue($apiObject, 'balance')) {
+            $this->balance = $balance;
+        }
+        if($cleanbalance = ArrayHelper::getValue($apiObject, 'cleanbalance')) {
+            $this->cleanbalance = $cleanbalance;
+        }
+        if($collectionsbalance = ArrayHelper::getValue($apiObject, 'collectionsbalance')) {
+            $this->collectionsbalance = $collectionsbalance;
+        }
+        if($contracts = ArrayHelper::getValue($apiObject, 'contracts')) {
+            $this->contracts = $contracts;
+        }
+        if($departmentids = ArrayHelper::getValue($apiObject, 'departmentids')) {
+            $this->departmentids = $departmentids;
+        }
+        if($paymentplanbalance = ArrayHelper::getValue($apiObject, 'paymentplanbalance')) {
+            $this->paymentplanbalance = $paymentplanbalance;
+        }
+        if($providergroupid = ArrayHelper::getValue($apiObject, 'providergroupid')) {
+            $this->providergroupid = $providergroupid;
+        }
+        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
+            $this->patient = $patient;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }
