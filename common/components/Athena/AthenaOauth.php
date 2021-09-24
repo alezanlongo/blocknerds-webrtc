@@ -8,6 +8,7 @@ use yii\db\Exception as DBException;
 use yii\httpclient\Client;
 use yii\httpclient\Exception as HttpClientException;
 
+use common\models\Configuration;
 
 class AthenaOauth
 {
@@ -16,71 +17,28 @@ class AthenaOauth
     /**
      * AthenaOauth constructor.
      */
-    public function Authenticate()
+    public function Authenticate($expired = FALSE)
     {
         $data = [];
         $success =  FALSE;
         $session = Yii::$app->session;
 
-        try {
-            if(is_null($session->get('athenaAuth'))){
-                $link = Yii::$app->params['athena_url'].self::URL_SERVICE_AUTH;
-                $client = new Client();
-                $response = $client->createRequest()
-                    ->setMethod('POST')
-                    ->setUrl($link)
-                    ->setHeaders([
-                        'Content-type' => 'application/x-www-form-urlencoded',
-                        'Authorization' => 'Basic ' . base64_encode(Yii::$app->params['athena_key'] . ':' . Yii::$app->params['athena_secret']),
-                    ])
-                    ->setData([
-                        'grant_type'    => 'client_credentials',
-                        'scope'         => 'athena/service/Athenanet.MDP.*',
-                    ])
-                    ->send();
-
-                $dataResponse = json_decode($response->getContent(), TRUE);
-                $dataStatusCodeRespose =  $response->getStatusCode();
-                if ($response->isOk) {
-                    $success = TRUE;
-                    $dataResponse['created_time'] = date('Y-m-d H:i:s');
-                    $data = [
-                        'message'       => "",
-                        'data'          => $dataResponse,
-                        'success'       => $success,
-                        'statusCode'    => $dataStatusCodeRespose
-                    ];
-                    $session->set('athenaAuth', $data);
-                }else{
-                    if(isset($dataResponse['error'])){
-                        $data = [
-                            'message'       => $dataResponse['error']." ".$dataResponse['detailedmessage'],
-                            'data'          => [],
-                            'success'       => $success,
-                            'statusCode'    => $dataStatusCodeRespose
-                        ];
-                    }else{
-                        $data = [
-                            'message'       => "",
-                            'data'          => [],
-                            'success'       => $success,
-                            'statusCode'    => $dataStatusCodeRespose
-                        ];
-                    }
-                }
-            }else{
-                $data = $session->get('athenaAuth');
-            }
-        }catch(\Exception $e){
-            $data = [
-                'message'       => $e->getMessage(),
-                'data'          => [],
-                'success'       => $success,
-                'statusCode'    => 0
-            ];
+        $configurationModel = Configuration::find()->where([
+            'type'          => 'AthenaToken',
+            'practiceId' => Yii::$app->params['practiceID'],
+        ])->one();
+        if(!is_null($configurationModel) && $expired){
+            $configurationModel->content = json_encode($this->callAuthenticateAthena());
+            $configurationModel->save();
+        }else if($expired){
+            $configurationModel = new Configuration;
+            $configurationModel->type = "AthenaToken";
+            $configurationModel->content = json_encode($this->callAuthenticateAthena());
+            $configurationModel->practiceId = Yii::$app->params['practiceID'];
+            $configurationModel->save();
         }
 
-        return $data;
+        return $configurationModel->content;
     }
 
 
@@ -90,29 +48,18 @@ class AthenaOauth
         $success =  FALSE;
         $session = Yii::$app->session;
 
-        $dataSession = $this->Authenticate();
-        if(!$dataSession['success']){
-            throw new \yii\web\BadRequestHttpException($dataSession['message']);
-        }
-
-        $interval = time() - strtotime($dataSession['data']['created_time']);
-        if((int)$interval < (int)$dataSession['data']['expires_in']){
-            $session->remove('athenaAuth');
-            $dataSession = $this->Authenticate();
-        }
-
-        if(!isset($dataSession['data']['access_token'])){
-            throw new \yii\web\BadRequestHttpException($dataSession['message']);
+        $dataSession = json_decode($this->Authenticate(), TRUE);
+        if((int)$dataSession['expirationTime'] < (int)time()){
+            $dataSession = json_decode($this->Authenticate(TRUE), TRUE);
         }
 
         $link = Yii::$app->params['athena_url'].$path;
         $client = new Client();
-
         $request = $client->createRequest();
         $request->setMethod($action)
             ->setUrl($link)
             ->setHeaders([
-                'Authorization' => 'Bearer ' . $dataSession['data']['access_token'],
+                'Authorization' => 'Bearer ' . $dataSession['access_token'],
             ]);
         if(count($params) > 0){
             $request->setData($params);
@@ -146,4 +93,52 @@ class AthenaOauth
 
         return $data;
     }
+
+
+    private function callAuthenticateAthena()
+    {
+        $link = Yii::$app->params['athena_url'].self::URL_SERVICE_AUTH;
+        $client = new Client();
+        $request = $client->createRequest();
+        $request->setMethod('POST')
+            ->setUrl($link)
+            ->setHeaders([
+                'Content-type' => 'application/x-www-form-urlencoded',
+                'Authorization' => 'Basic ' . base64_encode(Yii::$app->params['athena_key'] . ':' . Yii::$app->params['athena_secret']),
+            ])
+            ->setData([
+                'grant_type'    => 'client_credentials',
+                'scope'         => 'athena/service/Athenanet.MDP.*',
+            ]);
+
+        try {
+            $response = $request->send();
+        } catch (\Exception $e) {
+            throw new \yii\web\ServerErrorHttpException($e->getMessage());
+        }
+
+        $dataResponse = json_decode($response->getContent(), TRUE);
+        $dataStatusCodeRespose =  $response->getStatusCode();
+        if ($response->isOk) {
+            $success = TRUE;
+            $dataResponse['expirationTime'] = (time() + $dataResponse['expires_in']) - 60;
+            /*$data = [
+                'message'       => "",
+                'data'          => $dataResponse,
+                'success'       => $success,
+                'statusCode'    => $dataStatusCodeRespose
+            ];
+            $session->set('athenaAuth', $data);*/
+        }else{
+            $error = '';
+            if(isset($dataResponse['error'])){
+                $error = $dataResponse['error'];
+                $error = (isset($dataResponse['detailedmessage'])) ? $error." ".$dataResponse['detailedmessage'] : $error;
+            }
+            throw new \yii\web\BadRequestHttpException($error);
+        }
+
+        return $dataResponse;
+    }
+
 }
