@@ -33,10 +33,21 @@ class PatientLocation extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->defaultoncheckin = ArrayHelper::getValue($apiObject, 'defaultoncheckin');
-        $this->name = ArrayHelper::getValue($apiObject, 'name');
-        $this->patientlocationid = ArrayHelper::getValue($apiObject, 'patientlocationid');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($defaultoncheckin = ArrayHelper::getValue($apiObject, 'defaultoncheckin')) {
+            $this->defaultoncheckin = $defaultoncheckin;
+        }
+        if($name = ArrayHelper::getValue($apiObject, 'name')) {
+            $this->name = $name;
+        }
+        if($patientlocationid = ArrayHelper::getValue($apiObject, 'patientlocationid')) {
+            $this->patientlocationid = $patientlocationid;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

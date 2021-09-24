@@ -32,9 +32,18 @@ class PatientStatus extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->patientstatusname = ArrayHelper::getValue($apiObject, 'patientstatusname');
-        $this->patientstatusid = ArrayHelper::getValue($apiObject, 'patientstatusid');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($patientstatusname = ArrayHelper::getValue($apiObject, 'patientstatusname')) {
+            $this->patientstatusname = $patientstatusname;
+        }
+        if($patientstatusid = ArrayHelper::getValue($apiObject, 'patientstatusid')) {
+            $this->patientstatusid = $patientstatusid;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

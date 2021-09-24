@@ -35,12 +35,30 @@ class Diagnoses extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->description = ArrayHelper::getValue($apiObject, 'description');
-        $this->diagnosisid = ArrayHelper::getValue($apiObject, 'diagnosisid');
-        $this->icdcodes = ArrayHelper::getValue($apiObject, 'icdcodes');
-        $this->note = ArrayHelper::getValue($apiObject, 'note');
-        $this->snomedcode = ArrayHelper::getValue($apiObject, 'snomedcode');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($description = ArrayHelper::getValue($apiObject, 'description')) {
+            $this->description = $description;
+        }
+        if($diagnosisid = ArrayHelper::getValue($apiObject, 'diagnosisid')) {
+            $this->diagnosisid = $diagnosisid;
+        }
+        if($diagnosisid = ArrayHelper::getValue($apiObject, 'diagnosisid')) {
+            $this->externalId = $diagnosisid;
+        }
+        if($icdcodes = ArrayHelper::getValue($apiObject, 'icdcodes')) {
+            $this->icdcodes = $icdcodes;
+        }
+        if($note = ArrayHelper::getValue($apiObject, 'note')) {
+            $this->note = $note;
+        }
+        if($snomedcode = ArrayHelper::getValue($apiObject, 'snomedcode')) {
+            $this->snomedcode = $snomedcode;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

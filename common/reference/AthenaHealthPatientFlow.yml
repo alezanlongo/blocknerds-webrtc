@@ -889,6 +889,8 @@ components:
         providergroupid:
           description: Athena ID for this financial group.
           type: integer
+        patient:
+          $ref: '#/components/schemas/Patient'
     customfield:
       properties:
         customfieldid:

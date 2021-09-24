@@ -31,9 +31,18 @@ class PutEncounter200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->errormessage = ArrayHelper::getValue($apiObject, 'errormessage');
-        $this->success = ArrayHelper::getValue($apiObject, 'success');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($errormessage = ArrayHelper::getValue($apiObject, 'errormessage')) {
+            $this->errormessage = $errormessage;
+        }
+        if($success = ArrayHelper::getValue($apiObject, 'success')) {
+            $this->success = $success;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

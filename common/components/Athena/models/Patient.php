@@ -178,143 +178,415 @@ class Patient extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->address1 = ArrayHelper::getValue($apiObject, 'address1');
-        $this->address2 = ArrayHelper::getValue($apiObject, 'address2');
-        $this->agriculturalworker = ArrayHelper::getValue($apiObject, 'agriculturalworker');
-        $this->agriculturalworkertype = ArrayHelper::getValue($apiObject, 'agriculturalworkertype');
-        $this->balances = ArrayHelper::getValue($apiObject, 'balances');
-        $this->caresummarydeliverypreference = ArrayHelper::getValue($apiObject, 'caresummarydeliverypreference');
-        $this->city = ArrayHelper::getValue($apiObject, 'city');
-        $this->claimbalancedetails = ArrayHelper::getValue($apiObject, 'claimbalancedetails');
-        $this->confidentialitycode = ArrayHelper::getValue($apiObject, 'confidentialitycode');
-        $this->consenttocall = ArrayHelper::getValue($apiObject, 'consenttocall');
-        $this->consenttotext = ArrayHelper::getValue($apiObject, 'consenttotext');
-        $this->contacthomephone = ArrayHelper::getValue($apiObject, 'contacthomephone');
-        $this->contactmobilephone = ArrayHelper::getValue($apiObject, 'contactmobilephone');
-        $this->contactname = ArrayHelper::getValue($apiObject, 'contactname');
-        $this->contactpreference = ArrayHelper::getValue($apiObject, 'contactpreference');
-        $this->contactpreference_announcement_email = ArrayHelper::getValue($apiObject, 'contactpreference_announcement_email');
-        $this->contactpreference_announcement_phone = ArrayHelper::getValue($apiObject, 'contactpreference_announcement_phone');
-        $this->contactpreference_announcement_sms = ArrayHelper::getValue($apiObject, 'contactpreference_announcement_sms');
-        $this->contactpreference_appointment_email = ArrayHelper::getValue($apiObject, 'contactpreference_appointment_email');
-        $this->contactpreference_appointment_phone = ArrayHelper::getValue($apiObject, 'contactpreference_appointment_phone');
-        $this->contactpreference_appointment_sms = ArrayHelper::getValue($apiObject, 'contactpreference_appointment_sms');
-        $this->contactpreference_billing_email = ArrayHelper::getValue($apiObject, 'contactpreference_billing_email');
-        $this->contactpreference_billing_phone = ArrayHelper::getValue($apiObject, 'contactpreference_billing_phone');
-        $this->contactpreference_billing_sms = ArrayHelper::getValue($apiObject, 'contactpreference_billing_sms');
-        $this->contactpreference_lab_email = ArrayHelper::getValue($apiObject, 'contactpreference_lab_email');
-        $this->contactpreference_lab_phone = ArrayHelper::getValue($apiObject, 'contactpreference_lab_phone');
-        $this->contactpreference_lab_sms = ArrayHelper::getValue($apiObject, 'contactpreference_lab_sms');
-        $this->contactrelationship = ArrayHelper::getValue($apiObject, 'contactrelationship');
-        $this->countrycode = ArrayHelper::getValue($apiObject, 'countrycode');
-        $this->countrycode3166 = ArrayHelper::getValue($apiObject, 'countrycode3166');
-        $this->customfields = ArrayHelper::getValue($apiObject, 'customfields');
-        $this->deceaseddate = ArrayHelper::getValue($apiObject, 'deceaseddate');
-        $this->defaultpharmacyncpdpid = ArrayHelper::getValue($apiObject, 'defaultpharmacyncpdpid');
-        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
-        $this->dob = ArrayHelper::getValue($apiObject, 'dob');
-        $this->donotcallyn = ArrayHelper::getValue($apiObject, 'donotcallyn');
-        $this->driverslicenseexpirationdate = ArrayHelper::getValue($apiObject, 'driverslicenseexpirationdate');
-        $this->driverslicensenumber = ArrayHelper::getValue($apiObject, 'driverslicensenumber');
-        $this->driverslicensestateid = ArrayHelper::getValue($apiObject, 'driverslicensestateid');
-        $this->driverslicenseurl = ArrayHelper::getValue($apiObject, 'driverslicenseurl');
-        $this->driverslicenseyn = ArrayHelper::getValue($apiObject, 'driverslicenseyn');
-        $this->email = ArrayHelper::getValue($apiObject, 'email');
-        $this->emailexistsyn = ArrayHelper::getValue($apiObject, 'emailexistsyn');
-        $this->employeraddress = ArrayHelper::getValue($apiObject, 'employeraddress');
-        $this->employercity = ArrayHelper::getValue($apiObject, 'employercity');
-        $this->employerfax = ArrayHelper::getValue($apiObject, 'employerfax');
-        $this->employerid = ArrayHelper::getValue($apiObject, 'employerid');
-        $this->employername = ArrayHelper::getValue($apiObject, 'employername');
-        $this->employerphone = ArrayHelper::getValue($apiObject, 'employerphone');
-        $this->employerstate = ArrayHelper::getValue($apiObject, 'employerstate');
-        $this->employerzip = ArrayHelper::getValue($apiObject, 'employerzip');
-        $this->ethnicitycode = ArrayHelper::getValue($apiObject, 'ethnicitycode');
-        $this->firstappointment = ArrayHelper::getValue($apiObject, 'firstappointment');
-        $this->firstname = ArrayHelper::getValue($apiObject, 'firstname');
-        $this->guarantoraddress1 = ArrayHelper::getValue($apiObject, 'guarantoraddress1');
-        $this->guarantoraddress2 = ArrayHelper::getValue($apiObject, 'guarantoraddress2');
-        $this->guarantoraddresssameaspatient = ArrayHelper::getValue($apiObject, 'guarantoraddresssameaspatient');
-        $this->guarantorcity = ArrayHelper::getValue($apiObject, 'guarantorcity');
-        $this->guarantorcountrycode = ArrayHelper::getValue($apiObject, 'guarantorcountrycode');
-        $this->guarantorcountrycode3166 = ArrayHelper::getValue($apiObject, 'guarantorcountrycode3166');
-        $this->guarantordob = ArrayHelper::getValue($apiObject, 'guarantordob');
-        $this->guarantoremail = ArrayHelper::getValue($apiObject, 'guarantoremail');
-        $this->guarantoremployerid = ArrayHelper::getValue($apiObject, 'guarantoremployerid');
-        $this->guarantorfirstname = ArrayHelper::getValue($apiObject, 'guarantorfirstname');
-        $this->guarantorlastname = ArrayHelper::getValue($apiObject, 'guarantorlastname');
-        $this->guarantormiddlename = ArrayHelper::getValue($apiObject, 'guarantormiddlename');
-        $this->guarantorphone = ArrayHelper::getValue($apiObject, 'guarantorphone');
-        $this->guarantorrelationshiptopatient = ArrayHelper::getValue($apiObject, 'guarantorrelationshiptopatient');
-        $this->guarantorssn = ArrayHelper::getValue($apiObject, 'guarantorssn');
-        $this->guarantorstate = ArrayHelper::getValue($apiObject, 'guarantorstate');
-        $this->guarantorsuffix = ArrayHelper::getValue($apiObject, 'guarantorsuffix');
-        $this->guarantorzip = ArrayHelper::getValue($apiObject, 'guarantorzip');
-        $this->guardianfirstname = ArrayHelper::getValue($apiObject, 'guardianfirstname');
-        $this->guardianlastname = ArrayHelper::getValue($apiObject, 'guardianlastname');
-        $this->guardianmiddlename = ArrayHelper::getValue($apiObject, 'guardianmiddlename');
-        $this->guardiansuffix = ArrayHelper::getValue($apiObject, 'guardiansuffix');
-        $this->hasmobileyn = ArrayHelper::getValue($apiObject, 'hasmobileyn');
-        $this->hierarchicalcode = ArrayHelper::getValue($apiObject, 'hierarchicalcode');
-        $this->homeboundyn = ArrayHelper::getValue($apiObject, 'homeboundyn');
-        $this->homeless = ArrayHelper::getValue($apiObject, 'homeless');
-        $this->homelesstype = ArrayHelper::getValue($apiObject, 'homelesstype');
-        $this->homephone = ArrayHelper::getValue($apiObject, 'homephone');
-        $this->industrycode = ArrayHelper::getValue($apiObject, 'industrycode');
-        $this->insurances = ArrayHelper::getValue($apiObject, 'insurances');
-        $this->language6392code = ArrayHelper::getValue($apiObject, 'language6392code');
-        $this->lastappointment = ArrayHelper::getValue($apiObject, 'lastappointment');
-        $this->lastemail = ArrayHelper::getValue($apiObject, 'lastemail');
-        $this->lastname = ArrayHelper::getValue($apiObject, 'lastname');
-        $this->maritalstatus = ArrayHelper::getValue($apiObject, 'maritalstatus');
-        $this->maritalstatusname = ArrayHelper::getValue($apiObject, 'maritalstatusname');
-        $this->medicationhistoryconsentverified = ArrayHelper::getValue($apiObject, 'medicationhistoryconsentverified');
-        $this->middlename = ArrayHelper::getValue($apiObject, 'middlename');
-        $this->mobilecarrierid = ArrayHelper::getValue($apiObject, 'mobilecarrierid');
-        $this->mobilephone = ArrayHelper::getValue($apiObject, 'mobilephone');
-        $this->nextkinname = ArrayHelper::getValue($apiObject, 'nextkinname');
-        $this->nextkinphone = ArrayHelper::getValue($apiObject, 'nextkinphone');
-        $this->nextkinrelationship = ArrayHelper::getValue($apiObject, 'nextkinrelationship');
-        $this->notes = ArrayHelper::getValue($apiObject, 'notes');
-        $this->occupationcode = ArrayHelper::getValue($apiObject, 'occupationcode');
-        $this->onlinestatementonlyyn = ArrayHelper::getValue($apiObject, 'onlinestatementonlyyn');
-        $this->externalId = ArrayHelper::getValue($apiObject, 'patientid');
-        $this->patientphotourl = ArrayHelper::getValue($apiObject, 'patientphotourl');
-        $this->patientphotoyn = ArrayHelper::getValue($apiObject, 'patientphotoyn');
-        $this->portalaccessgiven = ArrayHelper::getValue($apiObject, 'portalaccessgiven');
-        $this->portalsignatureonfile = ArrayHelper::getValue($apiObject, 'portalsignatureonfile');
-        $this->portalstatus = ArrayHelper::getValue($apiObject, 'portalstatus');
-        $this->portaltermsonfile = ArrayHelper::getValue($apiObject, 'portaltermsonfile');
-        $this->povertylevelcalculated = ArrayHelper::getValue($apiObject, 'povertylevelcalculated');
-        $this->povertylevelfamilysize = ArrayHelper::getValue($apiObject, 'povertylevelfamilysize');
-        $this->povertylevelfamilysizedeclined = ArrayHelper::getValue($apiObject, 'povertylevelfamilysizedeclined');
-        $this->povertylevelincomedeclined = ArrayHelper::getValue($apiObject, 'povertylevelincomedeclined');
-        $this->povertylevelincomepayperiod = ArrayHelper::getValue($apiObject, 'povertylevelincomepayperiod');
-        $this->povertylevelincomeperpayperiod = ArrayHelper::getValue($apiObject, 'povertylevelincomeperpayperiod');
-        $this->povertylevelincomerangedeclined = ArrayHelper::getValue($apiObject, 'povertylevelincomerangedeclined');
-        $this->preferredname = ArrayHelper::getValue($apiObject, 'preferredname');
-        $this->primarydepartmentid = ArrayHelper::getValue($apiObject, 'primarydepartmentid');
-        $this->primaryproviderid = ArrayHelper::getValue($apiObject, 'primaryproviderid');
-        $this->privacyinformationverified = ArrayHelper::getValue($apiObject, 'privacyinformationverified');
-        $this->publichousing = ArrayHelper::getValue($apiObject, 'publichousing');
-        $this->race = ArrayHelper::getValue($apiObject, 'race');
-        $this->racename = ArrayHelper::getValue($apiObject, 'racename');
-        $this->referralsourceid = ArrayHelper::getValue($apiObject, 'referralsourceid');
-        $this->registrationdate = ArrayHelper::getValue($apiObject, 'registrationdate');
-        $this->schoolbasedhealthcenter = ArrayHelper::getValue($apiObject, 'schoolbasedhealthcenter');
-        $this->sex = ArrayHelper::getValue($apiObject, 'sex');
-        $this->ssn = ArrayHelper::getValue($apiObject, 'ssn');
-        $this->state = ArrayHelper::getValue($apiObject, 'state');
-        $this->status = ArrayHelper::getValue($apiObject, 'status');
-        $this->suffix = ArrayHelper::getValue($apiObject, 'suffix');
-        $this->veteran = ArrayHelper::getValue($apiObject, 'veteran');
-        $this->workphone = ArrayHelper::getValue($apiObject, 'workphone');
-        $this->zip = ArrayHelper::getValue($apiObject, 'zip');
-        // $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($address1 = ArrayHelper::getValue($apiObject, 'address1')) {
+            $this->address1 = $address1;
+        }
+        if($address2 = ArrayHelper::getValue($apiObject, 'address2')) {
+            $this->address2 = $address2;
+        }
+        if($agriculturalworker = ArrayHelper::getValue($apiObject, 'agriculturalworker')) {
+            $this->agriculturalworker = $agriculturalworker;
+        }
+        if($agriculturalworkertype = ArrayHelper::getValue($apiObject, 'agriculturalworkertype')) {
+            $this->agriculturalworkertype = $agriculturalworkertype;
+        }
+        if($balances = ArrayHelper::getValue($apiObject, 'balances')) {
+            $this->balances = $balances;
+        }
+        if($caresummarydeliverypreference = ArrayHelper::getValue($apiObject, 'caresummarydeliverypreference')) {
+            $this->caresummarydeliverypreference = $caresummarydeliverypreference;
+        }
+        if($city = ArrayHelper::getValue($apiObject, 'city')) {
+            $this->city = $city;
+        }
+        if($claimbalancedetails = ArrayHelper::getValue($apiObject, 'claimbalancedetails')) {
+            $this->claimbalancedetails = $claimbalancedetails;
+        }
+        if($confidentialitycode = ArrayHelper::getValue($apiObject, 'confidentialitycode')) {
+            $this->confidentialitycode = $confidentialitycode;
+        }
+        if($consenttocall = ArrayHelper::getValue($apiObject, 'consenttocall')) {
+            $this->consenttocall = $consenttocall;
+        }
+        if($consenttotext = ArrayHelper::getValue($apiObject, 'consenttotext')) {
+            $this->consenttotext = $consenttotext;
+        }
+        if($contacthomephone = ArrayHelper::getValue($apiObject, 'contacthomephone')) {
+            $this->contacthomephone = $contacthomephone;
+        }
+        if($contactmobilephone = ArrayHelper::getValue($apiObject, 'contactmobilephone')) {
+            $this->contactmobilephone = $contactmobilephone;
+        }
+        if($contactname = ArrayHelper::getValue($apiObject, 'contactname')) {
+            $this->contactname = $contactname;
+        }
+        if($contactpreference = ArrayHelper::getValue($apiObject, 'contactpreference')) {
+            $this->contactpreference = $contactpreference;
+        }
+        if($contactpreference_announcement_email = ArrayHelper::getValue($apiObject, 'contactpreference_announcement_email')) {
+            $this->contactpreference_announcement_email = $contactpreference_announcement_email;
+        }
+        if($contactpreference_announcement_phone = ArrayHelper::getValue($apiObject, 'contactpreference_announcement_phone')) {
+            $this->contactpreference_announcement_phone = $contactpreference_announcement_phone;
+        }
+        if($contactpreference_announcement_sms = ArrayHelper::getValue($apiObject, 'contactpreference_announcement_sms')) {
+            $this->contactpreference_announcement_sms = $contactpreference_announcement_sms;
+        }
+        if($contactpreference_appointment_email = ArrayHelper::getValue($apiObject, 'contactpreference_appointment_email')) {
+            $this->contactpreference_appointment_email = $contactpreference_appointment_email;
+        }
+        if($contactpreference_appointment_phone = ArrayHelper::getValue($apiObject, 'contactpreference_appointment_phone')) {
+            $this->contactpreference_appointment_phone = $contactpreference_appointment_phone;
+        }
+        if($contactpreference_appointment_sms = ArrayHelper::getValue($apiObject, 'contactpreference_appointment_sms')) {
+            $this->contactpreference_appointment_sms = $contactpreference_appointment_sms;
+        }
+        if($contactpreference_billing_email = ArrayHelper::getValue($apiObject, 'contactpreference_billing_email')) {
+            $this->contactpreference_billing_email = $contactpreference_billing_email;
+        }
+        if($contactpreference_billing_phone = ArrayHelper::getValue($apiObject, 'contactpreference_billing_phone')) {
+            $this->contactpreference_billing_phone = $contactpreference_billing_phone;
+        }
+        if($contactpreference_billing_sms = ArrayHelper::getValue($apiObject, 'contactpreference_billing_sms')) {
+            $this->contactpreference_billing_sms = $contactpreference_billing_sms;
+        }
+        if($contactpreference_lab_email = ArrayHelper::getValue($apiObject, 'contactpreference_lab_email')) {
+            $this->contactpreference_lab_email = $contactpreference_lab_email;
+        }
+        if($contactpreference_lab_phone = ArrayHelper::getValue($apiObject, 'contactpreference_lab_phone')) {
+            $this->contactpreference_lab_phone = $contactpreference_lab_phone;
+        }
+        if($contactpreference_lab_sms = ArrayHelper::getValue($apiObject, 'contactpreference_lab_sms')) {
+            $this->contactpreference_lab_sms = $contactpreference_lab_sms;
+        }
+        if($contactrelationship = ArrayHelper::getValue($apiObject, 'contactrelationship')) {
+            $this->contactrelationship = $contactrelationship;
+        }
+        if($countrycode = ArrayHelper::getValue($apiObject, 'countrycode')) {
+            $this->countrycode = $countrycode;
+        }
+        if($countrycode3166 = ArrayHelper::getValue($apiObject, 'countrycode3166')) {
+            $this->countrycode3166 = $countrycode3166;
+        }
+        if($customfields = ArrayHelper::getValue($apiObject, 'customfields')) {
+            $this->customfields = $customfields;
+        }
+        if($deceaseddate = ArrayHelper::getValue($apiObject, 'deceaseddate')) {
+            $this->deceaseddate = $deceaseddate;
+        }
+        if($defaultpharmacyncpdpid = ArrayHelper::getValue($apiObject, 'defaultpharmacyncpdpid')) {
+            $this->defaultpharmacyncpdpid = $defaultpharmacyncpdpid;
+        }
+        if($departmentid = ArrayHelper::getValue($apiObject, 'departmentid')) {
+            $this->departmentid = $departmentid;
+        }
+        if($dob = ArrayHelper::getValue($apiObject, 'dob')) {
+            $this->dob = $dob;
+        }
+        if($donotcallyn = ArrayHelper::getValue($apiObject, 'donotcallyn')) {
+            $this->donotcallyn = $donotcallyn;
+        }
+        if($driverslicenseexpirationdate = ArrayHelper::getValue($apiObject, 'driverslicenseexpirationdate')) {
+            $this->driverslicenseexpirationdate = $driverslicenseexpirationdate;
+        }
+        if($driverslicensenumber = ArrayHelper::getValue($apiObject, 'driverslicensenumber')) {
+            $this->driverslicensenumber = $driverslicensenumber;
+        }
+        if($driverslicensestateid = ArrayHelper::getValue($apiObject, 'driverslicensestateid')) {
+            $this->driverslicensestateid = $driverslicensestateid;
+        }
+        if($driverslicenseurl = ArrayHelper::getValue($apiObject, 'driverslicenseurl')) {
+            $this->driverslicenseurl = $driverslicenseurl;
+        }
+        if($driverslicenseyn = ArrayHelper::getValue($apiObject, 'driverslicenseyn')) {
+            $this->driverslicenseyn = $driverslicenseyn;
+        }
+        if($email = ArrayHelper::getValue($apiObject, 'email')) {
+            $this->email = $email;
+        }
+        if($emailexistsyn = ArrayHelper::getValue($apiObject, 'emailexistsyn')) {
+            $this->emailexistsyn = $emailexistsyn;
+        }
+        if($employeraddress = ArrayHelper::getValue($apiObject, 'employeraddress')) {
+            $this->employeraddress = $employeraddress;
+        }
+        if($employercity = ArrayHelper::getValue($apiObject, 'employercity')) {
+            $this->employercity = $employercity;
+        }
+        if($employerfax = ArrayHelper::getValue($apiObject, 'employerfax')) {
+            $this->employerfax = $employerfax;
+        }
+        if($employerid = ArrayHelper::getValue($apiObject, 'employerid')) {
+            $this->employerid = $employerid;
+        }
+        if($employername = ArrayHelper::getValue($apiObject, 'employername')) {
+            $this->employername = $employername;
+        }
+        if($employerphone = ArrayHelper::getValue($apiObject, 'employerphone')) {
+            $this->employerphone = $employerphone;
+        }
+        if($employerstate = ArrayHelper::getValue($apiObject, 'employerstate')) {
+            $this->employerstate = $employerstate;
+        }
+        if($employerzip = ArrayHelper::getValue($apiObject, 'employerzip')) {
+            $this->employerzip = $employerzip;
+        }
+        if($ethnicitycode = ArrayHelper::getValue($apiObject, 'ethnicitycode')) {
+            $this->ethnicitycode = $ethnicitycode;
+        }
+        if($firstappointment = ArrayHelper::getValue($apiObject, 'firstappointment')) {
+            $this->firstappointment = $firstappointment;
+        }
+        if($firstname = ArrayHelper::getValue($apiObject, 'firstname')) {
+            $this->firstname = $firstname;
+        }
+        if($guarantoraddress1 = ArrayHelper::getValue($apiObject, 'guarantoraddress1')) {
+            $this->guarantoraddress1 = $guarantoraddress1;
+        }
+        if($guarantoraddress2 = ArrayHelper::getValue($apiObject, 'guarantoraddress2')) {
+            $this->guarantoraddress2 = $guarantoraddress2;
+        }
+        if($guarantoraddresssameaspatient = ArrayHelper::getValue($apiObject, 'guarantoraddresssameaspatient')) {
+            $this->guarantoraddresssameaspatient = $guarantoraddresssameaspatient;
+        }
+        if($guarantorcity = ArrayHelper::getValue($apiObject, 'guarantorcity')) {
+            $this->guarantorcity = $guarantorcity;
+        }
+        if($guarantorcountrycode = ArrayHelper::getValue($apiObject, 'guarantorcountrycode')) {
+            $this->guarantorcountrycode = $guarantorcountrycode;
+        }
+        if($guarantorcountrycode3166 = ArrayHelper::getValue($apiObject, 'guarantorcountrycode3166')) {
+            $this->guarantorcountrycode3166 = $guarantorcountrycode3166;
+        }
+        if($guarantordob = ArrayHelper::getValue($apiObject, 'guarantordob')) {
+            $this->guarantordob = $guarantordob;
+        }
+        if($guarantoremail = ArrayHelper::getValue($apiObject, 'guarantoremail')) {
+            $this->guarantoremail = $guarantoremail;
+        }
+        if($guarantoremployerid = ArrayHelper::getValue($apiObject, 'guarantoremployerid')) {
+            $this->guarantoremployerid = $guarantoremployerid;
+        }
+        if($guarantorfirstname = ArrayHelper::getValue($apiObject, 'guarantorfirstname')) {
+            $this->guarantorfirstname = $guarantorfirstname;
+        }
+        if($guarantorlastname = ArrayHelper::getValue($apiObject, 'guarantorlastname')) {
+            $this->guarantorlastname = $guarantorlastname;
+        }
+        if($guarantormiddlename = ArrayHelper::getValue($apiObject, 'guarantormiddlename')) {
+            $this->guarantormiddlename = $guarantormiddlename;
+        }
+        if($guarantorphone = ArrayHelper::getValue($apiObject, 'guarantorphone')) {
+            $this->guarantorphone = $guarantorphone;
+        }
+        if($guarantorrelationshiptopatient = ArrayHelper::getValue($apiObject, 'guarantorrelationshiptopatient')) {
+            $this->guarantorrelationshiptopatient = $guarantorrelationshiptopatient;
+        }
+        if($guarantorssn = ArrayHelper::getValue($apiObject, 'guarantorssn')) {
+            $this->guarantorssn = $guarantorssn;
+        }
+        if($guarantorstate = ArrayHelper::getValue($apiObject, 'guarantorstate')) {
+            $this->guarantorstate = $guarantorstate;
+        }
+        if($guarantorsuffix = ArrayHelper::getValue($apiObject, 'guarantorsuffix')) {
+            $this->guarantorsuffix = $guarantorsuffix;
+        }
+        if($guarantorzip = ArrayHelper::getValue($apiObject, 'guarantorzip')) {
+            $this->guarantorzip = $guarantorzip;
+        }
+        if($guardianfirstname = ArrayHelper::getValue($apiObject, 'guardianfirstname')) {
+            $this->guardianfirstname = $guardianfirstname;
+        }
+        if($guardianlastname = ArrayHelper::getValue($apiObject, 'guardianlastname')) {
+            $this->guardianlastname = $guardianlastname;
+        }
+        if($guardianmiddlename = ArrayHelper::getValue($apiObject, 'guardianmiddlename')) {
+            $this->guardianmiddlename = $guardianmiddlename;
+        }
+        if($guardiansuffix = ArrayHelper::getValue($apiObject, 'guardiansuffix')) {
+            $this->guardiansuffix = $guardiansuffix;
+        }
+        if($hasmobileyn = ArrayHelper::getValue($apiObject, 'hasmobileyn')) {
+            $this->hasmobileyn = $hasmobileyn;
+        }
+        if($hierarchicalcode = ArrayHelper::getValue($apiObject, 'hierarchicalcode')) {
+            $this->hierarchicalcode = $hierarchicalcode;
+        }
+        if($homeboundyn = ArrayHelper::getValue($apiObject, 'homeboundyn')) {
+            $this->homeboundyn = $homeboundyn;
+        }
+        if($homeless = ArrayHelper::getValue($apiObject, 'homeless')) {
+            $this->homeless = $homeless;
+        }
+        if($homelesstype = ArrayHelper::getValue($apiObject, 'homelesstype')) {
+            $this->homelesstype = $homelesstype;
+        }
+        if($homephone = ArrayHelper::getValue($apiObject, 'homephone')) {
+            $this->homephone = $homephone;
+        }
+        if($industrycode = ArrayHelper::getValue($apiObject, 'industrycode')) {
+            $this->industrycode = $industrycode;
+        }
+        if($insurances = ArrayHelper::getValue($apiObject, 'insurances')) {
+            $this->insurances = $insurances;
+        }
+        if($language6392code = ArrayHelper::getValue($apiObject, 'language6392code')) {
+            $this->language6392code = $language6392code;
+        }
+        if($lastappointment = ArrayHelper::getValue($apiObject, 'lastappointment')) {
+            $this->lastappointment = $lastappointment;
+        }
+        if($lastemail = ArrayHelper::getValue($apiObject, 'lastemail')) {
+            $this->lastemail = $lastemail;
+        }
+        if($lastname = ArrayHelper::getValue($apiObject, 'lastname')) {
+            $this->lastname = $lastname;
+        }
+        if($maritalstatus = ArrayHelper::getValue($apiObject, 'maritalstatus')) {
+            $this->maritalstatus = $maritalstatus;
+        }
+        if($maritalstatusname = ArrayHelper::getValue($apiObject, 'maritalstatusname')) {
+            $this->maritalstatusname = $maritalstatusname;
+        }
+        if($medicationhistoryconsentverified = ArrayHelper::getValue($apiObject, 'medicationhistoryconsentverified')) {
+            $this->medicationhistoryconsentverified = $medicationhistoryconsentverified;
+        }
+        if($middlename = ArrayHelper::getValue($apiObject, 'middlename')) {
+            $this->middlename = $middlename;
+        }
+        if($mobilecarrierid = ArrayHelper::getValue($apiObject, 'mobilecarrierid')) {
+            $this->mobilecarrierid = $mobilecarrierid;
+        }
+        if($mobilephone = ArrayHelper::getValue($apiObject, 'mobilephone')) {
+            $this->mobilephone = $mobilephone;
+        }
+        if($nextkinname = ArrayHelper::getValue($apiObject, 'nextkinname')) {
+            $this->nextkinname = $nextkinname;
+        }
+        if($nextkinphone = ArrayHelper::getValue($apiObject, 'nextkinphone')) {
+            $this->nextkinphone = $nextkinphone;
+        }
+        if($nextkinrelationship = ArrayHelper::getValue($apiObject, 'nextkinrelationship')) {
+            $this->nextkinrelationship = $nextkinrelationship;
+        }
+        if($notes = ArrayHelper::getValue($apiObject, 'notes')) {
+            $this->notes = $notes;
+        }
+        if($occupationcode = ArrayHelper::getValue($apiObject, 'occupationcode')) {
+            $this->occupationcode = $occupationcode;
+        }
+        if($onlinestatementonlyyn = ArrayHelper::getValue($apiObject, 'onlinestatementonlyyn')) {
+            $this->onlinestatementonlyyn = $onlinestatementonlyyn;
+        }
+        if($patientid = ArrayHelper::getValue($apiObject, 'patientid')) {
+            $this->patientid = $patientid;
+        }
+        if($patientid = ArrayHelper::getValue($apiObject, 'patientid')) {
+            $this->externalId = $patientid;
+        }
+        if($patientphotourl = ArrayHelper::getValue($apiObject, 'patientphotourl')) {
+            $this->patientphotourl = $patientphotourl;
+        }
+        if($patientphotoyn = ArrayHelper::getValue($apiObject, 'patientphotoyn')) {
+            $this->patientphotoyn = $patientphotoyn;
+        }
+        if($portalaccessgiven = ArrayHelper::getValue($apiObject, 'portalaccessgiven')) {
+            $this->portalaccessgiven = $portalaccessgiven;
+        }
+        if($portalsignatureonfile = ArrayHelper::getValue($apiObject, 'portalsignatureonfile')) {
+            $this->portalsignatureonfile = $portalsignatureonfile;
+        }
+        if($portalstatus = ArrayHelper::getValue($apiObject, 'portalstatus')) {
+            $this->portalstatus = $portalstatus;
+        }
+        if($portaltermsonfile = ArrayHelper::getValue($apiObject, 'portaltermsonfile')) {
+            $this->portaltermsonfile = $portaltermsonfile;
+        }
+        if($povertylevelcalculated = ArrayHelper::getValue($apiObject, 'povertylevelcalculated')) {
+            $this->povertylevelcalculated = $povertylevelcalculated;
+        }
+        if($povertylevelfamilysize = ArrayHelper::getValue($apiObject, 'povertylevelfamilysize')) {
+            $this->povertylevelfamilysize = $povertylevelfamilysize;
+        }
+        if($povertylevelfamilysizedeclined = ArrayHelper::getValue($apiObject, 'povertylevelfamilysizedeclined')) {
+            $this->povertylevelfamilysizedeclined = $povertylevelfamilysizedeclined;
+        }
+        if($povertylevelincomedeclined = ArrayHelper::getValue($apiObject, 'povertylevelincomedeclined')) {
+            $this->povertylevelincomedeclined = $povertylevelincomedeclined;
+        }
+        if($povertylevelincomepayperiod = ArrayHelper::getValue($apiObject, 'povertylevelincomepayperiod')) {
+            $this->povertylevelincomepayperiod = $povertylevelincomepayperiod;
+        }
+        if($povertylevelincomeperpayperiod = ArrayHelper::getValue($apiObject, 'povertylevelincomeperpayperiod')) {
+            $this->povertylevelincomeperpayperiod = $povertylevelincomeperpayperiod;
+        }
+        if($povertylevelincomerangedeclined = ArrayHelper::getValue($apiObject, 'povertylevelincomerangedeclined')) {
+            $this->povertylevelincomerangedeclined = $povertylevelincomerangedeclined;
+        }
+        if($preferredname = ArrayHelper::getValue($apiObject, 'preferredname')) {
+            $this->preferredname = $preferredname;
+        }
+        if($primarydepartmentid = ArrayHelper::getValue($apiObject, 'primarydepartmentid')) {
+            $this->primarydepartmentid = $primarydepartmentid;
+        }
+        if($primaryproviderid = ArrayHelper::getValue($apiObject, 'primaryproviderid')) {
+            $this->primaryproviderid = $primaryproviderid;
+        }
+        if($privacyinformationverified = ArrayHelper::getValue($apiObject, 'privacyinformationverified')) {
+            $this->privacyinformationverified = $privacyinformationverified;
+        }
+        if($publichousing = ArrayHelper::getValue($apiObject, 'publichousing')) {
+            $this->publichousing = $publichousing;
+        }
+        if($race = ArrayHelper::getValue($apiObject, 'race')) {
+            $this->race = $race;
+        }
+        if($racename = ArrayHelper::getValue($apiObject, 'racename')) {
+            $this->racename = $racename;
+        }
+        if($referralsourceid = ArrayHelper::getValue($apiObject, 'referralsourceid')) {
+            $this->referralsourceid = $referralsourceid;
+        }
+        if($registrationdate = ArrayHelper::getValue($apiObject, 'registrationdate')) {
+            $this->registrationdate = $registrationdate;
+        }
+        if($schoolbasedhealthcenter = ArrayHelper::getValue($apiObject, 'schoolbasedhealthcenter')) {
+            $this->schoolbasedhealthcenter = $schoolbasedhealthcenter;
+        }
+        if($sex = ArrayHelper::getValue($apiObject, 'sex')) {
+            $this->sex = $sex;
+        }
+        if($ssn = ArrayHelper::getValue($apiObject, 'ssn')) {
+            $this->ssn = $ssn;
+        }
+        if($state = ArrayHelper::getValue($apiObject, 'state')) {
+            $this->state = $state;
+        }
+        if($status = ArrayHelper::getValue($apiObject, 'status')) {
+            $this->status = $status;
+        }
+        if($suffix = ArrayHelper::getValue($apiObject, 'suffix')) {
+            $this->suffix = $suffix;
+        }
+        if($veteran = ArrayHelper::getValue($apiObject, 'veteran')) {
+            $this->veteran = $veteran;
+        }
+        if($workphone = ArrayHelper::getValue($apiObject, 'workphone')) {
+            $this->workphone = $workphone;
+        }
+        if($zip = ArrayHelper::getValue($apiObject, 'zip')) {
+            $this->zip = $zip;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }
-
+    
     public static function createFromApiObject($apiObject) {
         $model = new self();
 

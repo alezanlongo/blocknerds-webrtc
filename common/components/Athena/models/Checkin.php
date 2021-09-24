@@ -31,9 +31,18 @@ class Checkin extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->message = ArrayHelper::getValue($apiObject, 'message');
-        $this->success = ArrayHelper::getValue($apiObject, 'success');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($message = ArrayHelper::getValue($apiObject, 'message')) {
+            $this->message = $message;
+        }
+        if($success = ArrayHelper::getValue($apiObject, 'success')) {
+            $this->success = $success;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

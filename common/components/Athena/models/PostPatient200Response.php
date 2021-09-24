@@ -31,9 +31,21 @@ class PostPatient200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->errormessage = ArrayHelper::getValue($apiObject, 'errormessage');
-        $this->patientid = ArrayHelper::getValue($apiObject, 'patientid');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($errormessage = ArrayHelper::getValue($apiObject, 'errormessage')) {
+            $this->errormessage = $errormessage;
+        }
+        if($patientid = ArrayHelper::getValue($apiObject, 'patientid')) {
+            $this->patientid = $patientid;
+        }
+        if($patientid = ArrayHelper::getValue($apiObject, 'patientid')) {
+            $this->externalId = $patientid;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }

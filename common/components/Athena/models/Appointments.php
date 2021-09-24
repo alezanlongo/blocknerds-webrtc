@@ -29,8 +29,15 @@ class Appointments extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentids = ArrayHelper::getValue($apiObject, 'appointmentids');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($appointmentids = ArrayHelper::getValue($apiObject, 'appointmentids')) {
+            $this->appointmentids = $appointmentids;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }
