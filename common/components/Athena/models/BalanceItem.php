@@ -28,7 +28,7 @@ class BalanceItem extends \yii\db\ActiveRecord
         return [
             [['balance', 'cleanbalance', 'collectionsbalance', 'departmentids', 'paymentplanbalance'], 'trim'],
             [['balance', 'cleanbalance', 'collectionsbalance', 'departmentids', 'paymentplanbalance'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['providergroupid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

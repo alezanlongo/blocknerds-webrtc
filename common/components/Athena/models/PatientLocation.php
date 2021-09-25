@@ -23,8 +23,7 @@ class PatientLocation extends \yii\db\ActiveRecord
         return [
             [['defaultoncheckin', 'name'], 'trim'],
             [['defaultoncheckin', 'name'], 'string'],
-            [['externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['patientlocationid', 'externalId', 'id'], 'integer'],
         ];
     }
 

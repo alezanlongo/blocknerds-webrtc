@@ -2,6 +2,9 @@
 
 namespace common\components;
 
+use common\components\Athena\models\Encounter;
+use common\components\Athena\models\PatientLocation;
+use common\components\Athena\models\PatientStatus;
 use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\models\Department;
@@ -78,5 +81,71 @@ class AthenaComponent extends Component
         }
 
         return $patient->loadApiObject($patientModelApi);
+    }
+
+
+    public function getPatientStatuses($flatten = false)
+    {
+        $patientStatusesModelsApi = $this->client->getPracticeidChartConfigurationPatientstatuses($this->practiceid);
+
+        $patientStatusesModels = [];
+
+        foreach ($patientStatusesModelsApi as $patientStatusModelApi) {
+            $patientStatusesModels[] = PatientStatus::createFromApiObject($patientStatusModelApi);
+        }
+
+        if ($flatten) {
+            return array_column($patientStatusesModels, 'patientstatusname', 'patientstatusid');
+        }
+
+        return $patientStatusesModels;
+    }
+
+
+    public function getPatientLocations($flatten = false, $departmentId)
+    {
+        $patientLocationsModelsApi = $this->client->getPracticeidChartConfigurationPatientlocations($this->practiceid, [
+            'departmentId'  => $departmentId,
+        ]);
+
+        $patientLocationsModels = [];
+
+        foreach ($patientLocationsModelsApi as $patientLocationModelApi) {
+            $patientLocationsModels[] = PatientLocation::createFromApiObject($patientLocationModelApi);
+        }
+
+        if ($flatten) {
+            return array_column($patientLocationsModels, 'name', 'patientlocationid');
+        }
+
+        return $patientLocationsModels;
+    }
+
+
+    /**
+     * @return Encounter
+     */
+    public function updateEncounter(Encounter $encounter)
+    {
+        $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid);
+
+        $encounterDB = Encounter::find()
+            ->where(['externalId' => $encounter->externalId])
+            ->one();
+
+        if (!$encounterDB) {
+            return Encounter::createFromApiObject($encounterModelApi);
+        }
+
+        $putOrderModelApi = $this->client->putPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid, $encounter->toArray());
+        if(!isset($putOrderModelApi['errormessage'])){
+            return $encounterDB;
+        }
+
+        $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid);
+        $encounterToUpdate = $encounterDB->loadApiObject($encounterModelApi);
+        $encounterToUpdate->id = $encounter->id;
+
+        return $encounterToUpdate;
     }
 }

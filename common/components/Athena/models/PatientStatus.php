@@ -22,8 +22,7 @@ class PatientStatus extends \yii\db\ActiveRecord
         return [
             [['patientstatusname'], 'trim'],
             [['patientstatusname'], 'string'],
-            [['externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['patientstatusid', 'externalId', 'id'], 'integer'],
         ];
     }
 

@@ -675,6 +675,40 @@ paths:
       tags:
         - Encounter
   /v1/{practiceid}/chart/encounter/{encounterid}:
+    get:
+      summary: Update patient location/status encounter information
+      description: >-
+        Modifies the patient location and patient status for a specific
+        encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Encounter'
+          description: Success
+      operationId: getPracticeidChartEncounterEncounterid
+      tags:
+        - Encounter
     put:
       summary: Update patient location/status encounter information
       description: >-
@@ -704,9 +738,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PutEncounter200Response'
+                $ref: '#/components/schemas/PutEncounter200Response'
           description: Success
       operationId: putPracticeidChartEncounterEncounterid
       requestBody:
@@ -752,7 +784,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientLocation'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientLocation'
           description: Success
       operationId: getPracticeidChartConfigurationPatientlocations
       tags:
@@ -787,7 +821,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientStatus'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientStatus'
           description: Success
       operationId: getPracticeidChartConfigurationPatientstatuses
       tags:
@@ -2566,7 +2602,6 @@ components:
             INCLUDEALLSTATUSES flag to see others.
           type: string
     PutEncounter200Response:
-      x-external-id: encounterid
       type: object
       properties:
         errormessage:

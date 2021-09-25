@@ -49,8 +49,7 @@ class Provider extends \yii\db\ActiveRecord
         return [
             [['acceptingnewpatientsyn', 'ansinamecode', 'ansispecialtycode', 'billable', 'createencounteroncheckinyn', 'createencounterprovideridlist', 'displayname', 'entitytype', 'federalidnumber', 'firstname', 'hideinportalyn', 'homedepartment', 'lastname', 'otherprovideridlist', 'personalpronouns', 'providergrouplist', 'providertype', 'providertypeid', 'providerusername', 'scheduleresourcetype', 'schedulingname', 'sex', 'specialty', 'supervisingproviderusername'], 'trim'],
             [['acceptingnewpatientsyn', 'ansinamecode', 'ansispecialtycode', 'billable', 'createencounteroncheckinyn', 'createencounterprovideridlist', 'displayname', 'entitytype', 'federalidnumber', 'firstname', 'hideinportalyn', 'homedepartment', 'lastname', 'otherprovideridlist', 'personalpronouns', 'providergrouplist', 'providertype', 'providertypeid', 'providerusername', 'scheduleresourcetype', 'schedulingname', 'sex', 'specialty', 'supervisingproviderusername'], 'string'],
-            [['externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['npi', 'providerid', 'specialtyid', 'supervisingproviderid', 'usualdepartmentid', 'externalId', 'id'], 'integer'],
         ];
     }
 

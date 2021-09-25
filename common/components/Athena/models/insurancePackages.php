@@ -24,7 +24,7 @@ class insurancePackages extends \yii\db\ActiveRecord
         return [
             [['insuranceplanname'], 'trim'],
             [['insuranceplanname'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['insurancepackageid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

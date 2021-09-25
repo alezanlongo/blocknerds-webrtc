@@ -31,7 +31,7 @@ class Appointment extends \yii\db\ActiveRecord
             [['bookingnote'], 'trim'],
             [['patientid'], 'required'],
             [['bookingnote'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['appointmenttypeid', 'departmentid', 'patientid', 'reasonid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

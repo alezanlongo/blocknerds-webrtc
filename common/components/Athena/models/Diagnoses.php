@@ -25,7 +25,7 @@ class Diagnoses extends \yii\db\ActiveRecord
         return [
             [['description', 'note'], 'trim'],
             [['description', 'note'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['diagnosisid', 'snomedcode', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

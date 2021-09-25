@@ -41,7 +41,7 @@ class Encounter extends \yii\db\ActiveRecord
         return [
             [['closeddate', 'closeduser', 'encounterdate', 'encountertype', 'encountervisitname', 'lastreopened', 'lastupdated', 'patientlocation', 'patientstatus', 'providerfirstname', 'providerlastname', 'providerphone', 'stage', 'status'], 'trim'],
             [['closeddate', 'closeduser', 'encounterdate', 'encountertype', 'encountervisitname', 'lastreopened', 'lastupdated', 'patientlocation', 'patientstatus', 'providerfirstname', 'providerlastname', 'providerphone', 'stage', 'status'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['appointmentid', 'departmentid', 'encounterid', 'patientlocationid', 'patientstatusid', 'providerid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
