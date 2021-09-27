@@ -55,7 +55,7 @@ class AthenaComponent extends Component
                 $this->practiceid,
                 $patient->toArray()
             );
-
+//var_dump(__METHOD__,$patientModelApi[0]->patientid);die;
         return $this->retrievePatient($patientModelApi[0]->patientid);
     }
 
@@ -67,8 +67,8 @@ class AthenaComponent extends Component
         $patientModelApi = $this->client->getPracticeidPatientsPatientid(
             $this->practiceid,
             $patientid
-        );
-
+        )[0];
+//var_dump(__METHOD__,$patientModelApi);die;
         $patient = Patient::find()
             ->where(['externalId' => $patientid])
             ->one();

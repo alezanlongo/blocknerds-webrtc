@@ -13,6 +13,7 @@ use yii\helpers\ArrayHelper;
  */
 class PatientLocation extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%patient_locations}}';
@@ -23,8 +24,7 @@ class PatientLocation extends \yii\db\ActiveRecord
         return [
             [['defaultoncheckin', 'name'], 'trim'],
             [['defaultoncheckin', 'name'], 'string'],
-            [['externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['patientlocationid', 'externalId', 'id'], 'integer'],
         ];
     }
 
@@ -56,5 +56,11 @@ class PatientLocation extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

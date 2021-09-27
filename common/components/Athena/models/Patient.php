@@ -142,6 +142,13 @@ use yii\helpers\ArrayHelper;
  */
 class Patient extends \yii\db\ActiveRecord
 {
+ 
+    protected $_balancesAr;
+ 
+    protected $_customfieldsAr;
+ 
+    protected $_insurancesAr;
+
     public static function tableName()
     {
         return '{{%patients}}';
@@ -191,7 +198,7 @@ class Patient extends \yii\db\ActiveRecord
             $this->agriculturalworkertype = $agriculturalworkertype;
         }
         if($balances = ArrayHelper::getValue($apiObject, 'balances')) {
-            $this->balances = $balances;
+            $this->_balancesAr = $balances;
         }
         if($caresummarydeliverypreference = ArrayHelper::getValue($apiObject, 'caresummarydeliverypreference')) {
             $this->caresummarydeliverypreference = $caresummarydeliverypreference;
@@ -269,7 +276,7 @@ class Patient extends \yii\db\ActiveRecord
             $this->countrycode3166 = $countrycode3166;
         }
         if($customfields = ArrayHelper::getValue($apiObject, 'customfields')) {
-            $this->customfields = $customfields;
+            $this->_customfieldsAr = $customfields;
         }
         if($deceaseddate = ArrayHelper::getValue($apiObject, 'deceaseddate')) {
             $this->deceaseddate = $deceaseddate;
@@ -428,7 +435,7 @@ class Patient extends \yii\db\ActiveRecord
             $this->industrycode = $industrycode;
         }
         if($insurances = ArrayHelper::getValue($apiObject, 'insurances')) {
-            $this->insurances = $insurances;
+            $this->_insurancesAr = $insurances;
         }
         if($language6392code = ArrayHelper::getValue($apiObject, 'language6392code')) {
             $this->language6392code = $language6392code;
@@ -591,5 +598,35 @@ class Patient extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+        if( !empty($this->_balancesAr) and is_array($this->_balancesAr) ) {
+            foreach($this->_balancesAr as $balancesApi) {
+                $balanceitem = new BalanceItem();
+                $balanceitem->loadApiObject($balancesApi);
+                $balanceitem->link('patient', $this);
+                $balanceitem->save();
+            }
+        }
+        if( !empty($this->_customfieldsAr) and is_array($this->_customfieldsAr) ) {
+            foreach($this->_customfieldsAr as $customfieldsApi) {
+                $customfield = new customfield();
+                $customfield->loadApiObject($customfieldsApi);
+                $customfield->link('patient', $this);
+                $customfield->save();
+            }
+        }
+        if( !empty($this->_insurancesAr) and is_array($this->_insurancesAr) ) {
+            foreach($this->_insurancesAr as $insurancesApi) {
+                $insurancepatient = new InsurancePatient();
+                $insurancepatient->loadApiObject($insurancesApi);
+                $insurancepatient->link('patient', $this);
+                $insurancepatient->save();
+            }
+        }
+
+        return $saved;
     }
 }

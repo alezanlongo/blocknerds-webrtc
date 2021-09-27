@@ -44,6 +44,7 @@ use yii\helpers\ArrayHelper;
  */
 class Department extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%departments}}';
@@ -182,5 +183,11 @@ class Department extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

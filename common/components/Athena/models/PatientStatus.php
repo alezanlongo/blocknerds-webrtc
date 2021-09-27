@@ -12,6 +12,7 @@ use yii\helpers\ArrayHelper;
  */
 class PatientStatus extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%patient_statuses}}';
@@ -22,8 +23,7 @@ class PatientStatus extends \yii\db\ActiveRecord
         return [
             [['patientstatusname'], 'trim'],
             [['patientstatusname'], 'string'],
-            [['externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['patientstatusid', 'externalId', 'id'], 'integer'],
         ];
     }
 
@@ -52,5 +52,11 @@ class PatientStatus extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

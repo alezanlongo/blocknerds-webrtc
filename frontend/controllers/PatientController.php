@@ -23,6 +23,11 @@ class PatientController extends \yii\web\Controller
      */
     public function actionIndex()
     {
+$model = $this->component->retrievePatient(34024);
+$model->save();
+//var_dump(__METHOD__.__LINE__,$model);die;
+
+        
         $dataProvider = new ActiveDataProvider([
             'query' => Patient::find(),
         ]);
@@ -41,7 +46,7 @@ class PatientController extends \yii\web\Controller
     public function actionCreate()
     {
         $model = new Patient;
-
+        
         if ($model->load(Yii::$app->request->post())) {
             $model = $this->component->createPatient(
                 $model
