@@ -56,28 +56,78 @@ class Encounter extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid');
-        $this->closeddate = ArrayHelper::getValue($apiObject, 'closeddate');
-        $this->closeduser = ArrayHelper::getValue($apiObject, 'closeduser');
-        $this->departmentid = ArrayHelper::getValue($apiObject, 'departmentid');
-        $this->diagnoses = ArrayHelper::getValue($apiObject, 'diagnoses');
-        $this->encounterdate = ArrayHelper::getValue($apiObject, 'encounterdate');
-        $this->encounterid = ArrayHelper::getValue($apiObject, 'encounterid');
-        $this->encountertype = ArrayHelper::getValue($apiObject, 'encountertype');
-        $this->encountervisitname = ArrayHelper::getValue($apiObject, 'encountervisitname');
-        $this->lastreopened = ArrayHelper::getValue($apiObject, 'lastreopened');
-        $this->lastupdated = ArrayHelper::getValue($apiObject, 'lastupdated');
-        $this->patientlocation = ArrayHelper::getValue($apiObject, 'patientlocation');
-        $this->patientlocationid = ArrayHelper::getValue($apiObject, 'patientlocationid');
-        $this->patientstatus = ArrayHelper::getValue($apiObject, 'patientstatus');
-        $this->patientstatusid = ArrayHelper::getValue($apiObject, 'patientstatusid');
-        $this->providerfirstname = ArrayHelper::getValue($apiObject, 'providerfirstname');
-        $this->providerid = ArrayHelper::getValue($apiObject, 'providerid');
-        $this->providerlastname = ArrayHelper::getValue($apiObject, 'providerlastname');
-        $this->providerphone = ArrayHelper::getValue($apiObject, 'providerphone');
-        $this->stage = ArrayHelper::getValue($apiObject, 'stage');
-        $this->status = ArrayHelper::getValue($apiObject, 'status');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
+        if($appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid')) {
+            $this->appointmentid = $appointmentid;
+        }
+        if($closeddate = ArrayHelper::getValue($apiObject, 'closeddate')) {
+            $this->closeddate = $closeddate;
+        }
+        if($closeduser = ArrayHelper::getValue($apiObject, 'closeduser')) {
+            $this->closeduser = $closeduser;
+        }
+        if($departmentid = ArrayHelper::getValue($apiObject, 'departmentid')) {
+            $this->departmentid = $departmentid;
+        }
+        if($diagnoses = ArrayHelper::getValue($apiObject, 'diagnoses')) {
+            $this->diagnoses = $diagnoses;
+        }
+        if($encounterdate = ArrayHelper::getValue($apiObject, 'encounterdate')) {
+            $this->encounterdate = $encounterdate;
+        }
+        if($encounterid = ArrayHelper::getValue($apiObject, 'encounterid')) {
+            $this->encounterid = $encounterid;
+        }
+        if($encounterid = ArrayHelper::getValue($apiObject, 'encounterid')) {
+            $this->externalId = $encounterid;
+        }
+        if($encountertype = ArrayHelper::getValue($apiObject, 'encountertype')) {
+            $this->encountertype = $encountertype;
+        }
+        if($encountervisitname = ArrayHelper::getValue($apiObject, 'encountervisitname')) {
+            $this->encountervisitname = $encountervisitname;
+        }
+        if($lastreopened = ArrayHelper::getValue($apiObject, 'lastreopened')) {
+            $this->lastreopened = $lastreopened;
+        }
+        if($lastupdated = ArrayHelper::getValue($apiObject, 'lastupdated')) {
+            $this->lastupdated = $lastupdated;
+        }
+        if($patientlocation = ArrayHelper::getValue($apiObject, 'patientlocation')) {
+            $this->patientlocation = $patientlocation;
+        }
+        if($patientlocationid = ArrayHelper::getValue($apiObject, 'patientlocationid')) {
+            $this->patientlocationid = $patientlocationid;
+        }
+        if($patientstatus = ArrayHelper::getValue($apiObject, 'patientstatus')) {
+            $this->patientstatus = $patientstatus;
+        }
+        if($patientstatusid = ArrayHelper::getValue($apiObject, 'patientstatusid')) {
+            $this->patientstatusid = $patientstatusid;
+        }
+        if($providerfirstname = ArrayHelper::getValue($apiObject, 'providerfirstname')) {
+            $this->providerfirstname = $providerfirstname;
+        }
+        if($providerid = ArrayHelper::getValue($apiObject, 'providerid')) {
+            $this->providerid = $providerid;
+        }
+        if($providerlastname = ArrayHelper::getValue($apiObject, 'providerlastname')) {
+            $this->providerlastname = $providerlastname;
+        }
+        if($providerphone = ArrayHelper::getValue($apiObject, 'providerphone')) {
+            $this->providerphone = $providerphone;
+        }
+        if($stage = ArrayHelper::getValue($apiObject, 'stage')) {
+            $this->stage = $stage;
+        }
+        if($status = ArrayHelper::getValue($apiObject, 'status')) {
+            $this->status = $status;
+        }
+        if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
+            $this->externalId = $externalId;
+        }
+        if($id = ArrayHelper::getValue($apiObject, 'id')) {
+            $this->id = $id;
+        }
 
         return $this;
     }
