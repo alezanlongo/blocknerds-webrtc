@@ -19,13 +19,13 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'create-appointment-form']); ?>
 
-                <?= $form->field($model, 'departmentid')->textInput(['value' => $patient->departmentid, 'disabled' => true]) ?>
+                <?= $form->field($model, 'departmentid')->textInput(['value' => $patient->departmentid, 'readonly' => true]) ?>
 
                 <?= $form->field($model, 'appointmenttime')->textInput() ?>
 
                 <?= $form->field($model, 'appointmentdate')->textInput() ?>
 
-                <?= $form->field($model, 'appointmenttypeid')->textInput() ?>
+                <?= $form->field($model, 'appointmenttypeid')->textInput(['value' => 62, 'readonly' => true]) ?>
 
                 <?= $form->field($model, 'providerid')->dropdownList($providers,
                     ['prompt'=>'Select Provider']

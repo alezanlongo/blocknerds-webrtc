@@ -101,4 +101,20 @@ class AthenaComponent extends Component
 
         return $providersModels;
     }
+
+    /**
+     * @return Patient
+     */
+
+    public function createAppointment($appointment)
+    {
+        $appointmentModelApi =
+            $this->client->postPracticeidAppointmentsOpen(
+                $this->practiceid,
+                $appointment->toArray()
+            );
+        
+        $appointmentids = array_flip($appointmentModelApi->appointmentids);
+        var_dump(array_shift($appointmentids));
+    }
 }

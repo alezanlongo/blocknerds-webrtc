@@ -4,7 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\Athena\models\Patient;
-use common\components\Athena\models\RequestCreateAppointment as Appointment;
+use common\components\Athena\models\RequestCreateAppointment;
 use yii\data\ActiveDataProvider;
 
 class AppointmentController extends \yii\web\Controller
@@ -41,12 +41,13 @@ class AppointmentController extends \yii\web\Controller
 
     public function actionCreate($patientid)
     {
-        $model = new Appointment;
+        $model = new RequestCreateAppointment;
 
-        // if ($model->load(Yii::$app->request->post())) {
-        //     $model = $this->component->createPatient(
-        //         $model
-        //     );
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->createAppointment(
+                $model
+            );
+        }
 
         //     if($model->save()){
         //         return $this->redirect(['view', 'id' => $model->id]);

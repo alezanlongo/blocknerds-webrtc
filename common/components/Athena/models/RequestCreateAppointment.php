@@ -25,7 +25,7 @@ class RequestCreateAppointment extends \yii\db\ActiveRecord
     {
         return [
             [['appointmentdate'], 'trim'],
-            [['appointmentdate', 'appointmenttime', 'departmentid', 'providerid'], 'required'],
+            [['appointmentdate', 'appointmenttime', 'departmentid', 'providerid', 'appointmenttypeid'], 'required'],
             [['appointmentdate'], 'string'],
             [['externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
