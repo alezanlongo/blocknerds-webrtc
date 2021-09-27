@@ -125,16 +125,16 @@ const initJanus = () => {
             mediaState: (medium, on) => {
               Janus.log(
                 "Janus " +
-                  (on ? "started" : "stopped") +
-                  " receiving our " +
-                  medium
+                (on ? "started" : "stopped") +
+                " receiving our " +
+                medium
               );
             },
             webrtcState: (on) => {
               Janus.log(
                 "Janus says our WebRTC PeerConnection is " +
-                  (on ? "up" : "down") +
-                  " now"
+                (on ? "up" : "down") +
+                " now"
               );
               $(`#video-source0`).parent().parent().unblock();
               if (!on) return;
@@ -162,9 +162,9 @@ const initJanus = () => {
               $("#myvideo").get(0).muted = "muted";
               if (
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  ICE_CONNECTION_STATE_COMPLETED &&
+                ICE_CONNECTION_STATE_COMPLETED &&
                 pluginHandler.webrtcStuff.pc.iceConnectionState !==
-                  ICE_CONNECTION_STATE_CONNECTED
+                ICE_CONNECTION_STATE_CONNECTED
               ) {
                 $(`#video-source0`)
                   .parent()
@@ -187,9 +187,9 @@ const initJanus = () => {
                 if ($("#video-source .no-video-container").length === 0) {
                   $(`#video-source0`).append(
                     '<div class="no-video-container">' +
-                      '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-                      '<span class="no-video-text">No webcam available</span>' +
-                      "</div>"
+                    '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
+                    '<span class="no-video-text">No webcam available</span>' +
+                    "</div>"
                   );
                 }
               } else {
@@ -245,6 +245,7 @@ const handleEvent = (witchEvent, objMessage) => {
     default:
       break;
   }
+  fullScreenBehavior()
   dish()
 };
 const handleJsep = (objMessage, jsep) => {
@@ -332,7 +333,7 @@ const handlingEvent = (objMessage) => {
         $("#remote" + remoteFeed.rfindex)
           .empty()
           .hide();
-          $(".box" + remoteFeed.rfindex).hide();
+        $(".box" + remoteFeed.rfindex).hide();
         $("#videoremote" + remoteFeed.rfindex).empty();
         // $(`.box${remoteFeed.rfindex}`).hide();
         // $(`.box${remoteFeed.rfindex} h1`).text("");
@@ -349,7 +350,7 @@ const handlingEvent = (objMessage) => {
       pluginHandler.hangup();
       return;
     }
-    
+
     let remoteFeed = null;
     for (let i = 1; i < limitMembers; i++) {
       if (feeds[i] && feeds[i].rfid === unpublished) {
@@ -365,7 +366,7 @@ const handlingEvent = (objMessage) => {
       $("#videoremote" + remoteFeed.rfindex).empty();
       $(".box" + remoteFeed.rfindex).hide();
       feeds[remoteFeed.rfindex] = null;
-      
+
       remoteFeed.detach();
     }
   } else if (objMessage["error"]) {
@@ -373,13 +374,13 @@ const handlingEvent = (objMessage) => {
       // This is a "no such room" error: give a more meaningful description
       bootbox.alert(
         "<p>Apparently room <code>" +
-          myRoom +
-          "</code> (the one this demo uses as a test room) " +
-          "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
-          "configuration file? If not, make sure you copy the details of room <code>" +
-          myRoom +
-          "</code> " +
-          "from that sample in your current configuration file, then restart Janus and try again."
+        myRoom +
+        "</code> (the one this demo uses as a test room) " +
+        "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
+        "configuration file? If not, make sure you copy the details of room <code>" +
+        myRoom +
+        "</code> " +
+        "from that sample in your current configuration file, then restart Janus and try again."
       );
     } else {
       bootbox.alert(objMessage["error"]);
@@ -465,10 +466,10 @@ function newRemoteFeed(id, display, audio, video) {
       remoteFeed.simulcastStarted = false;
       Janus.log(
         "Plugin attached! (" +
-          remoteFeed.getPlugin() +
-          ", id=" +
-          remoteFeed.getId() +
-          ")"
+        remoteFeed.getPlugin() +
+        ", id=" +
+        remoteFeed.getId() +
+        ")"
       );
       Janus.log("  -- This is a subscriber");
       let subscribe = {
@@ -490,8 +491,8 @@ function newRemoteFeed(id, display, audio, video) {
         if (video) video = video.toUpperCase();
         toastr.warning(
           "Publisher is using " +
-            video +
-            ", but Safari doesn't support it: disabling video"
+          video +
+          ", but Safari doesn't support it: disabling video"
         );
         subscribe["offer_video"] = false;
       }
@@ -534,11 +535,11 @@ function newRemoteFeed(id, display, audio, video) {
           }
           Janus.log(
             "Successfully attached to feed " +
-              remoteFeed.rfid +
-              " (" +
-              remoteFeed.rfdisplay +
-              ") in room " +
-              msg["room"]
+            remoteFeed.rfid +
+            " (" +
+            remoteFeed.rfdisplay +
+            ") in room " +
+            msg["room"]
           );
         } else if (event === EVENT) {
           // Check if we got a simulcast-related event from this publisher
@@ -563,7 +564,7 @@ function newRemoteFeed(id, display, audio, video) {
           // What has just happened?
         }
       }
-     
+
       if (jsep) {
         // Answer and attach
         remoteFeed.createAnswer({
@@ -583,18 +584,18 @@ function newRemoteFeed(id, display, audio, video) {
     iceState: function (state) {
       Janus.log(
         "ICE state of this WebRTC PeerConnection (feed #" +
-          remoteFeed.rfindex +
-          ") changed to " +
-          state
+        remoteFeed.rfindex +
+        ") changed to " +
+        state
       );
     },
     webrtcState: function (on) {
       Janus.log(
         "Janus says this WebRTC PeerConnection (feed #" +
-          remoteFeed.rfindex +
-          ") is " +
-          (on ? "up" : "down") +
-          " now"
+        remoteFeed.rfindex +
+        ") is " +
+        (on ? "up" : "down") +
+        " now"
       );
     },
     onlocalstream: function (stream) {
@@ -605,17 +606,17 @@ function newRemoteFeed(id, display, audio, video) {
       let addButtons = false;
       if ($("#remotevideo" + remoteFeed.rfindex).length === 0) {
         addButtons = true;
-        
+
         // No remote video yet
         $("#video-source" + remoteFeed.rfindex).append(
           '<video class="rounded centered" id="waitingvideo' +
-            remoteFeed.rfindex +
-            '" width="100%" height="100%" />'
+          remoteFeed.rfindex +
+          '" width="100%" height="100%" />'
         );
         $("#video-source" + remoteFeed.rfindex).append(
           '<video class="rounded centered relative hide" id="remotevideo' +
-            remoteFeed.rfindex +
-            '" width="100%" height="100%" autoplay playsinline/>'
+          remoteFeed.rfindex +
+          '" width="100%" height="100%" autoplay playsinline/>'
         );
         $(`#video-source${remoteFeed.rfindex} .username-on-call`).text(
           feeds[remoteFeed.rfindex].rfuser.usernameFeed
@@ -673,9 +674,9 @@ function newRemoteFeed(id, display, audio, video) {
         ) {
           $("#video-source" + remoteFeed.rfindex).append(
             '<div class="no-video-container">' +
-              '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
-              '<span class="no-video-text">No remote video available</span>' +
-              "</div>"
+            '<i class="fa fa-video-camera fa-5 no-video-icon"></i>' +
+            '<span class="no-video-text">No remote video available</span>' +
+            "</div>"
           );
         }
       } else {
@@ -814,6 +815,61 @@ function joinHandler(action, userProfileId) {
       console.log(err);
     },
   });
+}
+
+function fullScreenBehavior(index = null) {
+  let actionAdd = true;
+  var currIdx = null
+  curr = document.getElementsByClassName("fullscreen-mode");
+  if (typeof curr[0] == "object" && index === null) {
+    currIdx = curr[0].id.match(/\d+/)[0]
+  }
+  if (index !== null) {
+    currIdx = index
+    let newElm = document.getElementById("fullscreen_" + index)
+    if (typeof curr == "object" && curr.length > 0 && curr[0].id != newElm.id) {
+      curr[0].classList.remove("fullscreen-mode")
+      currIcon = curr.querySelector("i")
+      if (typeof currIcon == "object") {
+        currIcon.classList.remove("fa-compress")
+        currIcon.classList.add("fa-expand")
+      }
+    }
+    if (typeof curr == "object" && curr.length > 0 && curr[0].id == newElm.id) {
+      currIcon = curr[0].querySelector("i")
+      curr[0].classList.remove("fullscreen-mode")
+      if (typeof currIcon == "object") {
+        currIcon.classList.remove("fa-compress")
+        currIcon.classList.add("fa-expand")
+      }
+      actionAdd = false
+    }
+    if (typeof curr != "object" && index === null) {
+      actionAdd = false
+    }
+    if (typeof newElm == "object" && actionAdd === true) {
+      newElm.classList.add("fullscreen-mode")
+      newElmIcon = newElm.querySelector("i");
+      if (typeof newElmIcon == "object") {
+        newElmIcon.classList.add("fa-compress")
+        newElmIcon.classList.remove("fa-expand")
+      }
+    }
+  }
+
+  boxes = document.querySelectorAll('div[id^="box-"]');
+  if (boxes.length > 0) {
+    boxes.forEach((elm) => {
+      if (actionAdd === true && parseInt(elm.getAttribute("data-id")) !== 0 && currIdx !== null) {
+        if (!elm.classList.contains("video-fullcreen-none") && parseInt(elm.getAttribute("data-id")) !== parseInt(currIdx)) {
+          elm.classList.add("video-fullcreen-none")
+        }
+      } else {
+        elm.classList.remove("video-fullcreen-none")
+      }
+    })
+  }
+  dish()
 }
 
 const pinMember = (index) => {
