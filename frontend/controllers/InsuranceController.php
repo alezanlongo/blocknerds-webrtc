@@ -74,7 +74,6 @@ class InsuranceController extends Controller
      */
     public function actionCreate($patientId)
     {
-
         if(!$patientId){
             throw new \yii\web\BadRequestHttpException();
         }
@@ -89,7 +88,7 @@ class InsuranceController extends Controller
                 $patientId
             );
             if($model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['appointment/create', 'patientId' => $patientId]);
             }
         }
 
