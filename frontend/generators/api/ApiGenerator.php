@@ -259,6 +259,19 @@ class ApiGenerator extends ParentApiGenerator
                             'method' => 'hasOne',
                             'link' => ['id' => $dbName], // TODO pk may not be 'id'
                         ];
+
+                        //add relation_id
+                        $attributes[$name.'_id'] = [
+                            'name' => $name.'_id',
+                            'type' => 'integer',
+                            'dbType' => '$this->integer()',
+                            'dbName' => $dbName,
+                            'required' => false,
+                            'readOnly' => false,
+                            'description' => $resolvedProperty->description,
+                            //'faker' => $this->guessModelFaker($name, $type, $resolvedProperty),
+                        ];
+
                     } else {
                         $type = $this->getSchemaType($resolvedProperty);
                     }

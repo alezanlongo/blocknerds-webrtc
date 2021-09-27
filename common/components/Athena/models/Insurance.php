@@ -78,6 +78,9 @@ use yii\helpers\ArrayHelper;
  */
 class Insurance extends \yii\db\ActiveRecord
 {
+ 
+    protected $_copaysAr;
+
     public static function tableName()
     {
         return '{{%insurances}}';
@@ -140,7 +143,7 @@ class Insurance extends \yii\db\ActiveRecord
             $this->coinsurancepercent = $coinsurancepercent;
         }
         if($copays = ArrayHelper::getValue($apiObject, 'copays')) {
-            $this->copays = $copays;
+            $this->_copaysAr = $copays;
         }
         if($descriptionofinjury = ArrayHelper::getValue($apiObject, 'descriptionofinjury')) {
             $this->descriptionofinjury = $descriptionofinjury;
@@ -324,5 +327,19 @@ class Insurance extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+        if( !empty($this->_copaysAr) and is_array($this->_copaysAr) ) {
+            foreach($this->_copaysAr as $copaysApi) {
+                $copays = new Copays();
+                $copays->loadApiObject($copaysApi);
+                $copays->link('insurance', $this);
+                $copays->save();
+            }
+        }
+
+        return $saved;
     }
 }

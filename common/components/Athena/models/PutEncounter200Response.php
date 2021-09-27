@@ -12,6 +12,7 @@ use yii\helpers\ArrayHelper;
  */
 class PutEncounter200Response extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%put_encounter200_responses}}';
@@ -51,5 +52,11 @@ class PutEncounter200Response extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

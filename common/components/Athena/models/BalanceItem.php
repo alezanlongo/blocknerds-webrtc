@@ -12,12 +12,16 @@ use yii\helpers\ArrayHelper;
  * @property string $departmentids Comma separated list of department IDs that belong to this group
  * @property string $paymentplanbalance The outstanding amount associated with a payment plan.
  * @property int $providergroupid Athena ID for this financial group.
+ * @property integer $patient_id
  * @property Patient $patient
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class BalanceItem extends \yii\db\ActiveRecord
 {
+ 
+    protected $_contractsAr;
+
     public static function tableName()
     {
         return '{{%balance_items}}';
@@ -28,7 +32,7 @@ class BalanceItem extends \yii\db\ActiveRecord
         return [
             [['balance', 'cleanbalance', 'collectionsbalance', 'departmentids', 'paymentplanbalance'], 'trim'],
             [['balance', 'cleanbalance', 'collectionsbalance', 'departmentids', 'paymentplanbalance'], 'string'],
-            [['providergroupid', 'externalId', 'id'], 'integer'],
+            [['providergroupid', 'patient_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -58,7 +62,7 @@ class BalanceItem extends \yii\db\ActiveRecord
             $this->collectionsbalance = $collectionsbalance;
         }
         if($contracts = ArrayHelper::getValue($apiObject, 'contracts')) {
-            $this->contracts = $contracts;
+            $this->_contractsAr = $contracts;
         }
         if($departmentids = ArrayHelper::getValue($apiObject, 'departmentids')) {
             $this->departmentids = $departmentids;
@@ -68,6 +72,9 @@ class BalanceItem extends \yii\db\ActiveRecord
         }
         if($providergroupid = ArrayHelper::getValue($apiObject, 'providergroupid')) {
             $this->providergroupid = $providergroupid;
+        }
+        if($patient_id = ArrayHelper::getValue($apiObject, 'patient_id')) {
+            $this->patient_id = $patient_id;
         }
         if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
             $this->patient = $patient;
@@ -86,5 +93,19 @@ class BalanceItem extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+        if( !empty($this->_contractsAr) and is_array($this->_contractsAr) ) {
+            foreach($this->_contractsAr as $contractsApi) {
+                $contractitem = new contractItem();
+                $contractitem->loadApiObject($contractsApi);
+                $contractitem->link('balanceItem', $this);
+                $contractitem->save();
+            }
+        }
+
+        return $saved;
     }
 }

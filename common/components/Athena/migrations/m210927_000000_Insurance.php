@@ -3,7 +3,7 @@
 /**
  * Table for Insurance
  */
-class m210924_000000_Insurance extends \yii\db\Migration
+class m210927_000000_Insurance extends \yii\db\Migration
 {
     public function up()
     {
@@ -79,7 +79,6 @@ class m210924_000000_Insurance extends \yii\db\Migration
             'id' => $this->primaryKey(),
         ]);
 
-        // TODO generate foreign keys
     }
 
     public function down()

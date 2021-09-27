@@ -15,6 +15,7 @@ use yii\helpers\ArrayHelper;
  */
 class Diagnoses extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%diagnoses}}';
@@ -67,5 +68,11 @@ class Diagnoses extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

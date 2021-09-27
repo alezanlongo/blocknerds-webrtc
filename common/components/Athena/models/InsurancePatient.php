@@ -73,11 +73,14 @@ use yii\helpers\ArrayHelper;
  * @property int $sequencenumber 1 = primary, 2 = secondary, 3 = tertiary, etc.  Must have a primary before a secondary and a secondary before a tertiary, etc.
  * @property int $slidingfeeplanid If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
  * @property string $stateofreportedinjury CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
+ * @property integer $patient_id
+ * @property Patient $patient
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class InsurancePatient extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%insurance_patients}}';
@@ -88,9 +91,14 @@ class InsurancePatient extends \yii\db\ActiveRecord
         return [
             [['adjusterfax', 'adjusterfirstname', 'adjusterlastname', 'adjusterphone', 'anotherpartyresponsibleyn', 'autoaccidentstate', 'cancelled', 'caseinjurydate', 'casepolicytypename', 'ccmstatusname', 'copays', 'descriptionofinjury', 'eligibilitylastchecked', 'eligibilitymessage', 'eligibilityreason', 'eligibilitystatus', 'employerid', 'expirationdate', 'icd10codes', 'icd9codes', 'injuredbodypart', 'insuranceclaimnumber', 'insuranceid', 'insuranceidnumber', 'insurancepackageaddress1', 'insurancepackageaddress2', 'insurancepackagecity', 'insurancepackagestate', 'insurancepackagezip', 'insurancephone', 'insuranceplandisplayname', 'insuranceplanname', 'insurancepolicyholder', 'insurancepolicyholderaddress1', 'insurancepolicyholderaddress2', 'insurancepolicyholdercity', 'insurancepolicyholdercountrycode', 'insurancepolicyholdercountryiso3166', 'insurancepolicyholderdob', 'insurancepolicyholderfirstname', 'insurancepolicyholderlastname', 'insurancepolicyholdermiddlename', 'insurancepolicyholdersex', 'insurancepolicyholderssn', 'insurancepolicyholderstate', 'insurancepolicyholdersuffix', 'insurancepolicyholderzip', 'insurancetype', 'insuredpcp', 'ircname', 'issuedate', 'policynumber', 'relatedtoautoaccidentyn', 'relatedtoemploymentyn', 'relatedtootheraccidentyn', 'relationshiptoinsured', 'repricername', 'repricerphone', 'stateofreportedinjury'], 'trim'],
             [['adjusterfax', 'adjusterfirstname', 'adjusterlastname', 'adjusterphone', 'anotherpartyresponsibleyn', 'autoaccidentstate', 'cancelled', 'caseinjurydate', 'casepolicytypename', 'ccmstatusname', 'copays', 'descriptionofinjury', 'eligibilitylastchecked', 'eligibilitymessage', 'eligibilityreason', 'eligibilitystatus', 'employerid', 'expirationdate', 'icd10codes', 'icd9codes', 'injuredbodypart', 'insuranceclaimnumber', 'insuranceid', 'insuranceidnumber', 'insurancepackageaddress1', 'insurancepackageaddress2', 'insurancepackagecity', 'insurancepackagestate', 'insurancepackagezip', 'insurancephone', 'insuranceplandisplayname', 'insuranceplanname', 'insurancepolicyholder', 'insurancepolicyholderaddress1', 'insurancepolicyholderaddress2', 'insurancepolicyholdercity', 'insurancepolicyholdercountrycode', 'insurancepolicyholdercountryiso3166', 'insurancepolicyholderdob', 'insurancepolicyholderfirstname', 'insurancepolicyholderlastname', 'insurancepolicyholdermiddlename', 'insurancepolicyholdersex', 'insurancepolicyholderssn', 'insurancepolicyholderstate', 'insurancepolicyholdersuffix', 'insurancepolicyholderzip', 'insurancetype', 'insuredpcp', 'ircname', 'issuedate', 'policynumber', 'relatedtoautoaccidentyn', 'relatedtoemploymentyn', 'relatedtootheraccidentyn', 'relationshiptoinsured', 'repricername', 'repricerphone', 'stateofreportedinjury'], 'string'],
-            [['ccmstatusid', 'insurancepackageid', 'insuredentitytypeid', 'insuredpcpnpi', 'ircid', 'relationshiptoinsuredid', 'sequencenumber', 'slidingfeeplanid', 'externalId', 'id'], 'integer'],
+            [['ccmstatusid', 'insurancepackageid', 'insuredentitytypeid', 'insuredpcpnpi', 'ircid', 'relationshiptoinsuredid', 'sequencenumber', 'slidingfeeplanid', 'patient_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getPatient()
+    {
+        return $this->hasOne(Patient::class, ['id' => 'patient_id']);
     }
 
 
@@ -305,6 +313,12 @@ class InsurancePatient extends \yii\db\ActiveRecord
         if($stateofreportedinjury = ArrayHelper::getValue($apiObject, 'stateofreportedinjury')) {
             $this->stateofreportedinjury = $stateofreportedinjury;
         }
+        if($patient_id = ArrayHelper::getValue($apiObject, 'patient_id')) {
+            $this->patient_id = $patient_id;
+        }
+        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
+            $this->patient = $patient;
+        }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;
         }
@@ -319,5 +333,11 @@ class InsurancePatient extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

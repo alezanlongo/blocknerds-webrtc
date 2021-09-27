@@ -41,7 +41,7 @@ class PatientController extends \yii\web\Controller
     public function actionCreate()
     {
         $model = new Patient;
-
+        
         if ($model->load(Yii::$app->request->post())) {
             $model = $this->component->createPatient(
                 $model

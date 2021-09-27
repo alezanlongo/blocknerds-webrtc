@@ -3,7 +3,7 @@
 /**
  * Table for InsurancePatient
  */
-class m210924_000000_InsurancePatient extends \yii\db\Migration
+class m210927_000000_InsurancePatient extends \yii\db\Migration
 {
     public function up()
     {
@@ -76,11 +76,19 @@ class m210924_000000_InsurancePatient extends \yii\db\Migration
             'sequencenumber' => $this->integer(),
             'slidingfeeplanid' => $this->integer(),
             'stateofreportedinjury' => $this->string(),
+            'patient_id' => $this->integer(),
             'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 
-        // TODO generate foreign keys
+        $this->addForeignKey(
+            'fk-patient-patient_id',
+            '{{%insurance_patients}}',
+            'patient_id',
+            'patients',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()
