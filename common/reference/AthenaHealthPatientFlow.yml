@@ -535,9 +535,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Appointments'
+                $ref: '#/components/schemas/Appointments'
           description: Success
       operationId: postPracticeidAppointmentsOpen
       requestBody:
