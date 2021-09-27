@@ -19,7 +19,7 @@
 .boxes {
   float: right;
   position: relative;
-  width: 90% !important;
+  width: 100% !important;
   margin: 0 auto !important;
 }
 #containerBoxes {
@@ -97,7 +97,7 @@
   position: absolute;
   z-index: 9999;
   bottom: 0;
-  right: 0;
+  right: 1%;
   margin: 0;
   padding: 0;
   display: block;
