@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'janus.record' => false,
+    'janus.record' => true,
     'janus.rec_dir' => '/opt/janus/share/janus/recordings',
 ];
