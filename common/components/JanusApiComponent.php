@@ -2,19 +2,20 @@
 
 namespace common\components;
 
-use common\components\janusApi\JanusCommonException;
-use common\traits\HttpClientTrait;
-use Exception as GlobalException;
-use phpDocumentor\Reflection\Types\Boolean;
+use Yii;
 use Ramsey\Uuid\Uuid;
 use yii\base\Component;
-use yii\base\InvalidConfigException;
-use yii\base\InvalidValueException;
 use yii\helpers\VarDumper;
 use yii\httpclient\Client;
-use yii\httpclient\Exception;
-use yii\httpclient\Exception as HttpClientException;
 use yii\httpclient\Response;
+use yii\httpclient\Exception;
+use Exception as GlobalException;
+use common\traits\HttpClientTrait;
+use yii\base\InvalidValueException;
+use yii\base\InvalidConfigException;
+use phpDocumentor\Reflection\Types\Boolean;
+use common\components\janusApi\JanusCommonException;
+use yii\httpclient\Exception as HttpClientException;
 
 class JanusApiComponent extends Component
 {
@@ -56,7 +57,25 @@ class JanusApiComponent extends Component
 
         try {
             $this->attach('janus.plugin.videoroom');
-            $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'create', 'room' => $uuid, 'description' => $description, 'is_private' => true, 'publisher' => 10, 'admin_key' => $this->apiParams['adminKey']], 'transaction' =>  $this->createRandStr(), 'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+            $res = $this->apiCall(
+                'POST',
+                [
+                    'janus' => 'message',
+                    'body' => [
+                        'request' => 'create',
+                        'room' => $uuid,
+                        'description' => $description,
+                        'is_private' => true,
+                        'publisher' => 10,
+                        'admin_key' => $this->apiParams['adminKey'],
+                        'record' => Yii::$app->params['janus.record'],
+                        'rec_dir' => Yii::$app->params['janus.rec_dir']
+                    ],
+                    'transaction' =>  $this->createRandStr(),
+                    'token' => $this->apiParams['storedAuth'] ? $this->createAdminToken() : $this->createHmacToken()
+                ],
+                $this->createSession() . '/' . $this->handleID
+            );
         } catch (Exception $e) {
             $this->lastError = $this->exceptionFormatter('janus server not found', $e);
             throw new JanusCommonException($this->lastError, 404);
