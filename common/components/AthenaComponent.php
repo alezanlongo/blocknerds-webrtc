@@ -7,6 +7,7 @@ use common\components\Athena\AthenaClient;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\Provider;
+use common\components\Athena\models\PutAppointment200Response;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -113,8 +114,30 @@ class AthenaComponent extends Component
                 $this->practiceid,
                 $appointment->toArray()
             );
-        
-        $appointmentids = array_flip($appointmentModelApi->appointmentids);
-        var_dump(array_shift($appointmentids));
+
+        $appointmentid = array_flip($appointmentModelApi->appointmentids);
+
+        return $this->retrieveAppointment(array_shift($appointmentid));
+    }
+
+    /**
+     * @return Appointment
+     */
+    public function retrieveAppointment($appointmentid)
+    {
+        $appointmentModelApi = $this->client->getPracticeidAppointmentsAppointmentid(
+            $this->practiceid,
+            $appointmentid
+        );
+
+        $appointment = PutAppointment200Response::find()
+            ->where(['externalId' => $appointmentid])
+            ->one();
+
+        if (!$appointment) {
+            return PutAppointment200Response::createFromApiObject($appointmentModelApi);
+        }
+
+        return $appointment->loadApiObject($appointmentModelApi);
     }
 }

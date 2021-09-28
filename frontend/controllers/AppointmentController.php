@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\Athena\models\Patient;
+use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\RequestCreateAppointment;
 use yii\data\ActiveDataProvider;
 
@@ -19,13 +20,13 @@ class AppointmentController extends \yii\web\Controller
     }
 
     /**
-     * Lists all Patient models.
+     * Lists all Appointments models.
      * @return mixed
      */
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Patient::find(),
+            'query' => PutAppointment200Response::find(),
         ]);
 
         return $this->render('index', [
@@ -47,13 +48,12 @@ class AppointmentController extends \yii\web\Controller
             $model = $this->component->createAppointment(
                 $model
             );
+
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
-        //     if($model->save()){
-        //         return $this->redirect(['view', 'id' => $model->id]);
-        //     }
-
-        // }
 
         return $this->render('create', [
             'model' => $model,
@@ -64,7 +64,7 @@ class AppointmentController extends \yii\web\Controller
     }
 
     /**
-     * Displays a single Patient model.
+     * Displays a single Appointment model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -77,15 +77,15 @@ class AppointmentController extends \yii\web\Controller
     }
 
     /**
-     * Finds the Patient model based on its primary key value.
+     * Finds the Appointment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Patient the loaded model
+     * @return Appointment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Patient::findOne($id)) !== null) {
+        if (($model = PutAppointment200Response::findOne($id)) !== null) {
             return $model;
         }
 

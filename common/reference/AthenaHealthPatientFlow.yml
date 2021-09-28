@@ -833,6 +833,90 @@ paths:
         required: true
       tags:
         - Appointment
+    get:
+      summary: Get appointment details
+      description: >-
+        Retrieves the details of a specific appointment. Note: This endpoint may
+        rely on specific settings to be enabled in athenaNet Production to
+        function properly that are not required in other environments. Please
+        see <a
+        href="https://docs.athenahealth.com/api/resources/best-practices-and-troubleshooting#Handling_Beta_APIs">Permissioned
+        Rollout of APIs</a> for more information if you are experiencing issues.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, the expected co-pay is returned. For performance
+            purposes, you can set this to false and copay will not be populated.
+          in: query
+          name: showcopay
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Include claim information, if available, associated with the
+            appointment.
+          in: query
+          name: showclaimdetail
+          required: false
+          schema:
+            type: boolean
+        - description: Include patient insurance information.
+          in: query
+          name: showinsurance
+          required: false
+          schema:
+            type: boolean
+        - description: Show expected procedure codes
+          in: query
+          name: showexpectedprocedurecodes
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Include patient information for each patient associated with an
+            appointment.
+          in: query
+          name: showpatientdetail
+          required: false
+          schema:
+            type: boolean
+        - description: Show indicator for if this is a native athenatelehealth appointment
+          in: query
+          name: showtelehealth
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            When showing patient detail for appointments, the patient
+            information for patients with record restrictions and blocked
+            patients will not be shown.  Setting this flag to true will show
+            that information for those patients.
+          in: query
+          name: ignorerestrictions
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutAppointment200Response'
+          description: Success
+      operationId: getPracticeidAppointmentsAppointmentid
+      tags:
+        - Appointment
 components:
   schemas:
     PostPatient200Response:
@@ -2609,7 +2693,7 @@ components:
           type: integer
           description: The patient status ID.
     PutAppointment200Response:
-      x-external-id: apointmentid
+      x-external-id: appointmentid
       type: object
       properties:
         appointmentcopay:

@@ -64,7 +64,7 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
             return null;
 
         $this->appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay');
-        $this->appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid');
+        $this->externalId = ArrayHelper::getValue($apiObject, 'appointmentid');
         $this->appointmentstatus = ArrayHelper::getValue($apiObject, 'appointmentstatus');
         $this->appointmenttype = ArrayHelper::getValue($apiObject, 'appointmenttype');
         $this->appointmenttypeid = ArrayHelper::getValue($apiObject, 'appointmenttypeid');
@@ -96,11 +96,10 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         $this->supervisingproviderid = ArrayHelper::getValue($apiObject, 'supervisingproviderid');
         $this->urgentyn = ArrayHelper::getValue($apiObject, 'urgentyn');
         $this->useexpectedprocedurecodes = ArrayHelper::getValue($apiObject, 'useexpectedprocedurecodes');
-        $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }
-    
+
     public static function createFromApiObject($apiObject) {
         $model = new self();
 
