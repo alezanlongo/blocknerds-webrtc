@@ -42,7 +42,12 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\PatientApi($dataResponse['data']);
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['{patientid}'])) ? $dataResponse['data']['{patientid}'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\PatientApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }

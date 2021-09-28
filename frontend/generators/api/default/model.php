@@ -1,3 +1,6 @@
+<?php
+use yii\helpers\Inflector;
+?>
 <?= '<?php' ?>
 
 namespace <?= $namespace ?>;
@@ -14,6 +17,12 @@ use yii\helpers\ArrayHelper;
  */
 class <?= $className ?> extends \yii\db\ActiveRecord
 {
+<?php foreach ($attributes as $attribute): ?>
+<?php if ( strpos($attribute['type'], '[]') !== false ): ?> 
+    protected $_<?= $attribute['name'] ?>Ar;
+<?php endif ?>
+<?php endforeach; ?>
+
     public static function tableName()
     {
         return <?= var_export($tableName) ?>;
@@ -35,7 +44,9 @@ class <?= $className ?> extends \yii\db\ActiveRecord
         if ($attribute['required']) {
             $requiredAttributes[$attribute['name']] = $attribute['name'];
         }
+
         switch ($attribute['type']) {
+            case 'int':
             case 'integer':
                 $integerAttributes[$attribute['name']] = $attribute['name'];
                 break;
@@ -91,7 +102,13 @@ class <?= $className ?> extends \yii\db\ActiveRecord
 
 <?php foreach ($attributes as $attribute): ?>
         if($<?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>')) {
-            $this-><?= $attribute['name'] ?> = $<?= $attribute['name'] ?>;
+<?php 
+$fieldName = $attribute['name'];
+if ( strpos($attribute['type'], '[]') !== false ) {
+    $fieldName = '_'.$fieldName.'Ar';
+}
+?>
+            $this-><?= $fieldName ?> = $<?= $attribute['name'] ?>;
         }
 <?php if( $extIdField == $attribute['name'] ): ?>
         if($<?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>')) {
@@ -107,5 +124,23 @@ class <?= $className ?> extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+<?php foreach($relations as $relationName => $relation): ?>
+<?php if ($relation['method'] == 'hasMany'): ?>
+        if( !empty($this->_<?= $relationName ?>Ar) and is_array($this->_<?= $relationName ?>Ar) ) {
+            foreach($this->_<?= $relationName ?>Ar as $<?= $relationName ?>Api) {
+                $<?= strtolower($relation['class']) ?> = new <?= $relation['class'] ?>();
+                $<?= strtolower($relation['class']) ?>->loadApiObject($<?= $relationName ?>Api);
+                $<?= strtolower($relation['class']) ?>->link('<?= Inflector::variablize($className) ?>', $this);
+                $<?= strtolower($relation['class']) ?>->save();
+            }
+        }
+<?php endif; ?>
+<?php endforeach ?>
+
+        return $saved;
     }
 }

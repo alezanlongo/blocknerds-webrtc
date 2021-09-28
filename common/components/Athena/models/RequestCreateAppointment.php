@@ -16,6 +16,7 @@ use yii\helpers\ArrayHelper;
  */
 class RequestCreateAppointment extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%request_create_appointments}}';
@@ -27,7 +28,7 @@ class RequestCreateAppointment extends \yii\db\ActiveRecord
             [['appointmentdate'], 'trim'],
             [['appointmentdate', 'appointmenttime', 'departmentid', 'providerid'], 'required'],
             [['appointmentdate'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['appointmenttypeid', 'departmentid', 'providerid', 'reasonid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -69,5 +70,11 @@ class RequestCreateAppointment extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

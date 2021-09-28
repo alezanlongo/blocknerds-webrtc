@@ -21,6 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'table table-striped table-bordered detail-view bg-light'
             ],
         'attributes' => [
+            'id',
+            'externalId',
             'departmentid',
             'dob',
             'email:email',
@@ -29,8 +31,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'primarydepartmentid',
             'registrationdate',
             'status',
-            'externalId',
-            'id',
         ],
     ]) ?>
 

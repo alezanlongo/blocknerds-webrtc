@@ -198,7 +198,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Patient'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
           description: Success
       operationId: getPracticeidPatientsPatientid
       tags:
@@ -902,6 +904,8 @@ components:
         optionid:
           description: For a select custom field, the selectid value (from /customfield's selectlist).
           type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
       type: object
     InsurancePatient:
       x-external-id: insuranceid
@@ -1126,6 +1130,8 @@ components:
         stateofreportedinjury:
           description: CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
           type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
       type: object
     Patient:
       x-external-id: patientid

@@ -43,6 +43,7 @@ use yii\helpers\ArrayHelper;
  */
 class PutAppointment200Response extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%put_appointment200_responses}}';
@@ -53,7 +54,7 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         return [
             [['appointmentcopay', 'appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'trim'],
             [['appointmentcopay', 'appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['duration', 'hl7providerid', 'referringproviderid', 'renderingproviderid', 'supervisingproviderid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -176,5 +177,11 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

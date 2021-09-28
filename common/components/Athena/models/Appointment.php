@@ -20,6 +20,7 @@ use yii\helpers\ArrayHelper;
  */
 class Appointment extends \yii\db\ActiveRecord
 {
+
     public static function tableName()
     {
         return '{{%appointments}}';
@@ -31,7 +32,7 @@ class Appointment extends \yii\db\ActiveRecord
             [['bookingnote'], 'trim'],
             [['patientid'], 'required'],
             [['bookingnote'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['appointmenttypeid', 'departmentid', 'patientid', 'reasonid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -85,5 +86,11 @@ class Appointment extends \yii\db\ActiveRecord
         $model = new self();
 
         return $model->loadApiObject($apiObject);
+    }
+
+    public function save($runValidation = true, $attributeNames = null) {
+        $saved = parent::save($runValidation, $attributeNames);
+
+        return $saved;
     }
 }

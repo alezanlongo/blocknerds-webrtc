@@ -1,3 +1,6 @@
+<?php
+use yii\helpers\Inflector;
+?>
 <?= '<?php' ?>
 
 <?php if (isset($namespace)) {
@@ -18,9 +21,25 @@ class <?= $className ?> extends \yii\db\Migration
             '<?= $attribute['dbName'] ?>' => <?= $attribute['dbType'] ?><?php if ($attribute['required']): ?>->notNull()<?php endif ?><?php if (isset($attribute['unique']) and $attribute['unique']): ?>->unique()<?php endif ?>,
 <?php endif; ?>
 <?php endforeach; ?>
+<?php /*foreach ($relations as $relationName => $relation): ?>
+<?php if ($relation['method'] == 'hasOne'): ?>
+            '<?= $relation['link']['id'] ?>' => $this->integer(),
+<?php endif; ?>
+<?php endforeach;*/ ?>
         ]);
 
-        // TODO generate foreign keys
+<?php foreach ($relations as $relationName => $relation): ?>
+<?php if ($relation['method'] == 'hasOne'): ?>
+        $this->addForeignKey(
+            'fk-<?= $relationName ?>-<?= $relation['link']['id'] ?>',
+            '<?= $tableName ?>',
+            '<?= $relation['link']['id'] ?>',
+            '<?= Inflector::pluralize($relationName) ?>',
+            'id',
+            'CASCADE'
+        );
+<?php endif; ?>
+<?php endforeach; ?>
     }
 
     public function down()
