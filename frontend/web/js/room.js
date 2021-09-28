@@ -630,7 +630,7 @@ function newRemoteFeed(id, display, audio, video) {
         // );
         const compList = $(`.profile_id_${remoteFeed.rfuser.idFeed}`);
         if (compList.length === 0) {
-          $(`#attendee_${remoteFeed.rfindex}`).removeClass("d-none").addClass(`.profile_id_${remoteFeed.rfuser.idFeed}`).addClass('text-success').show();
+          $(`#attendee_${remoteFeed.rfindex}`).removeClass("d-none").addClass(`profile_id_${remoteFeed.rfuser.idFeed}`).addClass('text-success').show();
           $(`span.usernameFeed${remoteFeed.rfindex}`).text(remoteFeed.rfuser.usernameFeed);
         }else{
           compList.addClass('text-success');
