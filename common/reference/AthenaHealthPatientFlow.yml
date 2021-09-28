@@ -706,7 +706,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Encounter'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Encounter'
           description: Success
       operationId: getPracticeidChartEncounterEncounterid
       tags:

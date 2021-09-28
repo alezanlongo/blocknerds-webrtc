@@ -21,3 +21,10 @@ $this->params['breadcrumbs'][] = 'Update';
     ]) ?>
 
 </div>
+
+<?php
+$this->registerJsFile(
+    '@web/js/Athena/encounter.js',
+    ['depends' => [\yii\web\JqueryAsset::class]]
+);
+?>

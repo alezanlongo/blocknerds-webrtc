@@ -127,23 +127,21 @@ class AthenaComponent extends Component
      */
     public function updateEncounter(Encounter $encounter)
     {
-        $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid);
-
         $encounterDB = Encounter::find()
             ->where(['externalId' => $encounter->externalId])
             ->one();
-
-        if (!$encounterDB) {
+        if (is_null($encounterDB)) {
+            $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid);
             return Encounter::createFromApiObject($encounterModelApi);
         }
 
         $putOrderModelApi = $this->client->putPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid, $encounter->toArray());
-        if(!isset($putOrderModelApi['errormessage'])){
+        if(!is_null($putOrderModelApi['errormessage'])){
             return $encounterDB;
         }
 
-        $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid);
-        $encounterToUpdate = $encounterDB->loadApiObject($encounterModelApi);
+        $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $encounter->externalId);
+        $encounterToUpdate = $encounterDB->loadApiObject($encounterModelApi[0]);
         $encounterToUpdate->id = $encounter->id;
 
         return $encounterToUpdate;

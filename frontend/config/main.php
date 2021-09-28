@@ -38,7 +38,7 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*'urlManager' => [
+        'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
@@ -58,7 +58,7 @@ return [
                 'GET user/get-profile/<profile_id>' => 'user/get-profile',
                 'POST room/toggle-media' => 'room/toggle-media',
             ],
-        ],*/
+        ],
     ],
     'params' => $params,
 ];
