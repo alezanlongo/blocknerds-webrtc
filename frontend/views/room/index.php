@@ -10,7 +10,7 @@ use frontend\assets\Janus\JanusAsset;
 use frontend\assets\pahoMqtt\PahoMqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
 use yii\helpers\Url;
-
+use yii\helpers\VarDumper;
 
 /** @var \yii\web\View $this */
 JanusAsset::register($this);
@@ -28,6 +28,7 @@ $this->registerJsVar('isOwner', $is_owner, View::POS_BEGIN);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
 $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
+$this->registerJsVar('members', $members, View::POS_END);
 $this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
 
 $this->registerJsFile(
@@ -61,6 +62,9 @@ $this->registerJsFile(
 );
 
 $this->title = 'The Room';
+
+// VarDumper::dump( count($members), $depth = 10, $highlight = true);
+// die;
 ?>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
@@ -155,12 +159,14 @@ $this->title = 'The Room';
                 <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                 <ul class="list-group bg-dark list-attendees">
-                    <li class="list-group-item list-group-item-light bg-dark position-relative">
-                        <span class="p-1 username-member" onclick="loadAndOpenModalInfo(0)"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
+                    <li class="list-group-item list-group-item-light bg-dark position-relative" data-user-id="<?= Yii::$app->getUser()->getId() ?>">
+                        <span class="p-1 username-member text-success" onclick="loadAndOpenModalInfo(0)"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
                     </li>
-                    <?php for ($i = 0; $i < $limit_members; $i++) { ?>
-                        <li class="list-group-item list-group-item-light bg-dark d-none position-relative" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                            <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"></span>
+                    <?php for ($i = 0; $i < $limit_members; $i++) { 
+                        $member = (count($members) > $i) ? $members[$i] : null;
+                        ?>
+                        <li class="list-group-item list-group-item-light bg-dark position-relative <?= ($member) ? 'profile_id_'.$member['id'] : 'd-none' ?>" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
+                            <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"><?= ($member) ? $member['username'] : '' ?></span>
                             <?php if ($is_owner) { ?>
                                 <div class="position-absolute top-0 end-0">
                                     <button class="btn btn-default text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">

@@ -90,27 +90,25 @@ class RoomController extends \yii\web\Controller
         }
 
         $profileIds = RoomMember::find()
-            ->andWhere(['room_id' => $room->id])
+            ->where(['room_id' => $room->id])
             ->select('user_profile_id');
 
-        if ($is_allowed || $is_owner) {
-            // $mutedSource = RoomMe
+        $members = [];
+        foreach ($profileIds->all() as $member) {
+            if ($member->user_profile_id !== $profile->id) {
+                $members[] =  [
+                    'id' => $member->user_profile_id,
+                    'user_id' => $member->getUser()->id,
+                    'username' => $member->getUser()->username,
+                ];
+            }
         }
 
-        $usersIds = UserProfile::find()->where(['in', 'id', $profileIds])
-            ->select('user_id');
-
-        $users = User::find()->where(['in', 'id', $usersIds])
-            ->select('id, username');
-
-        $members = $users->asArray()->all();
 
         if (count($members) > $limit_members) {
             var_dump("No possible add more members can't be in this room. The limit is " . $limit_members);
             die;
         }
-
-        $members = $users->all();
 
         $token = null;
         if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true && $room->is_quick) {

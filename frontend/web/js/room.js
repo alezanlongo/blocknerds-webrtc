@@ -64,7 +64,6 @@ $(document).ready(function () {
   }
 });
 
-
 $(".btn-leave").on("click", () => {
   unpublishOwnFeed();
 });
@@ -335,6 +334,7 @@ const handlingEvent = (objMessage) => {
           .hide();
         $(".box" + remoteFeed.rfindex).hide();
         $("#videoremote" + remoteFeed.rfindex).empty();
+        $(".profile_id_" + remoteFeed.rfuser.idFeed).removeClass('text-success');
         // $(`.box${remoteFeed.rfindex}`).hide();
         // $(`.box${remoteFeed.rfindex} h1`).text("");
         feeds[remoteFeed.rfindex] = null;
@@ -362,7 +362,8 @@ const handlingEvent = (objMessage) => {
       $("#remote" + remoteFeed.rfindex)
         .empty()
         .hide();
-      $("#attendee_" + remoteFeed.rfindex).hide();
+        console.log('nico',$(".profile_id_" + remoteFeed.rfuser.idFeed) )
+      $(".profile_id_" + remoteFeed.rfuser.idFeed).removeClass('text-success');
       $("#videoremote" + remoteFeed.rfindex).empty();
       $(".box" + remoteFeed.rfindex).hide();
       feeds[remoteFeed.rfindex] = null;
@@ -394,7 +395,8 @@ const handlingEvent = (objMessage) => {
     }
     $(`.box${index}`).hide();
     $(`#remotevideo${index}`).empty();
-    $(`#attendee_${index}`).hide();
+    // TODO: improve text connect 
+    $(`#attendee_${index}`).removeClass('text-success'); 
   }
 };
 const joinMe = () => {
@@ -626,7 +628,13 @@ function newRemoteFeed(id, display, audio, video) {
         //     feeds[remoteFeed.rfindex].rfuser.usernameFeed +
         //     "</h1>"
         // );
-        addNewAttendee(remoteFeed);
+        const compList = $(`.profile_id_${remoteFeed.rfuser.idFeed}`);
+        if (compList.length === 0) {
+          $(`#attendee_${remoteFeed.rfindex}`).removeClass("d-none").addClass(`.profile_id_${remoteFeed.rfuser.idFeed}`).addClass('text-success').show();
+          $(`span.usernameFeed${remoteFeed.rfindex}`).text(remoteFeed.rfuser.usernameFeed);
+        }else{
+          compList.addClass('text-success');
+        }
 
         // Show the video, hide the spinner and show the resolution when we get a playing event
         irmStatus.forEach((v) => {
@@ -1074,11 +1082,6 @@ $(".option-side .icon-menu").on("click", (e) => {
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////// HANDLING SIDEBAR -> ATTENDEES
 ////////////////////////////////////////////////////////////////////////////////
-const addNewAttendee = (feed) => {
-  $(`#attendee_${feed.rfindex}`).removeClass("d-none").show();
-  $(`span.usernameFeed${feed.rfindex}`).text(feed.rfuser.usernameFeed);
-};
-
 $(".icon-option-member").on("click", (e) => {
   $(e.target).parent().trigger("click");
 });
