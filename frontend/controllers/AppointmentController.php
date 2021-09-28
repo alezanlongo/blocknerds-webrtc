@@ -43,14 +43,18 @@ class AppointmentController extends \yii\web\Controller
     public function actionCreate($patientid)
     {
         $model = new RequestCreateAppointment;
+        $patient = Patient::findOne($patientid);
 
         if ($model->load(Yii::$app->request->post())) {
             $model = $this->component->createAppointment(
-                $model
+                $model,
+                $patient->externalId
             );
-
             if($model->save()){
                 return $this->redirect(['view', 'id' => $model->id]);
+            }
+            else{
+                var_dump($model->getErrors());die;
             }
         }
 
@@ -59,7 +63,7 @@ class AppointmentController extends \yii\web\Controller
             'model' => $model,
             'providers' => $this->component->getProviders(true),
             'departments' => $this->component->getDepartments(true),
-            'patient' => Patient::findOne($patientid)
+            'patient' => $patient
         ]);
     }
 

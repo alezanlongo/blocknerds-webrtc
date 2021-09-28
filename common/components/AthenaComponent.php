@@ -1,5 +1,4 @@
 <?php
-
 namespace common\components;
 
 use Yii;
@@ -107,7 +106,7 @@ class AthenaComponent extends Component
      * @return Patient
      */
 
-    public function createAppointment($appointment)
+    public function createAppointment($appointment, $patientid)
     {
         $appointmentModelApi =
             $this->client->postPracticeidAppointmentsOpen(
@@ -115,9 +114,14 @@ class AthenaComponent extends Component
                 $appointment->toArray()
             );
 
-        $appointmentid = array_flip($appointmentModelApi->appointmentids);
+        $appointmentids = array_flip($appointmentModelApi->appointmentids);
 
-        return $this->retrieveAppointment(array_shift($appointmentid));
+        $appointmentid = array_shift($appointmentids);
+
+        // $this->bookAppointment(1195848, 34067);
+        $this->bookAppointment($appointmentid, $patientid);
+
+        return $this->retrieveAppointment($appointmentid);
     }
 
     /**
@@ -139,5 +143,21 @@ class AthenaComponent extends Component
         }
 
         return $appointment->loadApiObject($appointmentModelApi);
+    }
+
+    /**
+     * @return Appointment
+     */
+    public function bookAppointment($appointmentid, $patientid)
+    {
+        $bookedAppointmentModelApi = $this->client->putPracticeidAppointmentsAppointmentid(
+            $this->practiceid,
+            $appointmentid,
+            [
+                'patientid' => $patientid,
+                'ignoreschedulablepermission' => "true",
+                'appointmenttypeid' => 62
+            ]
+        );
     }
 }

@@ -820,9 +820,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PutAppointment200Response'
+                $ref: '#/components/schemas/PutAppointment200Response'
           description: Success
       operationId: putPracticeidAppointmentsAppointmentid
       requestBody:

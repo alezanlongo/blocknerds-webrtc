@@ -63,7 +63,6 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        $this->appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay');
         $this->externalId = ArrayHelper::getValue($apiObject, 'appointmentid');
         $this->appointmentstatus = ArrayHelper::getValue($apiObject, 'appointmentstatus');
         $this->appointmenttype = ArrayHelper::getValue($apiObject, 'appointmenttype');
@@ -96,6 +95,7 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         $this->supervisingproviderid = ArrayHelper::getValue($apiObject, 'supervisingproviderid');
         $this->urgentyn = ArrayHelper::getValue($apiObject, 'urgentyn');
         $this->useexpectedprocedurecodes = ArrayHelper::getValue($apiObject, 'useexpectedprocedurecodes');
+        // $this->id = ArrayHelper::getValue($apiObject, 'id');
 
         return $this;
     }

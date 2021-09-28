@@ -271,12 +271,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'put' , $body);
         if($dataResponse['success']){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse['data']['{appointmentid}'])) ? $dataResponse['data']['{appointmentid}'] : $dataResponse['data'];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Athena\apiModels\PutAppointment200ResponseApi($value));
-            }
-            return $dataApiModel;
+            return new \common\components\Athena\apiModels\PutAppointment200ResponseApi($dataResponse['data'][0]);
         }else{
             return $dataResponse['message'];
         }
