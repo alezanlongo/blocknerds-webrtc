@@ -432,9 +432,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/insurancePackages'
+                type: array
+                items:
+                  $ref: '#/components/schemas/insurancePackages'
           description: Success
       operationId: getPracticeidInsurancepackages
+      x-list-key: 'insurances'
       tags:
         - Insurance Package
   /v1/{practiceid}/providers:
@@ -950,309 +953,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PutAppointment200Response'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PutAppointment200Response'
           description: Success
       operationId: getPracticeidAppointmentsAppointmentid
       tags:
         - Appointment
 components:
   schemas:
-    PostPatient200Response:
-      x-external-id: patientid
-      type: object
-      properties:
-        errormessage:
-          description: Error message will be returned if show error message flag is set to true and patient match found.
-          type: string
-        patientid:
-          description: Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
-          type: string
-    contractItem:
-      x-external-id: contractid
-      type: object
-      properties:
-        availablebalance:
-          description: The available balance on this contract.
-          type: string
-        contractclass:
-          description: The type of contract.  For example, "ONEYEAR,"
-          type: string
-        maxamount:
-          description: The maximum allowed amount for this contract.
-          type: string
-    BalanceItem:
-      x-external-id: balanceid
-      type: object
-      properties:
-        balance:
-          description: Balance for this provider group.
-          type: string
-        cleanbalance:
-          description: Indicates whether the balance is associated with a contract, payment plan, or collections agency.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        collectionsbalance:
-          description: The outstanding amount associated with a collections agency.
-          type: string
-        contracts:
-          description: Information related to existing credit card contracts.
-          items:
-            $ref: '#/components/schemas/contractItem'
-          type: array
-        departmentids:
-          description: Comma separated list of department IDs that belong to this group
-          type: string
-        paymentplanbalance:
-          description: The outstanding amount associated with a payment plan.
-          type: string
-        providergroupid:
-          description: Athena ID for this financial group.
-          type: integer
-        patient:
-          $ref: '#/components/schemas/Patient'
-    customfield:
-      properties:
-        customfieldid:
-          description: Corresponds to the /customfields customfieldid.
-          type: string
-        customfieldvalue:
-          description: For a non-select custom field, the value.
-          type: string
-        optionid:
-          description: For a select custom field, the selectid value (from /customfield's selectlist).
-          type: string
-        patient:
-          $ref: '#/components/schemas/Patient'
-      type: object
-    InsurancePatient:
-      x-external-id: insuranceid
-      properties:
-        adjusterfax:
-          description: CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterfirstname:
-          description: CASE POLICY FIELD - First name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterlastname:
-          description: CASE POLICY FIELD - Last name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterphone:
-          description: CASE POLICY FIELD - Phone number/other contact info for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        anotherpartyresponsibleyn:
-          description: CASE POLICY FIELD - Boolean field indicating if another party was responsible for this accident.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        autoaccidentstate:
-          description: CASE POLICY FIELD - Two-letter abbreviation for the state in which the auto accident took place. Only meaningful for auto insurance case policies.
-          type: string
-        cancelled:
-          description: The date in which the insurance was marked cancelled.
-          type: string
-        caseinjurydate:
-          description: CASE POLICY FIELD - Date of the injury.  Required for auto insurance, legal, and worker's comp case policies.
-          type: string
-        casepolicytypename:
-          description: CASE POLICY FIELD - The name of this type of case policy.
-          type: string
-        ccmstatusid:
-          description: Status ID of current CCM enrollment.
-          type: integer
-        ccmstatusname:
-          description: The name of current CCM enrollment status.
-          type: string
-        coinsurancepercent:
-          description: The coinsurance percentage for this insurance. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before this field populates.
-          type: number
-        copays:
-          description: Details about the copays for this insurance package. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before these populate.
-          type: string
-        descriptionofinjury:
-          description: CASE POLICY FIELD - A description of the injury.  Only available for auto insurance and worker's comp case policies.
-          type: string
-        eligibilitylastchecked:
-          description: Date the eligibility was last checked.
-          type: string
-        eligibilitymessage:
-          description: The message, usually from our engine, of the eligibility check.
-          type: string
-        eligibilityreason:
-          description: The source of the current status. Athena is our eligibility engine.
-          type: string
-        eligibilitystatus:
-          description: Current eligibility status of this insurance package.
-          type: string
-        employerid:
-          description: The employer ID associated with the patient's insurance.
-          type: string
-        expirationdate:
-          description: Date the insurance expires.
-          type: string
-        icd10codes:
-          description: CASE POLICY FIELD - See documentation for ICD9CODES.
-          type: string
-        icd9codes:
-          description: CASE POLICY FIELD - A list of ICD9 accepted diagnosis codes. Only available for worker's comp case policies.
-          type: string
-        injuredbodypart:
-          description: CASE POLICY FIELD - Text field for describing the injured body part.  Only available for auto insurance  and worker's comp case policies.
-          type: string
-        insuranceclaimnumber:
-          description: CASE POLICY FIELD - The auto insurance claim number or the worker's comp claim number.
-          type: string
-        insuranceid:
-          description: The athena insurance policy ID.
-          type: string
-        insuranceidnumber:
-          description: The insurance policy ID number (as presented on the insurance card itself).
-          type: string
-        insurancepackageaddress1:
-          description: Address 1 for the AthenaNet insurance Package.
-          type: string
-        insurancepackageaddress2:
-          description: Address 2 for the AthenaNet insurance Package.
-          type: string
-        insurancepackagecity:
-          description: City for the AthenaNet insurance Package.
-          type: string
-        insurancepackageid:
-          description: The athenaNet insurance package ID.
-          type: integer
-        insurancepackagestate:
-          description: State of the AthenaNet insurance package
-          type: string
-        insurancepackagezip:
-          description: Zip code of the AthenaNet insurance package
-          type: string
-        insurancephone:
-          description: 'The phone number for the insurance company. Note: This defaults to the insurance package phone number. If this is set, it will override it. Likewise if blanked out, it will go back to default.'
-          type: string
-        insuranceplandisplayname:
-          description: Superpackagename of the specific insurance package.
-          type: string
-        insuranceplanname:
-          description: Name of the specific insurance package.
-          type: string
-        insurancepolicyholder:
-          description: The full name of the insurance policy holder.
-          type: string
-        insurancepolicyholderaddress1:
-          description: The first address line of the insurance policy holder.
-          type: string
-        insurancepolicyholderaddress2:
-          description: The second address line of the insurance policy holder.
-          type: string
-        insurancepolicyholdercity:
-          description: The city of the insurance policy holder.
-          type: string
-        insurancepolicyholdercountrycode:
-          description: The country code (3 letter) of the insurance policy holder.
-          type: string
-        insurancepolicyholdercountryiso3166:
-          description: The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166</a> country code of the insurance policy holder.
-          type: string
-        insurancepolicyholderdob:
-          description: The DOB of the insurance policy holder (mm/dd/yyyy).
-          type: string
-        insurancepolicyholderfirstname:
-          description: The first name of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholderlastname:
-          description: The last name of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholdermiddlename:
-          description: The middle name of the insurance policy holder.
-          type: string
-        insurancepolicyholdersex:
-          description: The sex of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholderssn:
-          description: The SSN of the insurance policy holder.
-          type: string
-        insurancepolicyholderstate:
-          description: The state of the insurance policy holder.
-          type: string
-        insurancepolicyholdersuffix:
-          description: The suffix of the insurance policy holder.
-          type: string
-        insurancepolicyholderzip:
-          description: The zip of the insurance policy holder.
-          type: string
-        insurancetype:
-          description: Type of insurance. E.g., Medicare Part B, Group Policy, HMO, etc.
-          type: string
-        insuredentitytypeid:
-          description: The ID of the entity type for this insurance.
-          type: integer
-        insuredpcp:
-          type: string
-        insuredpcpnpi:
-          description: The national provider id of the primary care physcian assicated with the insurance.
-          type: integer
-        ircid:
-          description: Insurance category / company internal ID
-          type: integer
-        ircname:
-          description: Insurance category / company. E.g., United Healthcare, BCBS-MA, etc.
-          type: string
-        issuedate:
-          description: Date the insurance was issued.
-          type: string
-        policynumber:
-          description: The insurance group number.  This is sometimes present on an insurance card.
-          type: string
-        relatedtoautoaccidentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to an auto accident.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relatedtoemploymentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to the patient's employer.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relatedtootheraccidentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to another accident.  Only available for worker's comp case policies.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relationshiptoinsured:
-          description: This patient's relationship to the policy holder (text).
-          type: string
-        relationshiptoinsuredid:
-          default: 1
-          description: This patient's relationship to the policy holder (as an ID).  See <a href="/workflows/patient-relationship-mapping">the mapping</a>.
-          type: integer
-        repricername:
-          description: CASE POLICY FIELD - Name for the repricer.  Only available for worker's comp case policies.
-          type: string
-        repricerphone:
-          description: CASE POLICY FIELD - Phone number for the repricer.  Only available for worker's comp case policies.
-          type: string
-        sequencenumber:
-          description: 1 = primary, 2 = secondary, 3 = tertiary, etc.  Must have a primary before a secondary and a secondary before a tertiary, etc.
-          type: integer
-        slidingfeeplanid:
-          description: If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
-          type: integer
-        stateofreportedinjury:
-          description: CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
-          type: string
-        patient:
-          $ref: '#/components/schemas/Patient'
-      type: object
     Patient:
       x-external-id: patientid
       type: object
@@ -1759,6 +1468,296 @@ components:
         zip:
           description: Patient's zip.  Matching occurs on first 5 characters.
           type: string
+    PostPatient200Response:
+      x-external-id: patientid
+      type: object
+      properties:
+        errormessage:
+          description: Error message will be returned if show error message flag is set to true and patient match found.
+          type: string
+        patientid:
+          description: Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
+          type: string
+    contractItem:
+      x-external-id: contractid
+      type: object
+      properties:
+        availablebalance:
+          description: The available balance on this contract.
+          type: string
+        contractclass:
+          description: The type of contract.  For example, "ONEYEAR,"
+          type: string
+        maxamount:
+          description: The maximum allowed amount for this contract.
+          type: string
+    BalanceItem:
+      x-external-id: balanceid
+      type: object
+      properties:
+        balance:
+          description: Balance for this provider group.
+          type: string
+        cleanbalance:
+          description: Indicates whether the balance is associated with a contract, payment plan, or collections agency.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        collectionsbalance:
+          description: The outstanding amount associated with a collections agency.
+          type: string
+        contracts:
+          description: Information related to existing credit card contracts.
+          items:
+            $ref: '#/components/schemas/contractItem'
+          type: array
+        departmentids:
+          description: Comma separated list of department IDs that belong to this group
+          type: string
+        paymentplanbalance:
+          description: The outstanding amount associated with a payment plan.
+          type: string
+        providergroupid:
+          description: Athena ID for this financial group.
+          type: integer
+    customfield:
+      properties:
+        customfieldid:
+          description: Corresponds to the /customfields customfieldid.
+          type: string
+        customfieldvalue:
+          description: For a non-select custom field, the value.
+          type: string
+        optionid:
+          description: For a select custom field, the selectid value (from /customfield's selectlist).
+          type: string
+      type: object
+    InsurancePatient:
+      x-external-id: insuranceid
+      properties:
+        adjusterfax:
+          description: CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
+          type: string
+        adjusterfirstname:
+          description: CASE POLICY FIELD - First name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
+          type: string
+        adjusterlastname:
+          description: CASE POLICY FIELD - Last name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
+          type: string
+        adjusterphone:
+          description: CASE POLICY FIELD - Phone number/other contact info for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
+          type: string
+        anotherpartyresponsibleyn:
+          description: CASE POLICY FIELD - Boolean field indicating if another party was responsible for this accident.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        autoaccidentstate:
+          description: CASE POLICY FIELD - Two-letter abbreviation for the state in which the auto accident took place. Only meaningful for auto insurance case policies.
+          type: string
+        cancelled:
+          description: The date in which the insurance was marked cancelled.
+          type: string
+        caseinjurydate:
+          description: CASE POLICY FIELD - Date of the injury.  Required for auto insurance, legal, and worker's comp case policies.
+          type: string
+        casepolicytypename:
+          description: CASE POLICY FIELD - The name of this type of case policy.
+          type: string
+        ccmstatusid:
+          description: Status ID of current CCM enrollment.
+          type: integer
+        ccmstatusname:
+          description: The name of current CCM enrollment status.
+          type: string
+        coinsurancepercent:
+          description: The coinsurance percentage for this insurance. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before this field populates.
+          type: number
+        copays:
+          description: Details about the copays for this insurance package. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before these populate.
+          type: string
+        descriptionofinjury:
+          description: CASE POLICY FIELD - A description of the injury.  Only available for auto insurance and worker's comp case policies.
+          type: string
+        eligibilitylastchecked:
+          description: Date the eligibility was last checked.
+          type: string
+        eligibilitymessage:
+          description: The message, usually from our engine, of the eligibility check.
+          type: string
+        eligibilityreason:
+          description: The source of the current status. Athena is our eligibility engine.
+          type: string
+        eligibilitystatus:
+          description: Current eligibility status of this insurance package.
+          type: string
+        employerid:
+          description: The employer ID associated with the patient's insurance.
+          type: string
+        expirationdate:
+          description: Date the insurance expires.
+          type: string
+        icd10codes:
+          description: CASE POLICY FIELD - See documentation for ICD9CODES.
+          type: string
+        icd9codes:
+          description: CASE POLICY FIELD - A list of ICD9 accepted diagnosis codes. Only available for worker's comp case policies.
+          type: string
+        injuredbodypart:
+          description: CASE POLICY FIELD - Text field for describing the injured body part.  Only available for auto insurance  and worker's comp case policies.
+          type: string
+        insuranceclaimnumber:
+          description: CASE POLICY FIELD - The auto insurance claim number or the worker's comp claim number.
+          type: string
+        insuranceid:
+          description: The athena insurance policy ID.
+          type: string
+        insuranceidnumber:
+          description: The insurance policy ID number (as presented on the insurance card itself).
+          type: string
+        insurancepackageaddress1:
+          description: Address 1 for the AthenaNet insurance Package.
+          type: string
+        insurancepackageaddress2:
+          description: Address 2 for the AthenaNet insurance Package.
+          type: string
+        insurancepackagecity:
+          description: City for the AthenaNet insurance Package.
+          type: string
+        insurancepackageid:
+          description: The athenaNet insurance package ID.
+          type: integer
+        insurancepackagestate:
+          description: State of the AthenaNet insurance package
+          type: string
+        insurancepackagezip:
+          description: Zip code of the AthenaNet insurance package
+          type: string
+        insurancephone:
+          description: 'The phone number for the insurance company. Note: This defaults to the insurance package phone number. If this is set, it will override it. Likewise if blanked out, it will go back to default.'
+          type: string
+        insuranceplandisplayname:
+          description: Superpackagename of the specific insurance package.
+          type: string
+        insuranceplanname:
+          description: Name of the specific insurance package.
+          type: string
+        insurancepolicyholder:
+          description: The full name of the insurance policy holder.
+          type: string
+        insurancepolicyholderaddress1:
+          description: The first address line of the insurance policy holder.
+          type: string
+        insurancepolicyholderaddress2:
+          description: The second address line of the insurance policy holder.
+          type: string
+        insurancepolicyholdercity:
+          description: The city of the insurance policy holder.
+          type: string
+        insurancepolicyholdercountrycode:
+          description: The country code (3 letter) of the insurance policy holder.
+          type: string
+        insurancepolicyholdercountryiso3166:
+          description: The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166</a> country code of the insurance policy holder.
+          type: string
+        insurancepolicyholderdob:
+          description: The DOB of the insurance policy holder (mm/dd/yyyy).
+          type: string
+        insurancepolicyholderfirstname:
+          description: The first name of the insurance policy holder.  Except for self-pay, required for new policies.
+          type: string
+        insurancepolicyholderlastname:
+          description: The last name of the insurance policy holder.  Except for self-pay, required for new policies.
+          type: string
+        insurancepolicyholdermiddlename:
+          description: The middle name of the insurance policy holder.
+          type: string
+        insurancepolicyholdersex:
+          description: The sex of the insurance policy holder.  Except for self-pay, required for new policies.
+          type: string
+        insurancepolicyholderssn:
+          description: The SSN of the insurance policy holder.
+          type: string
+        insurancepolicyholderstate:
+          description: The state of the insurance policy holder.
+          type: string
+        insurancepolicyholdersuffix:
+          description: The suffix of the insurance policy holder.
+          type: string
+        insurancepolicyholderzip:
+          description: The zip of the insurance policy holder.
+          type: string
+        insurancetype:
+          description: Type of insurance. E.g., Medicare Part B, Group Policy, HMO, etc.
+          type: string
+        insuredentitytypeid:
+          description: The ID of the entity type for this insurance.
+          type: integer
+        insuredpcp:
+          type: string
+        insuredpcpnpi:
+          description: The national provider id of the primary care physcian assicated with the insurance.
+          type: integer
+        ircid:
+          description: Insurance category / company internal ID
+          type: integer
+        ircname:
+          description: Insurance category / company. E.g., United Healthcare, BCBS-MA, etc.
+          type: string
+        issuedate:
+          description: Date the insurance was issued.
+          type: string
+        policynumber:
+          description: The insurance group number.  This is sometimes present on an insurance card.
+          type: string
+        relatedtoautoaccidentyn:
+          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to an auto accident.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        relatedtoemploymentyn:
+          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to the patient's employer.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        relatedtootheraccidentyn:
+          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to another accident.  Only available for worker's comp case policies.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        relationshiptoinsured:
+          description: This patient's relationship to the policy holder (text).
+          type: string
+        relationshiptoinsuredid:
+          default: 1
+          description: This patient's relationship to the policy holder (as an ID).  See <a href="/workflows/patient-relationship-mapping">the mapping</a>.
+          type: integer
+        repricername:
+          description: CASE POLICY FIELD - Name for the repricer.  Only available for worker's comp case policies.
+          type: string
+        repricerphone:
+          description: CASE POLICY FIELD - Phone number for the repricer.  Only available for worker's comp case policies.
+          type: string
+        sequencenumber:
+          description: 1 = primary, 2 = secondary, 3 = tertiary, etc.  Must have a primary before a secondary and a secondary before a tertiary, etc.
+          type: integer
+        slidingfeeplanid:
+          description: If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
+          type: integer
+        stateofreportedinjury:
+          description: CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
+          type: string
+      type: object
     Department:
       x-external-id: departmentid
       properties:

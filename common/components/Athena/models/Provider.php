@@ -158,7 +158,7 @@ class Provider extends \yii\db\ActiveRecord
 
         return $this;
     }
-
+    
     public static function createFromApiObject($apiObject) {
         $model = new self();
 

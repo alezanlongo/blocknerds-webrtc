@@ -252,7 +252,7 @@ class AthenaComponent extends Component
             ->one();
 
         if (!$appointment) {
-            return PutAppointment200Response::createFromApiObject($appointmentModelApi);
+            return PutAppointment200Response::createFromApiObject($appointmentModelApi[0]);
         }
 
         return $appointment->loadApiObject($appointmentModelApi);
