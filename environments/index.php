@@ -48,6 +48,44 @@ return [
             'frontend/config/main-local.php',
         ],
     ],
+    'Sandbox' => [
+        'path' => 'sbx',
+        'setWritable' => [
+            'backend/runtime',
+            'backend/web/assets',
+            'console/runtime',
+            'frontend/runtime',
+            'frontend/web/assets',
+        ],
+        'setExecutable' => [
+            'yii',
+            'yii_test',
+        ],
+        'setCookieValidationKey' => [
+            'backend/config/main-local.php',
+            'common/config/codeception-local.php',
+            'frontend/config/main-local.php',
+        ],
+    ],
+    'Staging' => [
+        'path' => 'stg',
+        'setWritable' => [
+            'backend/runtime',
+            'backend/web/assets',
+            'console/runtime',
+            'frontend/runtime',
+            'frontend/web/assets',
+        ],
+        'setExecutable' => [
+            'yii',
+            'yii_test',
+        ],
+        'setCookieValidationKey' => [
+            'backend/config/main-local.php',
+            'common/config/codeception-local.php',
+            'frontend/config/main-local.php',
+        ],
+    ],
     'Production' => [
         'path' => 'prod',
         'setWritable' => [

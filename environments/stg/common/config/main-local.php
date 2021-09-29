@@ -17,15 +17,5 @@ return [
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-        'janus-api' => [
-            'url' => 'http://janus',
-            'uri' => 'janus',
-            'apiSecret' => 'janusrocks',
-            'adminSecret' => 'janusoverlord',
-            'adminUri' => 'admin',
-            'adminKey' => 'supersecret',
-            'tokenAuthSecret' => 'fcknlorenzo',
-            'storedAuth' => true
-        ],
     ],
 ];

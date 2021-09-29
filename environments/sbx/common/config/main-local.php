@@ -18,14 +18,14 @@ return [
             'useFileTransport' => true,
         ],
         'janus-api' => [
-            'url' => 'http://janus',
-            'uri' => 'janus',
-            'apiSecret' => 'janusrocks',
-            'adminSecret' => 'janusoverlord',
-            'adminUri' => 'admin',
-            'adminKey' => 'supersecret',
+            'url'             => 'http://janus',
+            'uri'             => 'janus',
+            'apiSecret'       => 'janusrocks',
+            'adminSecret'     => 'janusoverlord',
+            'adminUri'        => 'admin',
+            'adminKey'        => 'supersecret',
             'tokenAuthSecret' => 'fcknlorenzo',
-            'storedAuth' => true
+            'storedAuth'      => true
         ],
     ],
 ];
