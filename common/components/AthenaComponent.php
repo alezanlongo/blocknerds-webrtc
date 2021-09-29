@@ -6,6 +6,8 @@ use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Patient;
+use common\components\Athena\models\insurancePackages;
+use common\components\Athena\models\insurance;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -42,6 +44,48 @@ class AthenaComponent extends Component
         }
 
         return $departmentsModels;
+    }
+
+    public function getInsurancepackages($flatten = false)
+    {
+        $query = array(
+            'insuranceplanname' => 'HDEPO National HRA',
+            'memberid' => 'CD123456'
+        );
+        $insurancePackagesModelsApi = $this->client->getPracticeidInsurancepackages($this->practiceid, $query);
+
+        $insurancePackagesModels = [];
+
+        foreach ($insurancePackagesModelsApi as $insurancePackagesModelApi) {
+            $insurancePackagesModels[] =
+                insurancePackages::createFromApiObject(
+                    $insurancePackagesModelApi
+                );
+        }
+
+        if ($flatten) {
+            return array_column($insurancePackagesModels, 'insuranceplanname', 'insurancepackageid');
+        }
+
+        return $insurancePackagesModels;
+    }
+
+    /**
+     * @return Insurance
+     */
+
+    public function createInsurance($insuranceData, $patientId)
+    {
+
+        $insuranceData->sequencenumber = 1;
+        $insuranceModelApi =
+            $this->client->postPracticeidPatientsPatientidInsurances(
+                $this->practiceid,
+                $patientId,
+                $insuranceData->toArray()
+            );
+
+        return $insuranceData->createFromApiObject($insuranceModelApi[0]);
     }
 
     /**
