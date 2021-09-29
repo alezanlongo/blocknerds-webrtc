@@ -50,6 +50,11 @@ class RoomController extends \yii\web\Controller
         ];
     }
 
+    public function actionTest()
+    {
+        return $this->render('test');
+    }
+
     public function actionIndex($uuid)
     {
         $this->layout = 'room';
@@ -112,24 +117,23 @@ class RoomController extends \yii\web\Controller
         }
 
         $token = null;
-        if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true ) {
+        if (($is_owner || $is_allowed) && Yii::$app->janusApi->videoRoomExists($uuid) === true) {
             $userToken = RoomMember::find()->select('token')->where(['user_profile_id' => $profile->id, 'room_id' => $room->id])->limit(1)->one();
             $token = $userToken->token;
-            if($room->is_quick){
+            if ($room->is_quick) {
                 $uTokens = Yii::$app->janusApi->getMembersTokenByRoom($uuid);
                 if (false !== $uTokens && (empty($uTokens) || !\in_array($token, \array_column($uTokens, 'token')))) {
                     $res = Yii::$app->janusApi->addUserToken($uuid, $token);
                 }
             }
-        }else{
-            if(!$room->is_quick){
+        } else {
+            if (!$room->is_quick) {
                 // $filter = ['room_id'=>$room->id, 'user_profile_id' => $profile->id];
                 // $roomMember = RoomMember::find()->where($filter)->limit(1)->one();
                 // if($roomMember) $roomMember->delete();
                 // $roomRequest = RoomRequest::find()->where($filter)->limit(1)->one();
                 // if($roomRequest) $roomRequest->delete();
                 throw new UnauthorizedHttpException("Private meeting, you don't have access.");
-                
             }
         }
 
