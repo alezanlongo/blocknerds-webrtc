@@ -1,20 +1,20 @@
-const { testMediaConnectionBitrate } = Twilio.Diagnostics;
+const { testMediaConnectionBitrate, testAudioOutputDevice } = Twilio.Diagnostics;
 
 const getDevicesConnected = () => {
   return navigator.mediaDevices.enumerateDevices();
 };
-// getDevices()
-// .then(data => {
-//     console.log('devices?',data)
-// })
-// .catch(err=> console.log(err))
+getDevicesConnected()
+.then(data => {
+    console.log('devices',data)
+})
+.catch(err=> console.log(err))
 
 // navigator.mediaDevices
 //   .getUserMedia({ audio: true, video: false })
 //   .then(function (mediaStream) {
 //     console.log("media", mediaStream);
 //     const audioOutputDeviceTest = testAudioOutputDevice({
-//       deviceId: mediaStream.id,
+//       deviceId: 'default',
 //     });
 //     console.log("obj", audioOutputDeviceTest);
 //   })
