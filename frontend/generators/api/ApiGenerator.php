@@ -178,15 +178,15 @@ class ApiGenerator extends ParentApiGenerator
             }
         }
 
-        $clientEndPoints = $this->generateClients();
+        $clientEndPoints = $this->generateClient();
         $modelPath = $this->getPathFromNamespace($this->folderPath);
         $component = explode('\\', $this->folderPath);
         $component = $component[count($component) - 1];
         $files[] = new CodeFile(
-            Yii::getAlias("$modelPath/{$component}Client.php"), // fix me, ask Ricardo
+            Yii::getAlias("$modelPath/{$component}Client.php"),
             $this->render('client.php', [
                 'component'         => $component,
-                'className'         => $component.'Client', // fix me, ask Ricardo
+                'className'         => $component.'Client',
                 'namespace'         => $this->folderPath,
                 'clientEndPoints'   => $clientEndPoints,
             ])
@@ -361,7 +361,7 @@ class ApiGenerator extends ParentApiGenerator
     }
 
 
-    protected function generateClients()
+    protected function generateClient()
     {
         $arrayClient = [];
         foreach ($this->getOpenApi()->paths as $pathName => $path) {
@@ -375,6 +375,8 @@ class ApiGenerator extends ParentApiGenerator
                         array_push($arrPath, $parameter->name);
                     }
                 }
+
+                $listKey = ( array_key_exists('x-list-key', $operation->getExtensions()) ) ? $operation->getExtensions()['x-list-key'] : null;
 
                 foreach ($operation->responses->getResponses() as $responseCode => $response){
                     foreach ($response->content as $responseType => $responseItem){
@@ -396,8 +398,9 @@ class ApiGenerator extends ParentApiGenerator
                             'parameters'    => $arrPath,
                             'operationId'   => $operation->operationId,
                             'schema'        => $arrSchema[(count($arrSchema) - 1)],
-                            'flagList'      => $flagList
-                        ]);//var_dump($arrayClient); exit();
+                            'flagList'      => $flagList,
+                            'listKey'      => $listKey,
+                        ]);
                     }
                 }
             }
