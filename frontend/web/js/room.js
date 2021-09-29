@@ -78,6 +78,7 @@ $(".btn-join-again").on("click", () => {
 });
 
 const initJanus = () => {
+  console.log('Token', mytoken);
   Janus.init({
     debug: "all",
     callback: () => {
