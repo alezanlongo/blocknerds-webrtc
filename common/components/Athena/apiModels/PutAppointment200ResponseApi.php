@@ -6,7 +6,7 @@ use Yii;
 use yii\base\Model;
 
 /**
- * 
+ *
  *
  * @property string $appointmentcopay Detailed information about the copay for this appointment.  Gives more detail than the COPAY field.  Note: this information is not yet available in all practices, we are rolling this out slowly.
  * @property string $appointmentid Appointment ID of the booked appointment

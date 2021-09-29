@@ -64,6 +64,7 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+
         if($appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay')) {
             $this->appointmentcopay = $appointmentcopay;
         }
@@ -172,7 +173,7 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
 
         return $this;
     }
-    
+
     public static function createFromApiObject($apiObject) {
         $model = new self();
 

@@ -13,6 +13,7 @@ use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
 use yii\db\conditions\BetweenCondition;
+use yii\helpers\VarDumper;
 
 class RoomController extends Controller
 {
@@ -46,6 +47,7 @@ class RoomController extends Controller
             if (true === $roomExists) {
                 if ($this->debug) {
                     $this->stdout('already exists - ' . __METHOD__ . ':' . __LINE__);
+                    continue;
                 }
                 $this->addRoomMembers($r->uuid);
                 $r->status = Room::STATUS_CREATED;
@@ -79,12 +81,15 @@ class RoomController extends Controller
         foreach ($members as $m) {
             if (false !== $uTokens && !\in_array($m->token, \array_column($uTokens, 'token'))) {
                 $janus->addUserToken($roomUuid, $m->token);
-                $rr = new RoomRequest();
-                $rr->user_profile_id = $m->user_profile_id;
-                $rr->room_id = $m->room_id;
-                $rr->status = RoomRequest::STATUS_ALLOW;
-                $rr->attempts = 1;
-                $rr->save(false);
+                $rr = RoomRequest::find()->where(['user_profile_id' => $m->user_profile_id, 'room_id' => $m->room_id])->limit(1)->one();
+                if(!$rr){
+                    $rr = new RoomRequest();
+                    $rr->user_profile_id = $m->user_profile_id;
+                    $rr->room_id = $m->room_id;
+                    $rr->attempts = 1;
+                    $rr->status = RoomRequest::STATUS_ALLOW;
+                    $rr->save(false);
+                }
             }
         }
     }
