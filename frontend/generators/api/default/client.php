@@ -37,7 +37,7 @@ $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
         if($dataResponse['success']){
 <?php if($endpoint['flagList'] === TRUE): ?>
             $dataApiModel = [];
-            $responseData = (isset($dataResponse['data']['<?= $endpoint['finalPathName'] ?>'])) ? $dataResponse['data']['<?= $endpoint['finalPathName'] ?>'] : $dataResponse['data'];
+            $responseData = (isset($dataResponse['data']['<?= ($endpoint['listKey']) ? $endpoint['listKey'] : $endpoint['finalPathName'] ?>'])) ? $dataResponse['data']['<?= ($endpoint['listKey']) ? $endpoint['listKey'] : $endpoint['finalPathName'] ?>'] : $dataResponse['data'];
             foreach ($responseData as $key => $value){
                 array_push($dataApiModel, new  \common\components\<?= $component ?>\apiModels\<?= $endpoint['schema'] ?>Api($value));
             }
