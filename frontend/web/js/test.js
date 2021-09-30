@@ -31,30 +31,25 @@ getDevicesConnected()
   .catch((err) => console.log(err));
 
 navigator.mediaDevices
-  .getUserMedia({ audio: true, video: false })
+  .getUserMedia({ audio: true, video: true })
   .then(function (mediaStream) {
     console.log("media", mediaStream);
-    const cameraDeviceId =
-      "445e2e19d814686da61b34618019ef2da25dd909c36ff8678983231eb7d265d4";
-    doVideoInputTest({
-      mediaStream,
-      element: $("#video-test"),
-      cameraDeviceId,
-    });
+    initTests();
   })
   .catch(function (err) {
     console.log("err", err);
   });
+
 const initTests = (devices) => {
-  //   const outputHeadphonesDeviceId = "1f7677ca74b7d45fa99f19f46187e71afc72454d3bee888e8371a74b6a2b9ee0";
-  //   doAudioOutputTest(outputHeadphonesDeviceId)
-  //     const micHeadphonesDeviceId = "92c35b5b3166c069b8c0f31d2a3a753c420a312982ccb425d92df1b765241ceb"
-  //   doAudioInputTest(micHeadphonesDeviceId);
-  // const cameraDeviceId = "445e2e19d814686da61b34618019ef2da25dd909c36ff8678983231eb7d265d4"
-  // doVideoInputTest($('#video-test'),cameraDeviceId)
+
+  doAudioOutputTest();
+
+  doAudioInputTest();
+
+  doVideoInputTest($('#video-test'));
 };
 
-const doAudioInputTest = (deviceId) => {
+const doAudioInputTest = (deviceId = 'default') => {
   const audioInputDeviceTest = testAudioInputDevice({
     deviceId,
   });
@@ -75,7 +70,7 @@ const doAudioInputTest = (deviceId) => {
   stopTest(audioInputDeviceTest);
 };
 
-const doAudioOutputTest = (deviceId) => {
+const doAudioOutputTest = (deviceId = 'default') => {
   const audioOutputDeviceTest = testAudioOutputDevice({
     deviceId,
   });
@@ -94,8 +89,7 @@ const doAudioOutputTest = (deviceId) => {
   stopTest(audioOutputDeviceTest);
 };
 
-const doVideoInputTest = (obj) => {
-  const { videoElement:element, cameraDeviceId:deviceId } = obj;
+const doVideoInputTest = (element) => {
   const videoInputDeviceTest = testVideoInputDevice({ element });
   videoInputDeviceTest.on(EVENT_ERROR, (error) => {
     console.error(error);
@@ -133,6 +127,7 @@ const doBitrateTest = () => {
 
   stopTest(mediaConnectionBitrateTest);
 };
+
 const stopTest = (compTest) => {
   setTimeout(() => {
     console.log("do stop");
