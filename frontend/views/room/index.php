@@ -11,6 +11,7 @@ use frontend\assets\pahoMqtt\PahoMqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
+/** @var boolean $limit_members Whether to limit members for this room...? */
 
 /** @var \yii\web\View $this */
 JanusAsset::register($this);
@@ -31,6 +32,33 @@ $this->registerJsVar('endTime', $endTime, View::POS_END);
 $this->registerJsVar('members', $members, View::POS_END);
 $this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
 
+$config = [
+    'janus' => [
+        // 'protocol'        => \Yii::$app->params['janus.protocol'],
+        // 'host'            => \Yii::$app->params['janus.host'],
+        'port'            => \Yii::$app->params['janus.port'],
+        'path'            => \Yii::$app->params['janus.path'],
+        'secret'          => \Yii::$app->params['janus.secret'],
+        'adminPath'       => \Yii::$app->params['janus.adminPath'],
+        'adminSecret'     => \Yii::$app->params['janus.adminSecret'],
+        'adminKey'        => \Yii::$app->params['janus.adminKey'],
+        'tokenAuthSecret' => \Yii::$app->params['janus.tokenAuthSecret'],
+        'storedAuth'      => \Yii::$app->params['janus.storedAuth'],
+        'record'          => \Yii::$app->params['janus.record'],
+    ],
+    'mqtt'  => [
+        'protocol' => \Yii::$app->params['mqtt.protocol'],
+        'host'     => \Yii::$app->params['mqtt.host'],
+        'port'     => \Yii::$app->params['mqtt.port'],
+        'path'     => \Yii::$app->params['mqtt.path'],
+    ]
+];
+$this->registerJs(
+    "var roomConfig = ".\yii\helpers\Json::htmlEncode($config).";",
+    View::POS_HEAD,
+    'roomConfig'
+);
+
 $this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
     [
@@ -38,13 +66,13 @@ $this->registerJsFile(
         'position' => View::POS_END
     ]
 );
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/countdown.js',
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
+//$this->registerJsFile(
+//    Yii::$app->request->BaseUrl . '/js/countdown.js',
+//    [
+//        'depends' => "yii\web\JqueryAsset",
+//        'position' => View::POS_END
+//    ]
+//);
 
 $this->registerJsFile(
     Yii::$app->request->BaseUrl . '/js/room.js',
@@ -60,6 +88,43 @@ $this->registerJsFile(
         'position' => View::POS_END
     ]
 );
+
+$countdown = <<<'COUNTDOWN'
+const handleCountdown = (endTime) => {
+  const MILLISECONDS_STRING = "milliseconds";
+  const eventTimeFinish = moment(endTime);
+  const currentTime = moment();
+  let diffTime = eventTimeFinish._i - currentTime.unix();
+  let duration = moment.duration(diffTime * 1000, MILLISECONDS_STRING);
+  const interval = 1000;
+
+  setInterval(() => {
+    duration = moment.duration(duration - interval, MILLISECONDS_STRING);
+    if (duration.seconds() < 0) $(".spanCountdown").addClass('text-danger')
+    $(".spanCountdown").text(
+        checkAddZero(duration.hours()) +
+        ":" +
+        checkAddZero(duration.minutes()) +
+        ":" +
+        checkAddZero(duration.seconds())
+    );
+  }, interval);
+};
+
+const checkAddZero = (value) => {
+  value = Math.abs(value);
+  return value < 10 ? `0${value}` : `${value}`;
+};
+
+const switchSignal = (seconds) => {
+  if (seconds < 0) return "+ ";
+  if (seconds > 0) return "- ";
+  return "";
+};
+COUNTDOWN;
+
+$this->registerJs($countdown, View::POS_END,'countdown_script');
+
 
 $this->title = 'The Room';
 
@@ -104,7 +169,7 @@ $this->title = 'The Room';
         </div>
     </div>
     <div class="main-content d-flex">
-        <? if ($is_owner || $is_allowed) { ?>
+        <?php if ($is_owner || $is_allowed) { ?>
             <div class="join-again d-none">
                 <div class="card">
                     <div class="card-title">
@@ -150,7 +215,7 @@ $this->title = 'The Room';
                     <?php } ?>
                 </div>
             </div>
-        <? } ?>
+        <?php } ?>
         <div class="tab-content sidebar" id="pills-tabContent">
             <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
                 <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
@@ -187,11 +252,11 @@ $this->title = 'The Room';
         </div>
 
     </div>
-<? endif ?>
+<?php endif ?>
 
 <?php Pjax::begin(['id' => 'room-member', "options" => ['class' => 'container']]);
 if (!$is_owner) : ?>
-    <? if (!$request || $request->status !== RoomRequest::STATUS_ALLOW) : ?>
+    <?php if (!$request || $request->status !== RoomRequest::STATUS_ALLOW) : ?>
         <div class="row ">
             <div class="d-flex w-100 border-bottom">
                 <div class="d-flex mr-auto justify-content-start">
@@ -208,7 +273,7 @@ if (!$is_owner) : ?>
             </div>
         </div>
         <div class="row pt-5">
-            <?
+            <?php
             echo match ($request->status ?? null) {
                 RoomRequest::STATUS_PENDING =>
                 '<p class="text-info">Your join request is waiting for approval.</p>',
@@ -219,8 +284,8 @@ if (!$is_owner) : ?>
             };
             ?>
         </div>
-    <? endif ?>
-<? endif;
+    <?php endif ?>
+<?php endif;
 Pjax::end();
 ?>
 
@@ -241,7 +306,7 @@ Pjax::end();
 
 <?php Modal::end(); ?>
 
-<? Modal::begin([
+<?php Modal::begin([
     'title' => 'Require to join...',
     'id' => 'pendingRequests',
     'options' => [
@@ -259,13 +324,13 @@ if ($is_owner) {
             <div class="card mb-3">
                 <div class="card-header"><?= $request->user->username ?> wants to join the room</div>
                 <div class="card-body">
-                    <?
+                    <?php
                     echo Html::submitButton('Allow to join', ['class' => 'btn btn-success', 'id' => 'btnAllow', 'data-user' => $request->user_profile_id]);
                     echo Html::submitButton('Deny to join', ['class' => 'btn btn-danger', 'id' => 'btnDeny', 'data-user' => $request->user_profile_id]);
                     ?>
                 </div>
             </div>
-<?
+            <?php
         }
     } else {
         echo "<script>if (window.jQuery) $('#pendingRequests').modal('hide');</script>";
