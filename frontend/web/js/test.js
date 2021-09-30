@@ -90,7 +90,7 @@ const doAudioOutputTest = (deviceId = 'default') => {
 };
 
 const doVideoInputTest = (element) => {
-  const videoInputDeviceTest = testVideoInputDevice({ element });
+  const videoInputDeviceTest = testVideoInputDevice({ element: $(element).get(0) });
   videoInputDeviceTest.on(EVENT_ERROR, (error) => {
     console.error(error);
   });
