@@ -11,6 +11,7 @@ const {
   testMediaConnectionBitrate,
   testAudioOutputDevice,
   testAudioInputDevice,
+  testVideoInputDevice,
 } = Twilio.Diagnostics;
 
 console.log("twilio data to diagnostics", Twilio.Diagnostics, Twilio);
@@ -23,28 +24,34 @@ const filterDevices = (devices, kind) => {
 getDevicesConnected()
   .then((devices) => {
     console.log("devices", devices);
-    const optionsDevices = filterDevices(devices, KIND_AUDIO_INPUT)
-    console.log('options',optionsDevices)
+    const optionsDevices = filterDevices(devices, KIND_AUDIO_INPUT);
+    console.log("options", optionsDevices);
     deviceSelected = optionsDevices[0];
-    initTests();
   })
   .catch((err) => console.log(err));
 
-// navigator.mediaDevices
-//   .getUserMedia({ audio: true, video: false })
-//   .then(function (mediaStream) {
-//     console.log("media", mediaStream);
-
-//   })
-//   .catch(function (err) {
-//     console.log("err", err);
-//   });
+navigator.mediaDevices
+  .getUserMedia({ audio: true, video: false })
+  .then(function (mediaStream) {
+    console.log("media", mediaStream);
+    const cameraDeviceId =
+      "445e2e19d814686da61b34618019ef2da25dd909c36ff8678983231eb7d265d4";
+    doVideoInputTest({
+      mediaStream,
+      element: $("#video-test"),
+      cameraDeviceId,
+    });
+  })
+  .catch(function (err) {
+    console.log("err", err);
+  });
 const initTests = (devices) => {
-  const outputHeadphonesDeviceId = "1f7677ca74b7d45fa99f19f46187e71afc72454d3bee888e8371a74b6a2b9ee0";
-  doAudioOutputTest(outputHeadphonesDeviceId)
-    const micHeadphonesDeviceId = "92c35b5b3166c069b8c0f31d2a3a753c420a312982ccb425d92df1b765241ceb"
-  doAudioInputTest(micHeadphonesDeviceId);
-  
+  //   const outputHeadphonesDeviceId = "1f7677ca74b7d45fa99f19f46187e71afc72454d3bee888e8371a74b6a2b9ee0";
+  //   doAudioOutputTest(outputHeadphonesDeviceId)
+  //     const micHeadphonesDeviceId = "92c35b5b3166c069b8c0f31d2a3a753c420a312982ccb425d92df1b765241ceb"
+  //   doAudioInputTest(micHeadphonesDeviceId);
+  // const cameraDeviceId = "445e2e19d814686da61b34618019ef2da25dd909c36ff8678983231eb7d265d4"
+  // doVideoInputTest($('#video-test'),cameraDeviceId)
 };
 
 const doAudioInputTest = (deviceId) => {
@@ -87,9 +94,9 @@ const doAudioOutputTest = (deviceId) => {
   stopTest(audioOutputDeviceTest);
 };
 
-const doVideoInputTest = (videoElement) => {
-  const videoInputDeviceTest = testVideoInputDevice({ element: videoElement });
-
+const doVideoInputTest = (obj) => {
+  const { videoElement:element, cameraDeviceId:deviceId } = obj;
+  const videoInputDeviceTest = testVideoInputDevice({ element });
   videoInputDeviceTest.on(EVENT_ERROR, (error) => {
     console.error(error);
   });
@@ -127,8 +134,8 @@ const doBitrateTest = () => {
   stopTest(mediaConnectionBitrateTest);
 };
 const stopTest = (compTest) => {
-    setTimeout(() => {
-      console.log('do stop')
+  setTimeout(() => {
+    console.log("do stop");
     compTest.stop();
   }, TIME_OUT_MILLISECONDS);
 };

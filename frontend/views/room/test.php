@@ -20,3 +20,4 @@ $this->registerJsFile(
 
 ?>
 
+<video id="video-test" width="320" height="240" autoplay></video>
