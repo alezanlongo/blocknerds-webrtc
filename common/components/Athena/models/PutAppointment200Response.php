@@ -53,7 +53,7 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
     {
         return [
             [['appointmentcopay', 'appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'trim'],
-            [[ 'appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'string'],
+            [['appointmentcopay', 'appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'string'],
             [['duration', 'hl7providerid', 'referringproviderid', 'renderingproviderid', 'supervisingproviderid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
@@ -64,9 +64,9 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        // if($appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay')) {
-        //     $this->appointmentcopay = $appointmentcopay;
-        // }
+        if($appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay')) {
+            $this->appointmentcopay = $appointmentcopay;
+        }
         if($appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid')) {
             $this->appointmentid = $appointmentid;
         }
@@ -175,7 +175,7 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
 
         return $this;
     }
-
+    
     public static function createFromApiObject($apiObject) {
         $model = new self();
 
