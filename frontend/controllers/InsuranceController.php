@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\Athena\models\Insurance;
+use common\components\Athena\models\Patient;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -78,6 +79,10 @@ class InsuranceController extends Controller
             throw new \yii\web\BadRequestHttpException();
         }
 
+        $patient = Patient::find()
+            ->where(['id' => $patientId])
+            ->one();
+
         $model = new Insurance();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -85,16 +90,16 @@ class InsuranceController extends Controller
             $patientId = Yii::$app->request->post('Insurance')['patientId'];
             $model = $this->component->createInsurance(
                 $model,
-                $patientId
+                $patient->externalId
             );
             if($model->save()) {
-                return $this->redirect(['appointment/create', 'patientId' => $patientId]);
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         }
 
         return $this->render('create', [
             'model' => $model,
-            'patientId' => $patientId,
+            'patientId' => $patient->externalId,
             'insurancePackages' => $this->component->getInsurancepackages(true)
         ]);
     }

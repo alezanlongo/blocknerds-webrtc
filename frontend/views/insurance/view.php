@@ -16,14 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
+
     </p>
 
     <?= DetailView::widget([
@@ -32,29 +25,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'table table-striped table-bordered detail-view bg-light'
         ],
         'attributes' => [
-            'adjusterfax',
-            'adjusterfirstname',
-            'adjusterlastname',
-            'adjusterphone',
-            'anotherpartyresponsibleyn',
-            'autoaccidentstate',
-            'cancelled',
-            'caseinjurydate',
-            'casepolicytypename',
-            'ccmstatusid',
-            'ccmstatusname',
-            'coinsurancepercent',
-            'copays',
-            'descriptionofinjury',
-            'eligibilitylastchecked',
-            'eligibilitymessage',
-            'eligibilityreason',
-            'eligibilitystatus',
-            'employerid',
-            'expirationdate',
-            'icd10codes',
-            'icd9codes',
-            'injuredbodypart',
             'insuranceclaimnumber',
             'insuranceid',
             'insuranceidnumber',

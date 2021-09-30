@@ -105,7 +105,7 @@ class EncounterController extends Controller
 
         return $this->render('update', [
             'model'             => $model,
-            'patientLocations'  => $this->component->getPatientLocations(TRUE, $departmentId),
+            'patientLocations'  => $this->component->getPatientLocations($departmentId, TRUE),
             'patientStatuses'   => $this->component->getPatientStatuses(TRUE),
         ]);
     }

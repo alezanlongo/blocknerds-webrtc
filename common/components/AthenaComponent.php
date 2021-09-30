@@ -148,7 +148,7 @@ class AthenaComponent extends Component
     }
 
 
-    public function getPatientLocations($flatten = false, $departmentId)
+    public function getPatientLocations($departmentId, $flatten = false)
     {
         $patientLocationsModelsApi = $this->client->getPracticeidChartConfigurationPatientlocations($this->practiceid, [
             'departmentId'  => $departmentId,
