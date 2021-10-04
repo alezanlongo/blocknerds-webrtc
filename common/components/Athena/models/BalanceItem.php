@@ -12,8 +12,6 @@ use yii\helpers\ArrayHelper;
  * @property string $departmentids Comma separated list of department IDs that belong to this group
  * @property string $paymentplanbalance The outstanding amount associated with a payment plan.
  * @property int $providergroupid Athena ID for this financial group.
- * @property integer $patient_id
- * @property Patient $patient
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
@@ -32,7 +30,7 @@ class BalanceItem extends \yii\db\ActiveRecord
         return [
             [['balance', 'cleanbalance', 'collectionsbalance', 'departmentids', 'paymentplanbalance'], 'trim'],
             [['balance', 'cleanbalance', 'collectionsbalance', 'departmentids', 'paymentplanbalance'], 'string'],
-            [['providergroupid', 'patient_id', 'externalId', 'id'], 'integer'],
+            [['providergroupid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -40,11 +38,6 @@ class BalanceItem extends \yii\db\ActiveRecord
     public function getContracts()
     {
         return $this->hasMany(contractItem::class, ['balance_item_id' => 'id']);
-    }
-
-    public function getPatient()
-    {
-        return $this->hasOne(Patient::class, ['id' => 'patient_id']);
     }
 
 
@@ -72,12 +65,6 @@ class BalanceItem extends \yii\db\ActiveRecord
         }
         if($providergroupid = ArrayHelper::getValue($apiObject, 'providergroupid')) {
             $this->providergroupid = $providergroupid;
-        }
-        if($patient_id = ArrayHelper::getValue($apiObject, 'patient_id')) {
-            $this->patient_id = $patient_id;
-        }
-        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
-            $this->patient = $patient;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;

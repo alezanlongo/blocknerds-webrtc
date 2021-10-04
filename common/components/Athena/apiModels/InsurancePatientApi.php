@@ -76,7 +76,6 @@ use yii\base\Model;
  * @property int $sequencenumber 1 = primary, 2 = secondary, 3 = tertiary, etc.  Must have a primary before a secondary and a secondary before a tertiary, etc.
  * @property int $slidingfeeplanid If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
  * @property string $stateofreportedinjury CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
- * @property Patient $patient
  */
 class InsurancePatientApi extends Model
 {
@@ -149,7 +148,6 @@ class InsurancePatientApi extends Model
     public $sequencenumber;
     public $slidingfeeplanid;
     public $stateofreportedinjury;
-    public $patient;
 
     public function __construct(array $data)
     {
