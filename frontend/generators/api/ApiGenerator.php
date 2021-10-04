@@ -118,19 +118,20 @@ class ApiGenerator extends ParentApiGenerator
             }
             $migrationPath = Yii::getAlias($this->migrationPath);
             $migrationNamespace = $this->migrationNamespace;
+            $migrationCounter = 0;
             foreach ($models as $modelName => $model) {
                 // migration files get invalidated directly after generating
                 // if they contain a timestamp
                 // use fixed time here instead
+                $migrationCounter++;
                 if ($migrationNamespace) {
                     $m = date('ymd000000');
-                    $className = "M{$m}$modelName";
+                    $className = "M{$m}".str_pad($migrationCounter, 3, '0', STR_PAD_LEFT)."$modelName";
                 } else {
                     $m = date('ymd_000000');
-                    $className = "m{$m}_$modelName";
+                    $className = "m{$m}_".str_pad($migrationCounter, 3, '0', STR_PAD_LEFT)."_$modelName";
                 }
                 $tableName = $model['tableName'];
-
 
                 $files[] = new CodeFile(
                     Yii::getAlias("$migrationPath/$className.php"),

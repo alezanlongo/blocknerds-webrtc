@@ -125,7 +125,7 @@ if ( strpos($attribute['type'], '[]') !== false ) {
 
         return $model->loadApiObject($apiObject);
     }
-
+    /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
 <?php foreach($relations as $relationName => $relation): ?>
@@ -143,4 +143,5 @@ if ( strpos($attribute['type'], '[]') !== false ) {
 
         return $saved;
     }
+    */
 }
