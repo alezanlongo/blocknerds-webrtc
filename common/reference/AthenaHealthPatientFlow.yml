@@ -960,6 +960,189 @@ paths:
       operationId: getPracticeidAppointmentsAppointmentid
       tags:
         - Appointment
+  /v1/{practiceid}/patients/{patientid}/documents/patientcase:
+    get:
+      summary: Get list of patient case documents for a patient
+      description: >-
+        Retrieves a list of patientcase document information for a specific
+        patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: By default, deleted documents are not listed.  Set to list these.
+          in: query
+          name: showdeleted
+          required: false
+          schema:
+            type: boolean
+        - description: The status of the task to filter document results.
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - ADMINISTER
+              - CLOSED
+              - DATAENTRY
+              - DELETED
+              - DISPENSE
+              - FOLLOWUP
+              - HOLD
+              - NOTIFY
+              - PEND
+              - PENDING
+              - PENDINGLABEL
+              - PERFORM
+              - REVIEW
+              - SCHEDULE
+              - SCHEDULED
+              - SUBMIT
+              - SUBMITTED
+            type: string
+            x-enumDescriptions:
+              - ADMINISTER
+              - CLOSED
+              - DATAENTRY
+              - DELETED
+              - DISPENSE
+              - FOLLOWUP
+              - HOLD
+              - NOTIFY
+              - PEND
+              - PENDING
+              - PENDINGLABEL
+              - PERFORM
+              - REVIEW
+              - SCHEDULE
+              - SCHEDULED
+              - SUBMIT
+              - SUBMITTED
+        - description: The athenaNet department id.
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+        - description: Show only documents attached to this encounter.
+          in: query
+          name: encounterid
+          required: false
+          schema:
+            type: integer
+        - description: The document subclass to filter document results.
+          in: query
+          name: documentsubclass
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientCase'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsPatientcase
+      x-list-key: 'patientcases'
+      tags:
+        - Document Type - Patient Case
+    post:
+      summary: Add patient case document for a patient
+      description: Creates a patient case document record of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostPatientCase200Response'
+          description: Success
+      operationId: postPracticeidPatientsPatientidDocumentsPatientcase
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreatePatientCase'
+        required: true
+      tags:
+        - Document Type - Patient Case
+  /v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}:
+    get:
+      summary: Get patient case document for a patient
+      description: Retrieves information on a specific patient case document
+      parameters:
+        - description: patientcaseid
+          in: path
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientCase'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid
+      tags:
+        - Document Type - Patient Case
 components:
   schemas:
     Patient:
@@ -3439,3 +3622,299 @@ components:
             Set this field in order to set the urgent flag in athena (if the
             practice settings allow for this).
           type: boolean
+    RequestCreatePatientCase:
+      properties:
+        autoclose:
+          description: >-
+            Documents will, normally, automatically appear in the
+            clinical inbox for providers to review. In some cases, you
+            might want to force the document to skip the clinical inbox,
+            and go directly to the patient chart with a "closed" status.
+            For that case, set this to true.
+          type: boolean
+        callbackname:
+          description: The name of the person to call (if other than patient).
+          type: string
+        callbacknumber:
+          description: >-
+            The phone number to use to call back the patient (mutually
+            exclusive with callbacknumbertype).
+          type: string
+        callbacknumbertype:
+          description: >-
+            The phone number type to use to call back the patient
+            (mutually exclusive with callbacknumber).
+          enum:
+            - ''
+            - home
+            - work
+            - mobile
+            - emergency contact
+            - guarantor
+          type: string
+        clinicalproviderid:
+          description: >-
+            The ID of the external provider/lab/pharmacy associated the
+            document.
+          type: integer
+        departmentid:
+          description: >-
+            The athenaNet department ID associated with the uploaded
+            document.
+          type: integer
+        documentsource:
+          description: Explains where this document originated.
+          enum:
+            - PATIENT
+            - CAREGIVER
+            - PARTNER
+            - PHARMACY
+            - LAB
+            - PCP
+            - SPECIALIST
+            - STAFF
+            - HOSPITAL
+            - OTHER
+            - PORTAL
+            - Live Operator
+          type: string
+        documentsubclass:
+          description: Subclasses for PATIENTCASE documents
+          enum:
+            - PATIENTCASE
+            - ADMINISTRATIVE
+            - BILLING
+            - CLINICALQUESTION
+            - ELECTRONICMEDICALRECORDS
+            - MEDICALRECORDS
+            - MEDICATION
+            - NEWRX
+            - OTHER
+            - PATIENTNOSHOW
+            - REFERRAL
+            - REFILL
+          type: string
+        internalnote:
+          description: >-
+            An internal note for the provider or staff. Updating this
+            will append to any previous notes.
+          type: string
+        outboundonly:
+          description: >-
+            True/false flag indicating the patient case requires an
+            outbound phone call and is not a response to an inbound
+            call.
+          type: boolean
+        priority:
+          description: Priority of this result.  1 is high; 2 is normal.
+          enum:
+            - ''
+            - 1
+            - 2
+          type: string
+        providerid:
+          description: The ID of the ordering provider.
+          type: integer
+        subject:
+          description: The subject of this patient case.
+          type: string
+      required:
+        - documentsubclass
+        - documentsource
+        - departmentid
+        - providerid
+      type: object
+    PostPatientCase200Response:
+      x-external-id: patientcaseid
+      type: object
+      properties:
+        errormessage:
+          description: >-
+            If the operation failed, this will contain an error
+            message.
+          type: string
+        patientcaseid:
+          description: The document ID of the new or modified document.
+          type: integer
+        success:
+          description: Returns true/false if the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PatientCase:
+      x-external-id: patientcaseid
+      properties:
+        actionnote:
+          description: The most recent action note for a document
+          type: string
+        assignedto:
+          description: Person the document is assigned to
+          type: string
+        callbackname:
+          description: The person to call (if other than patient).
+          type: string
+        callbacknumber:
+          description: The phone number to use to call back the patient.
+          type: string
+        callbacknumbertype:
+          description: >-
+            The type of callback number (e.g. home, office, work,
+            guarantor).
+          type: string
+        calltype:
+          description: >-
+            Type of call.  (Options include: Tickler, Cancellation,
+            ReminderCall etc...)
+          type: string
+        clinicalproviderid:
+          description: >-
+            DEPRECATED:  The clinical provider ID.  The information
+            can now be found in the field entitled 'facilityid'
+          type: integer
+        createddate:
+          description: >-
+            Date the document was created. Please use createddatetime
+            instead.
+          type: string
+        createddatetime:
+          description: Date/Time (ISO 8601) the document was created
+          type: string
+        createddocuments:
+          description: Documents created by a patient case.
+          items:
+            properties:
+              documentclass:
+                description: The document class.
+                type: string
+              documentid:
+                description: The document id.
+                type: string
+            type: object
+          type: array
+        createduser:
+          description: The user who created this document.
+          type: string
+        deleteddatetime:
+          description: Date/time (ISO 8601) the document was deleted
+          type: string
+        departmentid:
+          description: Department for the document
+          type: string
+        description:
+          description: Description of the document type
+          type: string
+        documentclass:
+          description: Class of document
+          type: string
+        documentdescription:
+          description: >-
+            DEPRECATED:  The document description.  The information
+            can now be found in the field entitled 'description'
+          type: string
+        documentroute:
+          description: >-
+            Explains method by which the document was entered into the
+            AthenaNet (INTERFACE (digital), FAX, etc.)
+          type: string
+        documentsource:
+          description: Explains where this document originated.
+          enum:
+            - ''
+            - PATIENT
+            - CAREGIVER
+            - PARTNER
+            - PHARMACY
+            - LAB
+            - PCP
+            - SPECIALIST
+            - STAFF
+            - HOSPITAL
+            - OTHER
+            - PORTAL
+            - Live Operator
+          type: string
+        documentsubclass:
+          description: Specific type of document
+          type: string
+        documenttypeid:
+          description: A specific document type identifier.
+          type: integer
+        encounterid:
+          description: Encounter ID
+          type: string
+        externalaccessionid:
+          description: >-
+            The external accession ID for this document. Format
+            depends on the system the ID belongs to.
+          type: string
+        externalnote:
+          description: External note for the patient.
+          type: string
+        facilityid:
+          description: >-
+            The ID of the clinical provider associated with this
+            clinical document. Clinical providers are a master list of
+            providers throughout the country.  These include providers
+            as well as radiology centers, labs and pharmacies.
+          type: integer
+        internalaccessionid:
+          description: >-
+            The internal accession ID for this document. Format
+            depends on the system the ID belongs to.
+          type: string
+        internalnote:
+          description: The 'Internal Note' attached to this document
+          type: string
+        lastmodifieddate:
+          description: >-
+            DEPRECATED:  The last modified date.  The information can
+            now be found in the field entitled lastmodifieddatetime
+          type: string
+        lastmodifieddatetime:
+          description: Date/time (ISO 8601) the document was last modified
+          type: string
+        lastmodifieduser:
+          description: The user who last modified this document.
+          type: string
+        observationdatetime:
+          description: Date/time the observation was taken
+          type: string
+        outboundonly:
+          description: If the call made in the patient case is outbound
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        patientcaseid:
+          description: The patient case id
+          type: string
+        patientid:
+          description: The athenaNet patient ID.
+          type: integer
+        priority:
+          description: >-
+            Document priority, when available. 1 is high, 2 is normal.
+            Some labs use other numbers or characters that are
+            lab-specific.
+          type: string
+        providerid:
+          description: Provider ID for this document
+          type: integer
+        providerusername:
+          description: >-
+            The username of the provider associated with this lab
+            result document.
+          type: string
+        status:
+          description: Status of the document
+          type: string
+        subject:
+          description: Subject of the document
+          type: string
+        tietoorderid:
+          description: Order ID of the order this document is tied to, if any
+          type: integer
+      type: object
