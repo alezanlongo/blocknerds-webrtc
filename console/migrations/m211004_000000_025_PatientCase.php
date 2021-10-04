@@ -3,7 +3,7 @@
 /**
  * Table for PatientCase
  */
-class m211004_000000_PatientCase extends \yii\db\Migration
+class m211004_000000_025_PatientCase extends \yii\db\Migration
 {
     public function up()
     {
