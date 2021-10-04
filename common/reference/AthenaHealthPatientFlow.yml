@@ -1062,156 +1062,12 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  appointmentid:
-                    description: The appointment ID for this document
-                    type: integer
-                  assignedto:
-                    description: Person the document is assigned to
-                    type: string
-                  clinicalproviderid:
-                    description: >-
-                      DEPRECATED:  The clinical provider ID.  The information
-                      can now be found in the field entitled 'facilityid'
-                    type: integer
-                  createddate:
-                    description: >-
-                      Date the document was created. Please use createddatetime
-                      instead.
-                    type: string
-                  createddatetime:
-                    description: Date/Time (ISO 8601) the document was created
-                    type: string
-                  createddocuments:
-                    description: Documents created by a patient case.
-                    items:
-                      properties:
-                        documentclass:
-                          description: The document class.
-                          type: string
-                        documentid:
-                          description: The document id.
-                          type: string
-                      type: object
-                    type: array
-                  createduser:
-                    description: The user who created this document.
-                    type: string
-                  deleteddatetime:
-                    description: Date/time (ISO 8601) the document was deleted
-                    type: string
-                  departmentid:
-                    description: Department for the document
-                    type: string
-                  description:
-                    description: Description of the document type
-                    type: string
-                  documentclass:
-                    description: Class of document
-                    type: string
-                  documentdescription:
-                    description: >-
-                      DEPRECATED:  The document description.  The information
-                      can now be found in the field entitled 'description'
-                    type: string
-                  documentroute:
-                    description: >-
-                      Explains method by which the document was entered into the
-                      AthenaNet (INTERFACE (digital), FAX, etc.)
-                    type: string
-                  documentsource:
-                    description: Explains where this document originated.
-                    enum:
-                      - ''
-                      - PATIENT
-                      - CAREGIVER
-                      - PARTNER
-                      - PHARMACY
-                      - LAB
-                      - PCP
-                      - SPECIALIST
-                      - STAFF
-                      - HOSPITAL
-                      - OTHER
-                      - PORTAL
-                      - Live Operator
-                    type: string
-                  documentsubclass:
-                    description: Specific type of document
-                    type: string
-                  documenttypeid:
-                    description: A specific document type identifier.
-                    type: integer
-                  encounterid:
-                    description: Encounter ID
-                    type: string
-                  externalaccessionid:
-                    description: >-
-                      The external accession ID for this document. Format
-                      depends on the system the ID belongs to.
-                    type: string
-                  externalnote:
-                    description: External note for the patient.
-                    type: string
-                  facilityid:
-                    description: >-
-                      The ID of the clinical provider associated with this
-                      clinical document. Clinical providers are a master list of
-                      providers throughout the country.  These include providers
-                      as well as radiology centers, labs and pharmacies.
-                    type: integer
-                  internalaccessionid:
-                    description: >-
-                      The internal accession ID for this document. Format
-                      depends on the system the ID belongs to.
-                    type: string
-                  internalnote:
-                    description: The 'Internal Note' attached to this document
-                    type: string
-                  lastmodifieddate:
-                    description: >-
-                      DEPRECATED:  The last modified date.  The information can
-                      now be found in the field entitled lastmodifieddatetime
-                    type: string
-                  lastmodifieddatetime:
-                    description: Date/time (ISO 8601) the document was last modified
-                    type: string
-                  lastmodifieduser:
-                    description: The user who last modified this document.
-                    type: string
-                  observationdatetime:
-                    description: Date/time the observation was taken
-                    type: string
-                  patientcaseid:
-                    description: The patient case id
-                    type: string
-                  patientid:
-                    description: The athenaNet patient ID.
-                    type: integer
-                  phonemessageid:
-                    description: The primary key for phone message documents
-                    type: integer
-                  priority:
-                    description: >-
-                      Document priority, when available. 1 is high, 2 is normal.
-                      Some labs use other numbers or characters that are
-                      lab-specific.
-                    type: string
-                  providerid:
-                    description: Provider ID for this document
-                    type: integer
-                  status:
-                    description: Status of the document
-                    type: string
-                  subject:
-                    description: Subject of the document
-                    type: string
-                  tietoorderid:
-                    description: Order ID of the order this document is tied to, if any
-                    type: integer
-                type: object
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientCase'
           description: Success
       operationId: getPracticeidPatientsPatientidDocumentsPatientcase
+      x-list-key: 'patientcases'
       tags:
         - Document Type - Patient Case
     post:
@@ -1241,23 +1097,7 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  errormessage:
-                    description: >-
-                      If the operation failed, this will contain an error
-                      message.
-                    type: string
-                  patientcaseid:
-                    description: The document ID of the new or modified document.
-                    type: integer
-                  success:
-                    description: Returns true/false if the operation was successful.
-                    enum:
-                      - ''
-                      - false
-                      - true
-                    type: string
-                type: object
+                $ref: '#/components/schemas/PostPatientCase200Response'
           description: Success
       operationId: postPracticeidPatientsPatientidDocumentsPatientcase
       requestBody:
@@ -1296,179 +1136,9 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  actionnote:
-                    description: The most recent action note for a document
-                    type: string
-                  assignedto:
-                    description: Person the document is assigned to
-                    type: string
-                  callbackname:
-                    description: The person to call (if other than patient).
-                    type: string
-                  callbacknumber:
-                    description: The phone number to use to call back the patient.
-                    type: string
-                  callbacknumbertype:
-                    description: >-
-                      The type of callback number (e.g. home, office, work,
-                      guarantor).
-                    type: string
-                  calltype:
-                    description: >-
-                      Type of call.  (Options include: Tickler, Cancellation,
-                      ReminderCall etc...)
-                    type: string
-                  clinicalproviderid:
-                    description: >-
-                      DEPRECATED:  The clinical provider ID.  The information
-                      can now be found in the field entitled 'facilityid'
-                    type: integer
-                  createddate:
-                    description: >-
-                      Date the document was created. Please use createddatetime
-                      instead.
-                    type: string
-                  createddatetime:
-                    description: Date/Time (ISO 8601) the document was created
-                    type: string
-                  createddocuments:
-                    description: Documents created by a patient case.
-                    items:
-                      properties:
-                        documentclass:
-                          description: The document class.
-                          type: string
-                        documentid:
-                          description: The document id.
-                          type: string
-                      type: object
-                    type: array
-                  createduser:
-                    description: The user who created this document.
-                    type: string
-                  deleteddatetime:
-                    description: Date/time (ISO 8601) the document was deleted
-                    type: string
-                  departmentid:
-                    description: Department for the document
-                    type: string
-                  description:
-                    description: Description of the document type
-                    type: string
-                  documentclass:
-                    description: Class of document
-                    type: string
-                  documentdescription:
-                    description: >-
-                      DEPRECATED:  The document description.  The information
-                      can now be found in the field entitled 'description'
-                    type: string
-                  documentroute:
-                    description: >-
-                      Explains method by which the document was entered into the
-                      AthenaNet (INTERFACE (digital), FAX, etc.)
-                    type: string
-                  documentsource:
-                    description: Explains where this document originated.
-                    enum:
-                      - ''
-                      - PATIENT
-                      - CAREGIVER
-                      - PARTNER
-                      - PHARMACY
-                      - LAB
-                      - PCP
-                      - SPECIALIST
-                      - STAFF
-                      - HOSPITAL
-                      - OTHER
-                      - PORTAL
-                      - Live Operator
-                    type: string
-                  documentsubclass:
-                    description: Specific type of document
-                    type: string
-                  documenttypeid:
-                    description: A specific document type identifier.
-                    type: integer
-                  encounterid:
-                    description: Encounter ID
-                    type: string
-                  externalaccessionid:
-                    description: >-
-                      The external accession ID for this document. Format
-                      depends on the system the ID belongs to.
-                    type: string
-                  externalnote:
-                    description: External note for the patient.
-                    type: string
-                  facilityid:
-                    description: >-
-                      The ID of the clinical provider associated with this
-                      clinical document. Clinical providers are a master list of
-                      providers throughout the country.  These include providers
-                      as well as radiology centers, labs and pharmacies.
-                    type: integer
-                  internalaccessionid:
-                    description: >-
-                      The internal accession ID for this document. Format
-                      depends on the system the ID belongs to.
-                    type: string
-                  internalnote:
-                    description: The 'Internal Note' attached to this document
-                    type: string
-                  lastmodifieddate:
-                    description: >-
-                      DEPRECATED:  The last modified date.  The information can
-                      now be found in the field entitled lastmodifieddatetime
-                    type: string
-                  lastmodifieddatetime:
-                    description: Date/time (ISO 8601) the document was last modified
-                    type: string
-                  lastmodifieduser:
-                    description: The user who last modified this document.
-                    type: string
-                  observationdatetime:
-                    description: Date/time the observation was taken
-                    type: string
-                  outboundonly:
-                    description: If the call made in the patient case is outbound
-                    enum:
-                      - ''
-                      - false
-                      - true
-                    type: string
-                  patientcaseid:
-                    description: The patient case id
-                    type: string
-                  patientid:
-                    description: The athenaNet patient ID.
-                    type: integer
-                  priority:
-                    description: >-
-                      Document priority, when available. 1 is high, 2 is normal.
-                      Some labs use other numbers or characters that are
-                      lab-specific.
-                    type: string
-                  providerid:
-                    description: Provider ID for this document
-                    type: integer
-                  providerusername:
-                    description: >-
-                      The username of the provider associated with this lab
-                      result document.
-                    type: string
-                  status:
-                    description: Status of the document
-                    type: string
-                  subject:
-                    description: Subject of the document
-                    type: string
-                  tietoorderid:
-                    description: Order ID of the order this document is tied to, if any
-                    type: integer
-                type: object
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientCase'
           description: Success
       operationId: getPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid
       tags:
@@ -4047,4 +3717,198 @@ components:
         - documentsource
         - departmentid
         - providerid
+      type: object
+    PostPatientCase200Response:
+      x-external-id: patientcaseid
+      type: object
+      properties:
+        errormessage:
+          description: >-
+            If the operation failed, this will contain an error
+            message.
+          type: string
+        patientcaseid:
+          description: The document ID of the new or modified document.
+          type: integer
+        success:
+          description: Returns true/false if the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PatientCase:
+      x-external-id: patientcaseid
+      properties:
+        actionnote:
+          description: The most recent action note for a document
+          type: string
+        assignedto:
+          description: Person the document is assigned to
+          type: string
+        callbackname:
+          description: The person to call (if other than patient).
+          type: string
+        callbacknumber:
+          description: The phone number to use to call back the patient.
+          type: string
+        callbacknumbertype:
+          description: >-
+            The type of callback number (e.g. home, office, work,
+            guarantor).
+          type: string
+        calltype:
+          description: >-
+            Type of call.  (Options include: Tickler, Cancellation,
+            ReminderCall etc...)
+          type: string
+        clinicalproviderid:
+          description: >-
+            DEPRECATED:  The clinical provider ID.  The information
+            can now be found in the field entitled 'facilityid'
+          type: integer
+        createddate:
+          description: >-
+            Date the document was created. Please use createddatetime
+            instead.
+          type: string
+        createddatetime:
+          description: Date/Time (ISO 8601) the document was created
+          type: string
+        createddocuments:
+          description: Documents created by a patient case.
+          items:
+            properties:
+              documentclass:
+                description: The document class.
+                type: string
+              documentid:
+                description: The document id.
+                type: string
+            type: object
+          type: array
+        createduser:
+          description: The user who created this document.
+          type: string
+        deleteddatetime:
+          description: Date/time (ISO 8601) the document was deleted
+          type: string
+        departmentid:
+          description: Department for the document
+          type: string
+        description:
+          description: Description of the document type
+          type: string
+        documentclass:
+          description: Class of document
+          type: string
+        documentdescription:
+          description: >-
+            DEPRECATED:  The document description.  The information
+            can now be found in the field entitled 'description'
+          type: string
+        documentroute:
+          description: >-
+            Explains method by which the document was entered into the
+            AthenaNet (INTERFACE (digital), FAX, etc.)
+          type: string
+        documentsource:
+          description: Explains where this document originated.
+          enum:
+            - ''
+            - PATIENT
+            - CAREGIVER
+            - PARTNER
+            - PHARMACY
+            - LAB
+            - PCP
+            - SPECIALIST
+            - STAFF
+            - HOSPITAL
+            - OTHER
+            - PORTAL
+            - Live Operator
+          type: string
+        documentsubclass:
+          description: Specific type of document
+          type: string
+        documenttypeid:
+          description: A specific document type identifier.
+          type: integer
+        encounterid:
+          description: Encounter ID
+          type: string
+        externalaccessionid:
+          description: >-
+            The external accession ID for this document. Format
+            depends on the system the ID belongs to.
+          type: string
+        externalnote:
+          description: External note for the patient.
+          type: string
+        facilityid:
+          description: >-
+            The ID of the clinical provider associated with this
+            clinical document. Clinical providers are a master list of
+            providers throughout the country.  These include providers
+            as well as radiology centers, labs and pharmacies.
+          type: integer
+        internalaccessionid:
+          description: >-
+            The internal accession ID for this document. Format
+            depends on the system the ID belongs to.
+          type: string
+        internalnote:
+          description: The 'Internal Note' attached to this document
+          type: string
+        lastmodifieddate:
+          description: >-
+            DEPRECATED:  The last modified date.  The information can
+            now be found in the field entitled lastmodifieddatetime
+          type: string
+        lastmodifieddatetime:
+          description: Date/time (ISO 8601) the document was last modified
+          type: string
+        lastmodifieduser:
+          description: The user who last modified this document.
+          type: string
+        observationdatetime:
+          description: Date/time the observation was taken
+          type: string
+        outboundonly:
+          description: If the call made in the patient case is outbound
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        patientcaseid:
+          description: The patient case id
+          type: string
+        patientid:
+          description: The athenaNet patient ID.
+          type: integer
+        priority:
+          description: >-
+            Document priority, when available. 1 is high, 2 is normal.
+            Some labs use other numbers or characters that are
+            lab-specific.
+          type: string
+        providerid:
+          description: Provider ID for this document
+          type: integer
+        providerusername:
+          description: >-
+            The username of the provider associated with this lab
+            result document.
+          type: string
+        status:
+          description: Status of the document
+          type: string
+        subject:
+          description: Subject of the document
+          type: string
+        tietoorderid:
+          description: Order ID of the order this document is tied to, if any
+          type: integer
       type: object
