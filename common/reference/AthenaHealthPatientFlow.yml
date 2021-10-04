@@ -540,7 +540,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Appointments'
+                $ref: '#/components/schemas/AppointmentResponse'
           description: Success
       operationId: postPracticeidAppointmentsOpen
       requestBody:
@@ -1522,6 +1522,8 @@ components:
         providergroupid:
           description: Athena ID for this financial group.
           type: integer
+        patient:
+          $ref: '#/components/schemas/Patient'
     customfield:
       properties:
         customfieldid:
@@ -1533,6 +1535,8 @@ components:
         optionid:
           description: For a select custom field, the selectid value (from /customfield's selectlist).
           type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
       type: object
     InsurancePatient:
       x-external-id: insuranceid
@@ -1757,6 +1761,8 @@ components:
         stateofreportedinjury:
           description: CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
           type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
       type: object
     Department:
       x-external-id: departmentid
@@ -2525,7 +2531,7 @@ components:
             SHOWUSUALDEPARTMENTGUESSTHRESHOLD is set.
           type: integer
       type: object
-    Appointments:
+    AppointmentResponse:
       x-external-id: appointmentid
       type: object
       properties:

@@ -140,7 +140,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
-     * @return Appointments
+     * @return AppointmentResponse
      */
     public function postPracticeidAppointmentsOpen($practiceid, array $body = [])
     {
@@ -149,7 +149,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\AppointmentsApi($dataResponse['data']);
+            return new \common\components\Athena\apiModels\AppointmentResponseApi($dataResponse['data']);
         }else{
             return $dataResponse['message'];
         }
