@@ -19,3 +19,19 @@ a:hover {
 .fc-popover.fc-more-popover.fc-day.fc-day-tue.fc-day-today{
   background-color: black;
 }
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0,0,0,.9);  
+}
+
+.vertical-center {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+  display: flex;
+  align-items: center;
+}
