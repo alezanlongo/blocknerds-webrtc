@@ -5,7 +5,10 @@ const KIND_AUDIO_OUTPUT = "audiooutput";
 const EVENT_END = "end";
 const EVENT_VOLUME = "volume";
 const EVENT_ERROR = "error";
+const TOTAL_TESTS = 4;
+
 let deviceSelected = null;
+let test_performed = 0;
 
 const {
   testMediaConnectionBitrate,
@@ -14,7 +17,7 @@ const {
   testVideoInputDevice,
 } = Twilio.Diagnostics;
 
-console.log("twilio data to diagnostics", Twilio.Diagnostics, Twilio);
+console.log("data to diagnostics", Twilio.Diagnostics, Twilio);
 
 const getDevicesConnected = () => {
   return navigator.mediaDevices.enumerateDevices();
@@ -47,6 +50,8 @@ navigator.mediaDevices
   });
 
 const initTests = () => {
+
+  $(".overlay").removeClass("d-none");
 
   doAudioOutputTest();
 
@@ -175,12 +180,12 @@ const doBitrateTest = () => {
     console.log("mediaConnectionBitrateTest bitrate", bitrate);
   });
 
-  mediaConnectionBitrateTest.on("error", (error) => {
+  mediaConnectionBitrateTest.on(EVENT_ERROR, (error) => {
     console.log("mediaConnectionBitrateTest error", error);
     $("#testMediaConnectionBitrate").addClass("text-danger");
   });
 
-  mediaConnectionBitrateTest.on("end", (report) => {
+  mediaConnectionBitrateTest.on(EVENT_END, (report) => {
     console.log("mediaConnectionBitrateTest report", report);
 
     if (report.errors.length <= 0) {
@@ -201,5 +206,7 @@ const stopTest = (compTest) => {
   setTimeout(() => {
     console.log("do stop");
     compTest.stop();
+    test_performed++;
+    test_performed === TOTAL_TESTS && $(".overlay").addClass("d-none");
   }, TIME_OUT_MILLISECONDS);
 };
