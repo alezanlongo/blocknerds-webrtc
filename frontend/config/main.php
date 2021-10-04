@@ -48,7 +48,6 @@ return [
                 'GET room/waiting/<uuid>' => 'room/waiting',
                 'GET room/calendar' => 'room/calendar',
                 'GET room/calendar/events/<id>' => 'room/fetch-calendar-events',
-                'GET room/test' => 'room/test',
                 'GET room/<uuid>' => 'room',
                 'POST room-moderate/<roomUuid>/<profileId>' => 'room/moderate-member',
                 'POST room/<uuid>/kick'=>'room/kick-member',

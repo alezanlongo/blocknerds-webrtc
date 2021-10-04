@@ -50,11 +50,6 @@ class RoomController extends \yii\web\Controller
         ];
     }
 
-    public function actionTest()
-    {
-        return $this->render('test');
-    }
-
     public function actionIndex($uuid)
     {
         $this->layout = 'room';

@@ -57,6 +57,7 @@ AppAsset::register($this);
                     'label' => Yii::$app->getUser()->getIdentity()->username,
                     'items' => [
                         ['label' => 'Edit Profile', 'url' => ['/user/edit-profile']],
+                        ['label' => 'Diagnostic', 'url' => ['/diagnostic']],
                         ['label' => 'Logout', 'url' => ['/site/logout'], ['data-method' => 'post']],
                     ]
                 ];

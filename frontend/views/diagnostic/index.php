@@ -11,7 +11,7 @@ $this->registerJsFile(
 );
 
 $this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/test.js',
+    Yii::$app->request->BaseUrl . '/js/diagnostics.js',
     [
         'depends' => "yii\web\JqueryAsset",
         'position' => View::POS_END
