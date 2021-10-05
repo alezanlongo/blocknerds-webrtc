@@ -5,7 +5,11 @@ const KIND_AUDIO_OUTPUT = "audiooutput";
 const EVENT_END = "end";
 const EVENT_VOLUME = "volume";
 const EVENT_ERROR = "error";
+const TOTAL_TESTS = 4;
+
 let deviceSelected = null;
+let test_performed = 0;
+let log = "";
 
 const {
   testMediaConnectionBitrate,
@@ -14,7 +18,23 @@ const {
   testVideoInputDevice,
 } = Twilio.Diagnostics;
 
-console.log("twilio data to diagnostics", Twilio.Diagnostics, Twilio);
+const logger = (obj) => {
+  if (
+    typeof obj === 'object' &&
+    !Array.isArray(obj) &&
+    obj !== null
+  ) {
+    str = JSON.stringify(obj, null, 4);
+  } else {
+    str = String(obj);
+  }
+
+  log = log + str;
+
+  console.log(str);
+}
+
+console.log("data to diagnostics", Twilio.Diagnostics, Twilio);
 
 const getDevicesConnected = () => {
   return navigator.mediaDevices.enumerateDevices();
@@ -26,27 +46,32 @@ const filterDevices = (devices, kind) => {
 
 getDevicesConnected()
   .then((devices) => {
-    console.log("devices", devices);
+    logger({ "devices": devices })
     const optionsDevices = filterDevices(devices, KIND_AUDIO_INPUT);
-    console.log("options", optionsDevices);
+    logger({ "optionsDevices": optionsDevices });
     deviceSelected = optionsDevices[0];
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    logger({ "getDevicesConnectedError": err });
+  });
 
 navigator.mediaDevices
   .getUserMedia({ audio: true, video: true })
   .then(function (mediaStream) {
-    console.log("media", mediaStream);
+    logger({ "mediaStream": { "id": mediaStream.id, "active": mediaStream.active } });
     initTests();
   })
   .catch(function (err) {
-    console.log("mediaDevices error", err);
+    logger({ "mediaDevicesError": String(err) })
+
     $("#testAudioVideoDevices h1").append('<i class="text-danger fas fa-exclamation-triangle"></i>');
     $("#testAudioVideoDevices").append('<p class="text-danger">Failed to access your computer\'s camera and microphone</p>');
     $("#testAudioVideoDevices").append('<p class="text-danger">' + err + '</p>');
   });
 
 const initTests = () => {
+
+  $(".overlay").removeClass("d-none");
 
   doAudioOutputTest();
 
@@ -66,16 +91,16 @@ const doAudioOutputTest = (deviceId = 'default') => {
   });
 
   audioOutputDeviceTest.on(EVENT_VOLUME, (volume) => {
-    console.log("audioOutputDeviceTest volume", volume);
+    console.log("audioOutputDeviceTestVolume", volume);
   });
 
   audioOutputDeviceTest.on(EVENT_ERROR, (error) => {
-    console.error("audioOutputDeviceTest error", error);
+    logger({ "audioOutputDeviceTestError": error });
     $("#testAudioOutputDevice").addClass("text-danger");
   });
 
   audioOutputDeviceTest.on(EVENT_END, (report) => {
-    console.log("audioOutputDeviceTest report", report);
+    logger({ "audioOutputDeviceTestReport": report });
 
     if (report.errors.length <= 0) {
       $("#testAudioOutputDevice").addClass("text-success");
@@ -103,16 +128,16 @@ const doAudioInputTest = (deviceId = 'default') => {
   console.log("audioInputDeviceTest", audioInputDeviceTest);
 
   audioInputDeviceTest.on(EVENT_VOLUME, (volume) => {
-    console.log("audioInputDeviceTest volume", volume);
+    console.log("audioInputDeviceTestVolume", volume);
   });
 
   audioInputDeviceTest.on(EVENT_ERROR, (error) => {
-    console.error("audioInputDeviceTest error", error);
+    logger({ "audioInputDeviceTestError": error });
     $("#testAudioInputDevice").addClass("text-danger");
   });
 
   audioInputDeviceTest.on(EVENT_END, (report) => {
-    console.log("audioInputDeviceTest report", report);
+    logger({ "audioInputDeviceTestReport": report });
 
     if (report.errors.length <= 0) {
       $("#testAudioInputDevice").addClass("text-success");
@@ -136,12 +161,12 @@ const doVideoInputTest = (element) => {
   const videoInputDeviceTest = testVideoInputDevice({ element: $(element).get(0) });
 
   videoInputDeviceTest.on(EVENT_ERROR, (error) => {
-    console.error("videoInputDeviceTest error", error);
+    logger({ "videoInputDeviceTestError": error });
     $("#testVideoInputDevice").addClass("text-danger");
   });
 
   videoInputDeviceTest.on(EVENT_END, (report) => {
-    console.log("videoInputDeviceTest report", report);
+    logger({ "videoInputDeviceTestReport": report });
 
     if (report.errors.length <= 0) {
       $("#testVideoInputDevice").addClass("text-success");
@@ -172,16 +197,16 @@ const doBitrateTest = () => {
   });
 
   mediaConnectionBitrateTest.on("bitrate", (bitrate) => {
-    console.log("mediaConnectionBitrateTest bitrate", bitrate);
+    logger({ "mediaConnectionBitrateTestBitrate": bitrate });
   });
 
-  mediaConnectionBitrateTest.on("error", (error) => {
-    console.log("mediaConnectionBitrateTest error", error);
+  mediaConnectionBitrateTest.on(EVENT_ERROR, (error) => {
+    logger({ "mediaConnectionBitrateTestError": error });
     $("#testMediaConnectionBitrate").addClass("text-danger");
   });
 
-  mediaConnectionBitrateTest.on("end", (report) => {
-    console.log("mediaConnectionBitrateTest report", report);
+  mediaConnectionBitrateTest.on(EVENT_END, (report) => {
+    logger({ "mediaConnectionBitrateTestReport": report });
 
     if (report.errors.length <= 0) {
       $("#testMediaConnectionBitrate").addClass("text-success");
@@ -201,5 +226,40 @@ const stopTest = (compTest) => {
   setTimeout(() => {
     console.log("do stop");
     compTest.stop();
+    test_performed++;
+    if (test_performed === TOTAL_TESTS) {
+      $(".overlay").addClass("d-none");
+      if (log !== "") {
+        console.save(log, "diagnostic.log")
+      }
+    }
+
   }, TIME_OUT_MILLISECONDS);
 };
+
+(function (console) {
+
+  console.save = function (data, filename) {
+
+    if (!data) {
+      alert('Console.save: No data')
+      return;
+    }
+
+    if (!filename) filename = 'console.log'
+
+    if (typeof data === "object") {
+      data = JSON.stringify(data, undefined, 4)
+    }
+
+    var blob = new Blob([data], { type: 'text/json' }),
+      e = document.createEvent('MouseEvents'),
+      a = document.createElement('a')
+
+    a.download = filename
+    a.href = window.URL.createObjectURL(blob)
+    a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
+    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+    a.dispatchEvent(e)
+  }
+})(console)

@@ -1,18 +1,18 @@
 <?php
 namespace common\components;
 
-use common\components\Athena\models\Encounter;
-use common\components\Athena\models\PatientLocation;
-use common\components\Athena\models\PatientStatus;
 use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\models\Department;
+use common\components\Athena\models\Encounter;
 use common\components\Athena\models\Patient;
-use common\components\Athena\models\insurancePackages;
-use common\components\Athena\models\insurance;
+use common\components\Athena\models\PatientCase;
+use common\components\Athena\models\PatientLocation;
+use common\components\Athena\models\PatientStatus;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
-
+use common\components\Athena\models\insurance;
+use common\components\Athena\models\insurancePackages;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -272,5 +272,46 @@ class AthenaComponent extends Component
                 'appointmenttypeid' => 62
             ]
         );
+    }
+
+    /**
+     * @return Patient
+     */
+
+    public function createPatientCase($patientCase, $patientid)
+    {
+        $patientCaseModelApi =
+            $this->client->postPracticeidPatientsPatientidDocumentsPatientcase(
+                $this->practiceid,
+                $patientid,
+                $patientCase->toArray()
+            );
+
+        return $this->retrievePatientCase(
+            $patientid,
+            $patientCaseModelApi->patientcaseid
+        );
+    }
+
+    /**
+     * @return PatientCase
+     */
+    public function retrievePatientCase($patientid, $patientcaseid)
+    {
+        $patientCaseModelApi = $this->client->getPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid(
+            $patientcaseid,
+            $this->practiceid,
+            $patientid
+        )[0];
+
+        $patientCase = PatientCase::find()
+            ->where(['externalId' => $patientcaseid])
+            ->one();
+
+        if (!$patientCase) {
+            return PatientCase::createFromApiObject($patientCaseModelApi);
+        }
+
+        return $patientCase->loadApiObject($patientCaseModelApi);
     }
 }
