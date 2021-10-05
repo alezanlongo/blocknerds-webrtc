@@ -165,6 +165,7 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
+        $this->layout = 'adminlte/main-login';
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
@@ -234,7 +235,7 @@ class SiteController extends Controller
             Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
             return $this->goHome();
         }
-
+        // $this->layout = 'adminlte/main-login';
         return $this->render('signup', [
             'model' => $model,
         ]);
@@ -257,7 +258,7 @@ class SiteController extends Controller
 
             Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
         }
-
+        // $this->layout = 'adminlte/main-login';
         return $this->render('requestPasswordResetToken', [
             'model' => $model,
         ]);

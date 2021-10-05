@@ -542,6 +542,7 @@ class RoomController extends \yii\web\Controller
 
     function actionCalendar()
     {
+        $this->layout = 'adminlte/main';
         $user = Yii::$app->user->identity;
         $profile = $user->getUserProfile()->one();
 
