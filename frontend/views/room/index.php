@@ -233,7 +233,7 @@ $this->title = 'The Room';
                         <li class="list-group-item list-group-item-light bg-dark position-relative <?= ($member) ? 'profile_id_'.$member['id'] : 'd-none' ?>" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
                             <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"><?= ($member) ? $member['username'] : '' ?></span>
                             <?php if ($is_owner) { ?>
-                                <div class="position-absolute top-0 end-0">
+                                <div class="position-absolute top-0 end-0 member-controls d-none">
                                     <button class="btn btn-default text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
                                         <i class="fas fa-microphone icon-option-member"></i></button> |
                                     <button class="btn btn-default text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
