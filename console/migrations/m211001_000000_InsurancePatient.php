@@ -3,11 +3,12 @@
 /**
  * Table for InsurancePatient
  */
-class m210930_000000_InsurancePatient extends \yii\db\Migration
+class m211001_000000_InsurancePatient extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%insurance_patients}}', [
+            'patient_id' => $this->integer(),
             'adjusterfax' => $this->string(),
             'adjusterfirstname' => $this->string(),
             'adjusterlastname' => $this->string(),
@@ -80,6 +81,14 @@ class m210930_000000_InsurancePatient extends \yii\db\Migration
             'id' => $this->primaryKey(),
         ]);
 
+        $this->addForeignKey(
+            'fk-patient-patient_id',
+            '{{%insurance_patients}}',
+            'patient_id',
+            'patients',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()

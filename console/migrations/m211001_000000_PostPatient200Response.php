@@ -3,7 +3,7 @@
 /**
  * Table for PostPatient200Response
  */
-class m210930_000000_PostPatient200Response extends \yii\db\Migration
+class m211001_000000_PostPatient200Response extends \yii\db\Migration
 {
     public function up()
     {

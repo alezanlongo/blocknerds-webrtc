@@ -3,7 +3,7 @@
 /**
  * Table for insurancePackages
  */
-class m210930_000000_insurancePackages extends \yii\db\Migration
+class m211001_000000_insurancePackages extends \yii\db\Migration
 {
     public function up()
     {

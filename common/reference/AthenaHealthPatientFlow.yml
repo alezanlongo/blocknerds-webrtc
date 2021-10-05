@@ -1522,6 +1522,8 @@ components:
         providergroupid:
           description: Athena ID for this financial group.
           type: integer
+        patient:
+          $ref: '#/components/schemas/Patient'
     customfield:
       properties:
         customfieldid:
@@ -1533,10 +1535,14 @@ components:
         optionid:
           description: For a select custom field, the selectid value (from /customfield's selectlist).
           type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
       type: object
     InsurancePatient:
       x-external-id: insuranceid
       properties:
+        patient:
+          $ref: '#/components/schemas/Patient'
         adjusterfax:
           description: CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
           type: string

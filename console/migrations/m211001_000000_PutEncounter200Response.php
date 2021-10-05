@@ -3,7 +3,7 @@
 /**
  * Table for PutEncounter200Response
  */
-class m210930_000000_PutEncounter200Response extends \yii\db\Migration
+class m211001_000000_PutEncounter200Response extends \yii\db\Migration
 {
     public function up()
     {

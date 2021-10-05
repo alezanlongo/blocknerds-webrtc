@@ -3,7 +3,7 @@
 /**
  * Table for Diagnoses
  */
-class m210930_000000_Diagnoses extends \yii\db\Migration
+class m211001_000000_Diagnoses extends \yii\db\Migration
 {
     public function up()
     {

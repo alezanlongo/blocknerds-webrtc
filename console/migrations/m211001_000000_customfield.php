@@ -3,7 +3,7 @@
 /**
  * Table for customfield
  */
-class m210930_000000_customfield extends \yii\db\Migration
+class m211001_000000_customfield extends \yii\db\Migration
 {
     public function up()
     {
@@ -11,10 +11,19 @@ class m210930_000000_customfield extends \yii\db\Migration
             'customfieldid' => $this->string(),
             'customfieldvalue' => $this->string(),
             'optionid' => $this->string(),
+            'patient_id' => $this->integer(),
             'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 
+        $this->addForeignKey(
+            'fk-patient-patient_id',
+            '{{%customfields}}',
+            'patient_id',
+            'patients',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()

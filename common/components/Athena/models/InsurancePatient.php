@@ -5,6 +5,8 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property integer $patient_id
+ * @property Patient $patient
  * @property string $adjusterfax CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
  * @property string $adjusterfirstname CASE POLICY FIELD - First name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
  * @property string $adjusterlastname CASE POLICY FIELD - Last name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
@@ -89,9 +91,14 @@ class InsurancePatient extends \yii\db\ActiveRecord
         return [
             [['adjusterfax', 'adjusterfirstname', 'adjusterlastname', 'adjusterphone', 'anotherpartyresponsibleyn', 'autoaccidentstate', 'cancelled', 'caseinjurydate', 'casepolicytypename', 'ccmstatusname', 'copays', 'descriptionofinjury', 'eligibilitylastchecked', 'eligibilitymessage', 'eligibilityreason', 'eligibilitystatus', 'employerid', 'expirationdate', 'icd10codes', 'icd9codes', 'injuredbodypart', 'insuranceclaimnumber', 'insuranceid', 'insuranceidnumber', 'insurancepackageaddress1', 'insurancepackageaddress2', 'insurancepackagecity', 'insurancepackagestate', 'insurancepackagezip', 'insurancephone', 'insuranceplandisplayname', 'insuranceplanname', 'insurancepolicyholder', 'insurancepolicyholderaddress1', 'insurancepolicyholderaddress2', 'insurancepolicyholdercity', 'insurancepolicyholdercountrycode', 'insurancepolicyholdercountryiso3166', 'insurancepolicyholderdob', 'insurancepolicyholderfirstname', 'insurancepolicyholderlastname', 'insurancepolicyholdermiddlename', 'insurancepolicyholdersex', 'insurancepolicyholderssn', 'insurancepolicyholderstate', 'insurancepolicyholdersuffix', 'insurancepolicyholderzip', 'insurancetype', 'insuredpcp', 'ircname', 'issuedate', 'policynumber', 'relatedtoautoaccidentyn', 'relatedtoemploymentyn', 'relatedtootheraccidentyn', 'relationshiptoinsured', 'repricername', 'repricerphone', 'stateofreportedinjury'], 'trim'],
             [['adjusterfax', 'adjusterfirstname', 'adjusterlastname', 'adjusterphone', 'anotherpartyresponsibleyn', 'autoaccidentstate', 'cancelled', 'caseinjurydate', 'casepolicytypename', 'ccmstatusname', 'copays', 'descriptionofinjury', 'eligibilitylastchecked', 'eligibilitymessage', 'eligibilityreason', 'eligibilitystatus', 'employerid', 'expirationdate', 'icd10codes', 'icd9codes', 'injuredbodypart', 'insuranceclaimnumber', 'insuranceid', 'insuranceidnumber', 'insurancepackageaddress1', 'insurancepackageaddress2', 'insurancepackagecity', 'insurancepackagestate', 'insurancepackagezip', 'insurancephone', 'insuranceplandisplayname', 'insuranceplanname', 'insurancepolicyholder', 'insurancepolicyholderaddress1', 'insurancepolicyholderaddress2', 'insurancepolicyholdercity', 'insurancepolicyholdercountrycode', 'insurancepolicyholdercountryiso3166', 'insurancepolicyholderdob', 'insurancepolicyholderfirstname', 'insurancepolicyholderlastname', 'insurancepolicyholdermiddlename', 'insurancepolicyholdersex', 'insurancepolicyholderssn', 'insurancepolicyholderstate', 'insurancepolicyholdersuffix', 'insurancepolicyholderzip', 'insurancetype', 'insuredpcp', 'ircname', 'issuedate', 'policynumber', 'relatedtoautoaccidentyn', 'relatedtoemploymentyn', 'relatedtootheraccidentyn', 'relationshiptoinsured', 'repricername', 'repricerphone', 'stateofreportedinjury'], 'string'],
-            [['ccmstatusid', 'insurancepackageid', 'insuredentitytypeid', 'insuredpcpnpi', 'ircid', 'relationshiptoinsuredid', 'sequencenumber', 'slidingfeeplanid', 'externalId', 'id'], 'integer'],
+            [['patient_id', 'ccmstatusid', 'insurancepackageid', 'insuredentitytypeid', 'insuredpcpnpi', 'ircid', 'relationshiptoinsuredid', 'sequencenumber', 'slidingfeeplanid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getPatient()
+    {
+        return $this->hasOne(Patient::class, ['id' => 'patient_id']);
     }
 
 
@@ -99,6 +106,12 @@ class InsurancePatient extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($patient_id = ArrayHelper::getValue($apiObject, 'patient_id')) {
+            $this->patient_id = $patient_id;
+        }
+        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
+            $this->patient = $patient;
+        }
         if($adjusterfax = ArrayHelper::getValue($apiObject, 'adjusterfax')) {
             $this->adjusterfax = $adjusterfax;
         }

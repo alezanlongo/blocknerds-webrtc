@@ -8,6 +8,7 @@ use yii\base\Model;
 /**
  * 
  *
+ * @property Patient $patient
  * @property string $adjusterfax CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
  * @property string $adjusterfirstname CASE POLICY FIELD - First name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
  * @property string $adjusterlastname CASE POLICY FIELD - Last name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
@@ -80,6 +81,7 @@ use yii\base\Model;
 class InsurancePatientApi extends Model
 {
 
+    public $patient;
     public $adjusterfax;
     public $adjusterfirstname;
     public $adjusterlastname;

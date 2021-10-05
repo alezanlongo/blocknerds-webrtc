@@ -8,6 +8,8 @@ use yii\helpers\ArrayHelper;
  * @property string $customfieldid Corresponds to the /customfields customfieldid.
  * @property string $customfieldvalue For a non-select custom field, the value.
  * @property string $optionid For a select custom field, the selectid value (from /customfield's selectlist).
+ * @property integer $patient_id
+ * @property Patient $patient
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
@@ -24,8 +26,14 @@ class customfield extends \yii\db\ActiveRecord
         return [
             [['customfieldid', 'customfieldvalue', 'optionid'], 'trim'],
             [['customfieldid', 'customfieldvalue', 'optionid'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['patient_id', 'externalId', 'id'], 'integer'],
+            // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getPatient()
+    {
+        return $this->hasOne(Patient::class, ['id' => 'patient_id']);
     }
 
 
@@ -41,6 +49,12 @@ class customfield extends \yii\db\ActiveRecord
         }
         if($optionid = ArrayHelper::getValue($apiObject, 'optionid')) {
             $this->optionid = $optionid;
+        }
+        if($patient_id = ArrayHelper::getValue($apiObject, 'patient_id')) {
+            $this->patient_id = $patient_id;
+        }
+        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
+            $this->patient = $patient;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;

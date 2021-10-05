@@ -3,7 +3,7 @@
 /**
  * Table for BalanceItem
  */
-class m210930_000000_BalanceItem extends \yii\db\Migration
+class m211001_000000_BalanceItem extends \yii\db\Migration
 {
     public function up()
     {
@@ -14,10 +14,19 @@ class m210930_000000_BalanceItem extends \yii\db\Migration
             'departmentids' => $this->string(),
             'paymentplanbalance' => $this->string(),
             'providergroupid' => $this->integer(),
+            'patient_id' => $this->integer(),
             'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
 
+        $this->addForeignKey(
+            'fk-patient-patient_id',
+            '{{%balance_items}}',
+            'patient_id',
+            'patients',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()

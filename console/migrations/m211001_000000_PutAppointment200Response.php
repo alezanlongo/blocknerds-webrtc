@@ -3,7 +3,7 @@
 /**
  * Table for PutAppointment200Response
  */
-class m210930_000000_PutAppointment200Response extends \yii\db\Migration
+class m211001_000000_PutAppointment200Response extends \yii\db\Migration
 {
     public function up()
     {

@@ -3,7 +3,7 @@
 /**
  * Table for Provider
  */
-class m210930_000000_Provider extends \yii\db\Migration
+class m211001_000000_Provider extends \yii\db\Migration
 {
     public function up()
     {
