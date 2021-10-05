@@ -42,12 +42,12 @@ class JanusApiComponent extends Component
     public const SOURCE_VIDEO = 'video';
 
 
-//    public function __construct($config = [])
-//    {
-//        $this->apiParams = $config;
-//        $this->apiParams['baseUrl'] = ($config['url'] ?? '') . ':' . ($config['port'] ?? '') . '/' . $config['uri'] ?? '';
-//        $this->apiParams['adminBaseUrl'] = ($config['url'] ?? '') . ':' . ($config['adminPort'] ?? '') . '/' . $config['adminUri'] ?? '';
-//    }
+    //    public function __construct($config = [])
+    //    {
+    //        $this->apiParams = $config;
+    //        $this->apiParams['baseUrl'] = ($config['url'] ?? '') . ':' . ($config['port'] ?? '') . '/' . $config['uri'] ?? '';
+    //        $this->apiParams['adminBaseUrl'] = ($config['url'] ?? '') . ':' . ($config['adminPort'] ?? '') . '/' . $config['adminUri'] ?? '';
+    //    }
 
     public function init()
     {
@@ -86,7 +86,9 @@ class JanusApiComponent extends Component
                         'publisher' => 10,
                         'admin_key' => $this->adminKey,
                         'record' => Yii::$app->params['janus.record'],
-                        'rec_dir' => Yii::$app->params['janus.rec_dir']
+                        'rec_dir' => Yii::$app->params['janus.rec_dir'],
+                        'audiocodec' => Yii::$app->params['janus.audiocodec'],
+                        'videocodec' => Yii::$app->params['janus.videocodec'],
                     ],
                     'transaction' =>  $this->createRandStr(),
                     'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()
@@ -117,7 +119,9 @@ class JanusApiComponent extends Component
     {
         try {
             $this->attach('janus.plugin.videoroom');
-            $res = $this->apiCall('POST', [
+            $res = $this->apiCall(
+                'POST',
+                [
                     'janus' => 'message',
                     'body' => [
                         'request' => 'exists',
@@ -126,7 +130,8 @@ class JanusApiComponent extends Component
                     'transaction' => $this->createRandStr(),
                     'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()
                 ],
-                $this->createSession() . '/' . $this->handleID);
+                $this->createSession() . '/' . $this->handleID
+            );
 
             $data = $res->getData();
         } catch (Exception $e) {
@@ -147,16 +152,19 @@ class JanusApiComponent extends Component
     public function getInRoomMembers(string $roomUuid): false|array
     {
         $this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall('POST', [
-            'janus' => 'message',
-            'body' => [
-                'request' => 'listparticipants',
-                'room' => $roomUuid
+        $res = $this->apiCall(
+            'POST',
+            [
+                'janus' => 'message',
+                'body' => [
+                    'request' => 'listparticipants',
+                    'room' => $roomUuid
+                ],
+                'transaction' => $this->createRandStr(),
+                'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()
             ],
-            'transaction' => $this->createRandStr(),
-            'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()
-        ],
-            $this->createSession() . '/' . $this->handleID);
+            $this->createSession() . '/' . $this->handleID
+        );
         if (!$res->isOk) {
             return false;
         }
