@@ -140,7 +140,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
-     * @return Appointments
+     * @return AppointmentResponse
      */
     public function postPracticeidAppointmentsOpen($practiceid, array $body = [])
     {
@@ -149,7 +149,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\AppointmentsApi($dataResponse['data']);
+            return new \common\components\Athena\apiModels\AppointmentResponseApi($dataResponse['data']);
         }else{
             return $dataResponse['message'];
         }
@@ -315,6 +315,72 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
         $dataResponse = $this->callMethod($path, 'put' , $body);
         if($dataResponse['success']){
             return new \common\components\Athena\apiModels\PutAppointment200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return PatientCase
+     */
+    public function getPracticeidPatientsPatientidDocumentsPatientcase($practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['patientcases'])) ? $dataResponse['data']['patientcases'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\PatientCaseApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return PostPatientCase200Response
+     */
+    public function postPracticeidPatientsPatientidDocumentsPatientcase($practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PostPatientCase200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param patientcaseid
+     * @param practiceid
+     * @param patientid
+     * @return PatientCase
+     */
+    public function getPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid($patientcaseid, $practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}';
+        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['{patientcaseid}'])) ? $dataResponse['data']['{patientcaseid}'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\PatientCaseApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }

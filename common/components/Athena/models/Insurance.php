@@ -328,7 +328,7 @@ class Insurance extends \yii\db\ActiveRecord
 
         return $model->loadApiObject($apiObject);
     }
-
+    /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
         if( !empty($this->_copaysAr) and is_array($this->_copaysAr) ) {
@@ -342,4 +342,5 @@ class Insurance extends \yii\db\ActiveRecord
 
         return $saved;
     }
+    */
 }

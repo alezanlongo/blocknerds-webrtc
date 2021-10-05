@@ -19,7 +19,7 @@ use yii\helpers\ArrayHelper;
  */
 class BalanceItem extends \yii\db\ActiveRecord
 {
-    public $patient_id;
+ 
     protected $_contractsAr;
 
     public static function tableName()
@@ -94,7 +94,7 @@ class BalanceItem extends \yii\db\ActiveRecord
 
         return $model->loadApiObject($apiObject);
     }
-
+    /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
         if( !empty($this->_contractsAr) and is_array($this->_contractsAr) ) {
@@ -108,4 +108,5 @@ class BalanceItem extends \yii\db\ActiveRecord
 
         return $saved;
     }
+    */
 }

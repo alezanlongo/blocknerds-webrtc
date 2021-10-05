@@ -140,7 +140,7 @@ class Encounter extends \yii\db\ActiveRecord
 
         return $model->loadApiObject($apiObject);
     }
-
+    /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
         if( !empty($this->_diagnosesAr) and is_array($this->_diagnosesAr) ) {
@@ -154,4 +154,5 @@ class Encounter extends \yii\db\ActiveRecord
 
         return $saved;
     }
+    */
 }
