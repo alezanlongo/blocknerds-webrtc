@@ -45,6 +45,12 @@ class EncounterController extends Controller
      */
     public function actionIndex()
     {
+        $dataApiEncounters = $this->component->getEcounters(34527, 1);
+        foreach ($dataApiEncounters as $apiEncounter){
+            $model = $this->component->createEncounter($apiEncounter->toArray());
+            $model->save();
+        }
+
         $dataProvider = new ActiveDataProvider([
             'query' => Encounter::find(),
         ]);

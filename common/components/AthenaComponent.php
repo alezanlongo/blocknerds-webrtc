@@ -1,6 +1,8 @@
 <?php
 namespace common\components;
 
+use common\components\Athena\models\Checkin;
+use spec\Prophecy\Doubler\Generator\Node\ReturnTypeNodeSpec;
 use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\models\Department;
@@ -117,7 +119,7 @@ class AthenaComponent extends Component
             $this->practiceid,
             $patientid
         )[0];
-//var_dump(__METHOD__,$patientModelApi);die;
+
         $patient = Patient::find()
             ->where(['externalId' => $patientid])
             ->one();
@@ -127,6 +129,71 @@ class AthenaComponent extends Component
         }
 
         return $patient->loadApiObject($patientModelApi);
+    }
+
+
+    /**
+     * @return Checkin
+     */
+    public function startCheckin($appointmentid)
+    {
+        $startCheckinModelApi = $this->client->postPracticeidAppointmentsAppointmentidStartcheckin(
+            $this->practiceid,
+            $appointmentid,
+        );
+
+        return $startCheckinModelApi;
+    }
+
+
+    /**
+     * @return Checkin
+     */
+    public function checkin($appointmentid)
+    {
+        $startCheckinModelApi = $this->client->postPracticeidAppointmentsAppointmentidCheckin(
+            $this->practiceid,
+            $appointmentid,
+        );
+
+        return $startCheckinModelApi;
+    }
+
+
+    /**
+     * @return Checkin
+     */
+    public function cancelCheckin($appointmentid)
+    {
+        $startCheckinModelApi = $this->client->postPracticeidAppointmentsAppointmentidCancelcheckin(
+            $this->practiceid,
+            $appointmentid,
+        );
+
+        return $startCheckinModelApi;
+    }
+
+
+    public function getEcounters($patientid, $departmentId, $flatten = false)
+    {
+        $encountersModelsApi = $this->client->getPracticeidChartPatientidEncounters(
+            $this->practiceid,
+            $patientid,
+            [
+                'departmentId'  => $departmentId,
+            ]
+        );
+
+        $encountersModels = [];
+
+        foreach ($encountersModelsApi as $encounterModelApi) {
+            $encountersModels[] =
+                Encounter::createFromApiObject(
+                    $encounterModelApi
+                );
+        }
+
+        return $encountersModels;
     }
 
 
@@ -171,26 +238,40 @@ class AthenaComponent extends Component
     /**
      * @return Encounter
      */
-    public function updateEncounter(Encounter $encounter)
+    public function createEncounter($encounterApiModel)
     {
         $encounterDB = Encounter::find()
-            ->where(['externalId' => $encounter->externalId])
+            ->where(['externalId' => $encounterApiModel['externalId']])
             ->one();
         if (is_null($encounterDB)) {
-            $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid);
-            return Encounter::createFromApiObject($encounterModelApi);
-        }
+            return Encounter::createFromApiObject($encounterApiModel);
+        }else{
+            $id = $encounterDB->id;
+            $encounterDB->loadApiObject($encounterApiModel);
+            $encounterDB->id = $id;
 
-        $putOrderModelApi = $this->client->putPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid, $encounter->toArray());
-        if (!is_null($putOrderModelApi['errormessage'])) {
             return $encounterDB;
         }
+    }
 
+
+    /**
+     * @return Encounter
+     */
+    public function updateEncounter(Encounter $encounter)
+    {
+        $putOrderModelApi = $this->client->putPracticeidChartEncounterEncounterid($this->practiceid, $encounter->encounterid, $encounter->toArray());
+        if (!is_null($putOrderModelApi['errormessage'])) {
+            return $encounter;
+        }
+
+        $id = $encounter->id;
         $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $encounter->externalId);
-        $encounterToUpdate = $encounterDB->loadApiObject($encounterModelApi[0]);
-        $encounterToUpdate->id = $encounter->id;
+        $encounterToUpdate = $encounter->loadApiObject($encounterModelApi[0]);
+        $encounterToUpdate->id = $id;
 
         return $encounterToUpdate;
+
     }
 
 
