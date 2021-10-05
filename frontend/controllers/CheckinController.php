@@ -83,11 +83,12 @@ class CheckinController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);*/
-        $data = Yii::$app->request->post();
+        $data = Yii::$app->request->post()['PutAppointment200Response'];
+
         $data = [
-            'patientid' => 34527,
-            'departmentid'  => 1,
-            'appointmentid' => 12321,
+            'patientid' => $data['patientid'],
+            'departmentid'  => $data['departmentid'],
+            'appointmentid' => $data['appointmentid'],
         ];
 
         $startCheckin = $this->component->startCheckin($data['appointmentid']);
