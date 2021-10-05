@@ -3,16 +3,16 @@
 namespace frontend\controllers;
 
 use Yii;
-use common\components\Athena\models\Encounter;
+use common\components\Athena\models\Checkin;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * EncounterController implements the CRUD actions for Encounter model.
+ * CheckinController implements the CRUD actions for Checkin model.
  */
-class EncounterController extends Controller
+class CheckinController extends Controller
 {
     private $component;
 
@@ -40,19 +40,13 @@ class EncounterController extends Controller
     }
 
     /**
-     * Lists all Encounter models.
+     * Lists all Checkin models.
      * @return mixed
      */
-    public function actionIndex($patientid, $departmentid)
+    public function actionIndex()
     {
-        /*$dataApiEncounters = $this->component->getEcounters($patientid, $departmentid);
-        foreach ($dataApiEncounters as $apiEncounter){
-            $model = $this->component->createEncounter($apiEncounter->toArray());
-            $model->save();
-        }*/
-
         $dataProvider = new ActiveDataProvider([
-            'query' => Encounter::find(),
+            'query' => Checkin::find(),
         ]);
 
         return $this->render('index', [
@@ -61,7 +55,7 @@ class EncounterController extends Controller
     }
 
     /**
-     * Displays a single Encounter model.
+     * Displays a single Checkin model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -74,13 +68,13 @@ class EncounterController extends Controller
     }
 
     /**
-     * Creates a new Encounter model.
+     * Creates a new Checkin model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Encounter();
+        /*$model = new Checkin();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -88,36 +82,53 @@ class EncounterController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-        ]);
+        ]);*/
+        $data = Yii::$app->request->post();
+        $data = [
+            'patientid' => 34527,
+            'departmentid'  => 1,
+            'appointmentid' => 12321,
+        ];
+
+        $startCheckin = $this->component->startCheckin($data['appointmentid']);
+        if($startCheckin['success']){
+            $checkin = $this->component->checkin($data['appointmentid']);
+            if($checkin['success']){
+                return $this->redirect([
+                    'encounter/index',
+                    'patientid'     => $data['patientid'],
+                    'departmentid'  => $data['departmentid']
+                ]);
+            }else{
+                echo 'fallo checkin';
+            }
+        }else{
+            echo 'fallo start checkin';
+        }
     }
 
     /**
-     * Updates an existing Encounter model.
+     * Updates an existing Checkin model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id, $departmentId)
+    public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model = $this->component->updateEncounter($model);
-            if($model->save()){
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
-            'model'             => $model,
-            'patientLocations'  => $this->component->getPatientLocations($departmentId, TRUE),
-            'patientStatuses'   => $this->component->getPatientStatuses(TRUE),
+            'model' => $model,
         ]);
     }
 
     /**
-     * Deletes an existing Encounter model.
+     * Deletes an existing Checkin model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -131,15 +142,15 @@ class EncounterController extends Controller
     }
 
     /**
-     * Finds the Encounter model based on its primary key value.
+     * Finds the Checkin model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Encounter the loaded model
+     * @return Checkin the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Encounter::findOne($id)) !== null) {
+        if (($model = Checkin::findOne($id)) !== null) {
             return $model;
         }
 
