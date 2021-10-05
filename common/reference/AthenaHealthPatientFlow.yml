@@ -2927,12 +2927,6 @@ components:
       x-external-id: appointmentid
       type: object
       properties:
-        appointmentcopay:
-          description: >-
-            Detailed information about the copay for this appointment.  Gives
-            more detail than the COPAY field.  Note: this information is not yet
-            available in all practices, we are rolling this out slowly.
-          type: string
         appointmentid:
           description: Appointment ID of the booked appointment
           type: string
