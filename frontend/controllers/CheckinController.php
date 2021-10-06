@@ -95,6 +95,12 @@ class CheckinController extends Controller
         if($startCheckin['success']){
             $checkin = $this->component->checkin($data['appointmentid']);
             if($checkin['success']){
+                $dataApiEncounters = $this->component->getEcounters($data['patientid'], $data['departmentid'], $data['appointmentid']);
+                foreach ($dataApiEncounters as $apiEncounter){
+                    $model = $this->component->createEncounter($apiEncounter->toArray());
+                    $model->save();
+                }
+
                 return $this->redirect([
                     'encounter/index',
                     'patientid'     => $data['patientid'],

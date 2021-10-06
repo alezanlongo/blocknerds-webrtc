@@ -174,14 +174,21 @@ class AthenaComponent extends Component
     }
 
 
-    public function getEcounters($patientid, $departmentId, $flatten = false)
+    public function getEcounters($patientid, $departmentid, $appointmentid = "",  $flatten = false)
     {
+        $queryparams = [
+            'departmentid'      => $departmentid,
+            'showalltypes'      => "Y",
+            'showallstatuses'   => "Y",
+		    'encountertype'     => "INCLUDEALLSTATUSES",
+        ];
+        if($appointmentid !== ""){
+            $queryparams['appointmentid'] = $appointmentid;
+        }
         $encountersModelsApi = $this->client->getPracticeidChartPatientidEncounters(
             $this->practiceid,
             $patientid,
-            [
-                'departmentId'  => $departmentId,
-            ]
+            $queryparams
         );
 
         $encountersModels = [];
