@@ -1,7 +1,46 @@
 <?php
 
 /** @var \yii\web\View $this */
+
+use yii\helpers\Url;
+use yii\helpers\VarDumper;
+
 /** @var string $directoryAsset */
+
+$items = [];
+$items[] = ['label' => 'Home', 'icon' => 'fas fa-home', 'url' => ['/']];
+
+if (Url::home() === Yii::$app->request->url) {
+    $items[] = ['template' => '<hr>'];
+    $items[] = ['label' => 'Menu room options ', 'header' => true];
+    $items[] = [
+        'label' => 'Create new meet',
+        'template' => '<a class="nav-link" href="{url}" data-method="post">{icon}{label}</a>',
+        'url' => ['room/create'],
+        'icon' => 'fas fa-phone-alt',
+        'visible' => !Yii::$app->user->isGuest,
+    ];
+    $items[] =  [
+        'label' => 'Planning a meeting',
+        'template' => '<a class="nav-link" href="{url}" onclick="$(\'#planningMeeting\').modal(\'show\');return false;">{icon}{label}</a>',
+        'url' => null,
+        'icon' => 'far fa-calendar-plus',
+        'visible' => !Yii::$app->user->isGuest,
+    ];
+}
+$items[] = ['label' => 'Menu profile options ', 'header' => true];
+$items[] = ['label' => 'Profile', 'icon' => 'far fa-user-circle', 'url' => ['/user/edit-profile']];
+$items[] = ['template' => '<hr>'];
+$items[] = ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest];
+$items[] = [
+    'label' => 'Logout',
+    'template' => '<a class="nav-link" href="{url}" data-method="post">{icon}{label}</a>',
+    'url' => ['site/logout'],
+    'icon' => 'sign-out-alt',
+    'visible' => !Yii::$app->user->isGuest,
+];
+
+
 ?>
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -12,40 +51,7 @@
             <?= dmstr\adminlte\widgets\Menu::widget(
                 [
                     'options' => ['class' => 'nav nav-pills nav-sidebar flex-column', 'data-widget' => 'treeview'],
-                    'items' => [
-                        ['label' => 'Menu Yii2', 'header' => true],
-                        ['label' => 'Gii', 'iconType' => 'far', 'icon' => 'file-code', 'url' => ['/gii']],
-                        ['label' => 'Debug', 'icon' => 'tachometer-alt', 'url' => ['/debug']],
-                        ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest],
-                        [
-                            'label' => 'Some tools',
-                            'icon' => 'share',
-                            'url' => '#',
-                            'items' => [
-                                ['label' => 'Gii', 'iconType' => 'far', 'icon' => 'file-code', 'url' => ['/gii'],],
-                                ['label' => 'Debug', 'icon' => 'tachometer-alt', 'url' => ['/debug'],],
-                                [
-                                    'label' => 'Level One',
-                                    'iconType' => 'far',
-                                    'icon' => 'circle',
-                                    'url' => '#',
-                                    'items' => [
-                                        ['label' => 'Level Two', 'iconType' => 'far', 'icon' => 'dot-circle', 'url' => '#',],
-                                        [
-                                            'label' => 'Level Two',
-                                            'iconType' => 'far',
-                                            'icon' => 'dot-circle',
-                                            'url' => '#',
-                                            'items' => [
-                                                ['label' => 'Level Three', 'icon' => 'dot-circle', 'url' => '#',],
-                                                ['label' => 'Level Three', 'icon' => 'dot-circle', 'url' => '#',],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
+                    'items' => $items,
                 ]
             ) ?>
         </nav>
