@@ -20,7 +20,7 @@ dmstr\adminlte\web\FontAwesomeAsset::register($this);
     <?php $this->head() ?>
 </head>
 
-<body class="login-page dark-mode">
+<body class="login-page dark-mode" >
     <?php $this->beginBody() ?>
 
         <?= $content ?>
