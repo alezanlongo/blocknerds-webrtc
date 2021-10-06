@@ -144,3 +144,7 @@
 .username-member:hover {
   cursor: pointer;
 }
+
+.modal{
+  z-index: 999999 !important; 
+}

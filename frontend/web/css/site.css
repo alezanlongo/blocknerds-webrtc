@@ -10,6 +10,7 @@ main > .container-body {
 
 .modal {
   /* color: black; */
+  /* z-index: 999999; */
 }
 
 a:hover {
