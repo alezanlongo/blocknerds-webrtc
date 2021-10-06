@@ -14,7 +14,7 @@ $formatter = \Yii::$app->formatter;
                     <h5 class="card-title "><?= $title ?></h5>
                     <p class="card-text "><?= $text ?></p>
                 </div>
-               <div class="col">
+               <div class="col text-end">
                <?php
                 echo Html::a(
                     "Go to meeting",
