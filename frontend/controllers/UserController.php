@@ -83,7 +83,7 @@ class UserController extends Controller
             return $this->redirect(['user/edit-profile']);
         }
 
-        $this->layout = 'adminlte/main';
+        // $this->layout = 'adminlte/main';
         return $this->render(
             'edit',
             [

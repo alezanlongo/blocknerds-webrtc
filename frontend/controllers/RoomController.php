@@ -52,7 +52,7 @@ class RoomController extends \yii\web\Controller
 
     public function actionIndex($uuid)
     {
-        $this->layout = 'room';
+        $this->layout = 'main-room';
         $room = Room::find()->where(['uuid' => $uuid])->limit(1)->one();
 
         if (!$room) {
@@ -542,7 +542,6 @@ class RoomController extends \yii\web\Controller
 
     function actionCalendar()
     {
-        $this->layout = 'adminlte/main';
         $user = Yii::$app->user->identity;
         $profile = $user->getUserProfile()->one();
 
