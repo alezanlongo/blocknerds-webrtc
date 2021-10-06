@@ -309,9 +309,12 @@ Pjax::end();
 <?php Modal::begin([
     'title' => 'Require to join...',
     'id' => 'pendingRequests',
+    // 'size' => Modal::SIZE_LARGE,
+    'closeButton' => false,
     'options' => [
-        'data-backdrop' => "static",
-        'data-keyboard' => "false"
+        'data-bs-backdrop' => "static",
+        'data-bs-keyboard' => "false",
+        'class'=> 'mt-5 pt-3',
     ],
 ]);
 
