@@ -48,7 +48,7 @@ $username = Yii::$app->getUser()->getIdentity()->username ;
                         ['class' => 'btn btn-default btn-flat']
                     ) ?>
                     <?= Html::a(
-                        'Sign out',
+                        'Logout',
                         ['/site/logout'],
                         ['data-method' => 'post', 'class' => 'btn btn-default btn-flat float-right']
                     ) ?>
