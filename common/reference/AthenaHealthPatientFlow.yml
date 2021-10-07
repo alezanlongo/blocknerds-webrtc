@@ -42,7 +42,7 @@ paths:
             application/json:
               schema:
                 type: array
-                items: 
+                items:
                   $ref: '#/components/schemas/PostPatient200Response'
       requestBody:
         content:
@@ -432,9 +432,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/insurancePackages'
+                type: array
+                items:
+                  $ref: '#/components/schemas/insurancePackages'
           description: Success
       operationId: getPracticeidInsurancepackages
+      x-list-key: 'insurances'
       tags:
         - Insurance Package
   /v1/{practiceid}/providers:
@@ -508,7 +511,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Provider'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
           description: Success
       operationId: getPracticeidProviders
       tags:
@@ -535,9 +540,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Appointments'
+                $ref: '#/components/schemas/AppointmentResponse'
           description: Success
       operationId: postPracticeidAppointmentsOpen
       requestBody:
@@ -548,6 +551,39 @@ paths:
         required: true
       tags:
         - Appointment Slot
+  /v1/{practiceid}/appointments/{appointmentid}/checkin:
+    post:
+      summary: Check in this appointment.
+      description: ' Check in this appointment. '
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkin'
+          description: Success
+      operationId: postPracticeidAppointmentsAppointmentidCheckin
+      tags:
+        - Appointment Checkin
   /v1/{practiceid}/appointments/{appointmentid}/startcheckin:
     post:
       summary: Initiate appointment check-in process
@@ -579,6 +615,39 @@ paths:
                 $ref: '#/components/schemas/Checkin'
           description: Success
       operationId: postPracticeidAppointmentsAppointmentidStartcheckin
+      tags:
+        - Appointment Checkin
+  /v1/{practiceid}/appointments/{appointmentid}/cancelcheckin:
+    post:
+      summary: Cancel appointment check-in process
+      description: Cancel appointment check-in process. It cannot be called if the check-in process has been completed.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkin'
+          description: Success
+      operationId: postPracticeidAppointmentsAppointmentidCancelcheckin
       tags:
         - Appointment Checkin
   /v1/{practiceid}/chart/{patientid}/encounters:
@@ -677,7 +746,7 @@ paths:
       tags:
         - Encounter
   /v1/{practiceid}/chart/encounter/{encounterid}:
-    put:
+    get:
       summary: Update patient location/status encounter information
       description: >-
         Modifies the patient location and patient status for a specific
@@ -708,7 +777,41 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PutEncounter200Response'
+                  $ref: '#/components/schemas/Encounter'
+          description: Success
+      operationId: getPracticeidChartEncounterEncounterid
+      tags:
+        - Encounter
+    put:
+      summary: Update patient location/status encounter information
+      description: >-
+        Modifies the patient location and patient status for a specific
+        encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutEncounter200Response'
           description: Success
       operationId: putPracticeidChartEncounterEncounterid
       requestBody:
@@ -754,7 +857,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientLocation'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientLocation'
           description: Success
       operationId: getPracticeidChartConfigurationPatientlocations
       tags:
@@ -789,7 +894,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientStatus'
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientStatus'
           description: Success
       operationId: getPracticeidChartConfigurationPatientstatuses
       tags:
@@ -822,9 +929,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PutAppointment200Response'
+                $ref: '#/components/schemas/PutAppointment200Response'
           description: Success
       operationId: putPracticeidAppointmentsAppointmentid
       requestBody:
@@ -835,304 +940,277 @@ paths:
         required: true
       tags:
         - Appointment
+    get:
+      summary: Get appointment details
+      description: >-
+        Retrieves the details of a specific appointment. Note: This endpoint may
+        rely on specific settings to be enabled in athenaNet Production to
+        function properly that are not required in other environments. Please
+        see <a
+        href="https://docs.athenahealth.com/api/resources/best-practices-and-troubleshooting#Handling_Beta_APIs">Permissioned
+        Rollout of APIs</a> for more information if you are experiencing issues.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, the expected co-pay is returned. For performance
+            purposes, you can set this to false and copay will not be populated.
+          in: query
+          name: showcopay
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Include claim information, if available, associated with the
+            appointment.
+          in: query
+          name: showclaimdetail
+          required: false
+          schema:
+            type: boolean
+        - description: Include patient insurance information.
+          in: query
+          name: showinsurance
+          required: false
+          schema:
+            type: boolean
+        - description: Show expected procedure codes
+          in: query
+          name: showexpectedprocedurecodes
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Include patient information for each patient associated with an
+            appointment.
+          in: query
+          name: showpatientdetail
+          required: false
+          schema:
+            type: boolean
+        - description: Show indicator for if this is a native athenatelehealth appointment
+          in: query
+          name: showtelehealth
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            When showing patient detail for appointments, the patient
+            information for patients with record restrictions and blocked
+            patients will not be shown.  Setting this flag to true will show
+            that information for those patients.
+          in: query
+          name: ignorerestrictions
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PutAppointment200Response'
+          description: Success
+      operationId: getPracticeidAppointmentsAppointmentid
+      tags:
+        - Appointment
+  /v1/{practiceid}/patients/{patientid}/documents/patientcase:
+    get:
+      summary: Get list of patient case documents for a patient
+      description: >-
+        Retrieves a list of patientcase document information for a specific
+        patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: By default, deleted documents are not listed.  Set to list these.
+          in: query
+          name: showdeleted
+          required: false
+          schema:
+            type: boolean
+        - description: The status of the task to filter document results.
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - ADMINISTER
+              - CLOSED
+              - DATAENTRY
+              - DELETED
+              - DISPENSE
+              - FOLLOWUP
+              - HOLD
+              - NOTIFY
+              - PEND
+              - PENDING
+              - PENDINGLABEL
+              - PERFORM
+              - REVIEW
+              - SCHEDULE
+              - SCHEDULED
+              - SUBMIT
+              - SUBMITTED
+            type: string
+            x-enumDescriptions:
+              - ADMINISTER
+              - CLOSED
+              - DATAENTRY
+              - DELETED
+              - DISPENSE
+              - FOLLOWUP
+              - HOLD
+              - NOTIFY
+              - PEND
+              - PENDING
+              - PENDINGLABEL
+              - PERFORM
+              - REVIEW
+              - SCHEDULE
+              - SCHEDULED
+              - SUBMIT
+              - SUBMITTED
+        - description: The athenaNet department id.
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+        - description: Show only documents attached to this encounter.
+          in: query
+          name: encounterid
+          required: false
+          schema:
+            type: integer
+        - description: The document subclass to filter document results.
+          in: query
+          name: documentsubclass
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientCase'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsPatientcase
+      x-list-key: 'patientcases'
+      tags:
+        - Document Type - Patient Case
+    post:
+      summary: Add patient case document for a patient
+      description: Creates a patient case document record of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostPatientCase200Response'
+          description: Success
+      operationId: postPracticeidPatientsPatientidDocumentsPatientcase
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreatePatientCase'
+        required: true
+      tags:
+        - Document Type - Patient Case
+  /v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}:
+    get:
+      summary: Get patient case document for a patient
+      description: Retrieves information on a specific patient case document
+      parameters:
+        - description: patientcaseid
+          in: path
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientCase'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid
+      tags:
+        - Document Type - Patient Case
 components:
   schemas:
-    PostPatient200Response:
-      x-external-id: patientid
-      type: object
-      properties:
-        errormessage:
-          description: Error message will be returned if show error message flag is set to true and patient match found.
-          type: string
-        patientid:
-          description: Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
-          type: string
-    contractItem:
-      x-external-id: contractid
-      type: object
-      properties:
-        availablebalance:
-          description: The available balance on this contract.
-          type: string
-        contractclass:
-          description: The type of contract.  For example, "ONEYEAR,"
-          type: string
-        maxamount:
-          description: The maximum allowed amount for this contract.
-          type: string
-    BalanceItem:
-      x-external-id: balanceid
-      type: object
-      properties:
-        balance:
-          description: Balance for this provider group.
-          type: string
-        cleanbalance:
-          description: Indicates whether the balance is associated with a contract, payment plan, or collections agency.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        collectionsbalance:
-          description: The outstanding amount associated with a collections agency.
-          type: string
-        contracts:
-          description: Information related to existing credit card contracts.
-          items:
-            $ref: '#/components/schemas/contractItem'
-          type: array
-        departmentids:
-          description: Comma separated list of department IDs that belong to this group
-          type: string
-        paymentplanbalance:
-          description: The outstanding amount associated with a payment plan.
-          type: string
-        providergroupid:
-          description: Athena ID for this financial group.
-          type: integer
-        patient:
-          $ref: '#/components/schemas/Patient'
-    customfield:
-      properties:
-        customfieldid:
-          description: Corresponds to the /customfields customfieldid.
-          type: string
-        customfieldvalue:
-          description: For a non-select custom field, the value.
-          type: string
-        optionid:
-          description: For a select custom field, the selectid value (from /customfield's selectlist).
-          type: string
-        patient:
-          $ref: '#/components/schemas/Patient'
-      type: object
-    InsurancePatient:
-      x-external-id: insuranceid
-      properties:
-        adjusterfax:
-          description: CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterfirstname:
-          description: CASE POLICY FIELD - First name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterlastname:
-          description: CASE POLICY FIELD - Last name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterphone:
-          description: CASE POLICY FIELD - Phone number/other contact info for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        anotherpartyresponsibleyn:
-          description: CASE POLICY FIELD - Boolean field indicating if another party was responsible for this accident.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        autoaccidentstate:
-          description: CASE POLICY FIELD - Two-letter abbreviation for the state in which the auto accident took place. Only meaningful for auto insurance case policies.
-          type: string
-        cancelled:
-          description: The date in which the insurance was marked cancelled.
-          type: string
-        caseinjurydate:
-          description: CASE POLICY FIELD - Date of the injury.  Required for auto insurance, legal, and worker's comp case policies.
-          type: string
-        casepolicytypename:
-          description: CASE POLICY FIELD - The name of this type of case policy.
-          type: string
-        ccmstatusid:
-          description: Status ID of current CCM enrollment.
-          type: integer
-        ccmstatusname:
-          description: The name of current CCM enrollment status.
-          type: string
-        coinsurancepercent:
-          description: The coinsurance percentage for this insurance. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before this field populates.
-          type: number
-        copays:
-          description: Details about the copays for this insurance package. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before these populate.
-          type: string
-        descriptionofinjury:
-          description: CASE POLICY FIELD - A description of the injury.  Only available for auto insurance and worker's comp case policies.
-          type: string
-        eligibilitylastchecked:
-          description: Date the eligibility was last checked.
-          type: string
-        eligibilitymessage:
-          description: The message, usually from our engine, of the eligibility check.
-          type: string
-        eligibilityreason:
-          description: The source of the current status. Athena is our eligibility engine.
-          type: string
-        eligibilitystatus:
-          description: Current eligibility status of this insurance package.
-          type: string
-        employerid:
-          description: The employer ID associated with the patient's insurance.
-          type: string
-        expirationdate:
-          description: Date the insurance expires.
-          type: string
-        icd10codes:
-          description: CASE POLICY FIELD - See documentation for ICD9CODES.
-          type: string
-        icd9codes:
-          description: CASE POLICY FIELD - A list of ICD9 accepted diagnosis codes. Only available for worker's comp case policies.
-          type: string
-        injuredbodypart:
-          description: CASE POLICY FIELD - Text field for describing the injured body part.  Only available for auto insurance  and worker's comp case policies.
-          type: string
-        insuranceclaimnumber:
-          description: CASE POLICY FIELD - The auto insurance claim number or the worker's comp claim number.
-          type: string
-        insuranceid:
-          description: The athena insurance policy ID.
-          type: string
-        insuranceidnumber:
-          description: The insurance policy ID number (as presented on the insurance card itself).
-          type: string
-        insurancepackageaddress1:
-          description: Address 1 for the AthenaNet insurance Package.
-          type: string
-        insurancepackageaddress2:
-          description: Address 2 for the AthenaNet insurance Package.
-          type: string
-        insurancepackagecity:
-          description: City for the AthenaNet insurance Package.
-          type: string
-        insurancepackageid:
-          description: The athenaNet insurance package ID.
-          type: integer
-        insurancepackagestate:
-          description: State of the AthenaNet insurance package
-          type: string
-        insurancepackagezip:
-          description: Zip code of the AthenaNet insurance package
-          type: string
-        insurancephone:
-          description: 'The phone number for the insurance company. Note: This defaults to the insurance package phone number. If this is set, it will override it. Likewise if blanked out, it will go back to default.'
-          type: string
-        insuranceplandisplayname:
-          description: Superpackagename of the specific insurance package.
-          type: string
-        insuranceplanname:
-          description: Name of the specific insurance package.
-          type: string
-        insurancepolicyholder:
-          description: The full name of the insurance policy holder.
-          type: string
-        insurancepolicyholderaddress1:
-          description: The first address line of the insurance policy holder.
-          type: string
-        insurancepolicyholderaddress2:
-          description: The second address line of the insurance policy holder.
-          type: string
-        insurancepolicyholdercity:
-          description: The city of the insurance policy holder.
-          type: string
-        insurancepolicyholdercountrycode:
-          description: The country code (3 letter) of the insurance policy holder.
-          type: string
-        insurancepolicyholdercountryiso3166:
-          description: The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166</a> country code of the insurance policy holder.
-          type: string
-        insurancepolicyholderdob:
-          description: The DOB of the insurance policy holder (mm/dd/yyyy).
-          type: string
-        insurancepolicyholderfirstname:
-          description: The first name of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholderlastname:
-          description: The last name of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholdermiddlename:
-          description: The middle name of the insurance policy holder.
-          type: string
-        insurancepolicyholdersex:
-          description: The sex of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholderssn:
-          description: The SSN of the insurance policy holder.
-          type: string
-        insurancepolicyholderstate:
-          description: The state of the insurance policy holder.
-          type: string
-        insurancepolicyholdersuffix:
-          description: The suffix of the insurance policy holder.
-          type: string
-        insurancepolicyholderzip:
-          description: The zip of the insurance policy holder.
-          type: string
-        insurancetype:
-          description: Type of insurance. E.g., Medicare Part B, Group Policy, HMO, etc.
-          type: string
-        insuredentitytypeid:
-          description: The ID of the entity type for this insurance.
-          type: integer
-        insuredpcp:
-          type: string
-        insuredpcpnpi:
-          description: The national provider id of the primary care physcian assicated with the insurance.
-          type: integer
-        ircid:
-          description: Insurance category / company internal ID
-          type: integer
-        ircname:
-          description: Insurance category / company. E.g., United Healthcare, BCBS-MA, etc.
-          type: string
-        issuedate:
-          description: Date the insurance was issued.
-          type: string
-        policynumber:
-          description: The insurance group number.  This is sometimes present on an insurance card.
-          type: string
-        relatedtoautoaccidentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to an auto accident.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relatedtoemploymentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to the patient's employer.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relatedtootheraccidentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to another accident.  Only available for worker's comp case policies.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relationshiptoinsured:
-          description: This patient's relationship to the policy holder (text).
-          type: string
-        relationshiptoinsuredid:
-          default: 1
-          description: This patient's relationship to the policy holder (as an ID).  See <a href="/workflows/patient-relationship-mapping">the mapping</a>.
-          type: integer
-        repricername:
-          description: CASE POLICY FIELD - Name for the repricer.  Only available for worker's comp case policies.
-          type: string
-        repricerphone:
-          description: CASE POLICY FIELD - Phone number for the repricer.  Only available for worker's comp case policies.
-          type: string
-        sequencenumber:
-          description: 1 = primary, 2 = secondary, 3 = tertiary, etc.  Must have a primary before a secondary and a secondary before a tertiary, etc.
-          type: integer
-        slidingfeeplanid:
-          description: If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
-          type: integer
-        stateofreportedinjury:
-          description: CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
-          type: string
-        patient:
-          $ref: '#/components/schemas/Patient'
-      type: object
     Patient:
       x-external-id: patientid
       type: object
@@ -1639,6 +1717,302 @@ components:
         zip:
           description: Patient's zip.  Matching occurs on first 5 characters.
           type: string
+    PostPatient200Response:
+      x-external-id: patientid
+      type: object
+      properties:
+        errormessage:
+          description: Error message will be returned if show error message flag is set to true and patient match found.
+          type: string
+        patientid:
+          description: Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
+          type: string
+    contractItem:
+      x-external-id: contractid
+      type: object
+      properties:
+        availablebalance:
+          description: The available balance on this contract.
+          type: string
+        contractclass:
+          description: The type of contract.  For example, "ONEYEAR,"
+          type: string
+        maxamount:
+          description: The maximum allowed amount for this contract.
+          type: string
+    BalanceItem:
+      x-external-id: balanceid
+      type: object
+      properties:
+        balance:
+          description: Balance for this provider group.
+          type: string
+        cleanbalance:
+          description: Indicates whether the balance is associated with a contract, payment plan, or collections agency.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        collectionsbalance:
+          description: The outstanding amount associated with a collections agency.
+          type: string
+        contracts:
+          description: Information related to existing credit card contracts.
+          items:
+            $ref: '#/components/schemas/contractItem'
+          type: array
+        departmentids:
+          description: Comma separated list of department IDs that belong to this group
+          type: string
+        paymentplanbalance:
+          description: The outstanding amount associated with a payment plan.
+          type: string
+        providergroupid:
+          description: Athena ID for this financial group.
+          type: integer
+        patient:
+          $ref: '#/components/schemas/Patient'
+    customfield:
+      properties:
+        customfieldid:
+          description: Corresponds to the /customfields customfieldid.
+          type: string
+        customfieldvalue:
+          description: For a non-select custom field, the value.
+          type: string
+        optionid:
+          description: For a select custom field, the selectid value (from /customfield's selectlist).
+          type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
+      type: object
+    InsurancePatient:
+      x-external-id: insuranceid
+      properties:
+        adjusterfax:
+          description: CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
+          type: string
+        adjusterfirstname:
+          description: CASE POLICY FIELD - First name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
+          type: string
+        adjusterlastname:
+          description: CASE POLICY FIELD - Last name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
+          type: string
+        adjusterphone:
+          description: CASE POLICY FIELD - Phone number/other contact info for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
+          type: string
+        anotherpartyresponsibleyn:
+          description: CASE POLICY FIELD - Boolean field indicating if another party was responsible for this accident.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        autoaccidentstate:
+          description: CASE POLICY FIELD - Two-letter abbreviation for the state in which the auto accident took place. Only meaningful for auto insurance case policies.
+          type: string
+        cancelled:
+          description: The date in which the insurance was marked cancelled.
+          type: string
+        caseinjurydate:
+          description: CASE POLICY FIELD - Date of the injury.  Required for auto insurance, legal, and worker's comp case policies.
+          type: string
+        casepolicytypename:
+          description: CASE POLICY FIELD - The name of this type of case policy.
+          type: string
+        ccmstatusid:
+          description: Status ID of current CCM enrollment.
+          type: integer
+        ccmstatusname:
+          description: The name of current CCM enrollment status.
+          type: string
+        coinsurancepercent:
+          description: The coinsurance percentage for this insurance. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before this field populates.
+          type: number
+        copays:
+          description: Details about the copays for this insurance package. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before these populate.
+          type: string
+        descriptionofinjury:
+          description: CASE POLICY FIELD - A description of the injury.  Only available for auto insurance and worker's comp case policies.
+          type: string
+        eligibilitylastchecked:
+          description: Date the eligibility was last checked.
+          type: string
+        eligibilitymessage:
+          description: The message, usually from our engine, of the eligibility check.
+          type: string
+        eligibilityreason:
+          description: The source of the current status. Athena is our eligibility engine.
+          type: string
+        eligibilitystatus:
+          description: Current eligibility status of this insurance package.
+          type: string
+        employerid:
+          description: The employer ID associated with the patient's insurance.
+          type: string
+        expirationdate:
+          description: Date the insurance expires.
+          type: string
+        icd10codes:
+          description: CASE POLICY FIELD - See documentation for ICD9CODES.
+          type: string
+        icd9codes:
+          description: CASE POLICY FIELD - A list of ICD9 accepted diagnosis codes. Only available for worker's comp case policies.
+          type: string
+        injuredbodypart:
+          description: CASE POLICY FIELD - Text field for describing the injured body part.  Only available for auto insurance  and worker's comp case policies.
+          type: string
+        insuranceclaimnumber:
+          description: CASE POLICY FIELD - The auto insurance claim number or the worker's comp claim number.
+          type: string
+        insuranceid:
+          description: The athena insurance policy ID.
+          type: string
+        insuranceidnumber:
+          description: The insurance policy ID number (as presented on the insurance card itself).
+          type: string
+        insurancepackageaddress1:
+          description: Address 1 for the AthenaNet insurance Package.
+          type: string
+        insurancepackageaddress2:
+          description: Address 2 for the AthenaNet insurance Package.
+          type: string
+        insurancepackagecity:
+          description: City for the AthenaNet insurance Package.
+          type: string
+        insurancepackageid:
+          description: The athenaNet insurance package ID.
+          type: integer
+        insurancepackagestate:
+          description: State of the AthenaNet insurance package
+          type: string
+        insurancepackagezip:
+          description: Zip code of the AthenaNet insurance package
+          type: string
+        insurancephone:
+          description: 'The phone number for the insurance company. Note: This defaults to the insurance package phone number. If this is set, it will override it. Likewise if blanked out, it will go back to default.'
+          type: string
+        insuranceplandisplayname:
+          description: Superpackagename of the specific insurance package.
+          type: string
+        insuranceplanname:
+          description: Name of the specific insurance package.
+          type: string
+        insurancepolicyholder:
+          description: The full name of the insurance policy holder.
+          type: string
+        insurancepolicyholderaddress1:
+          description: The first address line of the insurance policy holder.
+          type: string
+        insurancepolicyholderaddress2:
+          description: The second address line of the insurance policy holder.
+          type: string
+        insurancepolicyholdercity:
+          description: The city of the insurance policy holder.
+          type: string
+        insurancepolicyholdercountrycode:
+          description: The country code (3 letter) of the insurance policy holder.
+          type: string
+        insurancepolicyholdercountryiso3166:
+          description: The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166</a> country code of the insurance policy holder.
+          type: string
+        insurancepolicyholderdob:
+          description: The DOB of the insurance policy holder (mm/dd/yyyy).
+          type: string
+        insurancepolicyholderfirstname:
+          description: The first name of the insurance policy holder.  Except for self-pay, required for new policies.
+          type: string
+        insurancepolicyholderlastname:
+          description: The last name of the insurance policy holder.  Except for self-pay, required for new policies.
+          type: string
+        insurancepolicyholdermiddlename:
+          description: The middle name of the insurance policy holder.
+          type: string
+        insurancepolicyholdersex:
+          description: The sex of the insurance policy holder.  Except for self-pay, required for new policies.
+          type: string
+        insurancepolicyholderssn:
+          description: The SSN of the insurance policy holder.
+          type: string
+        insurancepolicyholderstate:
+          description: The state of the insurance policy holder.
+          type: string
+        insurancepolicyholdersuffix:
+          description: The suffix of the insurance policy holder.
+          type: string
+        insurancepolicyholderzip:
+          description: The zip of the insurance policy holder.
+          type: string
+        insurancetype:
+          description: Type of insurance. E.g., Medicare Part B, Group Policy, HMO, etc.
+          type: string
+        insuredentitytypeid:
+          description: The ID of the entity type for this insurance.
+          type: integer
+        insuredpcp:
+          type: string
+        insuredpcpnpi:
+          description: The national provider id of the primary care physcian assicated with the insurance.
+          type: integer
+        ircid:
+          description: Insurance category / company internal ID
+          type: integer
+        ircname:
+          description: Insurance category / company. E.g., United Healthcare, BCBS-MA, etc.
+          type: string
+        issuedate:
+          description: Date the insurance was issued.
+          type: string
+        policynumber:
+          description: The insurance group number.  This is sometimes present on an insurance card.
+          type: string
+        relatedtoautoaccidentyn:
+          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to an auto accident.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        relatedtoemploymentyn:
+          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to the patient's employer.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        relatedtootheraccidentyn:
+          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to another accident.  Only available for worker's comp case policies.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        relationshiptoinsured:
+          description: This patient's relationship to the policy holder (text).
+          type: string
+        relationshiptoinsuredid:
+          default: 1
+          description: This patient's relationship to the policy holder (as an ID).  See <a href="/workflows/patient-relationship-mapping">the mapping</a>.
+          type: integer
+        repricername:
+          description: CASE POLICY FIELD - Name for the repricer.  Only available for worker's comp case policies.
+          type: string
+        repricerphone:
+          description: CASE POLICY FIELD - Phone number for the repricer.  Only available for worker's comp case policies.
+          type: string
+        sequencenumber:
+          description: 1 = primary, 2 = secondary, 3 = tertiary, etc.  Must have a primary before a secondary and a secondary before a tertiary, etc.
+          type: integer
+        slidingfeeplanid:
+          description: If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
+          type: integer
+        stateofreportedinjury:
+          description: CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
+          type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
+      type: object
     Department:
       x-external-id: departmentid
       properties:
@@ -2406,7 +2780,7 @@ components:
             SHOWUSUALDEPARTMENTGUESSTHRESHOLD is set.
           type: integer
       type: object
-    Appointments:
+    AppointmentResponse:
       x-external-id: appointmentid
       type: object
       properties:
@@ -2572,7 +2946,6 @@ components:
             INCLUDEALLSTATUSES flag to see others.
           type: string
     PutEncounter200Response:
-      x-external-id: encounterid
       type: object
       properties:
         errormessage:
@@ -2617,15 +2990,9 @@ components:
           type: integer
           description: The patient status ID.
     PutAppointment200Response:
-      x-external-id: apointmentid
+      x-external-id: appointmentid
       type: object
       properties:
-        appointmentcopay:
-          description: >-
-            Detailed information about the copay for this appointment.  Gives
-            more detail than the COPAY field.  Note: this information is not yet
-            available in all practices, we are rolling this out slowly.
-          type: string
         appointmentid:
           description: Appointment ID of the booked appointment
           type: string
@@ -3315,3 +3682,299 @@ components:
             Set this field in order to set the urgent flag in athena (if the
             practice settings allow for this).
           type: boolean
+    RequestCreatePatientCase:
+      properties:
+        autoclose:
+          description: >-
+            Documents will, normally, automatically appear in the
+            clinical inbox for providers to review. In some cases, you
+            might want to force the document to skip the clinical inbox,
+            and go directly to the patient chart with a "closed" status.
+            For that case, set this to true.
+          type: boolean
+        callbackname:
+          description: The name of the person to call (if other than patient).
+          type: string
+        callbacknumber:
+          description: >-
+            The phone number to use to call back the patient (mutually
+            exclusive with callbacknumbertype).
+          type: string
+        callbacknumbertype:
+          description: >-
+            The phone number type to use to call back the patient
+            (mutually exclusive with callbacknumber).
+          enum:
+            - ''
+            - home
+            - work
+            - mobile
+            - emergency contact
+            - guarantor
+          type: string
+        clinicalproviderid:
+          description: >-
+            The ID of the external provider/lab/pharmacy associated the
+            document.
+          type: integer
+        departmentid:
+          description: >-
+            The athenaNet department ID associated with the uploaded
+            document.
+          type: integer
+        documentsource:
+          description: Explains where this document originated.
+          enum:
+            - PATIENT
+            - CAREGIVER
+            - PARTNER
+            - PHARMACY
+            - LAB
+            - PCP
+            - SPECIALIST
+            - STAFF
+            - HOSPITAL
+            - OTHER
+            - PORTAL
+            - Live Operator
+          type: string
+        documentsubclass:
+          description: Subclasses for PATIENTCASE documents
+          enum:
+            - PATIENTCASE
+            - ADMINISTRATIVE
+            - BILLING
+            - CLINICALQUESTION
+            - ELECTRONICMEDICALRECORDS
+            - MEDICALRECORDS
+            - MEDICATION
+            - NEWRX
+            - OTHER
+            - PATIENTNOSHOW
+            - REFERRAL
+            - REFILL
+          type: string
+        internalnote:
+          description: >-
+            An internal note for the provider or staff. Updating this
+            will append to any previous notes.
+          type: string
+        outboundonly:
+          description: >-
+            True/false flag indicating the patient case requires an
+            outbound phone call and is not a response to an inbound
+            call.
+          type: boolean
+        priority:
+          description: Priority of this result.  1 is high; 2 is normal.
+          enum:
+            - ''
+            - 1
+            - 2
+          type: string
+        providerid:
+          description: The ID of the ordering provider.
+          type: integer
+        subject:
+          description: The subject of this patient case.
+          type: string
+      required:
+        - documentsubclass
+        - documentsource
+        - departmentid
+        - providerid
+      type: object
+    PostPatientCase200Response:
+      x-external-id: patientcaseid
+      type: object
+      properties:
+        errormessage:
+          description: >-
+            If the operation failed, this will contain an error
+            message.
+          type: string
+        patientcaseid:
+          description: The document ID of the new or modified document.
+          type: integer
+        success:
+          description: Returns true/false if the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PatientCase:
+      x-external-id: patientcaseid
+      properties:
+        actionnote:
+          description: The most recent action note for a document
+          type: string
+        assignedto:
+          description: Person the document is assigned to
+          type: string
+        callbackname:
+          description: The person to call (if other than patient).
+          type: string
+        callbacknumber:
+          description: The phone number to use to call back the patient.
+          type: string
+        callbacknumbertype:
+          description: >-
+            The type of callback number (e.g. home, office, work,
+            guarantor).
+          type: string
+        calltype:
+          description: >-
+            Type of call.  (Options include: Tickler, Cancellation,
+            ReminderCall etc...)
+          type: string
+        clinicalproviderid:
+          description: >-
+            DEPRECATED:  The clinical provider ID.  The information
+            can now be found in the field entitled 'facilityid'
+          type: integer
+        createddate:
+          description: >-
+            Date the document was created. Please use createddatetime
+            instead.
+          type: string
+        createddatetime:
+          description: Date/Time (ISO 8601) the document was created
+          type: string
+        createddocuments:
+          description: Documents created by a patient case.
+          items:
+            properties:
+              documentclass:
+                description: The document class.
+                type: string
+              documentid:
+                description: The document id.
+                type: string
+            type: object
+          type: array
+        createduser:
+          description: The user who created this document.
+          type: string
+        deleteddatetime:
+          description: Date/time (ISO 8601) the document was deleted
+          type: string
+        departmentid:
+          description: Department for the document
+          type: string
+        description:
+          description: Description of the document type
+          type: string
+        documentclass:
+          description: Class of document
+          type: string
+        documentdescription:
+          description: >-
+            DEPRECATED:  The document description.  The information
+            can now be found in the field entitled 'description'
+          type: string
+        documentroute:
+          description: >-
+            Explains method by which the document was entered into the
+            AthenaNet (INTERFACE (digital), FAX, etc.)
+          type: string
+        documentsource:
+          description: Explains where this document originated.
+          enum:
+            - ''
+            - PATIENT
+            - CAREGIVER
+            - PARTNER
+            - PHARMACY
+            - LAB
+            - PCP
+            - SPECIALIST
+            - STAFF
+            - HOSPITAL
+            - OTHER
+            - PORTAL
+            - Live Operator
+          type: string
+        documentsubclass:
+          description: Specific type of document
+          type: string
+        documenttypeid:
+          description: A specific document type identifier.
+          type: integer
+        encounterid:
+          description: Encounter ID
+          type: string
+        externalaccessionid:
+          description: >-
+            The external accession ID for this document. Format
+            depends on the system the ID belongs to.
+          type: string
+        externalnote:
+          description: External note for the patient.
+          type: string
+        facilityid:
+          description: >-
+            The ID of the clinical provider associated with this
+            clinical document. Clinical providers are a master list of
+            providers throughout the country.  These include providers
+            as well as radiology centers, labs and pharmacies.
+          type: integer
+        internalaccessionid:
+          description: >-
+            The internal accession ID for this document. Format
+            depends on the system the ID belongs to.
+          type: string
+        internalnote:
+          description: The 'Internal Note' attached to this document
+          type: string
+        lastmodifieddate:
+          description: >-
+            DEPRECATED:  The last modified date.  The information can
+            now be found in the field entitled lastmodifieddatetime
+          type: string
+        lastmodifieddatetime:
+          description: Date/time (ISO 8601) the document was last modified
+          type: string
+        lastmodifieduser:
+          description: The user who last modified this document.
+          type: string
+        observationdatetime:
+          description: Date/time the observation was taken
+          type: string
+        outboundonly:
+          description: If the call made in the patient case is outbound
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        patientcaseid:
+          description: The patient case id
+          type: string
+        patientid:
+          description: The athenaNet patient ID.
+          type: integer
+        priority:
+          description: >-
+            Document priority, when available. 1 is high, 2 is normal.
+            Some labs use other numbers or characters that are
+            lab-specific.
+          type: string
+        providerid:
+          description: Provider ID for this document
+          type: integer
+        providerusername:
+          description: >-
+            The username of the provider associated with this lab
+            result document.
+          type: string
+        status:
+          description: Status of the document
+          type: string
+        subject:
+          description: Subject of the document
+          type: string
+        tietoorderid:
+          description: Order ID of the order this document is tied to, if any
+          type: integer
+      type: object

@@ -45,18 +45,8 @@ return [
         ],
         'janusApi' => [
             'class' => common\components\JanusApiComponent::class,
-            'url' => 'http://janus',
             'port' => 8088,
-            'uri' => 'janus',
-            'apiSecret' => 'janusrocks',
-            'adminSecret' => 'janusoverlord',
             'adminPort' => 7088,
-            'adminUri' => 'admin',
-            'adminKey' => 'supersecret',
-            'tokenAuthSecret' => 'fcknlorenzo',
-            'adminKey' => 'supersecret',
-            'storedAuth' => true
-
         ],
         'athenaComponent' => [
             'class' => common\components\AthenaComponent::class,

@@ -5,7 +5,6 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
- * @property string $appointmentcopay Detailed information about the copay for this appointment.  Gives more detail than the COPAY field.  Note: this information is not yet available in all practices, we are rolling this out slowly.
  * @property string $appointmentid Appointment ID of the booked appointment
  * @property string $appointmentstatus The athenaNet appointment status. There are several possible statuses.  x=cancelled. f=future. (It can include appointments where were never checked in, even if the appointment date is in the past. It is up to a practice to cancel appointments as a no show when appropriate to do so.)  o=open. 2=checked in. 3=checked out. 4=charge entered (i.e. a past appointment).
  * @property string $appointmenttype The practice-friendly (not patient friendly) name for this appointment type.  Note that this may <strong>not</strong> be the same as the booked appointment because of "generic" slots.
@@ -52,8 +51,8 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['appointmentcopay', 'appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'trim'],
-            [['appointmentcopay', 'appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'string'],
+            [['appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'trim'],
+            [['appointmentid', 'appointmentstatus', 'appointmenttype', 'appointmenttypeid', 'chargeentrynotrequired', 'chargeentrynotrequiredreason', 'copay', 'date', 'departmentid', 'encounterid', 'encounterprep', 'encounterstate', 'encounterstatus', 'frozenyn', 'patient', 'patientappointmenttypename', 'patientid', 'patientlocationid', 'providerid', 'rescheduledappointmentid', 'startcheckin', 'starttime', 'stopcheckin', 'urgentyn'], 'string'],
             [['duration', 'hl7providerid', 'referringproviderid', 'renderingproviderid', 'supervisingproviderid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
@@ -64,11 +63,11 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        if($appointmentcopay = ArrayHelper::getValue($apiObject, 'appointmentcopay')) {
-            $this->appointmentcopay = $appointmentcopay;
-        }
         if($appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid')) {
             $this->appointmentid = $appointmentid;
+        }
+        if($appointmentid = ArrayHelper::getValue($apiObject, 'appointmentid')) {
+            $this->externalId = $appointmentid;
         }
         if($appointmentstatus = ArrayHelper::getValue($apiObject, 'appointmentstatus')) {
             $this->appointmentstatus = $appointmentstatus;
@@ -178,10 +177,11 @@ class PutAppointment200Response extends \yii\db\ActiveRecord
 
         return $model->loadApiObject($apiObject);
     }
-
+    /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
 
         return $saved;
     }
+    */
 }

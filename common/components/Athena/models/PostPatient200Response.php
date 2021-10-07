@@ -56,10 +56,11 @@ class PostPatient200Response extends \yii\db\ActiveRecord
 
         return $model->loadApiObject($apiObject);
     }
-
+    /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
 
         return $saved;
     }
+    */
 }

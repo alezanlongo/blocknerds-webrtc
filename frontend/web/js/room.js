@@ -331,11 +331,11 @@ const handlingEvent = (objMessage) => {
       }
       if (remoteFeed !== null) {
         $("#remote" + remoteFeed.rfindex)
-          .empty()
           .hide();
         $(".box" + remoteFeed.rfindex).hide();
         $("#videoremote" + remoteFeed.rfindex).empty();
         $(".profile_id_" + remoteFeed.rfuser.idFeed).removeClass('text-success');
+        $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").addClass('d-none').hide();
         // $(`.box${remoteFeed.rfindex}`).hide();
         // $(`.box${remoteFeed.rfindex} h1`).text("");
         feeds[remoteFeed.rfindex] = null;
@@ -361,10 +361,10 @@ const handlingEvent = (objMessage) => {
     }
     if (remoteFeed !== null) {
       $("#remote" + remoteFeed.rfindex)
-        .empty()
+        // .empty()
         .hide();
-        console.log('nico',$(".profile_id_" + remoteFeed.rfuser.idFeed) )
       $(".profile_id_" + remoteFeed.rfuser.idFeed).removeClass('text-success');
+      $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").addClass('d-none');
       $("#videoremote" + remoteFeed.rfindex).empty();
       $(".box" + remoteFeed.rfindex).hide();
       feeds[remoteFeed.rfindex] = null;
@@ -632,9 +632,12 @@ function newRemoteFeed(id, display, audio, video) {
         const compList = $(`.profile_id_${remoteFeed.rfuser.idFeed}`);
         if (compList.length === 0) {
           $(`#attendee_${remoteFeed.rfindex}`).removeClass("d-none").addClass(`profile_id_${remoteFeed.rfuser.idFeed}`).addClass('text-success').show();
+          $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").removeClass('d-none');
           $(`span.usernameFeed${remoteFeed.rfindex}`).text(remoteFeed.rfuser.usernameFeed);
         }else{
           compList.addClass('text-success');
+          console.log('nico', $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls"))
+          $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").removeClass('d-none');
         }
 
         // Show the video, hide the spinner and show the resolution when we get a playing event
