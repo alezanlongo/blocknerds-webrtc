@@ -224,16 +224,16 @@ $this->title = 'The Room';
                 <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                 <ul class="list-group bg-dark list-attendees">
-                    <li class="list-group-item list-group-item-light bg-dark position-relative" data-user-id="<?= Yii::$app->getUser()->getId() ?>">
-                        <span class="p-1 username-member text-success" onclick="loadAndOpenModalInfo(0)"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
+                    <li class="list-group-item list-group-item-light bg-dark position-relative" data-user-id="<?= Yii::$app->getUser()->getId() ?>" data-index="0">
+                        <span class="p-1 username-member text-success" ><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
                     </li>
-                    <?php for ($i = 0; $i < $limit_members; $i++) { 
+                    <?php for ($i = 1; $i < $limit_members; $i++) { 
                         $member = (count($members) > $i) ? $members[$i] : null;
                         ?>
                         <li class="list-group-item list-group-item-light bg-dark position-relative <?= ($member) ? 'profile_id_'.$member['id'] : 'd-none' ?>" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                            <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"><?= ($member) ? $member['username'] : '' ?></span>
+                            <span class="p-1 username-member usernameFeed<?= $i ?>"><?= ($member) ? $member['username'] : '' ?></span>
                             <?php if ($is_owner) { ?>
-                                <div class="position-absolute top-0 end-0 member-controls d-none">
+                                <div class="position-absolute pt-1 top-0 end-0 member-controls d-none">
                                     <button class="btn btn-link text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
                                         <i class="fas fa-microphone icon-option-member"></i></button> |
                                     <button class="btn btn-link text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">

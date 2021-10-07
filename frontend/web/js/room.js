@@ -1105,6 +1105,10 @@ $(".username-on-call").on("click", (e) => {
   );
   loadAndOpenModalInfo(indexClicked);
 });
+$(".username-member").on("click", (e) => {
+  const indexClicked = Number($(e.target).parent().attr("data-index"));
+  loadAndOpenModalInfo(indexClicked);
+});
 
 const loadAndOpenModalInfo = (indexClicked) => {
   const profile_id =
