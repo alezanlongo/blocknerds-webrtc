@@ -109,16 +109,16 @@
   font-size: x-large;
 }
 .join-again {
-  text-align: center;
+  /* text-align: center;
   width: 50%;
   height: auto;
   margin: 0 auto;
   padding: 1%;
+  display: flex;
+  justify-content: center; */
+
 }
-.join-again .card {
-  color: #fafafa;
-  background-color: transparent;
-}
+
 .video-mute-icon {
   position: absolute;
   top: 0;

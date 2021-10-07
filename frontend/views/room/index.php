@@ -128,8 +128,6 @@ $this->registerJs($countdown, View::POS_END,'countdown_script');
 
 $this->title = 'The Room';
 
-// VarDumper::dump( count($members), $depth = 10, $highlight = true);
-// die;
 ?>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
@@ -170,8 +168,8 @@ $this->title = 'The Room';
     </div>
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
-            <div class="join-again d-none">
-                <div class="card">
+            <div class="join-again d-none position-absolute top-50 start-50 translate-middle">
+                <div class="card bg-transparent border-0 shadow-none">
                     <div class="card-title">
                         <?= Html::tag("h4", "You left of the room") ?>
                     </div>
