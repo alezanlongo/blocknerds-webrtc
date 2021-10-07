@@ -1053,16 +1053,17 @@ const kickMember = (index) => {
 let targetActive = null;
 $(".option-side").on("click", (e) => {
   const hrefControl =
-    $(e.target).attr("data-bs-target") ||
-    $(e.target).find("button").attr("data-bs-target");
+  $(e.target).attr("data-bs-target") ||
+  $(e.target).find("button").attr("data-bs-target");
   if ($("#pills-tabContent").css("display") === "none") {
     $("#pills-tabContent").css("display", "block");
+    targetActive = hrefControl;
     dish()
   } else {
     if (targetActive === hrefControl) {
       resetTabOnSidebar();
     } else {
-      if (hrefControl) {
+      if (hrefControl !== null) {
         targetActive = hrefControl;
       }
     }
