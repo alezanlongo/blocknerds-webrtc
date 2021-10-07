@@ -334,7 +334,7 @@ const handlingEvent = (objMessage) => {
           .hide();
         $(".box" + remoteFeed.rfindex).hide();
         $("#videoremote" + remoteFeed.rfindex).empty();
-        $(".profile_id_" + remoteFeed.rfuser.idFeed).removeClass('text-success');
+        $(".profile_id_" + remoteFeed.rfuser.idFeed).attr('style', 'color: transparent');
         $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").addClass('d-none').hide();
         // $(`.box${remoteFeed.rfindex}`).hide();
         // $(`.box${remoteFeed.rfindex} h1`).text("");
@@ -363,7 +363,7 @@ const handlingEvent = (objMessage) => {
       $("#remote" + remoteFeed.rfindex)
         // .empty()
         .hide();
-      $(".profile_id_" + remoteFeed.rfuser.idFeed).removeClass('text-success');
+      $(".profile_id_" + remoteFeed.rfuser.idFeed).attr('style', 'color: transparent');;
       $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").addClass('d-none');
       $("#videoremote" + remoteFeed.rfindex).empty();
       $(".box" + remoteFeed.rfindex).hide();
@@ -397,7 +397,7 @@ const handlingEvent = (objMessage) => {
     $(`.box${index}`).hide();
     $(`#remotevideo${index}`).empty();
     // TODO: improve text connect 
-    $(`#attendee_${index}`).removeClass('text-success'); 
+    $(`#attendee_${index}`).attr('style', 'color: transparent');; 
   }
 };
 const joinMe = () => {
@@ -631,12 +631,11 @@ function newRemoteFeed(id, display, audio, video) {
         // );
         const compList = $(`.profile_id_${remoteFeed.rfuser.idFeed}`);
         if (compList.length === 0) {
-          $(`#attendee_${remoteFeed.rfindex}`).removeClass("d-none").addClass(`profile_id_${remoteFeed.rfuser.idFeed}`).addClass('text-success').show();
+          $(`#attendee_${remoteFeed.rfindex}`).removeClass("d-none").addClass(`profile_id_${remoteFeed.rfuser.idFeed}`).attr('style', 'color: #28a745 !important').show();
           $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").removeClass('d-none');
           $(`span.usernameFeed${remoteFeed.rfindex}`).text(remoteFeed.rfuser.usernameFeed);
         }else{
-          compList.addClass('text-success');
-          console.log('nico', $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls"))
+          compList.attr('style', 'color: #28a745 !important');
           $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").removeClass('d-none');
         }
 

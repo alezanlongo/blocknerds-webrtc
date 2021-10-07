@@ -121,30 +121,29 @@
 }
 .video-mute-icon {
   position: absolute;
-    top: 0;
-    left: 0;
-    margin: 10px;
+  top: 0;
+  left: 0;
+  margin: 10px;
 }
 .video-fullscreen-container {
   position: absolute;
-    top: 0;
-    right: 0;
-    margin: 10px;
-    z-index: 50;
-  }
-  .video-fullscreen-container:hover{
-    cursor: pointer;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  z-index: 50;
+}
+.video-fullscreen-container:hover {
+  cursor: pointer;
 }
 
-.video-fullcreen-none{
+.video-fullcreen-none {
   display: none !important;
 }
-
 
 .username-member:hover {
   cursor: pointer;
 }
 
-.modal{
-  z-index: 999999 !important; 
+.modal {
+  z-index: 999999 !important;
 }
