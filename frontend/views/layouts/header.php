@@ -4,7 +4,14 @@
 /** @var string $directoryAsset */
 
 use yii\helpers\Html;
-$username = Yii::$app->getUser()->getIdentity()->username ;
+use yii\helpers\VarDumper;
+
+$username = Yii::$app->getUser()->getIdentity()->username;
+$image = Yii::$app->getUser()->getIdentity()->getUserProfile()->one()->image;
+
+if ($image === null) {
+    $image = "/img/default-user.png";
+}
 ?>
 
 <!-- <nav class="main-header navbar navbar-expand navbar-white navbar-light"> -->
@@ -26,16 +33,16 @@ $username = Yii::$app->getUser()->getIdentity()->username ;
     <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="user-image img-circle elevation-2" alt="User Image">
+                <img src="<?= $image ?>" class="user-image <?= $image ?> " alt="User Image">
                 <span class="d-none d-md-inline"><?= $username ?></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <!-- User image -->
                 <li class="user-header bg-primary">
-                    <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    <img src="<?= $image ?>" class="<?= $image ?>" alt="User Image">
 
                     <p>
-                    <?= $username ?>
+                        <?= $username ?>
                         <!-- <small>Member since Nov. 2012</small> -->
                     </p>
                 </li>
