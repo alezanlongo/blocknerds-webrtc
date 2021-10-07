@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -78,7 +78,7 @@ use yii\base\Model;
  * @property string $stateofreportedinjury CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
  * @property Patient $patient
  */
-class InsurancePatientApi extends Model
+class InsurancePatientApi extends BaseApiModel
 {
 
     public $adjusterfax;
@@ -150,15 +150,6 @@ class InsurancePatientApi extends Model
     public $slidingfeeplanid;
     public $stateofreportedinjury;
     public $patient;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

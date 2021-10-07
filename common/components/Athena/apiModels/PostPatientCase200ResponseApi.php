@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -12,21 +12,12 @@ use yii\base\Model;
  * @property int $patientcaseid The document ID of the new or modified document.
  * @property string $success Returns true/false if the operation was successful.
  */
-class PostPatientCase200ResponseApi extends Model
+class PostPatientCase200ResponseApi extends BaseApiModel
 {
 
     public $errormessage;
     public $patientcaseid;
     public $success;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

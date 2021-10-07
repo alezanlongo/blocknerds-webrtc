@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -41,7 +41,7 @@ use yii\base\Model;
  * @property string $urgentyn Urgent flag for the appointment.
  * @property array $useexpectedprocedurecodes An array of expected procedure codes attached to this appointment.
  */
-class PutAppointment200ResponseApi extends Model
+class PutAppointment200ResponseApi extends BaseApiModel
 {
 
     public $appointmentid;
@@ -76,15 +76,6 @@ class PutAppointment200ResponseApi extends Model
     public $supervisingproviderid;
     public $urgentyn;
     public $useexpectedprocedurecodes;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

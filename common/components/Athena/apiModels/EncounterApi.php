@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -30,7 +30,7 @@ use yii\base\Model;
  * @property string $stage Last stage of the encounter
  * @property string $status Status of this encounter (CLOSED, OPEN, PEND). By default only OPEN, CLOSED, and REVIEW statuses are shown, use INCLUDEALLSTATUSES flag to see others.
  */
-class EncounterApi extends Model
+class EncounterApi extends BaseApiModel
 {
 
     public $appointmentid;
@@ -57,15 +57,6 @@ class EncounterApi extends Model
     public $stage;
     public $status;
 
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
-
     public function rules()
     {
         return [
@@ -77,8 +68,11 @@ class EncounterApi extends Model
     {
         parent::init();
         if (!empty($this->diagnoses) && is_array($this->diagnoses)) {
-            $this->_diagnosesAr = $this->diagnoses;
-            $this->diagnoses = new DiagnosesApi($this->_diagnosesAr);
+            foreach($this->diagnoses as $diagnoses) {
+                $this->_diagnosesAr[] = new DiagnosesApi($diagnoses);
+            }
+            $this->diagnoses = $this->_diagnosesAr;
+            $this->_diagnosesAr = [];//CHECKME
         }
     }
 
