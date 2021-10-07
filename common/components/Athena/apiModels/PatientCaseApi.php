@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -48,7 +48,7 @@ use yii\base\Model;
  * @property string $subject Subject of the document
  * @property int $tietoorderid Order ID of the order this document is tied to, if any
  */
-class PatientCaseApi extends Model
+class PatientCaseApi extends BaseApiModel
 {
 
     public $actionnote;
@@ -90,15 +90,6 @@ class PatientCaseApi extends Model
     public $status;
     public $subject;
     public $tietoorderid;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

@@ -36,8 +36,23 @@ class ApiModel extends Model
         return;
     }
 
-    public function toArray(array $fields = [], array $expand = [], $recursive = true)
+    public function array_filter_recursive($input)
+    {
+        foreach ($input as &$value)
+        {
+            if (is_array($value))
+            {
+                $value = $this->array_filter_recursive($value);
+            }
+        }
+
+        return array_filter($input);
+    }
+
+	public function toArray(array $fields = [], array $expand = [], $recursive = true)
     {
         //return Util::array_filter_recursive(parent::toArray($fields, $expand, $recursive));//FIXME needs Util library
+		return $this->array_filter_recursive(parent::toArray($fields, $expand, $recursive));
     }
+
 }

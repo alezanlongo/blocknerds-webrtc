@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -12,21 +12,12 @@ use yii\base\Model;
  * @property string $contractclass The type of contract.  For example, "ONEYEAR,"
  * @property string $maxamount The maximum allowed amount for this contract.
  */
-class contractItemApi extends Model
+class contractItemApi extends BaseApiModel
 {
 
     public $availablebalance;
     public $contractclass;
     public $maxamount;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

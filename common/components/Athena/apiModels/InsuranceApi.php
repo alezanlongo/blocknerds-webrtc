@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -77,7 +77,7 @@ use yii\base\Model;
  * @property int $slidingfeeplanid If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
  * @property string $stateofreportedinjury CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
  */
-class InsuranceApi extends Model
+class InsuranceApi extends BaseApiModel
 {
 
     public $adjusterfax;
@@ -151,15 +151,6 @@ class InsuranceApi extends Model
     public $slidingfeeplanid;
     public $stateofreportedinjury;
 
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
-
     public function rules()
     {
         return [
@@ -171,8 +162,11 @@ class InsuranceApi extends Model
     {
         parent::init();
         if (!empty($this->copays) && is_array($this->copays)) {
-            $this->_copaysAr = $this->copays;
-            $this->copays = new CopaysApi($this->_copaysAr);
+            foreach($this->copays as $copays) {
+                $this->_copaysAr[] = new CopaysApi($copays);
+            }
+            $this->copays = $this->_copaysAr;
+            $this->_copaysAr = [];//CHECKME
         }
     }
 
