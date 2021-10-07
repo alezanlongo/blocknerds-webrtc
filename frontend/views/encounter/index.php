@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -12,10 +13,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="encounter-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Encounter', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
 
     <?= GridView::widget([
@@ -50,7 +47,19 @@ $this->params['breadcrumbs'][] = $this->title;
             //'externalId',
             //'id',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            //['class' => 'yii\grid\ActionColumn'],
+            [
+                'attribute' => 'See Encounter',
+                'value' => function ($model) {
+                    $url = Url::toRoute(['encounter/view', 'id' => $model->id]);
+                    return Html::a(
+                        'See Encounter',
+                        $url,
+                        ['title' => 'See Encounter',]
+                    );
+                },
+                'format' => 'raw',
+            ],
         ],
     ]); ?>
 

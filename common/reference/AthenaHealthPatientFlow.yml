@@ -551,6 +551,39 @@ paths:
         required: true
       tags:
         - Appointment Slot
+  /v1/{practiceid}/appointments/{appointmentid}/checkin:
+    post:
+      summary: Check in this appointment.
+      description: ' Check in this appointment. '
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkin'
+          description: Success
+      operationId: postPracticeidAppointmentsAppointmentidCheckin
+      tags:
+        - Appointment Checkin
   /v1/{practiceid}/appointments/{appointmentid}/startcheckin:
     post:
       summary: Initiate appointment check-in process
@@ -582,6 +615,39 @@ paths:
                 $ref: '#/components/schemas/Checkin'
           description: Success
       operationId: postPracticeidAppointmentsAppointmentidStartcheckin
+      tags:
+        - Appointment Checkin
+  /v1/{practiceid}/appointments/{appointmentid}/cancelcheckin:
+    post:
+      summary: Cancel appointment check-in process
+      description: Cancel appointment check-in process. It cannot be called if the check-in process has been completed.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkin'
+          description: Success
+      operationId: postPracticeidAppointmentsAppointmentidCancelcheckin
       tags:
         - Appointment Checkin
   /v1/{practiceid}/chart/{patientid}/encounters:

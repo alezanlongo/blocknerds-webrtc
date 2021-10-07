@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -36,7 +36,7 @@ use yii\base\Model;
  * @property bool $updateappointments If set to true, automatically updates all future appointments to use this insurance as primary or secondary, respective to the sequence number.
  * @property bool $validateinsuranceidnumber BETA FIELD: If true, this makes sure that you have entered a valid INSURANCEIDNUMBER.  If you didn't it will error. Setting this is probably a good thing and means you shouldn't have to do a ton of validation on the ID number.
  */
-class RequestInsuranceApi extends Model
+class RequestInsuranceApi extends BaseApiModel
 {
 
     public $departmentid;
@@ -66,15 +66,6 @@ class RequestInsuranceApi extends Model
     public $sequencenumber;
     public $updateappointments;
     public $validateinsuranceidnumber;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

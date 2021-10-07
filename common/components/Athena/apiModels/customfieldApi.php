@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -13,22 +13,13 @@ use yii\base\Model;
  * @property string $optionid For a select custom field, the selectid value (from /customfield's selectlist).
  * @property Patient $patient
  */
-class customfieldApi extends Model
+class customfieldApi extends BaseApiModel
 {
 
     public $customfieldid;
     public $customfieldvalue;
     public $optionid;
     public $patient;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

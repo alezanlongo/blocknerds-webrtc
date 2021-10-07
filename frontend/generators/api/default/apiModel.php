@@ -4,7 +4,7 @@
 namespace <?= $namespace ?>;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * <?= str_replace("\n", "\n * ", trim($description)) ?>
@@ -15,7 +15,7 @@ use yii\base\Model;
 
 <?php endforeach; ?>
  */
-class <?= $className ?> extends Model
+class <?= $className ?> extends BaseApiModel
 {
 
 <?php foreach ($attributes as $attribute): ?>
@@ -24,15 +24,6 @@ class <?= $className ?> extends Model
     protected $_<?= $attribute['name'] ?>Ar;
 <?php endif ?>
 <?php endforeach; ?>
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {
@@ -79,8 +70,11 @@ class <?= $className ?> extends Model
         if (strpos($attribute['type'], '[]') !== false) {
 ?>
         if (!empty($this-><?= $attribute['name'] ?>) && is_array($this-><?= $attribute['name'] ?>)) {
-            $this->_<?= $attribute['name'] ?>Ar = $this-><?= $attribute['name'] ?>;
-            $this-><?= $attribute['name'] ?> = new <?= str_replace('[]', '', $attribute['type'].'Api') ?>($this->_<?= $attribute['name'] ?>Ar);
+            foreach($this-><?= $attribute['name'] ?> as $<?= $attribute['name'] ?>) {
+                $this->_<?= $attribute['name'] ?>Ar[] = new <?= str_replace('[]', '', $attribute['type'].'Api') ?>($<?= $attribute['name'] ?>);
+            }
+            $this-><?= $attribute['name'] ?> = $this->_<?= $attribute['name'] ?>Ar;
+            $this->_<?= $attribute['name'] ?>Ar = [];//CHECKME
         }
 <?php
         }//-foreach

@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -43,7 +43,7 @@ use yii\base\Model;
  * @property string $timezoneoffset The "normal" timezone offset from UTC/GMT.  The "timezone" combines this and "doesnotobservedst".  During daylight savings, this is 1 less than "timezone".
  * @property string $zip The zip code for this department.
  */
-class DepartmentApi extends Model
+class DepartmentApi extends BaseApiModel
 {
 
     public $address;
@@ -80,15 +80,6 @@ class DepartmentApi extends Model
     public $timezonename;
     public $timezoneoffset;
     public $zip;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

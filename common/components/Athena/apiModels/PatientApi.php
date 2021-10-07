@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -141,7 +141,7 @@ use yii\base\Model;
  * @property string $workphone The patient's work phone number.  Generally not used to contact a patient.  Invalid numbers in a GET/PUT will be ignored.  Patient phone numbers and other data may change, and one phone number may be associated with multiple patients. You are responsible for taking additional steps to verify patient identity and for using this data in accordance with applicable law, including HIPAA.  Invalid numbers in a POST will be ignored, possibly resulting in an error.
  * @property string $zip Patient's zip.  Matching occurs on first 5 characters.
  */
-class PatientApi extends Model
+class PatientApi extends BaseApiModel
 {
 
     public $address1;
@@ -283,15 +283,6 @@ class PatientApi extends Model
     public $workphone;
     public $zip;
 
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
-
     public function rules()
     {
         return [
@@ -304,16 +295,25 @@ class PatientApi extends Model
     {
         parent::init();
         if (!empty($this->balances) && is_array($this->balances)) {
-            $this->_balancesAr = $this->balances;
-            $this->balances = new BalanceItemApi($this->_balancesAr);
+            foreach($this->balances as $balances) {
+                $this->_balancesAr[] = new BalanceItemApi($balances);
+            }
+            $this->balances = $this->_balancesAr;
+            $this->_balancesAr = [];//CHECKME
         }
         if (!empty($this->customfields) && is_array($this->customfields)) {
-            $this->_customfieldsAr = $this->customfields;
-            $this->customfields = new customfieldApi($this->_customfieldsAr);
+            foreach($this->customfields as $customfields) {
+                $this->_customfieldsAr[] = new customfieldApi($customfields);
+            }
+            $this->customfields = $this->_customfieldsAr;
+            $this->_customfieldsAr = [];//CHECKME
         }
         if (!empty($this->insurances) && is_array($this->insurances)) {
-            $this->_insurancesAr = $this->insurances;
-            $this->insurances = new InsurancePatientApi($this->_insurancesAr);
+            foreach($this->insurances as $insurances) {
+                $this->_insurancesAr[] = new InsurancePatientApi($insurances);
+            }
+            $this->insurances = $this->_insurancesAr;
+            $this->_insurancesAr = [];//CHECKME
         }
     }
 
