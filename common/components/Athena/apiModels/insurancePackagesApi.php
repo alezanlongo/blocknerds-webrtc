@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -13,22 +13,13 @@ use yii\base\Model;
  * @property int $insurancepackageid The athena insurance package ID.
  * @property string $insuranceplanname Name of the specific insurance package.
  */
-class insurancePackagesApi extends Model
+class insurancePackagesApi extends BaseApiModel
 {
 
     public $addresslist;
     public $affiliations;
     public $insurancepackageid;
     public $insuranceplanname;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -17,7 +17,7 @@ use yii\base\Model;
  * @property int $providergroupid Athena ID for this financial group.
  * @property Patient $patient
  */
-class BalanceItemApi extends Model
+class BalanceItemApi extends BaseApiModel
 {
 
     public $balance;
@@ -31,15 +31,6 @@ class BalanceItemApi extends Model
     public $providergroupid;
     public $patient;
 
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
-
     public function rules()
     {
         return [
@@ -51,8 +42,11 @@ class BalanceItemApi extends Model
     {
         parent::init();
         if (!empty($this->contracts) && is_array($this->contracts)) {
-            $this->_contractsAr = $this->contracts;
-            $this->contracts = new contractItemApi($this->_contractsAr);
+            foreach($this->contracts as $contracts) {
+                $this->_contractsAr[] = new contractItemApi($contracts);
+            }
+            $this->contracts = $this->_contractsAr;
+            $this->_contractsAr = [];//CHECKME
         }
     }
 

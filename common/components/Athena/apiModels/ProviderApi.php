@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -38,7 +38,7 @@ use yii\base\Model;
  * @property string $supervisingproviderusername The username of the supervising provider.
  * @property int $usualdepartmentid The "usual" department for this provider, if SHOWUSUALDEPARTMENTGUESSTHRESHOLD is set.
  */
-class ProviderApi extends Model
+class ProviderApi extends BaseApiModel
 {
 
     public $acceptingnewpatientsyn;
@@ -70,15 +70,6 @@ class ProviderApi extends Model
     public $supervisingproviderid;
     public $supervisingproviderusername;
     public $usualdepartmentid;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

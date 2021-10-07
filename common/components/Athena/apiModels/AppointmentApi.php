@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -19,7 +19,7 @@ use yii\base\Model;
  * @property int $reasonid The appointment reason ID to be booked.  This field is required for booking appointments for web-based scheduling and is a reason that is retrieved from the /patientappointmentreasons call.
  * @property bool $urgentyn Set this field in order to set the urgent flag in athena (if the practice settings allow for this).
  */
-class AppointmentApi extends Model
+class AppointmentApi extends BaseApiModel
 {
 
     public $appointmenttypeid;
@@ -32,15 +32,6 @@ class AppointmentApi extends Model
     public $patientid;
     public $reasonid;
     public $urgentyn;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

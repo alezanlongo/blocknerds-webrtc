@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -15,7 +15,7 @@ use yii\base\Model;
  * @property int $providerid The athenaNet provider ID.
  * @property int $reasonid The appointment reason (/patientappointmentreasons) to be created. Either this or a raw appointment type ID must be provided.
  */
-class RequestCreateAppointmentApi extends Model
+class RequestCreateAppointmentApi extends BaseApiModel
 {
 
     public $appointmentdate;
@@ -24,15 +24,6 @@ class RequestCreateAppointmentApi extends Model
     public $departmentid;
     public $providerid;
     public $reasonid;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

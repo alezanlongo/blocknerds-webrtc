@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -12,21 +12,12 @@ use yii\base\Model;
  * @property string $name Name of this location
  * @property int $patientlocationid Athena patient location ID
  */
-class PatientLocationApi extends Model
+class PatientLocationApi extends BaseApiModel
 {
 
     public $defaultoncheckin;
     public $name;
     public $patientlocationid;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {
