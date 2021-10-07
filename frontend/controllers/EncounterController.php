@@ -43,8 +43,14 @@ class EncounterController extends Controller
      * Lists all Encounter models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($patientid, $departmentid)
     {
+        /*$dataApiEncounters = $this->component->getEcounters($patientid, $departmentid);
+        foreach ($dataApiEncounters as $apiEncounter){
+            $model = $this->component->createEncounter($apiEncounter->toArray());
+            $model->save();
+        }*/
+
         $dataProvider = new ActiveDataProvider([
             'query' => Encounter::find(),
         ]);

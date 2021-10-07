@@ -79,10 +79,11 @@ class UserController extends Controller
             } else {
                 Yii::$app->session->setFlash('error', 'Error updating profile.');
             }
-
+            
             return $this->redirect(['user/edit-profile']);
         }
 
+        // $this->layout = 'adminlte/main';
         return $this->render(
             'edit',
             [

@@ -1,5 +1,6 @@
 <?php
 
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -14,6 +15,20 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="appointments-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
+
+    <?php $form = ActiveForm::begin(['action' => ['checkin/create']]); ?>
+
+    <?= $form->field($model, 'patientid')->hiddenInput()->label(false); ?>
+
+    <?= $form->field($model, 'departmentid')->hiddenInput()->label(false); ?>
+
+    <?= $form->field($model, 'appointmentid')->hiddenInput()->label(false); ?>
+
+    <div class="form-group">
+        <?= Html::submitButton('Checkin', ['class' => 'btn btn-primary']) ?>
+    </div>
+
+<?php ActiveForm::end(); ?>
 
     <?= DetailView::widget([
         'model' => $model,

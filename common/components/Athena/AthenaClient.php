@@ -159,9 +159,45 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      * @param appointmentid
      * @return Checkin
      */
+    public function postPracticeidAppointmentsAppointmentidCheckin($practiceid, $appointmentid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/appointments/{appointmentid}/checkin';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{appointmentid}', $appointmentid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\CheckinApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param appointmentid
+     * @return Checkin
+     */
     public function postPracticeidAppointmentsAppointmentidStartcheckin($practiceid, $appointmentid, array $body = [])
     {
         $path = '/v1/{practiceid}/appointments/{appointmentid}/startcheckin';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{appointmentid}', $appointmentid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\CheckinApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param appointmentid
+     * @return Checkin
+     */
+    public function postPracticeidAppointmentsAppointmentidCancelcheckin($practiceid, $appointmentid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/appointments/{appointmentid}/cancelcheckin';
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
 

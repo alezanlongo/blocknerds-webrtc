@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -14,7 +14,7 @@ use yii\base\Model;
  * @property string $note The note entered for this diagnosis.
  * @property int $snomedcode SNOMED Code for this diagnosis
  */
-class DiagnosesApi extends Model
+class DiagnosesApi extends BaseApiModel
 {
 
     public $description;
@@ -22,15 +22,6 @@ class DiagnosesApi extends Model
     public $icdcodes;
     public $note;
     public $snomedcode;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {

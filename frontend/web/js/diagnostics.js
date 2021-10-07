@@ -230,7 +230,10 @@ const stopTest = (compTest) => {
     if (test_performed === TOTAL_TESTS) {
       $(".overlay").addClass("d-none");
       if (log !== "") {
-        console.save(log, "diagnostic.log")
+        var r = confirm("Would you like to save the log report file?");
+        if (r == true) {
+          console.save(log, "diagnostic.log")
+        }
       }
     }
 

@@ -151,14 +151,14 @@ $this->title = 'The Room';
                 <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle audio">
                     <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
                         'id' => "mute",
-                        "class" => "btn btn-default text-white",
+                        "class" => "btn btn-link text-white",
                         'onclick' => "toggleMute()"
                     ]) ?>
                 </li>
                 <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle video">
                     <?= Html::tag('button', '<i class="fas fa-video icon-menu"></i>', [
                         'id' => "no-video",
-                        "class" => "btn btn-default text-white",
+                        "class" => "btn btn-link text-white",
                         'onclick' => "toggleVideo()"
                     ]) ?>
                 </li>
@@ -234,11 +234,11 @@ $this->title = 'The Room';
                             <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"><?= ($member) ? $member['username'] : '' ?></span>
                             <?php if ($is_owner) { ?>
                                 <div class="position-absolute top-0 end-0 member-controls d-none">
-                                    <button class="btn btn-default text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                    <button class="btn btn-link text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
                                         <i class="fas fa-microphone icon-option-member"></i></button> |
-                                    <button class="btn btn-default text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
+                                    <button class="btn btn-link text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
                                         <i class="fas fa-video icon-option-member"></i></button> |
-                                    <button class="btn btn-default text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
+                                    <button class="btn btn-link text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
                                         <i class="fas fa-user-times icon-option-member"></i></button>
                                 </div>
                             <?php } ?>
@@ -309,9 +309,12 @@ Pjax::end();
 <?php Modal::begin([
     'title' => 'Require to join...',
     'id' => 'pendingRequests',
+    // 'size' => Modal::SIZE_LARGE,
+    'closeButton' => false,
     'options' => [
-        'data-backdrop' => "static",
-        'data-keyboard' => "false"
+        'data-bs-backdrop' => "static",
+        'data-bs-keyboard' => "false",
+        'class'=> 'mt-5 pt-3',
     ],
 ]);
 

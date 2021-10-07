@@ -103,10 +103,10 @@ class <?= $className ?> extends \yii\db\ActiveRecord
 <?php foreach ($attributes as $attribute): ?>
         if($<?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>')) {
 <?php 
-$fieldName = $attribute['name'];
-if ( strpos($attribute['type'], '[]') !== false ) {
-    $fieldName = '_'.$fieldName.'Ar';
-}
+        $fieldName = $attribute['name'];
+        if ( strpos($attribute['type'], '[]') !== false ) {
+            $fieldName = '_'.$fieldName.'Ar';
+        }
 ?>
             $this-><?= $fieldName ?> = $<?= $attribute['name'] ?>;
         }

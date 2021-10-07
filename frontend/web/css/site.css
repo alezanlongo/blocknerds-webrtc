@@ -1,5 +1,5 @@
 body {
-  background-color: #202124 !important;
+  /* background-color: #202124 !important; */
   color: #fafafa !important;
 }
 main > .container-body {
@@ -9,7 +9,8 @@ main > .container-body {
 }
 
 .modal {
-  color: black;
+  /* color: black; */
+  /* z-index: 999999; */
 }
 
 a:hover {
@@ -17,7 +18,7 @@ a:hover {
 }
 
 .fc-popover.fc-more-popover.fc-day.fc-day-tue.fc-day-today{
-  background-color: black;
+  /* background-color: black; */
 }
 
 .overlay {
@@ -27,6 +28,7 @@ a:hover {
   bottom: 0;
   right: 0;
   background: rgba(0,0,0,.9);  
+  z-index: 99999;
 }
 
 .vertical-center {

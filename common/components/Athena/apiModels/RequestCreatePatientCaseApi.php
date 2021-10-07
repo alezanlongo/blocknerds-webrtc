@@ -3,7 +3,7 @@
 namespace common\components\Athena\apiModels;
 
 use Yii;
-use yii\base\Model;
+use common\models\ApiModel as BaseApiModel;
 
 /**
  * 
@@ -22,7 +22,7 @@ use yii\base\Model;
  * @property int $providerid The ID of the ordering provider.
  * @property string $subject The subject of this patient case.
  */
-class RequestCreatePatientCaseApi extends Model
+class RequestCreatePatientCaseApi extends BaseApiModel
 {
 
     public $autoclose;
@@ -38,15 +38,6 @@ class RequestCreatePatientCaseApi extends Model
     public $priority;
     public $providerid;
     public $subject;
-
-    public function __construct(array $data)
-    {
-        foreach ($data as $key => $value){
-            if(property_exists($this, $key)){
-                $this->{$key} = $value;
-            }
-        }
-    }
 
     public function rules()
     {
