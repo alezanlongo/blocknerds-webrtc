@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?= Html::a('Create Insurance', ['insurance/create', 'patientId' => $model->id], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a('Create Appoitment', ['appointment/create', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
 
     <?= DetailView::widget([
         'model' => $model,
