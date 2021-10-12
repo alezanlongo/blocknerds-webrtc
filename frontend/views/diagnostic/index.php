@@ -20,7 +20,7 @@ $this->registerJsFile(
 
 ?>
 
-<div class="overlay d-flex justify-content-center vertical-center d-none">
+<div class="overlay justify-content-center vertical-center d-none">
     <div class="spinner-border" role="status"></div>
     <strong class="m-3">Running diagnostic...</strong>
 </div>

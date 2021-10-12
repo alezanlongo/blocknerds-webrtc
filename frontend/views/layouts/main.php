@@ -1,89 +1,77 @@
 <?php
 
-/* @var $this \yii\web\View */
-/* @var $content string */
+use yii\helpers\Html;
 
-use common\widgets\Alert;
-use frontend\assets\AppAsset;
-use yii\bootstrap5\Breadcrumbs;
-use yii\bootstrap5\Html;
-use yii\bootstrap5\Nav;
-use yii\bootstrap5\NavBar;
+/** @var \yii\web\View $this */
+/** @var string $content */
 
-AppAsset::register($this);
+$this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
+if (Yii::$app->controller->action->id === 'login') {
+    /**
+     * Do not use this code in your template. Remove it. 
+     * Instead, use the code  $this->layout = '//main-login'; in your controller.
+     */
+    echo $this->render(
+        'main-login',
+        ['content' => $content]
+    );
+} else {
+
+    if (class_exists('backend\assets\AppAsset')) {
+        backend\assets\AppAsset::register($this);
+    } else {
+        frontend\assets\AppAsset::register($this);
+    }
+
+    dmstr\adminlte\web\AdminLteAsset::register($this);
+    dmstr\adminlte\web\FontAwesomeAsset::register($this);
+
+    $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
 ?>
-<?php $this->beginPage() ?>
-<!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
+    <?php $this->beginPage() ?>
+    <!DOCTYPE html>
+    <html lang="<?= Yii::$app->language ?>">
 
-<head>
-    <meta charset="<?= Yii::$app->charset ?>">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <?php $this->registerCsrfMetaTags() ?>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
-    <style>
+    <head>
+        <meta charset="<?= Yii::$app->charset ?>" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <?= Html::csrfMetaTags() ?>
+        <title><?= Html::encode($this->title) ?></title>
+        <?php $this->head() ?>
+        <style>
         .alert-style {
             width: fit-content;
             float: right;
         }
-        .w-90 {
-            width: 90%;
-            margin: 0 auto;
-        }
     </style>
-</head>
+    </head>
 
-<body class="d-flex flex-column h-100">
-    <?php $this->beginBody() ?>
+    <!-- NOTE: remove sidebar-collapse class in order to when you refresh the screen, the sidebar is be collapsed -->
+    <body class="hold-transition skin-blue sidebar-mini dark-mode sidebar-collapse">
+        <?php $this->beginBody() ?>
+        <div class="wrapper">
 
-    <header>
-        <?php
-        NavBar::begin([
-            'brandLabel' => Yii::$app->name,
-            'brandUrl' => Yii::$app->homeUrl,
-            'innerContainerOptions' => ['class' => 'container-fluid w-90'],
-            'options' => [
-                'class' => 'navbar navbar-expand-md navbar-dark bg-withe fixed-top',
-            ],
-        ]);
-        $menuItems = [];
-        if (Yii::$app->user->isGuest) {
-            $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-            $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
-        } else {
-            $menuItems[] =
-                [
-                    'label' => Yii::$app->getUser()->getIdentity()->username,
-                    'items' => [
-                        ['label' => 'Edit Profile', 'url' => ['/user/edit-profile']],
-                        ['label' => 'Diagnostic', 'url' => ['/diagnostic']],
-                        ['label' => 'Logout', 'url' => ['/site/logout'], ['data-method' => 'post']],
-                    ]
-                ];
-        }
+            <?= $this->render(
+                'header.php',
+                ['directoryAsset' => $directoryAsset]
+            ) ?>
 
-        echo Nav::widget([
-            'options' => ['class' => 'navbar-nav', 'style' => 'margin-left: auto'],
-            'items' => $menuItems,
-        ]);
-        NavBar::end();
-        ?>
-    </header>
+            <?= $this->render(
+                'left.php',
+                ['directoryAsset' => $directoryAsset]
+            )
+            ?>
 
-    <main role="main" class="flex-shrink-0">
-        <div class="container-body">
-            <div class="">
-                <?= Alert::widget([
-                    'options' => ['class' => 'alert-style'],
-                ]) ?>
-            </div>
-            <?= $content ?>
+            <?= $this->render(
+                'content.php',
+                ['content' => $content, 'directoryAsset' => $directoryAsset]
+            ) ?>
+
         </div>
-    </main>
 
-    <?php $this->endBody() ?>
-</body>
+        <?php $this->endBody() ?>
+    </body>
 
-</html>
-<?php $this->endPage();
+    </html>
+    <?php $this->endPage() ?>
+<?php } ?>

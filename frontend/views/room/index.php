@@ -128,8 +128,6 @@ $this->registerJs($countdown, View::POS_END,'countdown_script');
 
 $this->title = 'The Room';
 
-// VarDumper::dump( count($members), $depth = 10, $highlight = true);
-// die;
 ?>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
@@ -140,25 +138,25 @@ $this->title = 'The Room';
         <div class="options-tab">
             <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
                 <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
-                    <button class="nav-link" id="pills-settings-tab" data-bs-toggle="pill" data-bs-target="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog icon-menu"></i></button>
+                    <button class="nav-link" id="pills-settings-tab" data-bs-toggle="pill" data-bs-target="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true" ><i class="fas fa-cog icon-menu"></i></button>
                 </li>
                 <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Participant">
-                    <button class="nav-link" id="pills-attendees-tab" data-bs-toggle="pill" data-bs-target="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></button>
+                    <button class="nav-link" id="pills-attendees-tab" data-bs-toggle="pill" data-bs-target="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false" ><i class="fas fa-users icon-menu"></i></button>
                 </li>
                 <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
-                    <button class="nav-link" id="pills-chat-tab" data-bs-toggle="pill" data-bs-target="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments icon-menu"></i></button>
+                    <button class="nav-link" id="pills-chat-tab" data-bs-toggle="pill" data-bs-target="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false" ><i class="fas fa-comments icon-menu"></i></button>
                 </li>
                 <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle audio">
                     <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
                         'id' => "mute",
-                        "class" => "btn btn-default text-white",
+                        "class" => "btn btn-link text-white",
                         'onclick' => "toggleMute()"
                     ]) ?>
                 </li>
                 <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle video">
                     <?= Html::tag('button', '<i class="fas fa-video icon-menu"></i>', [
                         'id' => "no-video",
-                        "class" => "btn btn-default text-white",
+                        "class" => "btn btn-link text-white",
                         'onclick' => "toggleVideo()"
                     ]) ?>
                 </li>
@@ -170,8 +168,8 @@ $this->title = 'The Room';
     </div>
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
-            <div class="join-again d-none">
-                <div class="card">
+            <div class="join-again d-none position-absolute top-50 start-50 translate-middle">
+                <div class="card bg-transparent border-0 shadow-none">
                     <div class="card-title">
                         <?= Html::tag("h4", "You left of the room") ?>
                     </div>
@@ -224,21 +222,21 @@ $this->title = 'The Room';
                 <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
 
                 <ul class="list-group bg-dark list-attendees">
-                    <li class="list-group-item list-group-item-light bg-dark position-relative" data-user-id="<?= Yii::$app->getUser()->getId() ?>">
-                        <span class="p-1 username-member text-success" onclick="loadAndOpenModalInfo(0)"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
+                    <li class="list-group-item list-group-item-light bg-dark position-relative" data-user-id="<?= Yii::$app->getUser()->getId() ?>" data-index="0">
+                        <span class="p-1 username-member text-success" ><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
                     </li>
-                    <?php for ($i = 0; $i < $limit_members; $i++) { 
+                    <?php for ($i = 1; $i < $limit_members; $i++) { 
                         $member = (count($members) > $i) ? $members[$i] : null;
                         ?>
                         <li class="list-group-item list-group-item-light bg-dark position-relative <?= ($member) ? 'profile_id_'.$member['id'] : 'd-none' ?>" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                            <span class="p-1 username-member usernameFeed<?= $i ?>" onclick="loadAndOpenModalInfo(<?= $i ?>)"><?= ($member) ? $member['username'] : '' ?></span>
+                            <span class="p-1 username-member usernameFeed<?= $i ?>"><?= ($member) ? $member['username'] : '' ?></span>
                             <?php if ($is_owner) { ?>
-                                <div class="position-absolute top-0 end-0 member-controls d-none">
-                                    <button class="btn btn-default text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                <div class="position-absolute pt-1 top-0 end-0 member-controls d-none">
+                                    <button class="btn btn-link text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
                                         <i class="fas fa-microphone icon-option-member"></i></button> |
-                                    <button class="btn btn-default text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
+                                    <button class="btn btn-link text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
                                         <i class="fas fa-video icon-option-member"></i></button> |
-                                    <button class="btn btn-default text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
+                                    <button class="btn btn-link text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
                                         <i class="fas fa-user-times icon-option-member"></i></button>
                                 </div>
                             <?php } ?>
@@ -309,9 +307,12 @@ Pjax::end();
 <?php Modal::begin([
     'title' => 'Require to join...',
     'id' => 'pendingRequests',
+    // 'size' => Modal::SIZE_LARGE,
+    'closeButton' => false,
     'options' => [
-        'data-backdrop' => "static",
-        'data-keyboard' => "false"
+        'data-bs-backdrop' => "static",
+        'data-bs-keyboard' => "false",
+        'class'=> 'mt-5 pt-3',
     ],
 ]);
 
