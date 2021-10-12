@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use common\components\Athena\models\Patient;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 
 class PatientController extends \yii\web\Controller
 {
@@ -15,6 +16,24 @@ class PatientController extends \yii\web\Controller
         parent::__construct($id, $module);
         $this->component = Yii::$app->athenaComponent;
         $this->component->setPracticeid(195900);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                "class" => AccessControl::class,
+                "rules" => [
+                    [
+                        'allow' => true,
+                        'roles' => ["@"],
+                    ]
+                ],
+            ],
+        ];
     }
 
     /**
@@ -41,7 +60,7 @@ class PatientController extends \yii\web\Controller
     public function actionCreate()
     {
         $model = new Patient;
-        
+
         if ($model->load(Yii::$app->request->post())) {
             $model = $this->component->createPatient(
                 $model
