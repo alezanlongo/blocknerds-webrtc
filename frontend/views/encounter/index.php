@@ -49,17 +49,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
             //['class' => 'yii\grid\ActionColumn'],
             [
-                'attribute' => 'See Encounter',
-                'value' => function ($model) {
-                    $url = Url::toRoute(['encounter/view', 'id' => $model->id]);
-                    return Html::a(
-                        'See Encounter',
-                        $url,
-                        ['title' => 'See Encounter',]
-                    );
-                },
-                'format' => 'raw',
-            ],
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
+            ]
         ],
     ]); ?>
 
