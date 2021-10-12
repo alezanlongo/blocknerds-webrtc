@@ -109,42 +109,41 @@
   font-size: x-large;
 }
 .join-again {
-  text-align: center;
+  /* text-align: center;
   width: 50%;
   height: auto;
   margin: 0 auto;
   padding: 1%;
+  display: flex;
+  justify-content: center; */
+
 }
-.join-again .card {
-  color: #fafafa;
-  background-color: transparent;
-}
+
 .video-mute-icon {
   position: absolute;
-    top: 0;
-    left: 0;
-    margin: 10px;
+  top: 0;
+  left: 0;
+  margin: 10px;
 }
 .video-fullscreen-container {
   position: absolute;
-    top: 0;
-    right: 0;
-    margin: 10px;
-    z-index: 50;
-  }
-  .video-fullscreen-container:hover{
-    cursor: pointer;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  z-index: 50;
+}
+.video-fullscreen-container:hover {
+  cursor: pointer;
 }
 
-.video-fullcreen-none{
+.video-fullcreen-none {
   display: none !important;
 }
-
 
 .username-member:hover {
   cursor: pointer;
 }
 
-.modal{
-  z-index: 999999 !important; 
+.modal {
+  z-index: 999999 !important;
 }
