@@ -129,7 +129,7 @@ class EncounterController extends Controller
     }
 
 
-    public function actionStartcheckin()
+    public function actionStartCheckin()
     {
         $error = FALSE;
         $message = '';
@@ -146,7 +146,7 @@ class EncounterController extends Controller
             $message = 'We have haven some problems please, try again';
         }
 
-        return $this->render('startCheckin', [
+        return $this->render('start-checkin', [
             'patientid'     => $data['patientid'],
             'departmentid'  => $data['departmentid'],
             'appointmentid' => $data['appointmentid'],

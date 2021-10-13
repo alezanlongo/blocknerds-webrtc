@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::a('Checkin', [
                 'encounter/index',
                 'patientid'     => $patientid,
-                'departmentId'  => $departmentid
+                'departmentid'  => $departmentid
             ], ['class' => 'btn btn-primary']) ?>
         </p>
     <?php else: ?>
