@@ -54,7 +54,7 @@ $items[] = [
 
 <aside class="main-sidebar sidebar-bg-dark sidebar-color-primary shadow">
   <div class="brand-container">
-    <?= Html::a('<img class="brand-image img-circle elevation-3 opacity-80 shadow" href="javascript:;" src="' . ($directoryAsset . '/img/AdminLTELogo.png') . '" alt="APP"><span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
+    <?= Html::a('<img class="brand-image img-circle elevation-3 opacity-80 shadow" href="javascript:;" src="' . ( '/img/AdminLTELogo.png') . '" alt="APP"><span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
     <!-- <a href="javascript:;" class="brand-link">
       <img src="./assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image opacity-80 shadow">
       <span class="brand-text fw-light">AdminLTE 4</span>
