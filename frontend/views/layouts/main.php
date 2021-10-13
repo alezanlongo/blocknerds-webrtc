@@ -1,5 +1,6 @@
 <?php
 
+use frontend\assets\adminlte\AdminLTEDependencesAssets;
 use yii\helpers\Html;
 
 /** @var \yii\web\View $this */
@@ -17,16 +18,17 @@ if (Yii::$app->controller->action->id === 'login') {
     );
 } else {
 
-    if (class_exists('backend\assets\AppAsset')) {
-        backend\assets\AppAsset::register($this);
-    } else {
-        frontend\assets\AppAsset::register($this);
-    }
+    // if (class_exists('backend\assets\AppAsset')) {
+    //     backend\assets\AppAsset::register($this);
+    // } else {
+    //     frontend\assets\AppAsset::register($this);
+    // }
 
-    dmstr\adminlte\web\AdminLteAsset::register($this);
-    dmstr\adminlte\web\FontAwesomeAsset::register($this);
+    // dmstr\adminlte\web\AdminLteAsset::register($this);
+    // dmstr\adminlte\web\FontAwesomeAsset::register($this);
+    AdminLTEDependencesAssets::register($this);
 
-    $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
+    $directoryAsset = null; //Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
 ?>
     <?php $this->beginPage() ?>
     <!DOCTYPE html>

@@ -50,6 +50,12 @@ class RoomController extends \yii\web\Controller
         ];
     }
 
+    public function actionTestingAdmin()
+    {
+        $this->layout = 'main-adminlte';
+        return $this->render('test', []);
+    }
+
     public function actionIndex($uuid)
     {
         $this->layout = 'main-room';
@@ -542,6 +548,7 @@ class RoomController extends \yii\web\Controller
 
     function actionCalendar()
     {
+        $this->layout = 'main-adminlte';
         $user = Yii::$app->user->identity;
         $profile = $user->getUserProfile()->one();
 

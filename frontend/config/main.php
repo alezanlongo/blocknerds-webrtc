@@ -45,6 +45,7 @@ return [
                 'POST room/create' => 'room/create',
                 'POST room/create-schedule' => 'room/create-schedule',
                 'GET room/user-list' => 'room/user-list',
+                'GET room/admin-test' => 'room/testing-admin',
                 'GET room/waiting/<uuid>' => 'room/waiting',
                 'GET room/calendar' => 'room/calendar',
                 'GET room/calendar/events/<id>' => 'room/fetch-calendar-events',
