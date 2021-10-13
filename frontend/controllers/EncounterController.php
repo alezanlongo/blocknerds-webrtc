@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use common\components\Athena\models\Encounter;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -16,9 +17,9 @@ class EncounterController extends Controller
 {
     private $component;
 
-    function __construct($id, $module)
+    public function init()
     {
-        parent::__construct($id, $module);
+        parent::init();
         $this->component = Yii::$app->athenaComponent;
         $this->component->setPracticeid(195900);
     }
@@ -31,9 +32,12 @@ class EncounterController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
+                "class" => AccessControl::class,
+                "rules" => [
+                    [
+                        'allow' => true,
+                        'roles' => ["@"],
+                    ]
                 ],
             ],
         ];
@@ -45,12 +49,6 @@ class EncounterController extends Controller
      */
     public function actionIndex($patientid, $departmentid)
     {
-        /*$dataApiEncounters = $this->component->getEcounters($patientid, $departmentid);
-        foreach ($dataApiEncounters as $apiEncounter){
-            $model = $this->component->createEncounter($apiEncounter->toArray());
-            $model->save();
-        }*/
-
         $dataProvider = new ActiveDataProvider([
             'query' => Encounter::find(),
         ]);
@@ -129,6 +127,67 @@ class EncounterController extends Controller
 
         return $this->redirect(['index']);
     }
+
+
+    public function actionStartCheckin()
+    {
+        $error = FALSE;
+        $message = '';
+        $data = Yii::$app->request->post()['PutAppointment200Response'];
+        $data = [
+            'patientid'     => $data['patientid'],
+            'departmentid'  => $data['departmentid'],
+            'appointmentid' => $data['appointmentid'],
+        ];
+
+        $startCheckin = $this->component->startCheckin($data['appointmentid']);
+        if(!$startCheckin['success']){
+            $error =  !$error;
+            $message = 'We have haven some problems please, try again';
+        }
+
+        return $this->render('start-checkin', [
+            'patientid'     => $data['patientid'],
+            'departmentid'  => $data['departmentid'],
+            'appointmentid' => $data['appointmentid'],
+            'error'         => $error,
+            'message'       => $message
+        ]);
+    }
+
+
+    public function actionCheckin($patientid, $departmentid, $appointmentid)
+    {
+        $error = FALSE;
+        $message = '';
+
+        $checkin = $this->component->checkin($appointmentid);
+        if($checkin['success']){
+            $dataApiEncounters = $this->component->getEcounters($patientid, $departmentid, $appointmentid);
+            foreach ($dataApiEncounters as $apiEncounter){
+                $model = $this->component->createEncounter($apiEncounter->toArray());
+                $model->save();
+            }
+
+            return $this->redirect([
+                'encounter/index',
+                'patientid'     => $patientid,
+                'departmentid'  => $departmentid
+            ]);
+        }else{
+            $error =  !$error;
+            $message = 'We have haven some problems please, try again';
+        }
+
+        return $this->render('checkin', [
+            'patientid'     => $patientid,
+            'departmentid'  => $departmentid,
+            'appointmentid' => $appointmentid,
+            'error'         => $error,
+            'message'       => $message
+        ]);
+    }
+
 
     /**
      * Finds the Encounter model based on its primary key value.
