@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php $form = ActiveForm::begin(['action' => ['checkin/create']]); ?>
+    <?php $form = ActiveForm::begin(['action' => ['encounter/startcheckin']]); ?>
 
     <?= $form->field($model, 'patientid')->hiddenInput()->label(false); ?>
 
