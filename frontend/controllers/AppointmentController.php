@@ -12,9 +12,9 @@ class AppointmentController extends \yii\web\Controller
 {
     private $component;
 
-    function __construct($id, $module)
+    public function init()
     {
-        parent::__construct($id, $module);
+        parent::init();
         $this->component = Yii::$app->athenaComponent;
         $this->component->setPracticeid(195900);
     }
