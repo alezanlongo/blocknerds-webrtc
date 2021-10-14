@@ -7,16 +7,35 @@ use common\components\Athena\models\Patient;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\RequestCreateAppointment;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 
 class AppointmentController extends \yii\web\Controller
 {
     private $component;
 
-    function __construct($id, $module)
+    public function init()
     {
-        parent::__construct($id, $module);
+        parent::init();
         $this->component = Yii::$app->athenaComponent;
         $this->component->setPracticeid(195900);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                "class" => AccessControl::class,
+                "rules" => [
+                    [
+                        'allow' => true,
+                        'roles' => ["@"],
+                    ]
+                ],
+            ],
+        ];
     }
 
     /**

@@ -33,7 +33,8 @@
     "nesbot/carbon": "3.x-dev",
     "cebe/php-openapi": "dev-master",
     "cebe/yii2-openapi": "dev-master",
-    "dmstr/yii2-adminlte-asset": "3.x-dev"
+    "dmstr/yii2-adminlte-asset": "3.x-dev",
+    "symfony/yaml": "5.4.x-dev"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",
