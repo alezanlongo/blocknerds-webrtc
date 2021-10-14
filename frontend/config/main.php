@@ -1,5 +1,7 @@
 <?php
 
+use frontend\assets\adminlte\AdminLteAsset;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -14,7 +16,22 @@ return [
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'room/calendar',
     'components' => [
-        'assetManager' => [],
+        'assetManager' => [
+            'bundles' => [
+                AdminLteAsset::class => [
+                    "css" => [
+                        'css/adminlte.css',
+                        'css/dark/adminlte-dark-addon.css',
+                        'lib/overlayscrollbars/css/OverlayScrollbars.min.css',
+                        'lib/@fortawesome/fontawesome-free/css/all.min.css'
+                    ],
+                    'js' => [
+                        'js/adminlte.js',
+                        'lib/overlayscrollbars/js/jquery.overlayScrollbars.min.js',
+                    ],
+                ]
+            ]
+        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
