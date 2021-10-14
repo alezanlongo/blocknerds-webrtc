@@ -47,7 +47,7 @@ if (Yii::$app->controller->action->id === 'login') {
     </style>
   </head>
 
-  <body class="hold-transition layout-fixed ">
+  <body class="layout-fixed ">
     <?php $this->beginBody() ?>
     <div class="wrapper">
       <?= $this->render(

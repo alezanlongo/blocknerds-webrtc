@@ -15,12 +15,13 @@ if ($image === null) {
 
 <nav class="main-header navbar navbar-expand navbar-light">
   <div class="container-fluid">
-    <!-- Start navbar links -->
+    <!-- Left side -->
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" data-lte-toggle="sidebar-full" href="#" role="button"><i class="fas fa-bars"></i></a>
       </li>
     </ul>
+    <!-- Right side -->
     <ul class="navbar-nav ms-auto">
       <li class="nav-item dropdown user-menu">
         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -28,13 +29,9 @@ if ($image === null) {
           <span class="d-none d-md-inline"><?= $username ?></span>
         </a>
         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-          <!-- User image -->
           <li class="user-header bg-primary">
             <img src="<?= $image ?>" class="<?= $image ?> shadow" alt="User Image">
-
-            <p>
-              <?= $username ?>
-            </p>
+            <p> <?= $username ?> </p>
           </li>
           <li class="user-footer">
             <?= Html::a(
@@ -48,6 +45,7 @@ if ($image === null) {
               ['data-method' => 'post', 'class' => 'btn btn-default btn-flat float-end']
             ) ?>
           </li>
+
         </ul>
       </li>
     </ul>
