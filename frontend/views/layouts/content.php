@@ -1,15 +1,15 @@
 <?php
 
-use yii\bootstrap5\Alert;
+use frontend\widgets\adminlte\Alert;
 
 ?>
 <div class="content-wrapper">
     <section class="content">
-        <!-- <div class="">
+        <div class="">
             <?= Alert::widget([
                 'options' => ['class' => 'alert-style'],
             ]) ?>
-        </div> -->
+        </div>
         <?= $content ?>
     </section>
 </div>
