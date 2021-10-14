@@ -20,8 +20,8 @@ if (Yii::$app->controller->action->id === 'login') {
     frontend\assets\AppAsset::register($this);
   }
 
-  // AdminLteAsset::register($this);
-  $directoryAsset = '/adminlte/assets'; //Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
+  AdminLteAsset::register($this);
+  $directoryAsset = null; //'/adminlte/assets'; //Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
 ?>
 
   <?php $this->beginPage() ?>
@@ -34,10 +34,10 @@ if (Yii::$app->controller->action->id === 'login') {
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link rel="stylesheet" href="/adminlte/vendor/@fortawesome/fontawesome-free/css/all.min.css">
+    <!-- <link rel="stylesheet" href="/adminlte/vendor/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="/adminlte/css/adminlte.css">
     <link rel="stylesheet" href="/adminlte/css/dark/adminlte-dark-addon.css" media="(prefers-color-scheme: dark)">
-    <link rel="stylesheet" href="/adminlte/vendor/overlayscrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="/adminlte/vendor/overlayscrollbars/css/OverlayScrollbars.min.css"> -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <style>
       .alert-style {
@@ -70,8 +70,8 @@ if (Yii::$app->controller->action->id === 'login') {
 
 
 
-    <script src="/adminlte/js/adminlte.js"></script>
-    <script src="/adminlte/vendor/overlayscrollbars/js/OverlayScrollbars.min.js"></script>
+    <!-- <script src="/adminlte/js/adminlte.js"></script>
+    <script src="/adminlte/vendor/overlayscrollbars/js/OverlayScrollbars.min.js"></script> -->
     <?php $this->endBody() ?>
   </body>
 
