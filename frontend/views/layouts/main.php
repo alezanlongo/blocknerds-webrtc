@@ -70,9 +70,8 @@ if (Yii::$app->controller->action->id === 'login') {
 
 
 
-    <script src="/adminlte/vendor/overlayscrollbars/js/OverlayScrollbars.min.js"></script>
-    <script src="/adminlte/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/adminlte/js/adminlte.js"></script>
+    <script src="/adminlte/vendor/overlayscrollbars/js/OverlayScrollbars.min.js"></script>
     <?php $this->endBody() ?>
   </body>
 
