@@ -14,6 +14,7 @@ return [
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'room/calendar',
     'components' => [
+        'assetManager' => [],
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
@@ -51,7 +52,7 @@ return [
                 'GET room/calendar/events/<id>' => 'room/fetch-calendar-events',
                 'GET room/<uuid>' => 'room',
                 'POST room-moderate/<roomUuid>/<profileId>' => 'room/moderate-member',
-                'POST room/<uuid>/kick'=>'room/kick-member',
+                'POST room/<uuid>/kick' => 'room/kick-member',
                 'POST room/join/request' => 'room/join-request',
                 'POST room/time/expired' => 'room/time-expired',
                 'POST room/time/add' => 'room/add-time',

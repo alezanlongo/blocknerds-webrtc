@@ -17,7 +17,7 @@ class AdminLteAsset extends \yii\web\AssetBundle
         'lib/overlayscrollbars/js/jquery.overlayScrollbars.min.js',
     ];
    
-    public $publishOptions = [
-        'forceCopy' => true,
-    ];
+    // public $publishOptions = [
+    //     'forceCopy' => true,
+    // ];
 }
