@@ -1,6 +1,8 @@
 <?php
 
 use frontend\assets\adminlte\AdminLteAsset;
+use frontend\assets\fontawesome\FontAwesomeAsset;
+use yii\bootstrap5\BootstrapAsset;
 
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
@@ -23,13 +25,19 @@ return [
                         'css/adminlte.css',
                         'css/dark/adminlte-dark-addon.css',
                         'lib/overlayscrollbars/css/OverlayScrollbars.min.css',
-                        'lib/@fortawesome/fontawesome-free/css/all.min.css'
+                        'lib/@fortawesome/fontawesome-free/css/all.min.css',
                     ],
                     'js' => [
                         'js/adminlte.js',
                         'lib/overlayscrollbars/js/jquery.overlayScrollbars.min.js',
                     ],
-                ]
+                    // 'depends' => [BootstrapAsset::class]
+                ],
+                // BootstrapAsset::class => [
+                //     'css' => [],
+                //     'js' => [],
+                //     'depends' => [FontAwesomeAsset::class]
+                // ],
             ]
         ],
         'request' => [

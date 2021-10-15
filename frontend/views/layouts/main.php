@@ -1,6 +1,7 @@
 <?php
 
 use frontend\assets\adminlte\AdminLteAsset;
+use frontend\assets\fontawesome\FontAwesomeAsset;
 use yii\helpers\Html;
 
 /** @var \yii\web\View $this */
@@ -21,7 +22,7 @@ if (Yii::$app->controller->action->id === 'login') {
   }
 
   AdminLteAsset::register($this);
-  $directoryAsset = null; //'/adminlte/assets'; //Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
+  // FontAwesomeAsset::register($this);
 ?>
 
   <?php $this->beginPage() ?>
@@ -34,10 +35,6 @@ if (Yii::$app->controller->action->id === 'login') {
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <!-- <link rel="stylesheet" href="/adminlte/vendor/@fortawesome/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="/adminlte/css/adminlte.css">
-    <link rel="stylesheet" href="/adminlte/css/dark/adminlte-dark-addon.css" media="(prefers-color-scheme: dark)">
-    <link rel="stylesheet" href="/adminlte/vendor/overlayscrollbars/css/OverlayScrollbars.min.css"> -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <style>
       .alert-style {
@@ -51,19 +48,17 @@ if (Yii::$app->controller->action->id === 'login') {
     <?php $this->beginBody() ?>
     <div class="wrapper">
       <?= $this->render(
-        'header.php',
-        ['directoryAsset' => $directoryAsset]
+        'header.php', []
       ) ?>
 
       <?= $this->render(
-        'left.php',
-        ['directoryAsset' => $directoryAsset]
+        'left.php',[]
       )
       ?>
 
       <?= $this->render(
         'content.php',
-        ['content' => $content, 'directoryAsset' => $directoryAsset]
+        ['content' => $content]
       ) ?>
 
     </div>

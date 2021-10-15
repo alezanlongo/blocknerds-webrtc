@@ -31,9 +31,23 @@ document.addEventListener('DOMContentLoaded', function () {
   calendar = new FullCalendar.Calendar(calendarEl, {
     timeZone: 'UTC',
     contentHeight: 'auto',
+    themeSystem: 'bootstrap',
     handleWindowResize: true,
     initialView: initialView,
-    headerToolbar: { center: 'timeGridDay,timeGridWeek,dayGridMonth,listWeek' },
+    // buttonIcons: {
+    //   myCustomButton: ' left-single-arrow',
+    // },
+    customButtons: {
+      myCustomButton: {
+        // icon: 'left-single-arrow',
+        text:"sarasa",
+        click: function() {
+          alert('clicked the custom button!');
+        }
+      }
+    },
+    bootstrapFontAwesome:true,
+    headerToolbar: {center: 'timeGridDay,timeGridWeek,dayGridMonth,listWeek', end: 'prev,today,next' },
     events: "room/calendar/events/" + user_profile_id,
     views: {
       month: {
