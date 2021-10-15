@@ -6,17 +6,22 @@ use Yii;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\RequestCreatePatientCase;
+use common\components\AthenaComponent;
 use yii\data\ActiveDataProvider;
 
 class PatientCaseController extends \yii\web\Controller
 {
     private $component;
 
-    function __construct($id, $module)
+    public function init()
     {
-        parent::__construct($id, $module);
-        $this->component = Yii::$app->athenaComponent;
-        $this->component->setPracticeid(195900);
+        parent::init();
+        if($user = Yii::$app->user->identity)
+        {
+            $practiceId = $user->ext_practice_id;
+            $this->component = Yii::createObject(AthenaComponent::class);
+            $this->component->setPracticeid($practiceId);
+        }
     }
 
     /**
