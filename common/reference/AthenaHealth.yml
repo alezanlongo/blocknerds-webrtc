@@ -12,6 +12,8 @@ info:
 tags:
   - name: Patient
     description: 'Person requesting a medical appointment'
+  - name: PatientSubscription
+    description: 'Person requesting a medical appointment Events'
 paths:
   /v1/{practiceid}/patients:
     post:
@@ -1209,6 +1211,207 @@ paths:
       operationId: getPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid
       tags:
         - Document Type - Patient Case
+  /v1/{practiceid}/patients/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for patient's records
+      description: Subscribes for changed patients events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientChangedSubscription200Response'
+          description: Success
+      operationId: postPracticeidPatientsChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                departmentids:
+                  description: >-
+                    For every New/Update Subscriptions complete list of
+                    departmentids should be passed. NOTE: Without DepartmentIDs
+                    entire Context/Practice will be subscribed.
+                  items:
+                    type: integer
+                  type: array
+                eventname:
+                  description: >-
+                    By default, you are subscribed to all possible events.  If
+                    you only wish to subscribe to an individual event, pass the
+                    event name with this argument.
+                  type: string
+              type: object
+        required: true
+      tags:
+        - PatientSubscription
+    get:
+      summary: Get list of subscribed events for changes in patient's records
+      description: Retrieves list of events applicable for patients changed
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientChangedSubscription'
+          description: Success
+      operationId: getPracticeidPatientsChangedSubscription
+      tags:
+        - PatientSubscription
+    delete:
+      summary: Unsubscribe to all/specific events for changes in patient's records
+      description: Deletes a specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, you are unsubscribed from all possible events.  If you
+            only wish to unsubscribe from an individual event, pass the event
+            name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidPatientsChangedSubscription
+      tags:
+        - PatientSubscription
+  /v1/{practiceid}/patients/changed:
+    get:
+      summary: Get list of changes in patient records
+      description: Retrieve list of changes made to the patient record
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed.
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Patient ID. Multiple Patient IDs are allowed, either comma separated
+            or with multiple values.
+          in: query
+          name: patientid
+          required: false
+          schema:
+            items:
+              type: integer
+            type: array
+        - description: Fetch the Global ID of the patients.
+          in: query
+          name: returnglobalid
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Patient information for patients with record restrictions and
+            blocked patients will not be shown.  Setting this flag to true will
+            show that information for those patients.
+          in: query
+          name: ignorerestrictions
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            If set, will show the previous patient ID this patient was merged
+            from.
+          in: query
+          name: showpreviouspatientids
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Department ID. Multiple departments are allowed, either comma
+            separated or with multiple values.
+          in: query
+          name: departmentid
+          required: false
+          schema:
+            items:
+              type: integer
+            type: array
+        - description: See showprocessestartdatetime.
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Show already processed changes.  This will show changes that you
+            previously retrieved at some point after this datetime mm/dd/yyyy
+            hh24:mi:ss (Eastern). Can be used to refetch data if there was an
+            error, such as a timeout, and records are marked as already
+            retrieved. This is intended to be used with showprocessedenddatetime
+            and for a short period of time only. Also note that processed
+            messages will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Number of entries to return (default 1000, max 10000)Please note
+            that this endpoint has a different default and max than normal.
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientChanged'
+          description: Success
+      x-base-list-key: 'patients'
+      operationId: getPracticeidPatientsChanged
+      tags:
+        - PatientSubscription
 components:
   schemas:
     Patient:
@@ -3978,3 +4181,39 @@ components:
           description: Order ID of the order this document is tied to, if any
           type: integer
       type: object
+    PatientChangedSubscription200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful.
+          enum:
+            - false
+            - true
+          type: string
+    PatientChangedSubscription:
+      type: object
+      properties:
+        status:
+          description: >-
+            Will return one of following statuses: ACTIVE, INACTIVE,
+            or PARTIAL. The PARTIAL status means that not all events
+            are subscribed to. In the event of a problem, UNKNOWN may
+            be returned.
+          type: string
+        subscriptions:
+          description: List of events you are subscribed to.
+          items:
+            properties:
+              eventname:
+                description: Name of event
+                type: string
+            type: object
+          type: array
+    PatientChanged:
+      type: object
+      patients:
+        type: array
+        items:
+          $ref: '#/components/schemas/Patient'
+      totalcount:
+        type: integer

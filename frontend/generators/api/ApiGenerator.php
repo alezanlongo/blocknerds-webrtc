@@ -378,6 +378,7 @@ class ApiGenerator extends ParentApiGenerator
                 }
 
                 $listKey = ( array_key_exists('x-list-key', $operation->getExtensions()) ) ? $operation->getExtensions()['x-list-key'] : null;
+                $baseListKey = ( array_key_exists('x-base-list-key', $operation->getExtensions()) ) ? $operation->getExtensions()['x-base-list-key'] : null;
 
                 foreach ($operation->responses->getResponses() as $responseCode => $response){
                     foreach ($response->content as $responseType => $responseItem){
@@ -387,11 +388,17 @@ class ApiGenerator extends ParentApiGenerator
                             $arrSchema = explode("/", $responseItem->schema->getReference());
                         }else if(get_class($responseItem->schema) == Schema::class){
                             $flagList = TRUE;
-                            $arrSchema = explode("/", $responseItem->schema->items->getReference());
+                            if(!empty($responseItem->schema->items)) {
+                                $arrSchema = explode("/", $responseItem->schema->items->getReference());
+                            }
                         }
-
-                        
-
+/*
+if ($operation->operationId == 'getPracticeidPatientsChanged') {
+    echo '<pre>';
+    var_dump(__METHOD__.__LINE__, $flagList, $arrSchema);
+    die;
+}
+*/
                         array_push($arrayClient, [
                             'pathname'      => $pathName,
                             'finalPathName' => $finalPathName,
@@ -401,6 +408,7 @@ class ApiGenerator extends ParentApiGenerator
                             'schema'        => $arrSchema[(count($arrSchema) - 1)],
                             'flagList'      => $flagList,
                             'listKey'      => $listKey,
+                            'baseListKey' => $baseListKey,
                         ]);
                     }
                 }
