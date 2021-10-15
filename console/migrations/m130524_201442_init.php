@@ -26,6 +26,9 @@ class m130524_201442_init extends Migration
             'updated_at' => $this->integer()->notNull(),
             'verification_token' => $this->string()->defaultValue(null),
             'is_admin' => $this->boolean()->notNull()->defaultValue(false),
+            'ext_practice_id' => $this->integer(),
+            'ext_provider_id' => $this->integer(),
+            'ext_provider_username' => $this->string(),
         ], $tableOptions);
 
         // user_profile

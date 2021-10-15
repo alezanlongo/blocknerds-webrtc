@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\Athena\models\Encounter;
+use common\components\AthenaComponent;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -20,8 +21,12 @@ class EncounterController extends Controller
     public function init()
     {
         parent::init();
-        $this->component = Yii::$app->athenaComponent;
-        $this->component->setPracticeid(195900);
+        if($user = Yii::$app->user->identity)
+        {
+            $practiceId = $user->ext_practice_id;
+            $this->component = Yii::createObject(AthenaComponent::class);
+            $this->component->setPracticeid($practiceId);
+        }
     }
 
 
