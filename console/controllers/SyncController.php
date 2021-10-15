@@ -11,6 +11,10 @@ use yii\console\ExitCode;
  */
 class SyncController extends Controller
 {
+    public $component;
+
+    const ACTIVE_STATUS = 'ACTIVE';
+
     const PATIENT_EVENTS = [
         'ADD' => 'AddPatient',
         'DELETE' => 'DeletePatient',
@@ -27,35 +31,27 @@ class SyncController extends Controller
 
     public function actionPatient($practiceId)
     {
+        //$this->component = Yii::$app->athenaComponent;
         $this->component->setPracticeid($practiceId);
         try {
-            $this->patientSubscriptionStatus();
-            //TODO if !ACTIVE patientsSubscription(PATIENT_EVENTS['ADD'])
+            $subscriptionStatus = $this->component->retrievePatientSubscriptionStatus();
+            $updateEventSubscription = false;
+            if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
+                $updateEventSubscription = true;
+            } else {
+                foreach( $subscriptionStatus->subscriptions as $event) {
+                    if( $event['eventname'] == self::PATIENT_EVENTS['UPDATE'] )
+                        $updateEventSubscription = true;
+                }
+            }
+            if( !$updateEventSubscription )
+                $this->component->patientsSubscription(self::PATIENT_EVENTS['UPDATE']);
+
             $this->patientChanges();
         } catch(\Exception  $e) {
             return ExitCode::UNSPECIFIED_ERROR;
         }
 
         return ExitCode::OK;
-    }
-
-    private function patientSubscriptionStatus()
-    {
-        //TODO
-        //call GET /patients/changed/subscription
-    }
-
-    private function patientsSubscription($event)
-    {
-        //TODO
-        //call POST /patients/changed/subscription use PATIENT_EVENTS['ADD']
-    }
-
-    private function patientChanges()
-    {
-        //TODO
-        //call GET /patients/changed
-        //loop patients
-        //upsert by externalId
     }
 }
