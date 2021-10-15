@@ -404,6 +404,7 @@ const joinMe = () => {
   const register = {
     request: REQUEST_JOIN,
     room: myRoom,
+    id: mytoken,
     ptype: PUBLISH_TYPE_PUBLISHER,
     display: `${username}_${userProfileId}`,
     data: true,

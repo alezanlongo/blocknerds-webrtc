@@ -9,5 +9,7 @@ return [
     'janus.roomMaxMembersAllowed' => 9,
     'janus.record' => false,
     'janus.rec_dir' => '/opt/janus/share/janus/recordings',
+    'janus.audiocodec' => 'opus',
+    'janus.videocodec' => 'h264',
     'bsVersion' => '5.x',
 ];
