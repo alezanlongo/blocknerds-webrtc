@@ -7,6 +7,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use common\components\Athena\models\Insurance;
 use common\components\Athena\models\Patient;
+use common\components\AthenaComponent;
 use yii\web\NotFoundHttpException;
 
 class PatientInsuranceController extends \yii\web\Controller
@@ -16,8 +17,9 @@ class PatientInsuranceController extends \yii\web\Controller
     public function init()
     {
         parent::init();
-        $this->component = Yii::$app->athenaComponent;
-        $this->component->setPracticeid(195900);
+        $practiceId = Yii::$app->user->identity->ext_practice_id;
+        $this->component = Yii::createObject(AthenaComponent::class);
+        $this->component->setPracticeid($practiceId);
     }
 
     /**
