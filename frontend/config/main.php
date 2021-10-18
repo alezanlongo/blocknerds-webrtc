@@ -20,6 +20,13 @@ return [
     'components' => [
         'assetManager' => [
             'bundles' => [
+                'appendTimestamp' => true,
+                'yii\web\JqueryAsset' => [
+                    'js' => [
+                        YII_ENV_DEV ? 'jquery.js' : 'jquery.min.js',
+                    ]
+                ],
+               
                 AdminLteAsset::class => [
                     "css" => [
                         'css/adminlte.css',
