@@ -47,10 +47,9 @@ class SyncController extends Controller
             if( !$updateEventSubscription )
                 $this->component->patientsSubscription(self::PATIENT_EVENTS['UPDATE']);
 
-                $changedPatiendResult = $this->component->patientChanges();
-
+            $changedPatiendResult = $this->component->patientChanges();
             echo Table::widget([
-                'headers' => ['PatientID', 'DB Result'],
+                'headers' => ['ID', 'ExternalID', 'DB Result'],
                 'rows' => $changedPatiendResult,
             ]);
         } catch(\Exception  $e) {
