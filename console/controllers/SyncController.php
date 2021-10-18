@@ -54,6 +54,7 @@ class SyncController extends Controller
                 'rows' => $changedPatiendResult,
             ]);
         } catch(\Exception  $e) {
+            echo $e->getMessage()."\n";
             return ExitCode::UNSPECIFIED_ERROR;
         }
 

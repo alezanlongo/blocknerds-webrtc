@@ -21,7 +21,6 @@ class AthenaOauth
     {
         $data = [];
         $success =  FALSE;
-        $session = Yii::$app->session;
 
         $configurationModel = Configuration::find()->where([
             'type'          => 'AthenaToken',
@@ -48,7 +47,6 @@ class AthenaOauth
     {
         $data = [];
         $success =  FALSE;
-        $session = Yii::$app->session;
 
         $dataSession = json_decode($this->Authenticate(), TRUE);
         if((int)$dataSession['expirationTime'] < (int)time()){
@@ -124,13 +122,6 @@ class AthenaOauth
         if ($response->isOk) {
             $success = TRUE;
             $dataResponse['expirationTime'] = (time() + $dataResponse['expires_in']) - 60;
-            /*$data = [
-                'message'       => "",
-                'data'          => $dataResponse,
-                'success'       => $success,
-                'statusCode'    => $dataStatusCodeRespose
-            ];
-            $session->set('athenaAuth', $data);*/
         }else{
             $error = '';
             if(isset($dataResponse['error'])){
