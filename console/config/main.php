@@ -1,5 +1,6 @@
 <?php
 
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -20,7 +21,7 @@ return [
         'fixture' => [
             'class' => 'yii\console\controllers\FixtureController',
             'namespace' => 'common\fixtures',
-          ],
+        ],
     ],
     'components' => [
         'log' => [
@@ -30,6 +31,9 @@ return [
                     'levels' => ['error', 'warning'],
                 ],
             ],
+        ],
+        'janusEvents' => [
+            'class' => console\components\JanusEventLoggerComponent::class,
         ],
     ],
     'params' => $params,
