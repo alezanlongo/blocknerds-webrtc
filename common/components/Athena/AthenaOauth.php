@@ -19,6 +19,7 @@ class AthenaOauth
      */
     public function Authenticate($expired = FALSE)
     {
+        //REFACTORIZAR ESTE VALOR DEL PRACTICE ID
         $data = [];
         $success =  FALSE;
 
