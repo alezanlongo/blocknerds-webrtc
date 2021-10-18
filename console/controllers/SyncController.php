@@ -5,6 +5,7 @@ namespace console\controllers;
 use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
+use yii\console\widgets\Table;
 
 /**
  * Usage Example: yii sync/patient 195900
@@ -31,7 +32,6 @@ class SyncController extends Controller
 
     public function actionPatient($practiceId)
     {
-        //$this->component = Yii::$app->athenaComponent;
         $this->component->setPracticeid($practiceId);
         try {
             $subscriptionStatus = $this->component->retrievePatientSubscriptionStatus();
@@ -47,7 +47,12 @@ class SyncController extends Controller
             if( !$updateEventSubscription )
                 $this->component->patientsSubscription(self::PATIENT_EVENTS['UPDATE']);
 
-            $this->patientChanges();
+                $changedPatiendResult = $this->component->patientChanges();
+
+            echo Table::widget([
+                'headers' => ['PatientID', 'DB Result'],
+                'rows' => $changedPatiendResult,
+            ]);
         } catch(\Exception  $e) {
             return ExitCode::UNSPECIFIED_ERROR;
         }

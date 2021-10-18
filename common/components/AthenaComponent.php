@@ -429,17 +429,17 @@ class AthenaComponent extends Component
 
     public function patientChanges()
     {
-        //TODO
-        //call GET /patients/changed
-        //loop patients
-        //upsert by externalId
-    	$changedPatients = $this->client->getPracticeidPatientsChanged($this->practiceid
-        );
-
-        foreach( $changedPatients->patients as $patientApi ) {
-            $this->obtainPatient($patientApi->patientid, $patientApi);
+    	$changedPatients = $this->client->getPracticeidPatientsChanged($this->practiceid);
+        $changedPatiendResult = [];
+        try {
+            foreach( $changedPatients->patients as $patientApi ) {
+                $patientModel = $this->obtainPatient($patientApi->patientid, $patientApi);
+                $changedPatiendResult[$patientApi->patientid] = $patientModel->save();
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
         }
 
-        return $changedPatients;
+        return $changedPatiendResult;
     }
 }
