@@ -4211,9 +4211,10 @@ components:
           type: array
     PatientChanged:
       type: object
-      patients:
-        type: array
-        items:
-          $ref: '#/components/schemas/Patient'
-      totalcount:
-        type: integer
+      properties:
+        patients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Patient'
+        totalcount:
+          type: integer
