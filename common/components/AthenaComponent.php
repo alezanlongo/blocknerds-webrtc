@@ -410,8 +410,7 @@ class AthenaComponent extends Component
 
     public function retrievePatientSubscriptionStatus()
     {
-    	$subscriptionStatusApi = $this->client->getPracticeidPatientsChangedSubscription($this->practiceid
-        );
+    	$subscriptionStatusApi = $this->client->getPracticeidPatientsChangedSubscription($this->practiceid);
 
         return $subscriptionStatusApi;
     }
@@ -427,14 +426,14 @@ class AthenaComponent extends Component
         return $subscriptionStatusApi;
     }
 
-    public function patientChanges()
+    public function patientChanges(): array
     {
     	$changedPatients = $this->client->getPracticeidPatientsChanged($this->practiceid);
         $changedPatiendResult = [];
         try {
             foreach( $changedPatients->patients as $patientApi ) {
                 $patientModel = $this->obtainPatient($patientApi->patientid, $patientApi);
-                $changedPatiendResult[$patientApi->patientid] = $patientModel->save();
+                $changedPatiendResult[] = [$patientModel->id, $patientModel->externalId, $patientModel->save()];
             }
         } catch(\Exception $e) {
             throw $e;//TODO handle this
