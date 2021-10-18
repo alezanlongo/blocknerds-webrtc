@@ -1,8 +1,2 @@
-<?= '<?php' ?>
-
-/**
- * OpenAPI UrlRules
- *
- * This file is auto generated.
- */
-return <?= var_export($urls); ?>;
+<?php 
+include(__DIR__.'/vendor/cebe/yii2-openapi/src/generator/default/urls.php');

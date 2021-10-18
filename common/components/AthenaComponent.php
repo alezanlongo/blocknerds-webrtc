@@ -113,15 +113,20 @@ class AthenaComponent extends Component
     /**
      * @return Patient
      */
-    public function retrievePatient($patientid)
+    public function retrievePatient($patientId)
     {
         $patientModelApi = $this->client->getPracticeidPatientsPatientid(
             $this->practiceid,
-            $patientid
+            $patientId
         )[0];
 
+        return $this->obtainPatient($patientId, $patientModelApi);
+    }
+
+    protected function obtainPatient($patientId, $patientModelApi)
+    {
         $patient = Patient::find()
-            ->where(['externalId' => $patientid])
+            ->where(['externalId' => $patientId])
             ->one();
 
         if (!$patient) {
@@ -401,5 +406,40 @@ class AthenaComponent extends Component
         }
 
         return $patientCase->loadApiObject($patientCaseModelApi);
+    }
+
+    public function retrievePatientSubscriptionStatus()
+    {
+    	$subscriptionStatusApi = $this->client->getPracticeidPatientsChangedSubscription($this->practiceid
+        );
+
+        return $subscriptionStatusApi;
+    }
+
+    public function patientsSubscription($event)
+    {
+    	$subscriptionStatusApi = $this->client->postPracticeidPatientsChangedSubscription($this->practiceid, 
+            [
+                'eventname' => $event,
+            ]
+        );
+
+        return $subscriptionStatusApi;
+    }
+
+    public function patientChanges()
+    {
+    	$changedPatients = $this->client->getPracticeidPatientsChanged($this->practiceid);
+        $changedPatiendResult = [];
+        try {
+            foreach( $changedPatients->patients as $patientApi ) {
+                $patientModel = $this->obtainPatient($patientApi->patientid, $patientApi);
+                $changedPatiendResult[$patientApi->patientid] = $patientModel->save();
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
+        }
+
+        return $changedPatiendResult;
     }
 }

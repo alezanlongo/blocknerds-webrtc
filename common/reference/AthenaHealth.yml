@@ -1408,7 +1408,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/PatientChanged'
           description: Success
-      x-base-list-key: 'patients'
       operationId: getPracticeidPatientsChanged
       tags:
         - PatientSubscription
