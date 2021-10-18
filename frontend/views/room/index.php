@@ -59,13 +59,13 @@ $this->registerJs(
     'roomConfig'
 );
 
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
+// $this->registerJsFile(
+//     Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
+//     [
+//         'depends' => "yii\web\JqueryAsset",
+//         'position' => View::POS_END
+//     ]
+// );
 //$this->registerJsFile(
 //    Yii::$app->request->BaseUrl . '/js/countdown.js',
 //    [
@@ -74,20 +74,20 @@ $this->registerJsFile(
 //    ]
 //);
 
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/room.js',
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/boxesHandler.js',
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
+// $this->registerJsFile(
+//     Yii::$app->request->BaseUrl . '/js/room.js',
+//     [
+//         'depends' => "yii\web\JqueryAsset",
+//         'position' => View::POS_END
+//     ]
+// );
+// $this->registerJsFile(
+//     Yii::$app->request->BaseUrl . '/js/boxesHandler.js',
+//     [
+//         'depends' => "yii\web\JqueryAsset",
+//         'position' => View::POS_END
+//     ]
+// );
 
 $countdown = <<<'COUNTDOWN'
 const handleCountdown = (endTime) => {
