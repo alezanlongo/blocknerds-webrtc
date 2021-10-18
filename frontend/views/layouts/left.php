@@ -36,6 +36,13 @@ if (Url::home() === Yii::$app->request->url) {
     'icon' => 'far fa-bug',
     'visible' => !Yii::$app->user->isGuest,
   ];
+  $items[] =  [
+    'label' => 'Run echotest',
+    'template' => '<a class="nav-link" href="{url}">{icon}{label}</a>',
+    'url' => ['/diagnostic/echo-test'],
+    'icon' => 'far fa-bug',
+    'visible' => !Yii::$app->user->isGuest,
+  ];
 }
 $items[] = ['label' => 'Menu profile options ', 'header' => true];
 $items[] = ['label' => 'Profile', 'icon' => 'far fa-user-circle', 'url' => ['/user/edit-profile']];
