@@ -34,14 +34,14 @@ class DiagnosticController extends \yii\web\Controller
     
     public function actionEchoTest()
     {
-        $token = Yii::$app->getUser()->getIdentity()->auth_key;
-        
-        if(!Yii::$app->janusApi->isTokenStoraged($token)){
-            $res = Yii::$app->janusApi->addToken($token);
+        $hash = hash("sha256", Yii::$app->getUser()->getId());
+
+        if(!Yii::$app->janusApi->isTokenStoraged($hash)){
+            $res = Yii::$app->janusApi->addToken($hash);
         }
 
         return $this->render('echo-test', [
-            'token' => $token,
+            'token' => $hash,
         ]);
     }
 }
