@@ -567,8 +567,7 @@ class JanusApiComponent extends Component
 
     public function isTokenStoraged(string $token): bool
     {
-        $tokens = $this->getStoredTokens();    
-        
+        $tokens = $this->getStoredTokens() ?? [];    
         $res = array_search($token, array_column($tokens, 'token') );
 
         // = false, no token storaged
