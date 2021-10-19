@@ -14,6 +14,8 @@ tags:
     description: 'Person requesting a medical appointment'
   - name: PatientSubscription
     description: 'Person requesting a medical appointment Events'
+  - name: AppointmentSubscription
+    description: 'Appointment Events'
 paths:
   /v1/{practiceid}/patients:
     post:
@@ -1411,6 +1413,235 @@ paths:
       operationId: getPracticeidPatientsChanged
       tags:
         - PatientSubscription
+  /v1/{practiceid}/appointments/changed:
+    get:
+      summary: Get list of changes in appointment slots based on subscribed events
+      description: 'Retrieves the list of changes in appointments or appointment slots Note: This endpoint may rely on specific settings to be enabled in athenaNet Production to function properly that are not required in other environments. Please see <a href="https://docs.athenahealth.com/api/resources/best-practices-and-troubleshooting#Handling_Beta_APIs">Permissioned Rollout of APIs</a> for more information if you are experiencing issues.'
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed.
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: Patient ID. Multiple Patient IDs are allowed, either comma separated or with multiple values.
+          in: query
+          name: patientid
+          required: false
+          schema:
+            items:
+              type: integer
+            type: array
+        - description: Return copay information with the appointment data.
+          in: query
+          name: showcopay
+          required: false
+          schema:
+            type: boolean
+        - description: Include patient insurance information. Shows insurance packages for the appointment if any are selected, and all patient packages otherwise.
+          in: query
+          name: showinsurance
+          required: false
+          schema:
+            type: boolean
+        - description: Include patient information for each patient associated with an appointment.
+          in: query
+          name: showpatientdetail
+          required: false
+          schema:
+            type: boolean
+        - description: When showing patient detail for appointments, the patient information for patients with record restrictions and blocked patients will not be shown.  Setting this flag to true will show that information for those patients.
+          in: query
+          name: ignorerestrictions
+          required: false
+          schema:
+            type: boolean
+        - description: Department ID. Multiple departments are allowed, either comma separated or with multiple values.
+          in: query
+          name: departmentid
+          required: false
+          schema:
+            items:
+              type: integer
+            type: array
+        - description: Provider ID.  Multiple providers are allowed using comma separated values.
+          in: query
+          name: providerid
+          required: false
+          schema:
+            items:
+              type: integer
+            type: array
+        - description: See showprocessedstartdatetime.
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: Include claim information, if available, associated with an appointment.
+          in: query
+          name: showclaimdetail
+          required: false
+          schema:
+            type: boolean
+        - description: Include all remindercall related results, if available, associated with an appointment.
+          in: query
+          name: showremindercalldetail
+          required: false
+          schema:
+            type: boolean
+        - description: Show already processed changes.  This will show changes that you previously retrieved at some point after this datetime mm/dd/yyyy hh24:mi:ss (Eastern). Can be used to refetch data if there was an error, such as a timeout, and records are marked as already retrieved. This is intended to be used with showprocessedenddatetime and for a short period of time only. Also note that all messages will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1000, max 10000)Please note that this endpoint has a different default and max than normal.
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentChanged'
+          description: Success
+      operationId: getPracticeidAppointmentsChanged
+      tags:
+        - AppointmentSubscription
+  /v1/{practiceid}/appointments/changed/subscription:
+    get:
+      summary: Get list of appointment slot change subscription(s)
+      description: Retrieves  the list of events appointment slots which are modified
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: If this is set, we will include the UpdateSuggestedOverbooking event as if it is one of the default events. Otherwise we will ignore that it exists.
+          in: query
+          name: includesuggestedoverbooking
+          required: false
+          schema:
+            type: boolean
+        - description: If this is set, we will include the UpdateRemiderCall event as if it is one of the default events. Otherwise we will ignore that it exists.
+          in: query
+          name: includeremindercall
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentChangedSuscription'
+          description: Success
+      operationId: getPracticeidAppointmentsChangedSubscription
+      tags:
+        - AppointmentSubscription
+    post:
+      summary: Subscribe to all/specific change events for appointment slots
+      description: Subscribes for changed appointment slots events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentChangedSubscription200Response'
+          description: Success
+      operationId: postPracticeidAppointmentsChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                departmentids:
+                  description: 'For every New/Update Subscriptions complete list of departmentids should be passed. NOTE: Without DepartmentIDs entire Context/Practice will be subscribed.'
+                  items:
+                    type: integer
+                  type: array
+                eventname:
+                  description: By default, you are subscribed to all possible events.  If you only wish to subscribe to an individual event, pass the event name with this argument.
+                  type: string
+                includeremindercall:
+                  description: If this is set, we will include the UpdateRemiderCall event as if it is one of the default events. Otherwise we will ignore that it exists.
+                  type: boolean
+                includesuggestedoverbooking:
+                  description: If this is set, we will include the UpdateSuggestedOverbooking event as if it is one of the default events. Otherwise we will ignore that it exists.
+                  type: boolean
+              type: object
+        required: true
+      tags:
+        - AppointmentSubscription
+    delete:
+      summary: Unsubscribe to all/specific change events for appointment slots
+      description: Delete a specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: By default, you are unsubscribed from all possible events.  If you only wish to unsubscribe from an individual event, pass the event name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+        - description: If this is set, we will include the UpdateSuggestedOverbooking event as if it is one of the default events. Otherwise we will ignore that it exists.
+          in: query
+          name: includesuggestedoverbooking
+          required: false
+          schema:
+            type: boolean
+        - description: If this is set, we will include the UpdateRemiderCall event as if it is one of the default events. Otherwise we will ignore that it exists.
+          in: query
+          name: includeremindercall
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidAppointmentsChangedSubscription
+      tags:
+        - AppointmentSubscription
 components:
   schemas:
     Patient:
@@ -4217,3 +4448,36 @@ components:
             $ref: '#/components/schemas/Patient'
         totalcount:
           type: integer
+    AppointmentChanged:
+      type: object
+      properties:
+        appointments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PutAppointment200Response'
+        totalcount:
+          type: integer
+    AppointmentChangedSuscription:
+      type: object
+      properties:
+        status:
+          description: 'Will return one of following statuses: ACTIVE, INACTIVE, or PARTIAL. The PARTIAL status means that not all events are subscribed to. In the event of a problem, UNKNOWN may be returned.'
+          type: string
+        subscriptions:
+          description: List of events you are subscribed to.
+          items:
+            properties:
+              eventname:
+                description: Name of event
+                type: string
+            type: object
+          type: array
+    AppointmentChangedSubscription200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful.
+          enum:
+            - false
+            - true
+          type: string

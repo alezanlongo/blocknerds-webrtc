@@ -1,6 +1,7 @@
 <?php
 namespace common\components;
 
+use common\components\Athena\models\Appointment;
 use common\components\Athena\models\Checkin;
 use spec\Prophecy\Doubler\Generator\Node\ReturnTypeNodeSpec;
 use Yii;
@@ -121,19 +122,6 @@ class AthenaComponent extends Component
         )[0];
 
         return $this->obtainPatient($patientId, $patientModelApi);
-    }
-
-    protected function obtainPatient($patientId, $patientModelApi)
-    {
-        $patient = Patient::find()
-            ->where(['externalId' => $patientId])
-            ->one();
-
-        if (!$patient) {
-            return Patient::createFromApiObject($patientModelApi);
-        }
-
-        return $patient->loadApiObject($patientModelApi);
     }
 
 
@@ -441,4 +429,70 @@ class AthenaComponent extends Component
 
         return $changedPatiendResult;
     }
+
+
+    public function retrieveAppointmentSubscriptionStatus()
+    {
+        $subscriptionStatusApi = $this->client->getPracticeidAppointmentsChangedSubscription($this->practiceid);
+
+        return $subscriptionStatusApi;
+    }
+
+    public function appointmentsSubscription($event)
+    {
+        $subscriptionStatusApi = $this->client->postPracticeidAppointmentsChangedSubscription($this->practiceid,
+            [
+                'eventname' => $event,
+            ]
+        );
+
+        return $subscriptionStatusApi;
+    }
+
+
+    public function appointmentChanges(): array
+    {
+        $changedAppointmentss = $this->client->getPracticeidAppointmentsChanged($this->practiceid);
+        $changedAppointmentResult = [];
+        try {
+            foreach( $changedAppointmentss->appointments as $appointmentApi ) {
+                $appointmentModel = $this->obtainAppointment($appointmentApi->appointmentid, $appointmentApi);
+                $changedAppointmentResult[] = [$appointmentModel->id, $appointmentModel->externalId, $appointmentModel->save()];
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
+        }
+
+        return $changedAppointmentResult;
+    }
+
+
+    /* ================================= Begin  Protected methods ============================================== */
+    protected function obtainPatient($patientId, $patientModelApi)
+    {
+        $patient = Patient::find()
+            ->where(['externalId' => $patientId])
+            ->one();
+
+        if (!$patient) {
+            return Patient::createFromApiObject($patientModelApi);
+        }
+
+        return $patient->loadApiObject($patientModelApi);
+    }
+
+
+    protected function obtainAppointment($appointmentId, $appointmentModelApi)
+    {
+        $appointment = PutAppointment200Response::find()
+            ->where(['externalId' => $appointmentId])
+            ->one();
+
+        if (!$appointment) {
+            return PutAppointment200Response::createFromApiObject($appointmentModelApi);
+        }
+
+        return $appointment->loadApiObject($appointmentModelApi);
+    }
+    /* =================================== End  Protected methods ============================================== */
 }

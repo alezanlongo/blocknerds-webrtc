@@ -17,8 +17,7 @@ class PatientInsuranceController extends \yii\web\Controller
     public function init()
     {
         parent::init();
-        if($user = Yii::$app->user->identity)
-        {
+        if($user = Yii::$app->user->identity){
             $practiceId = $user->ext_practice_id;
             $this->component = Yii::createObject(AthenaComponent::class);
             $this->component->setPracticeid($practiceId);
