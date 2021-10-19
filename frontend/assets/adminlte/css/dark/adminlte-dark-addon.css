@@ -247,9 +247,6 @@ caption {
 .form-control::-moz-placeholder {
   color: #5a5a5a;
 }
-.form-control:-ms-input-placeholder {
-  color: #5a5a5a;
-}
 .form-control::placeholder {
   color: #5a5a5a;
 }
@@ -395,17 +392,10 @@ caption {
   color: transparent;
 }
 
-.form-floating > .form-control:-ms-input-placeholder {
-  color: transparent;
-}
-
 .form-floating > .form-control::placeholder {
   color: transparent;
 }
 .form-floating > .form-control:not(:-moz-placeholder-shown) ~ label {
-  opacity: 0.65;
-}
-.form-floating > .form-control:not(:-ms-input-placeholder) ~ label {
   opacity: 0.65;
 }
 .form-floating > .form-control:focus ~ label,
