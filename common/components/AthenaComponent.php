@@ -442,7 +442,9 @@ class AthenaComponent extends Component
     {
         $subscriptionStatusApi = $this->client->postPracticeidAppointmentsChangedSubscription($this->practiceid,
             [
-                'eventname' => $event,
+                'eventname'                     => $event,
+                'includeremindercall'           => TRUE,
+                'includesuggestedoverbooking'   => TRUE
             ]
         );
 
@@ -457,7 +459,22 @@ class AthenaComponent extends Component
         try {
             foreach( $changedAppointmentss->appointments as $appointmentApi ) {
                 $appointmentModel = $this->obtainAppointment($appointmentApi->appointmentid, $appointmentApi);
-                $changedAppointmentResult[] = [$appointmentModel->id, $appointmentModel->externalId, $appointmentModel->save()];
+                $row = [
+                    $appointmentModel->id,
+                    $appointmentModel->externalId,
+                    $appointmentModel->save(),
+                ];
+                if(property_exists($appointmentApi, 'encounterid')){
+                    if(!is_null($appointmentApi->encounterid)){
+                        $encounterModelApi = $this->client->getPracticeidChartEncounterEncounterid($this->practiceid, $appointmentApi->encounterid);
+                        $encounterModel = $this->obtainEncounter($appointmentApi->encounterid, $encounterModelApi[0]);
+
+                        array_push($row, $encounterModel->id);
+                        array_push($row, $encounterModel->externalId);
+                        array_push($row, $encounterModel->save());
+                    }
+                }
+                $changedAppointmentResult[] = $row;
             }
         } catch(\Exception $e) {
             throw $e;//TODO handle this
@@ -493,6 +510,19 @@ class AthenaComponent extends Component
         }
 
         return $appointment->loadApiObject($appointmentModelApi);
+    }
+
+    protected function obtainEncounter($encounterId, $encounterModelApi)
+    {
+        $encounter = Encounter::find()
+            ->where(['externalId' => $encounterId])
+            ->one();
+
+        if (!$encounter) {
+            return Encounter::createFromApiObject($encounterModelApi);
+        }
+
+        return $encounter->loadApiObject($encounterModelApi);
     }
     /* =================================== End  Protected methods ============================================== */
 }

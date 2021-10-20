@@ -79,23 +79,65 @@ class SyncController extends Controller
     public function actionAppointment($practiceId)
     {
         $this->component->setPracticeid($practiceId);
+
         try {
             $subscriptionStatus = $this->component->retrieveAppointmentSubscriptionStatus();
             $updateEventSubscription = false;
             if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
                 $updateEventSubscription = true;
             } else {
+                $eventSubscription = \stdClass::class;
                 foreach( $subscriptionStatus->subscriptions as $event) {
-                    if( $event['eventname'] == self::PATIENT_EVENTS['UPDATE'] )
+                    switch ($event['eventname']){
+                        case self::APPOINTMENT_EVENTS['SCHEDULEAPPOINTMENT']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['SCHEDULEAPPOINTMENT']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['CHECKIN']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['CHECKIN']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['CHECKOUT']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['CHECKOUT']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['UPDATEAPPOINTMENT']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['UPDATEAPPOINTMENT']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['CANCELAPPOINTMENT']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['CANCELAPPOINTMENT']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['UPDATEREMINDERCALL']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['UPDATEREMINDERCALL']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['UPDATESUGGESTEDOVERBOOKING']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['UPDATESUGGESTEDOVERBOOKING']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['FREEZEAPPOINTMENT']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['FREEZEAPPOINTMENT']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['UNFREEZEAPPOINTMENT']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['UNFREEZEAPPOINTMENT']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['DELETEAPPOINTMENT']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['DELETEAPPOINTMENT']);
+                        break;
+                        case self::APPOINTMENT_EVENTS['ADDAPPOINTMENTSLOT']:
+                            $eventSubscription = $this->component->appointmentsSubscription(self::APPOINTMENT_EVENTS['ADDAPPOINTMENTSLOT']);
+                        break;
+                    }
+
+                    if(property_exists($eventSubscription, 'succcess')){
                         $updateEventSubscription = true;
+                    }else{
+                        break;
+                    }
                 }
             }
-            if( !$updateEventSubscription )
-                $this->component->appointmentsSubscription(self::PATIENT_EVENTS['UPDATE']);
 
             $changedAppointmentResult = $this->component->appointmentChanges();
             echo Table::widget([
-                'headers' => ['ID', 'ExternalID', 'DB Result'],
+                'headers' => [
+                    'AppointmentID', 'AppointmentExternalID', 'DB Result',
+                    'EncounterID', 'EncounterExternalID', 'DB Result'
+                ],
                 'rows' => $changedAppointmentResult,
             ]);
         } catch(\Exception  $e) {
