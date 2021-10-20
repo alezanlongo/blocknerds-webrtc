@@ -147,3 +147,8 @@
 .modal {
   z-index: 999999 !important;
 }
+.option-content{
+  top: 0;
+    position: absolute;
+    width: 100%;
+}
