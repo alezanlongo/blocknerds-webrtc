@@ -1,7 +1,7 @@
 <?php
 
 use frontend\assets\adminlte\AdminLteAsset;
-use frontend\assets\fontawesome\FontAwesomeAsset;
+use frontend\assets\AppAsset;
 use yii\helpers\Html;
 
 /** @var \yii\web\View $this */
@@ -15,14 +15,8 @@ if (Yii::$app->controller->action->id === 'login') {
   );
 } else {
 
-  if (class_exists('backend\assets\AppAsset')) {
-    backend\assets\AppAsset::register($this);
-  } else {
-    frontend\assets\AppAsset::register($this);
-  }
-
+  AppAsset::register($this);
   AdminLteAsset::register($this);
-  // FontAwesomeAsset::register($this);
 ?>
 
   <?php $this->beginPage() ?>
@@ -48,11 +42,13 @@ if (Yii::$app->controller->action->id === 'login') {
     <?php $this->beginBody() ?>
     <div class="wrapper">
       <?= $this->render(
-        'header.php', []
+        'header.php',
+        []
       ) ?>
 
       <?= $this->render(
-        'left.php',[]
+        'left.php',
+        []
       )
       ?>
 
@@ -63,10 +59,6 @@ if (Yii::$app->controller->action->id === 'login') {
 
     </div>
 
-
-
-    <!-- <script src="/adminlte/js/adminlte.js"></script>
-    <script src="/adminlte/vendor/overlayscrollbars/js/OverlayScrollbars.min.js"></script> -->
     <?php $this->endBody() ?>
   </body>
 
