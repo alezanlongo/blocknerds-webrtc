@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\Athena\models\Encounter;
+use common\components\Athena\models\PutAppointment200Response;
 use common\components\AthenaComponent;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -107,6 +108,10 @@ class EncounterController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model = $this->component->updateEncounter($model);
             if($model->save()){
+                $appointment = $this->findModelAppointment($model->appointmentid);
+                $appointment->encounterid = $model->encounterid;
+                $appointment->save();
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
@@ -171,6 +176,10 @@ class EncounterController extends Controller
             foreach ($dataApiEncounters as $apiEncounter){
                 $model = $this->component->createEncounter($apiEncounter->toArray());
                 $model->save();
+
+                $appointment = $this->findModelAppointment($appointmentid);
+                $appointment->encounterid = $apiEncounter->encounterid;
+                $appointment->save();
             }
 
             return $this->redirect([
@@ -203,6 +212,16 @@ class EncounterController extends Controller
     protected function findModel($id)
     {
         if (($model = Encounter::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    protected function findModelAppointment($id)
+    {
+        if (($model = PutAppointment200Response::find()->where(['externalId' => $id])->one()) !== null) {
             return $model;
         }
 
