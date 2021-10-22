@@ -1,11 +1,11 @@
 <?php
 namespace common\components;
 
-use common\components\Athena\models\Appointment;
-use common\components\Athena\models\Checkin;
-use spec\Prophecy\Doubler\Generator\Node\ReturnTypeNodeSpec;
 use Yii;
 use common\components\Athena\AthenaClient;
+use common\components\Athena\models\Appointment;
+use common\components\Athena\models\Checkin;
+use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Encounter;
 use common\components\Athena\models\Patient;
@@ -16,6 +16,7 @@ use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
+use spec\Prophecy\Doubler\Generator\Node\ReturnTypeNodeSpec;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -515,6 +516,28 @@ class AthenaComponent extends Component
             );
 
         return $this->retrievePatientCase($patientCase->patientid, $patientCase->externalId);
+    }
+
+    public function getCloseReasons($patientCaseId, $flatten = false)
+    {
+        $closeReasonsModelsApi = $this->client->getPracticeidReferenceDocumentsPatientcaseClosereasons($this->practiceid,
+            ['patientcaseid' => $patientCaseId]
+        );
+
+        $closeReasonsModels = [];
+
+        foreach ($closeReasonsModelsApi  as $closeReasonsModelApi ) {
+            $closeReasonsModels[] =
+                CloseReason::createFromApiObject(
+                    $closeReasonsModelApi
+                );
+        }
+
+        if ($flatten) {
+            return array_column($closeReasonsModels, 'reason', 'reasonid');
+        }
+
+        return $closeReasonsModels;
     }
 
 

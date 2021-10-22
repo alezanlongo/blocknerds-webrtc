@@ -1732,6 +1732,35 @@ paths:
         required: true
       tags:
         - Document Type - Patient Case
+  /v1/{practiceid}/reference/documents/patientcase/closereasons:
+    get:
+      summary: Get list of close-reasons for patient cases
+      description: Retrieves a list of reasons to be used to close patient cases
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: denotes the id of the patient case.
+          in: query
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CloseReason'
+          description: Success
+      operationId: getPracticeidReferenceDocumentsPatientcaseClosereasons
+      tags:
+        - Document Type - Patient Case
 components:
   schemas:
     Patient:
@@ -4617,3 +4646,12 @@ components:
             - false
             - true
           type: string
+    CloseReason:
+      type: object
+      properties:
+        reason:
+          description: Human readable string for the reason.
+          type: string
+        reasonid:
+          description: ID of the reason.
+          type: integer
