@@ -17,9 +17,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Reassign Patient Case', ['patient-case/reassign', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-    </p>
-
-    <p>
         <?= Html::a('Close Patient Case', ['patient-case/close', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
 

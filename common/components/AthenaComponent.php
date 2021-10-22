@@ -540,6 +540,19 @@ class AthenaComponent extends Component
         return $closeReasonsModels;
     }
 
+    public function closePatientCase($patientCase, $closePatientCase)
+    {
+        $closedPatientCaseModelApi =
+            $this->client->putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidClose(
+                $patientCase->externalId,
+                $this->practiceid,
+                $patientCase->patientid,
+                $closePatientCase->toArray()
+            );
+
+        return $this->retrievePatientCase($patientCase->patientid, $patientCase->externalId);
+    }
+
 
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, $patientModelApi)

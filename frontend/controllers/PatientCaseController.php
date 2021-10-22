@@ -120,7 +120,7 @@ class PatientCaseController extends \yii\web\Controller
         $patientCase = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post())) {
-            $model = $this->component->reassignPatientCase(
+            $model = $this->component->closePatientCase(
                 $patientCase,
                 $model,
             );
