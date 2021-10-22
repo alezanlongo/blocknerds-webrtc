@@ -30,12 +30,14 @@ return [
                 AdminLteAsset::class => [
                     "css" => [
                         'css/adminlte.css',
+                        'css/sidebar.css',
                         'css/dark/adminlte-dark-addon.css',
                         'lib/overlayscrollbars/css/OverlayScrollbars.min.css',
                         'lib/@fortawesome/fontawesome-free/css/all.min.css',
                     ],
                     'js' => [
                         'js/adminlte.js',
+                        'js/sidebar.js',
                         'lib/overlayscrollbars/js/jquery.overlayScrollbars.min.js',
                     ],
                     // 'depends' => [BootstrapAsset::class]

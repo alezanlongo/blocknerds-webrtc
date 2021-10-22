@@ -23,6 +23,7 @@ if ($image === null) {
     </ul>
     <!-- Right side -->
     <ul class="navbar-nav ms-auto">
+      
       <li class="nav-item dropdown user-menu">
         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
           <img src="<?= $image ?>" class="user-image <?= $image ?> shadow" alt="User Image">
@@ -45,9 +46,14 @@ if ($image === null) {
               ['data-method' => 'post', 'class' => 'btn btn-default btn-flat float-end']
             ) ?>
           </li>
-
         </ul>
       </li>
+      <!-- <li class="nav-item">
+        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+          <i class="fas fa-th-large"></i>
+        </a>
+      </li> -->
     </ul>
   </div>
 </nav>
+

@@ -22,13 +22,25 @@ AdminLteAsset::register($this);
     <?php $this->head() ?>
 </head>
 
-<body class="login-page ">
+<body class="layout-fixed  ">
     <?php $this->beginBody() ?>
+    <div class="wrapper">
+        <?= $this->render(
+            'header-room.php',
+            []
+        ) ?>
+        <div class="content-wrapper">
+            <section class="content">
 
-    <?= $content ?>
-
+                <?= $content ?>
+            </section>
+        </div>
+    </div>
     <?php $this->endBody() ?>
+
 </body>
+
+
 
 </html>
 <?php $this->endPage() ?>

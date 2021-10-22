@@ -1050,38 +1050,38 @@ const kickMember = (index) => {
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////// HANDLING SIDEBAR
 ////////////////////////////////////////////////////////////////////////////////
-let targetActive = null;
-$(".option-side").on("click", (e) => {
-  const hrefControl =
-  $(e.target).attr("data-bs-target") ||
-  $(e.target).find("button").attr("data-bs-target");
-  if ($("#pills-tabContent").css("display") === "none") {
-    $("#pills-tabContent").css("display", "block");
-    targetActive = hrefControl;
-    dish()
-  } else {
-    if (targetActive === hrefControl) {
-      resetTabOnSidebar();
-    } else {
-      if (hrefControl !== null) {
-        targetActive = hrefControl;
-      }
-    }
-  }
-});
-const resetTabOnSidebar = () => {
-  $("#pills-tabContent").css("display", "none");
-  setTimeout(() => {
-    $(`.nav-link`).removeClass("active");
-    targetActive = null;
-    dish()
-  }, 10);
-};
-$(".option-side .icon-menu").on("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  $(e.target).parent().parent().trigger("click");
-});
+// let targetActive = null;
+// $(".option-side").on("click", (e) => {
+//   const hrefControl =
+//   $(e.target).attr("data-bs-target") ||
+//   $(e.target).find("button").attr("data-bs-target");
+//   if ($("#pills-tabContent").css("display") === "none") {
+//     $("#pills-tabContent").css("display", "block");
+//     targetActive = hrefControl;
+//     dish()
+//   } else {
+//     if (targetActive === hrefControl) {
+//       resetTabOnSidebar();
+//     } else {
+//       if (hrefControl !== null) {
+//         targetActive = hrefControl;
+//       }
+//     }
+//   }
+// });
+// const resetTabOnSidebar = () => {
+//   $("#pills-tabContent").css("display", "none");
+//   setTimeout(() => {
+//     $(`.nav-link`).removeClass("active");
+//     targetActive = null;
+//     dish()
+//   }, 10);
+// };
+// $(".option-side .icon-menu").on("click", (e) => {
+//   e.preventDefault();
+//   e.stopPropagation();
+//   $(e.target).parent().parent().trigger("click");
+// });
 
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////// HANDLING SIDEBAR -> ATTENDEES

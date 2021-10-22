@@ -49,14 +49,17 @@ if (Yii::$app->controller->action->id === 'login') {
       <?= $this->render(
         'left.php',
         []
-      )
-      ?>
+      ) ?>
 
       <?= $this->render(
         'content.php',
         ['content' => $content]
       ) ?>
 
+      <?= $this->render(
+        'right.php',
+        []
+      ) ?>
     </div>
 
     <?php $this->endBody() ?>
