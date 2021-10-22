@@ -40,7 +40,7 @@ return [
                         'js/sidebar.js',
                         'lib/overlayscrollbars/js/jquery.overlayScrollbars.min.js',
                     ],
-                    // 'depends' => [BootstrapAsset::class]
+                    // 'depends' => [FontAwesomeAsset::class]
                 ],
                 // BootstrapAsset::class => [
                 //     'css' => [],

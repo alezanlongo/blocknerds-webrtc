@@ -71,7 +71,6 @@ $(".btn-leave").on("click", () => {
 $(".btn-join-again").on("click", () => {
   $(".header-nav").show();
   $(".boxes").show();
-  // $(".sidebar").hide();
 
   $(".join-again").hide();
   publishOwnFeed(true);
@@ -213,7 +212,6 @@ const initJanus = () => {
               resetTabOnSidebar();
               $(".header-nav").hide();
               $(".boxes").hide();
-              // $(".sidebar").hide();
               $(".join-again").removeClass("d-none").show();
             },
           });
@@ -318,7 +316,6 @@ const handlingEvent = (objMessage) => {
       objMessage["reason"] &&
       objMessage["reason"] === "kicked"
     ) {
-      // TODO: handle kick
       alert("you are kicked");
       window.location.replace("/");
     } else {
@@ -336,8 +333,6 @@ const handlingEvent = (objMessage) => {
         $("#videoremote" + remoteFeed.rfindex).empty();
         $(".profile_id_" + remoteFeed.rfuser.idFeed).attr('style', 'color: transparent');
         $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").addClass('d-none').hide();
-        // $(`.box${remoteFeed.rfindex}`).hide();
-        // $(`.box${remoteFeed.rfindex} h1`).text("");
         feeds[remoteFeed.rfindex] = null;
         remoteFeed.detach();
       }
@@ -360,9 +355,7 @@ const handlingEvent = (objMessage) => {
       }
     }
     if (remoteFeed !== null) {
-      $("#remote" + remoteFeed.rfindex)
-        // .empty()
-        .hide();
+      $("#remote" + remoteFeed.rfindex).hide();
       $(".profile_id_" + remoteFeed.rfuser.idFeed).attr('style', 'color: transparent');;
       $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").addClass('d-none');
       $("#videoremote" + remoteFeed.rfindex).empty();
@@ -388,7 +381,6 @@ const handlingEvent = (objMessage) => {
       bootbox.alert(objMessage["error"]);
     }
   } else if (objMessage["kicked"]) {
-    // TODO: reset ui
     console.log("member ", objMessage["kicked"], "was kicked");
     const index = getIndexByMemberId(objMessage["kicked"]);
     if (!index) {
@@ -396,9 +388,6 @@ const handlingEvent = (objMessage) => {
     }
     $(`.box${index}`).hide();
     $(`#remotevideo${index}`).empty();
-    // TODO: improve text connect 
-    // $(`#attendee_${index}`).attr('style', 'color: transparent');
-    // $(`#attendee_${index} div.member-controls`).addClass('d-none');
     $(`.usernameFeed${index}`).text('')
     const classes = $(`#attendee_${index}`).attr('class').split(' ');
     const classProfileId = classes.find(c => c.includes('profile_id_'))
@@ -800,7 +789,6 @@ function toggleMute(forceMute = null) {
     },
   });
 
-  // $("#mute").html(muted ? "Unmute" : "Mute");
   if (muted) {
     $("#mute > i").removeClass("fa-microphone").addClass("fa-microphone-slash");
   } else {
