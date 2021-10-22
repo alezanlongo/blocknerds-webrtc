@@ -1687,6 +1687,51 @@ paths:
         required: true
       tags:
         - Document Type - Patient Case
+  /v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/close:
+    put:
+      summary: Close patient case document
+      description: Closes a specific patient case document
+      parameters:
+        - description: patientcaseid
+          in: path
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutClosePatient200Response'
+          description: Success
+      operationId: putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidClose
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestClosePatientCase'
+        required: true
+      tags:
+        - Document Type - Patient Case
 components:
   schemas:
     Patient:
@@ -4543,6 +4588,27 @@ components:
           description: >-
             String denoting the entity that the patientcase has been
             assigned to.
+          type: string
+        success:
+          description: Boolean to denote success or failure.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    RequestClosePatientCase:
+      properties:
+        actionreasonid:
+          description: Valid Document Action Reason ID for closure of Patient Case.
+          type: integer
+      required:
+        - actionreasonid
+      type: object
+    PutClosePatient200Response:
+      type: object
+      properties:
+        error:
+          description: String denoting the failure for cse closure.
           type: string
         success:
           description: Boolean to denote success or failure.

@@ -569,4 +569,24 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param patientcaseid
+     * @param practiceid
+     * @param patientid
+     * @return PutClosePatient200Response
+     */
+    public function putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidClose($patientcaseid, $practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/close';
+        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutClosePatient200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }
