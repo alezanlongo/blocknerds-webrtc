@@ -95,7 +95,7 @@
   width: 300px !important;
   height: auto !important;
   position: absolute;
-  /* z-index: 9999; */
+  z-index: 9;
   bottom: 0;
   right: 1%;
   margin: 0;

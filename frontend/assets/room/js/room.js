@@ -397,7 +397,9 @@ const handlingEvent = (objMessage) => {
     $(`.box${index}`).hide();
     $(`#remotevideo${index}`).empty();
     // TODO: improve text connect 
-    $(`#attendee_${index}`).attr('style', 'color: transparent');; 
+    $(`#attendee_${index}`).attr('style', 'color: transparent');
+    $(`#attendee_${index} div.member-controls`).addClass('d-none');
+
   }
 };
 const joinMe = () => {
