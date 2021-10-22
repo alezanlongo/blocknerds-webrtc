@@ -283,13 +283,10 @@ class JanusApiComponent extends Component
         return $members[\array_search($token, \array_column($members, 'token'))]['id'] ?? null;
     }
 
-    public function kickMember(string $roomUuid, string $token, string $memberId)
+    public function kickMember(string $roomUuid, string $token)
     {
         $this->attach('janus.plugin.videoroom');
         $memberTokenId = $this->getMemberRoomToken($roomUuid, $token);
-        if (!$memberTokenId || $memberTokenId !== $memberId) {
-            return false;
-        }
 
         $res = $this->apiCall(
             'POST',
@@ -297,7 +294,7 @@ class JanusApiComponent extends Component
                 'janus' => 'message',
                 'body' => [
                     'request' => 'kick',
-                    'id' => $memberId,
+                    'id' => $memberTokenId,
                     'room' => $roomUuid
                 ],
                 'transaction' => $this->createRandStr(),
