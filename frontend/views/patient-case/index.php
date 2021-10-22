@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'documentclass',
             'documentsource',
             'patientid',
-            'priority',
+            'assignedto',
             'createddate',
             'status',
             [

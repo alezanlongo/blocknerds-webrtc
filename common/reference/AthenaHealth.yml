@@ -1642,6 +1642,51 @@ paths:
       operationId: deletePracticeidAppointmentsChangedSubscription
       tags:
         - AppointmentSubscription
+  /v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/assign:
+    put:
+      summary: Reassign patient case document
+      description: Reassigns a specific patient case document
+      parameters:
+        - description: patientcaseid
+          in: path
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutReassignPatient200Response'
+          description: Success
+      operationId: putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidAssign
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestReassignPatientCase'
+        required: true
+      tags:
+        - Document Type - Patient Case
 components:
   schemas:
     Patient:
@@ -4478,6 +4523,31 @@ components:
         success:
           description: Returns true/false if the operation was successful.
           enum:
+            - false
+            - true
+          type: string
+    RequestReassignPatientCase:
+      properties:
+        username:
+          description: >-
+            AthenNet user to whom the case is being reassigned to.This
+            parameter is case-sensitive.
+          type: string
+      required:
+        - username
+      type: object
+    PutReassignPatient200Response:
+      type: object
+      properties:
+        assignedto:
+          description: >-
+            String denoting the entity that the patientcase has been
+            assigned to.
+          type: string
+        success:
+          description: Boolean to denote success or failure.
+          enum:
+            - ''
             - false
             - true
           type: string

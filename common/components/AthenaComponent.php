@@ -405,7 +405,7 @@ class AthenaComponent extends Component
 
     public function patientsSubscription($event)
     {
-    	$subscriptionStatusApi = $this->client->postPracticeidPatientsChangedSubscription($this->practiceid, 
+    	$subscriptionStatusApi = $this->client->postPracticeidPatientsChangedSubscription($this->practiceid,
             [
                 'eventname' => $event,
             ]
@@ -481,6 +481,40 @@ class AthenaComponent extends Component
         }
 
         return $changedAppointmentResult;
+    }
+
+    public function getProvidersUsernames($flatten = false)
+    {
+        $providersModelsApi = $this->client->getPracticeidProviders($this->practiceid
+        );
+
+        $providersModels = [];
+
+        foreach ($providersModelsApi as $providersModelApi) {
+            $providersModels[] =
+                Provider::createFromApiObject(
+                    $providersModelApi
+                );
+        }
+
+        if ($flatten) {
+            return array_column($providersModels, 'providerusername', 'providerusername');
+        }
+
+        return $providersModels;
+    }
+
+    public function reassignPatientCase($patientCase, $reassignPatientCase)
+    {
+        $reassignedPatientCaseModelApi =
+            $this->client->putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidAssign(
+                $patientCase->externalId,
+                $this->practiceid,
+                $patientCase->patientid,
+                $reassignPatientCase->toArray()
+            );
+
+        return $this->retrievePatientCase($patientCase->patientid, $patientCase->externalId);
     }
 
 

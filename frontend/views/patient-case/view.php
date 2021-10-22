@@ -15,6 +15,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <p>
+        <?= Html::a('Reassign Patient Case', ['patient-case/reassign', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+    </p>
+
     <?= DetailView::widget([
         'model' => $model,
         'options' => [
@@ -28,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'documentclass',
             'documentsource',
             'patientid',
-            'priority',
+            'assignedto',
             'createddate',
             'status',
         ],
