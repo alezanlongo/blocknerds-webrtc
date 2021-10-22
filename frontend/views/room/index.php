@@ -60,36 +60,6 @@ $this->registerJs(
     'roomConfig'
 );
 
-// $this->registerJsFile(
-//     Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
-//     [
-//         'depends' => "yii\web\JqueryAsset",
-//         'position' => View::POS_END
-//     ]
-// );
-//$this->registerJsFile(
-//    Yii::$app->request->BaseUrl . '/js/countdown.js',
-//    [
-//        'depends' => "yii\web\JqueryAsset",
-//        'position' => View::POS_END
-//    ]
-//);
-
-// $this->registerJsFile(
-//     Yii::$app->request->BaseUrl . '/js/room.js',
-//     [
-//         'depends' => "yii\web\JqueryAsset",
-//         'position' => View::POS_END
-//     ]
-// );
-// $this->registerJsFile(
-//     Yii::$app->request->BaseUrl . '/js/boxesHandler.js',
-//     [
-//         'depends' => "yii\web\JqueryAsset",
-//         'position' => View::POS_END
-//     ]
-// );
-
 $countdown = <<<'COUNTDOWN'
 const handleCountdown = (endTime) => {
   const MILLISECONDS_STRING = "milliseconds";
@@ -141,8 +111,6 @@ $this->title = 'The Room';
             'is_owner' => $is_owner,
         ]
     ) ?>
-
-
 
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>

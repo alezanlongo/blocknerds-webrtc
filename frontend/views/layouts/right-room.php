@@ -2,14 +2,14 @@
 
 use yii\helpers\Html;
 ?>
-<aside class="control-sidebar control-sidebar-dark">
+<aside class="control-sidebar control-sidebar-dark" >
     <!-- Control sidebar content goes here -->
     <ul class="nav nav-pills mb-3 d-flex justify-content-around" id="pills-tab" role="tablist">
         <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
             <button class="nav-link" id="pills-settings-tab" data-bs-toggle="pill" data-bs-target="#pills-settings" type="button" role="tab" aria-controls="pills-settings" aria-selected="true"><i class="fas fa-cog icon-menu"></i></button>
         </li>
-        <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Participant">
-            <button class="nav-link" id="pills-attendees-tab" data-bs-toggle="pill" data-bs-target="#pills-attendees" type="button" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></button>
+        <li class="nav-item option-side " role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Participant">
+            <button class="nav-link active" id="pills-attendees-tab" data-bs-toggle="pill" data-bs-target="#pills-attendees" type="button" role="tab" aria-controls="pills-attendees" aria-selected="false"><i class="fas fa-users icon-menu"></i></button>
         </li>
         <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
             <button class="nav-link" id="pills-chat-tab" data-bs-toggle="pill" data-bs-target="#pills-chat" type="button" role="tab" aria-controls="pills-chat" aria-selected="false"><i class="fas fa-comments icon-menu"></i></button>
