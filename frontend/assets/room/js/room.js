@@ -397,8 +397,12 @@ const handlingEvent = (objMessage) => {
     $(`.box${index}`).hide();
     $(`#remotevideo${index}`).empty();
     // TODO: improve text connect 
-    $(`#attendee_${index}`).attr('style', 'color: transparent');
-    $(`#attendee_${index} div.member-controls`).addClass('d-none');
+    // $(`#attendee_${index}`).attr('style', 'color: transparent');
+    // $(`#attendee_${index} div.member-controls`).addClass('d-none');
+    $(`.usernameFeed${index}`).text('')
+    const classes = $(`#attendee_${index}`).attr('class').split(' ');
+    const classProfileId = classes.find(c => c.includes('profile_id_'))
+    $(`#attendee_${index}`).removeClass(classProfileId).addClass('d-none').hide();
 
   }
 };
