@@ -31,7 +31,6 @@ AdminLteAsset::register($this);
         ) ?>
         <div class="content-wrapper">
             <section class="content">
-
                 <?= $content ?>
             </section>
         </div>

@@ -60,6 +60,7 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
+    $('.main-header').removeClass('d-none').show()
     initJanus();
   }
 });
@@ -70,15 +71,13 @@ $(".btn-leave").on("click", () => {
 $(".btn-join-again").on("click", () => {
   $(".header-nav").show();
   $(".boxes").show();
-  $(".sidebar").hide();
-  resetTabOnSidebar();
+  // $(".sidebar").hide();
 
   $(".join-again").hide();
   publishOwnFeed(true);
 });
 
 const initJanus = () => {
-  console.log('Token', mytoken);
   Janus.init({
     debug: "all",
     callback: () => {
@@ -211,9 +210,10 @@ const initJanus = () => {
                 " ::: Got a cleanup notification: we are unpublished now :::"
               );
               myStream = null;
+              resetTabOnSidebar();
               $(".header-nav").hide();
               $(".boxes").hide();
-              $(".sidebar").hide();
+              // $(".sidebar").hide();
               $(".join-again").removeClass("d-none").show();
             },
           });
@@ -1082,6 +1082,9 @@ const kickMember = (index) => {
 //   e.stopPropagation();
 //   $(e.target).parent().parent().trigger("click");
 // });
+const resetTabOnSidebar = () => {
+  $('.control-sidebar').ControlSidebar('collapse');
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////// HANDLING SIDEBAR -> ATTENDEES

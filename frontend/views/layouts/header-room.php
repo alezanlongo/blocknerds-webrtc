@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 ?>
 
-<nav class="main-header navbar navbar-expand navbar-light m-0">
+<nav class="main-header navbar navbar-expand navbar-light m-0 header-nav d-none">
   <div class="container-fluid">
     <div class=" flex-grow-1 text-center">
       <span class="spanCountdown h4 text-danger"></span>
