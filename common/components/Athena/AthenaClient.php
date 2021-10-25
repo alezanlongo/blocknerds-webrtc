@@ -422,6 +422,26 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
         }
     }
     /**
+     * @param patientcaseid
+     * @param practiceid
+     * @param patientid
+     * @return PostPatientCase200Response
+     */
+    public function putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid($patientcaseid, $practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}';
+        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PostPatientCase200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
      * @param practiceid
      * @return ChangedSubscription
      */
@@ -609,6 +629,67 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
         $dataResponse = $this->callMethod($path, 'get' , $query);
         if($dataResponse['success']){
             return new \common\components\Athena\apiModels\PatientCaseChangedApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param patientcaseid
+     * @param practiceid
+     * @param patientid
+     * @return PutReassignPatient200Response
+     */
+    public function putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidAssign($patientcaseid, $practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/assign';
+        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutReassignPatient200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param patientcaseid
+     * @param practiceid
+     * @param patientid
+     * @return PutClosePatient200Response
+     */
+    public function putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidClose($patientcaseid, $practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/close';
+        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutClosePatient200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return CloseReason
+     */
+    public function getPracticeidReferenceDocumentsPatientcaseClosereasons($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/reference/documents/patientcase/closereasons';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['closereasons'])) ? $dataResponse['data']['closereasons'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\CloseReasonApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }

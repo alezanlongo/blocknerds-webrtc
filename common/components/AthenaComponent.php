@@ -1,12 +1,13 @@
 <?php
 namespace common\components;
 
+use Yii;
+use yii\base\Component;
+use common\components\Athena\AthenaClient;
 use common\components\Athena\models\Appointment;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\models\Checkin;
-use spec\Prophecy\Doubler\Generator\Node\ReturnTypeNodeSpec;
-use Yii;
-use common\components\Athena\AthenaClient;
+use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Encounter;
 use common\components\Athena\apiModels\EncounterApi;
@@ -20,7 +21,6 @@ use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
-use yii\base\Component;
 
 class AthenaComponent extends Component
 {
@@ -401,7 +401,7 @@ class AthenaComponent extends Component
 
     public function patientsSubscription($event)
     {
-    	$subscriptionStatusApi = $this->client->postPracticeidPatientsChangedSubscription($this->practiceid, 
+    	$subscriptionStatusApi = $this->client->postPracticeidPatientsChangedSubscription($this->practiceid,
             [
                 'eventname' => $event,
             ]
@@ -509,6 +509,95 @@ class AthenaComponent extends Component
         }
 
         return $changedPatientCasesResult;
+    }
+
+    public function getProvidersUsernames($flatten = false)
+    {
+        $providersModelsApi = $this->client->getPracticeidProviders($this->practiceid
+        );
+
+        $providersModels = [];
+
+        foreach ($providersModelsApi as $providersModelApi) {
+            $providersModels[] =
+                Provider::createFromApiObject(
+                    $providersModelApi
+                );
+        }
+
+        if ($flatten) {
+            return array_column($providersModels, 'providerusername', 'providerusername');
+        }
+
+        return $providersModels;
+    }
+
+    public function reassignPatientCase($patientCase, $reassignPatientCase)
+    {
+        $reassignedPatientCaseModelApi =
+            $this->client->putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidAssign(
+                $patientCase->externalId,
+                $this->practiceid,
+                $patientCase->patientid,
+                $reassignPatientCase->toArray()
+            );
+
+        return $this->retrievePatientCase($patientCase->patientid, $patientCase->externalId);
+    }
+
+    public function getCloseReasons($patientCaseId, $flatten = false)
+    {
+        $closeReasonsModelsApi = $this->client->getPracticeidReferenceDocumentsPatientcaseClosereasons($this->practiceid,
+            ['patientcaseid' => $patientCaseId]
+        );
+
+        $closeReasonsModels = [];
+
+        foreach ($closeReasonsModelsApi  as $closeReasonsModelApi ) {
+            $closeReasonsModels[] =
+                CloseReason::createFromApiObject(
+                    $closeReasonsModelApi
+                );
+        }
+
+        if ($flatten) {
+            return array_column($closeReasonsModels, 'reason', 'reasonid');
+        }
+
+        return $closeReasonsModels;
+    }
+
+    public function closePatientCase($patientCase, $closePatientCase)
+    {
+        $closedPatientCaseModelApi =
+            $this->client->putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidClose(
+                $patientCase->externalId,
+                $this->practiceid,
+                $patientCase->patientid,
+                $closePatientCase->toArray()
+            );
+
+        return $this->retrievePatientCase($patientCase->patientid, $patientCase->externalId);
+    }
+
+    /**
+     * @return Patient
+     */
+
+    public function updatePatientCase($patientCase, $updatePatientCase)
+    {
+        $patientCaseModelApi =
+            $this->client->putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid(
+                $patientCase->externalId,
+                $this->practiceid,
+                $patientCase->patientid,
+                $updatePatientCase->toArray()
+            );
+
+        return $this->retrievePatientCase(
+            $patientCase->patientid,
+            $patientCaseModelApi->patientcaseid
+        );
     }
 
     /* ================================= Begin  Protected methods ============================================== */

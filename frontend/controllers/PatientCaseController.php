@@ -3,10 +3,12 @@
 namespace frontend\controllers;
 
 use Yii;
+use common\components\AthenaComponent;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
+use common\components\Athena\models\RequestClosePatientCase;
 use common\components\Athena\models\RequestCreatePatientCase;
-use common\components\AthenaComponent;
+use common\components\Athena\models\RequestReassignPatientCase;
 use yii\data\ActiveDataProvider;
 
 class PatientCaseController extends \yii\web\Controller
@@ -69,6 +71,99 @@ class PatientCaseController extends \yii\web\Controller
             'providers' => $this->component->getProviders(true),
             'departments' => $this->component->getDepartments(true),
             'patient' => $patient,
+            'documentsources' => $this->getDocumentSources(),
+            'documentsubclasses' => $this->getDocumentSubclasses(),
+        ]);
+    }
+
+    /**
+     * Reassigns an existing Patient Case model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionReassign($id)
+    {
+        $model = new RequestReassignPatientCase;
+
+        if ($model->load(Yii::$app->request->post())) {
+            $patientCase = $this->findModel($id);
+            $model = $this->component->reassignPatientCase(
+                $patientCase,
+                $model,
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+            else{
+                var_dump($model->getErrors());die;
+            }
+        }
+
+        return $this->render('reassign', [
+            'usernames' => $this->component->getProvidersUsernames(true),
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Closes an existing Patient Case model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionClose($id)
+    {
+        $model = new RequestClosePatientCase;
+        $patientCase = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->closePatientCase(
+                $patientCase,
+                $model,
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+            else{
+                var_dump($model->getErrors());die;
+            }
+        }
+
+        return $this->render('close', [
+            'closeReasons' => $this->component->getCloseReasons($patientCase->externalId,true),
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Patient Case model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
+    {
+        $model = new RequestCreatePatientCase;
+        $patientCase = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->updatePatientCase(
+                $patientCase,
+                $model,
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+            'patientCase' => $patientCase,
+            'providers' => $this->component->getProviders(true),
             'documentsources' => $this->getDocumentSources(),
             'documentsubclasses' => $this->getDocumentSubclasses(),
         ]);
