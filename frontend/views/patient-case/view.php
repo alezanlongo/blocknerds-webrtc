@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
+        <?= Html::a('Update Patient Case', ['patient-case/update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Reassign Patient Case', ['patient-case/reassign', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Close Patient Case', ['patient-case/close', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
@@ -33,6 +34,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'documentclass',
             'documentsource',
             'patientid',
+            'providerid',
             'assignedto',
             'createddate',
             'status',

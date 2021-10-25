@@ -77,7 +77,7 @@ class PatientCaseController extends \yii\web\Controller
     }
 
     /**
-     * Updates an existing Patient Case model.
+     * Reassigns an existing Patient Case model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -108,7 +108,7 @@ class PatientCaseController extends \yii\web\Controller
     }
 
     /**
-     * Updates an existing Patient Case model.
+     * Closes an existing Patient Case model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -135,6 +135,37 @@ class PatientCaseController extends \yii\web\Controller
         return $this->render('close', [
             'closeReasons' => $this->component->getCloseReasons($patientCase->externalId,true),
             'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Patient Case model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
+    {
+        $model = new RequestCreatePatientCase;
+        $patientCase = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->updatePatientCase(
+                $patientCase,
+                $model,
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+            'patientCase' => $patientCase,
+            'providers' => $this->component->getProviders(true),
+            'documentsources' => $this->getDocumentSources(),
+            'documentsubclasses' => $this->getDocumentSubclasses(),
         ]);
     }
 

@@ -553,6 +553,26 @@ class AthenaComponent extends Component
         return $this->retrievePatientCase($patientCase->patientid, $patientCase->externalId);
     }
 
+    /**
+     * @return Patient
+     */
+
+    public function updatePatientCase($patientCase, $updatePatientCase)
+    {
+        $patientCaseModelApi =
+            $this->client->putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid(
+                $patientCase->externalId,
+                $this->practiceid,
+                $patientCase->patientid,
+                $updatePatientCase->toArray()
+            );
+
+        return $this->retrievePatientCase(
+            $patientCase->patientid,
+            $patientCaseModelApi->patientcaseid
+        );
+    }
+
 
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, $patientModelApi)
