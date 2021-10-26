@@ -1,5 +1,7 @@
 <?php
 
+use frontend\assets\adminlte\AdminLteAsset;
+use frontend\assets\AppAsset;
 use yii\helpers\Html;
 
 /** @var \yii\web\View $this */
@@ -7,71 +9,62 @@ use yii\helpers\Html;
 
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
 if (Yii::$app->controller->action->id === 'login') {
-    /**
-     * Do not use this code in your template. Remove it. 
-     * Instead, use the code  $this->layout = '//main-login'; in your controller.
-     */
-    echo $this->render(
-        'main-login',
-        ['content' => $content]
-    );
+  echo $this->render(
+    'main-login',
+    ['content' => $content]
+  );
 } else {
 
-    if (class_exists('backend\assets\AppAsset')) {
-        backend\assets\AppAsset::register($this);
-    } else {
-        frontend\assets\AppAsset::register($this);
-    }
-
-    dmstr\adminlte\web\AdminLteAsset::register($this);
-    dmstr\adminlte\web\FontAwesomeAsset::register($this);
-
-    $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
+  AppAsset::register($this);
+  AdminLteAsset::register($this);
 ?>
-    <?php $this->beginPage() ?>
-    <!DOCTYPE html>
-    <html lang="<?= Yii::$app->language ?>">
 
-    <head>
-        <meta charset="<?= Yii::$app->charset ?>" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <?= Html::csrfMetaTags() ?>
-        <title><?= Html::encode($this->title) ?></title>
-        <?php $this->head() ?>
-        <style>
-        .alert-style {
-            width: fit-content;
-            float: right;
-        }
+  <?php $this->beginPage() ?>
+  <!DOCTYPE html>
+  <html lang="<?= Yii::$app->language ?>">
+
+  <head>
+    <meta charset="<?= Yii::$app->charset ?>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?= Html::csrfMetaTags() ?>
+    <title><?= Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <style>
+      .alert-style {
+        width: fit-content;
+        float: right;
+      }
     </style>
-    </head>
+  </head>
 
-    <!-- NOTE: remove sidebar-collapse class in order to when you refresh the screen, the sidebar is be collapsed -->
-    <body class="hold-transition skin-blue sidebar-mini dark-mode sidebar-collapse">
-        <?php $this->beginBody() ?>
-        <div class="wrapper">
+  <body class="layout-fixed ">
+    <?php $this->beginBody() ?>
+    <div class="wrapper">
+      <?= $this->render(
+        'header.php',
+        []
+      ) ?>
 
-            <?= $this->render(
-                'header.php',
-                ['directoryAsset' => $directoryAsset]
-            ) ?>
+      <?= $this->render(
+        'left.php',
+        []
+      ) ?>
 
-            <?= $this->render(
-                'left.php',
-                ['directoryAsset' => $directoryAsset]
-            )
-            ?>
+      <?= $this->render(
+        'content.php',
+        ['content' => $content]
+      ) ?>
 
-            <?= $this->render(
-                'content.php',
-                ['content' => $content, 'directoryAsset' => $directoryAsset]
-            ) ?>
+      <?= $this->render(
+        'right.php',
+        []
+      ) ?>
+    </div>
 
-        </div>
+    <?php $this->endBody() ?>
+  </body>
 
-        <?php $this->endBody() ?>
-    </body>
-
-    </html>
-    <?php $this->endPage() ?>
+  </html>
+  <?php $this->endPage() ?>
 <?php } ?>

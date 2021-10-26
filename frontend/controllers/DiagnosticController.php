@@ -2,7 +2,9 @@
 
 namespace frontend\controllers;
 
+use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\VarDumper;
 
 class DiagnosticController extends \yii\web\Controller
 {
@@ -14,7 +16,7 @@ class DiagnosticController extends \yii\web\Controller
         return [
             'access' => [
                 "class" => AccessControl::class,
-                "only" => ['index'],
+                "only" => ['index', 'echo-test'],
                 "rules" => [
                     [
                         'allow' => true,
@@ -28,5 +30,18 @@ class DiagnosticController extends \yii\web\Controller
     public function actionIndex()
     {
         return $this->render('index');
+    }
+    
+    public function actionEchoTest()
+    {
+        $hash = hash("sha256", Yii::$app->getUser()->getId());
+
+        if(!Yii::$app->janusApi->isTokenStoraged($hash)){
+            $res = Yii::$app->janusApi->addToken($hash);
+        }
+
+        return $this->render('echo-test', [
+            'token' => $hash,
+        ]);
     }
 }

@@ -39,27 +39,8 @@ echo $cardNextOrInProgressMeetingWidget;
 Pjax::end();
 ?>
 
-<div class="mb-5">
-    <?php
 
-    $form = ActiveForm::begin(['action' => 'room/create']);
-
-    echo Html::submitButton("Start a quick meeting", ["class" => "btn btn-primary btn-lg", "id" => "btnStart"]);
-
-    echo Html::a(
-        "Planning a meeting",
-        null,
-        [
-            'onclick' => "$('#planningMeeting').modal('show');return false;",
-            "class" => "btn btn-outline-secondary btn-lg ml-2", "id" => "btnPlanning"
-        ]
-    );
-
-    ActiveForm::end();
-    ?>
-</div>
-
-<div id="calendar" class="text-white"></div>
+<div id="calendar" class="mt-5"></div>
 
 <?php
 Pjax::begin(['id' => 'calendar-request', 'timeout' => false, "options" => ["class" => ""]]);
