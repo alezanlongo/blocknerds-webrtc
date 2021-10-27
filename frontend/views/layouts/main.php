@@ -60,6 +60,9 @@ if (Yii::$app->controller->action->id === 'login') {
         'right.php',
         []
       ) ?>
+      <div class="chat-zone d-flex justify-content-end">
+
+      </div>
     </div>
 
     <?php $this->endBody() ?>

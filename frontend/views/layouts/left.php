@@ -2,6 +2,8 @@
 
 /** @var \yii\web\View $this */
 
+use common\models\User;
+use common\widgets\chat\ChatWidget;
 use frontend\widgets\adminlte\Menu;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -11,6 +13,13 @@ use yii\helpers\VarDumper;
 
 $items = [];
 $items[] = ['label' => 'Home', 'icon' => 'fas fa-home', 'url' => ['/']];
+$items[] =  [
+  'label' => 'Chat',
+  'template' => '<a class="nav-link" href="{url}" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvasScrolling">{icon}{label}</a>',
+  'url' => '#offcanvasScrolling',
+  'icon' => 'far fa-comments"',
+  'visible' => !Yii::$app->user->isGuest,
+];
 
 if (Url::home() === Yii::$app->request->url) {
   $items[] = ['template' => '<hr>'];
@@ -55,13 +64,13 @@ $items[] = [
   'icon' => 'sign-out-alt',
   'visible' => !Yii::$app->user->isGuest,
 ];
-
+$users = User::find()->all();
 
 ?>
 
 <aside class="main-sidebar sidebar-bg-dark sidebar-color-primary shadow">
   <div class="brand-container">
-    <?= Html::a('<img class="brand-image img-circle elevation-3 opacity-80 shadow" href="javascript:;" src="' . ( '/img/AdminLTELogo.png') . '" alt="APP"><span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
+    <?= Html::a('<img class="brand-image img-circle elevation-3 opacity-80 shadow" href="javascript:;" src="' . ('/img/AdminLTELogo.png') . '" alt="APP"><span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
     <a class="pushmenu mx-1" data-lte-toggle="sidebar-mini" href="javascript:;" role="button"><i class="fas fa-angle-double-left"></i></a>
   </div>
   <!-- Sidebar -->
@@ -77,3 +86,16 @@ $items[] = [
   </div>
   <!-- /.sidebar -->
 </aside>
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Chat</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+  <?= 
+      ChatWidget::widget([
+        'users'=> $users,
+      ])  
+    ?>
+  </div>
+</div>
