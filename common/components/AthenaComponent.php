@@ -573,6 +573,25 @@ class AthenaComponent extends Component
         );
     }
 
+    /**
+     * @return Patient
+     */
+
+    public function addActionNote($patientCase, $actionNote)
+    {
+        $actionNoteModelApi =
+            $this->client->postPracticeidDocumentsPatientcasePatientcaseidActions(
+                $patientCase->externalId,
+                $this->practiceid,
+                $actionNote->toArray()
+            );
+
+        return $this->retrievePatientCase(
+            $patientCase->patientid,
+            $patientCase->externalId
+        );
+    }
+
 
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, $patientModelApi)

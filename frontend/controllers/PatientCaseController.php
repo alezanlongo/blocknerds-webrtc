@@ -6,6 +6,7 @@ use Yii;
 use common\components\AthenaComponent;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
+use common\components\Athena\models\RequestActionNote;
 use common\components\Athena\models\RequestClosePatientCase;
 use common\components\Athena\models\RequestCreatePatientCase;
 use common\components\Athena\models\RequestReassignPatientCase;
@@ -179,6 +180,32 @@ class PatientCaseController extends \yii\web\Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Add note to Patient Case model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionAddActionNote($id)
+    {
+        $model = new RequestActionNote;
+        $patientCase = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->addActionNote(
+                $patientCase,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('action-note', [
+            'model' => $model,
         ]);
     }
 

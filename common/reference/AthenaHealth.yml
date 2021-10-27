@@ -1805,6 +1805,87 @@ paths:
       operationId: getPracticeidReferenceDocumentsPatientcaseClosereasons
       tags:
         - Document Type - Patient Case
+  /v1/{practiceid}/documents/patientcase/{patientcaseid}/actions:
+    get:
+      summary: Get action note for given patient case
+      description: Retrieves action note information of a specific patient case document
+      parameters:
+        - description: patientcaseid
+          in: path
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActionNote'
+          description: Success
+      operationId: getPracticeidDocumentsPatientcasePatientcaseidActions
+      tags:
+        - Document Type - Patient Case
+    post:
+      summary: >-
+        This is used to update an action note on a specific document of a type
+        indicated by the URI.
+      description: Returns a success message pertaining to the update.
+      parameters:
+        - description: patientcaseid
+          in: path
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostActionNote200Response'
+          description: Success
+      operationId: postPracticeidDocumentsPatientcasePatientcaseidActions
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestActionNote'
+        required: true
+      tags:
+        - Document Type - Patient Case
 components:
   schemas:
     Patient:
@@ -4699,3 +4780,65 @@ components:
         reasonid:
           description: ID of the reason.
           type: integer
+    RequestActionNote:
+      properties:
+        actionnote:
+          description: The new action note to add to the document.
+          type: string
+      required:
+        - actionnote
+      type: object
+    PostActionNote200Response:
+      type: object
+      properties:
+        errormessage:
+          description: >-
+            If there was an error with this call and SUCCESS is set to
+            false, this field may provide additional information.
+          type: string
+        newdocumentid:
+          description: >-
+            The document ID of newly created document as a result of
+            action of Deny-New Prescription To Follow (DNTF).
+          type: string
+        success:
+          description: Returns true if the update was a success.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        versiontoken:
+          description: >-
+            A token representing the current state of this document.
+            Will only be set if VERSIONTOKEN was originally sent to
+            the endpoint.
+          type: string
+    ActionNote:
+      type: object
+      properties:
+        actionnote:
+          description: The action notes that are attached to the document.
+          type: string
+        assignedto:
+          description: >-
+            This field will describe who was assigned this document
+            during this document action.
+          type: string
+        createdby:
+          description: >-
+            The username of the person that created this document
+            action.
+          type: string
+        createddatetime:
+          description: The datetime this action note was created.
+          type: string
+        patientid:
+          description: The patient ID this document is tied to.
+          type: integer
+        priority:
+          description: Priority given for this document action.
+          type: integer
+        status:
+          description: Status given for this document action.
+          type: string
