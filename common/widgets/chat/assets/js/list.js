@@ -1,7 +1,7 @@
 const openBox = (id, username) => {
     console.log('user',id, username)
     const user = {id, username}
-    $.post('/chat/open-chat', user).then(data=>{
+    $.post('/chat/get-chat', user).then(data=>{
         $('.chat-zone').append(chatBox(data, user))
     }).catch(err=>{
         console.log(err)
@@ -27,7 +27,7 @@ const sendMessage = (targetUserId) =>{
 }
 
 const chatBox = (content, userTarget) =>{
-    return `<div class="card direct-chat direct-chat-primary">
+    return `<div class="card direct-chat direct-chat-primary m-0">
     <div class="card-header">
       <h3 class="card-title">${userTarget.username}</h3>
 
@@ -43,13 +43,11 @@ const chatBox = (content, userTarget) =>{
         </button>
       </div>
     </div>
-    <!-- /.card-header -->
     <div class="card-body" id="card_collapse_${userTarget.id}">
       <!-- Conversations are loaded here -->
       <div class="direct-chat-messages">
         ${buildContent(content)}
       </div>
-     
     </div>
     <div class="card-footer">
         <div class="input-group">

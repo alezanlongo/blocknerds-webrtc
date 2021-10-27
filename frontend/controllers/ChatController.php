@@ -41,12 +41,21 @@ class ChatController extends Controller
         ];
     }
 
-    public function actionOpenChat()
+    public function actionSendMessage()
+    {
+        // TODO: send message
+    }
+
+    public function actionGetChat()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         // TODO: get message with pagination
         return [];
     }
+    public function actionRecentChat()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-   
+        return $this->generateRecentChat(4);
+    }
 }

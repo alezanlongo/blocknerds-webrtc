@@ -3,8 +3,10 @@
 /** @var \yii\web\View $this */
 
 use common\models\User;
-use common\widgets\chat\ChatWidget;
+use common\widgets\chat\ChatBoxWidget;
+use common\widgets\chat\ChatListWidget;
 use frontend\widgets\adminlte\Menu;
+use yii\bootstrap5\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
@@ -64,7 +66,21 @@ $items[] = [
   'icon' => 'sign-out-alt',
   'visible' => !Yii::$app->user->isGuest,
 ];
-$users = User::find()->all();
+
+function generateRecentChat($howMuch)
+{
+  $chats = [];
+
+  for ($i = 1; $i <= $howMuch; $i++) {
+    $chats[] = [
+      "id" => $i,
+      "chat_with" => "User$i",
+      "last_chat" => "something",
+    ];
+  }
+
+  return $chats;
+}
 
 ?>
 
@@ -88,14 +104,35 @@ $users = User::find()->all();
 </aside>
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Chat</h5>
+    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Recent Chats</h5>
+   <div class="btns">
+   <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#newChat">
+      <i class="fas fa-plus"></i>
+    </button>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+   </div>
   </div>
   <div class="offcanvas-body">
-  <?= 
-      ChatWidget::widget([
-        'users'=> $users,
-      ])  
+    <?=
+    ChatListWidget::widget([
+      'recentChat' => generateRecentChat(10),
+    ])
     ?>
   </div>
 </div>
+
+<?php 
+
+$users = User::find()->all();
+Modal::begin([
+  'title' => 'New Chat ',
+  'id' => 'newChat',
+]);
+
+echo ChatBoxWidget::widget([
+    'users'=> $users,
+]);
+
+Modal::end();
+
+?>

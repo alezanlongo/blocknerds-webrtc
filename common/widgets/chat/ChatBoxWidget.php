@@ -5,10 +5,12 @@ namespace common\widgets\chat;
 use yii\base\Widget;
 use yii\helpers\VarDumper;
 
-class ChatWidget extends Widget
+class ChatBoxWidget extends Widget
 {
 
     public $users = [];
+    public $chats = [];
+    public $user = null;
     public function init()
     {
         parent::init();
@@ -16,12 +18,15 @@ class ChatWidget extends Widget
 
     public function run()
     {
-        ChatWidgetAsset::register($this->getView());
+        ChatBoxWidgetAsset::register($this->getView());
 
         return $this->render(
-            '_list',
+            '_box',
             [
                 'users'=>$this->users,
+                'user'=> $this->user,
+                'chats'=> $this->chats,
+                'isNew' => count($this->users) > 0 && $this->user === null
             ]
         );
     }

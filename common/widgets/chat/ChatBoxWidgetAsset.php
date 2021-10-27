@@ -4,16 +4,16 @@ namespace common\widgets\chat;
 
 use yii\web\AssetBundle;
 
-class ChatWidgetAsset extends AssetBundle
+class ChatBoxWidgetAsset extends AssetBundle
 {
     public $sourcePath = '@common/widgets/chat/assets';
 
     public $js = [
-        'js/main.js',
+        'js/box.js',
     ];
 
     public $css = [
-        'css/main.css',
+        'css/box.css',
     ];
 
     public $depends = [
