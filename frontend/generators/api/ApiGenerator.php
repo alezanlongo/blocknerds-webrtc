@@ -379,6 +379,7 @@ class ApiGenerator extends ParentApiGenerator
                 }
 
                 $listKey = ( array_key_exists('x-list-key', $operation->getExtensions()) ) ? $operation->getExtensions()['x-list-key'] : null;
+                $apiModel = ( array_key_exists('x-api-model', $operation->getExtensions()) ) ? $operation->getExtensions()['x-api-model'] : null;
 
                 foreach ($operation->responses->getResponses() as $responseCode => $response){
                     foreach ($response->content as $responseType => $responseItem){
@@ -401,7 +402,8 @@ class ApiGenerator extends ParentApiGenerator
                             'operationId'   => $operation->operationId,
                             'schema'        => $arrSchema[(count($arrSchema) - 1)],
                             'flagList'      => $flagList,
-                            'listKey'      => $listKey,
+                            'listKey'       => $listKey,
+                            'apiModel'      => $apiModel,
                         ]);
                     }
                 }
