@@ -1844,6 +1844,7 @@ paths:
                   $ref: '#/components/schemas/ActionNote'
           description: Success
       operationId: getPracticeidDocumentsPatientcasePatientcaseidActions
+      x-list-key: 'actionnotes'
       tags:
         - Document Type - Patient Case
     post:

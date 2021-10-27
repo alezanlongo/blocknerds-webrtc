@@ -3,6 +3,7 @@ namespace common\components;
 
 use Yii;
 use common\components\Athena\AthenaClient;
+use common\components\Athena\models\ActionNote;
 use common\components\Athena\models\Appointment;
 use common\components\Athena\models\Checkin;
 use common\components\Athena\models\CloseReason;
@@ -586,12 +587,22 @@ class AthenaComponent extends Component
                 $actionNote->toArray()
             );
 
-        return $this->retrievePatientCase(
-            $patientCase->patientid,
+        return $this->retrieveLastCreatedActionNote(
             $patientCase->externalId
         );
     }
 
+    public function retrieveLastCreatedActionNote($patientCaseId)
+    {
+        $actionNotesModelsApi = $this->client->getPracticeidDocumentsPatientcasePatientcaseidActions(
+            $patientCaseId,
+            $this->practiceid
+        );
+
+        return ActionNote::createFromApiObject(
+            end($actionNotesModelsApi)
+        );
+    }
 
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, $patientModelApi)

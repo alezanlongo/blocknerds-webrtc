@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\AthenaComponent;
+use common\components\Athena\models\ActionNote;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\RequestActionNote;
@@ -200,12 +201,40 @@ class PatientCaseController extends \yii\web\Controller
                 $model
             );
             if($model->save()){
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['action-note', 'id' => $model->id]);
             }
         }
 
         return $this->render('action-note', [
             'model' => $model,
+        ]);
+    }
+
+    /**
+     * Lists all Action Notes models.
+     * @return mixed
+     */
+    public function actionActionNotes()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => ActionNote::find(),
+        ]);
+
+        return $this->render('index-action-notes', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single Appointment model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionActionNote($id)
+    {
+        return $this->render('view-action-note', [
+            'model' => $this->findActionNote($id),
         ]);
     }
 
@@ -219,6 +248,22 @@ class PatientCaseController extends \yii\web\Controller
     protected function findModel($id)
     {
         if (($model = PatientCase::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Finds the Action Note model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return ActionNote the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findActionNote($id)
+    {
+        if (($model = ActionNote::findOne($id)) !== null) {
             return $model;
         }
 

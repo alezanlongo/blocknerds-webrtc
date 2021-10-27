@@ -644,7 +644,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
         $dataResponse = $this->callMethod($path, 'get' , $query);
         if($dataResponse['success']){
             $dataApiModel = [];
-            $responseData = (isset($dataResponse['data']['actions'])) ? $dataResponse['data']['actions'] : $dataResponse['data'];
+            $responseData = (isset($dataResponse['data']['actionnotes'])) ? $dataResponse['data']['actionnotes'] : $dataResponse['data'];
             foreach ($responseData as $key => $value){
                 array_push($dataApiModel, new  \common\components\Athena\apiModels\ActionNoteApi($value));
             }
