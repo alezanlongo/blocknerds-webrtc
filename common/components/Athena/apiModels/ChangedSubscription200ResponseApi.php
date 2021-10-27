@@ -10,7 +10,7 @@ use common\models\ApiModel as BaseApiModel;
  *
  * @property string $success Returns true/false if the operation was successful.
  */
-class AppointmentChangedSubscription200ResponseApi extends BaseApiModel
+class ChangedSubscription200ResponseApi extends BaseApiModel
 {
 
     public $success;

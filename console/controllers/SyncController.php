@@ -38,6 +38,12 @@ class SyncController extends Controller
         'ADDAPPOINTMENTSLOT'            => 'AddAppointmentSlot',
     ];
 
+    const PATIENTCASE_EVENTS = [
+        'ADD'               => 'PatientCaseAdd',
+        'UPDATE'            => 'PatientCaseUpdate',
+        'ACTIONUPDATE'      => 'PatientCaseActionUpdate',
+        'NOTIFY'            => 'PatientCaseNotifyPatient',
+    ];
 
     public function init() 
     {
@@ -74,7 +80,6 @@ class SyncController extends Controller
 
         return ExitCode::OK;
     }
-
 
     public function actionAppointment($practiceId)
     {
@@ -139,6 +144,36 @@ class SyncController extends Controller
                     'EncounterID', 'EncounterExternalID', 'DB Result'
                 ],
                 'rows' => $changedAppointmentResult,
+            ]);
+        } catch(\Exception  $e) {
+            echo $e->getMessage()."\n";
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
+    }
+
+    public function actionPatientCase($practiceId)
+    {
+        $this->component->setPracticeid($practiceId);
+        try {
+            $subscriptionStatus = $this->component->retrievePatientCaseSubscriptionStatus();
+            $updateEventSubscription = false;
+            if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
+                $updateEventSubscription = true;
+            } else {
+                foreach( $subscriptionStatus->subscriptions as $event) {
+                    if( $event['eventname'] == self::PATIENT_EVENTS['UPDATE'] )
+                        $updateEventSubscription = true;
+                }
+            }
+            if( !$updateEventSubscription )
+                $this->component->patientCasesSubscription(self::PATIENTCASE_EVENTS['UPDATE']);
+
+            $changedPatiendCasesResult = $this->component->patientCasesChanges();
+            echo Table::widget([
+                'headers' => ['ID', 'ExternalID', 'DB Result'],
+                'rows' => $changedPatiendCasesResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";

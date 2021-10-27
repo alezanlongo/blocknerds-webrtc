@@ -1279,7 +1279,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientChangedSubscription200Response'
+                $ref: '#/components/schemas/ChangedSubscription200Response'
           description: Success
       operationId: postPracticeidPatientsChangedSubscription
       requestBody:
@@ -1320,7 +1320,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientChangedSubscription'
+                $ref: '#/components/schemas/ChangedSubscription'
           description: Success
       operationId: getPracticeidPatientsChangedSubscription
       tags:
@@ -1349,7 +1349,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PatientChangedSubscription200Response'
+                $ref: '#/components/schemas/ChangedSubscription200Response'
           description: Success
       operationId: deletePracticeidPatientsChangedSubscription
       tags:
@@ -1596,7 +1596,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppointmentChangedSuscription'
+                $ref: '#/components/schemas/ChangedSubscription'
           description: Success
       operationId: getPracticeidAppointmentsChangedSubscription
       tags:
@@ -1622,7 +1622,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppointmentChangedSubscription200Response'
+                $ref: '#/components/schemas/ChangedSubscription200Response'
           description: Success
       operationId: postPracticeidAppointmentsChangedSubscription
       requestBody:
@@ -1681,31 +1681,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AppointmentChangedSubscription200Response'
+                $ref: '#/components/schemas/ChangedSubscription200Response'
           description: Success
       operationId: deletePracticeidAppointmentsChangedSubscription
       tags:
         - AppointmentSubscription
-  /v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/assign:
-    put:
-      summary: Reassign patient case document
-      description: Reassigns a specific patient case document
+  /v1/{practiceid}/documents/patientcase/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for patient cases
+      description: Subscribes for changed patient case document events
       parameters:
-        - description: patientcaseid
-          in: path
-          name: patientcaseid
-          required: true
-          schema:
-            type: integer
         - description: practiceid
           in: path
           name: practiceid
-          required: true
-          schema:
-            type: integer
-        - description: patientid
-          in: path
-          name: patientid
           required: true
           schema:
             type: integer
@@ -1720,76 +1708,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PutReassignPatient200Response'
+                $ref: '#/components/schemas/ChangedSubscription200Response'
           description: Success
-      operationId: putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidAssign
+      operationId: postPracticeidDocumentsPatientcaseChangedSubscription
       requestBody:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/RequestReassignPatientCase'
+              properties:
+                eventname:
+                  description: >-
+                    By default, you are subscribed to all possible events.  If
+                    you only wish to subscribe to an individual event, pass the
+                    event name with this argument.
+                  type: string
+              type: object
         required: true
       tags:
         - Document Type - Patient Case
-  /v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/close:
-    put:
-      summary: Close patient case document
-      description: Closes a specific patient case document
-      parameters:
-        - description: patientcaseid
-          in: path
-          name: patientcaseid
-          required: true
-          schema:
-            type: integer
-        - description: practiceid
-          in: path
-          name: practiceid
-          required: true
-          schema:
-            type: integer
-        - description: patientid
-          in: path
-          name: patientid
-          required: true
-          schema:
-            type: integer
-        - description: Content type of the payload
-          in: header
-          name: Content-Type
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PutClosePatient200Response'
-          description: Success
-      operationId: putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidClose
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/RequestClosePatientCase'
-        required: true
-      tags:
-        - Document Type - Patient Case
-  /v1/{practiceid}/reference/documents/patientcase/closereasons:
     get:
-      summary: Get list of close-reasons for patient cases
-      description: Retrieves a list of reasons to be used to close patient cases
+      summary: Get list of subscribed events for changes in patient cases
+      description: Retrieves list of events applicable for patient case changed document
       parameters:
         - description: practiceid
           in: path
           name: practiceid
-          required: true
-          schema:
-            type: integer
-        - description: denotes the id of the patient case.
-          in: query
-          name: patientcaseid
           required: true
           schema:
             type: integer
@@ -1798,11 +1741,106 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CloseReason'
+                $ref: '#/components/schemas/ChangedSubscription'
           description: Success
-      operationId: getPracticeidReferenceDocumentsPatientcaseClosereasons
+      operationId: getPracticeidDocumentsPatientcaseChangedSubscription
+      tags:
+        - Document Type - Patient Case
+    delete:
+      summary: Unsubscribe to all/specific events for changes in patient cases
+      description: Delete an specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, you are unsubscribed from all possible events.  If you
+            only wish to unsubscribe from an individual event, pass the event
+            name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidDocumentsPatientcaseChangedSubscription
+      tags:
+        - Document Type - Patient Case
+  /v1/{practiceid}/documents/patientcase/changed:
+    get:
+      summary: Get list of changes in patient cases
+      description: Retrieves a list of modified patient cases
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: See showprocessedstartdatetime
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: One or more ID's of the Patient
+          in: query
+          name: patientids
+          required: false
+          schema:
+            items:
+              type: integer
+            type: array
+        - description: >-
+            Show already processed changes.  This will show changes that you
+            previously retrieved at some point after this datetime mm/dd/yyyy
+            hh24:mi:ss (Eastern). Can be used to refetch data if there was an
+            error, such as a timeout, and records are marked as already
+            retrieved. This is intended to be used with showprocessedenddatetime
+            and for a short period of time only. Also note that all messages
+            will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Number of entries to return (default 1000, max 5000)Please note that
+            this endpoint has a different default than normal.
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatientCaseChanged'
+          description: Success
+      operationId: getPracticeidDocumentsPatientcaseChanged
       tags:
         - Document Type - Patient Case
 components:
@@ -4574,7 +4612,7 @@ components:
           description: Order ID of the order this document is tied to, if any
           type: integer
       type: object
-    PatientChangedSubscription200Response:
+    ChangedSubscription200Response:
       type: object
       properties:
         success:
@@ -4583,7 +4621,7 @@ components:
             - false
             - true
           type: string
-    PatientChangedSubscription:
+    ChangedSubscription:
       type: object
       properties:
         status:
@@ -4620,82 +4658,12 @@ components:
             $ref: '#/components/schemas/PutAppointment200Response'
         totalcount:
           type: integer
-    AppointmentChangedSuscription:
+    PatientCaseChanged:
       type: object
       properties:
-        status:
-          description: 'Will return one of following statuses: ACTIVE, INACTIVE, or PARTIAL. The PARTIAL status means that not all events are subscribed to. In the event of a problem, UNKNOWN may be returned.'
-          type: string
-        subscriptions:
-          description: List of events you are subscribed to.
-          items:
-            properties:
-              eventname:
-                description: Name of event
-                type: string
-            type: object
+        patients:
           type: array
-    AppointmentChangedSubscription200Response:
-      type: object
-      properties:
-        success:
-          description: Returns true/false if the operation was successful.
-          enum:
-            - false
-            - true
-          type: string
-    RequestReassignPatientCase:
-      properties:
-        username:
-          description: >-
-            AthenNet user to whom the case is being reassigned to.This
-            parameter is case-sensitive.
-          type: string
-      required:
-        - username
-      type: object
-    PutReassignPatient200Response:
-      type: object
-      properties:
-        assignedto:
-          description: >-
-            String denoting the entity that the patientcase has been
-            assigned to.
-          type: string
-        success:
-          description: Boolean to denote success or failure.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-    RequestClosePatientCase:
-      properties:
-        actionreasonid:
-          description: Valid Document Action Reason ID for closure of Patient Case.
-          type: integer
-      required:
-        - actionreasonid
-      type: object
-    PutClosePatient200Response:
-      type: object
-      properties:
-        error:
-          description: String denoting the failure for cse closure.
-          type: string
-        success:
-          description: Boolean to denote success or failure.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-    CloseReason:
-      type: object
-      properties:
-        reason:
-          description: Human readable string for the reason.
-          type: string
-        reasonid:
-          description: ID of the reason.
+          items:
+            $ref: '#/components/schemas/PatientCase'
+        totalcount:
           type: integer
