@@ -1,6 +1,7 @@
 <?php
 namespace common\components;
 
+use common\components\Athena\models\ClinicalDocumentPageDetail;
 use spec\Prophecy\Doubler\Generator\Node\ReturnTypeNodeSpec;
 use Yii;
 use yii\base\Component;
@@ -631,6 +632,11 @@ class AthenaComponent extends Component
                 $postClinicalDocumentsModelsApi->clinicaldocumentid
             );
             $clinicalDocument = ClinicalDocument::createFromApiObject($clinicalDocumentsModelsApi[0]);
+            /*echo "<pre>"; var_dump($clinicalDocument->toArray()); exit();
+            foreach ($clinicalDocumentsModelsApi[0]['pages'] as $key => $value){
+                $pageDetail = ClinicalDocumentPageDetail::createFromApiObject($value->toArray());
+                array_push($clinicalDocument->pages, $pageDetail);
+            }*/
 
              return $clinicalDocument;
         }

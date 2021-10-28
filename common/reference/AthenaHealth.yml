@@ -5065,6 +5065,7 @@ components:
           type: integer
     ClinicalDocument:
       type: object
+      x-external-id: clinicaldocumentid
       properties:
         actionnote:
           description: The most recent action note for a document

@@ -75,6 +75,9 @@ class ClinicalDocument extends \yii\db\ActiveRecord
         if($clinicaldocumentid = ArrayHelper::getValue($apiObject, 'clinicaldocumentid')) {
             $this->clinicaldocumentid = $clinicaldocumentid;
         }
+        if($clinicaldocumentid = ArrayHelper::getValue($apiObject, 'clinicaldocumentid')) {
+            $this->externalId = $clinicaldocumentid;
+        }
         if($clinicalproviderid = ArrayHelper::getValue($apiObject, 'clinicalproviderid')) {
             $this->clinicalproviderid = $clinicalproviderid;
         }
