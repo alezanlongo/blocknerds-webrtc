@@ -48,7 +48,6 @@ let bitrateTimer = [];
 ///////////   ON READY
 ////////////////////////////////////////////////////////////
 $(document).ready(function () {
-  connectMQTT();
   handleCountdown(endTime);
 
   if (!Janus.isWebrtcSupported()) {

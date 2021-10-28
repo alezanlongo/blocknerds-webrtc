@@ -7,15 +7,14 @@ use yii\bootstrap5\Modal;
 use common\models\RoomRequest;
 use frontend\assets\room\RoomAsset;
 use frontend\assets\Janus\JanusAsset;
-use frontend\assets\pahoMqtt\PahoMqttAsset;
+use frontend\assets\mqtt\MqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
-use yii\helpers\Url;
-use yii\helpers\VarDumper;
 /** @var boolean $limit_members Whether to limit members for this room...? */
 
 /** @var \yii\web\View $this */
 JanusAsset::register($this);
-$this->registerAssetBundle(PahoMqttAsset::class);
+//$this->registerAssetBundle(PahoMqttAsset::class);
+$this->registerAssetBundle(MqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
 
 $this->registerJsVar('limitMembers', $limit_members, View::POS_END);

@@ -4,26 +4,19 @@ const EVENT_TYPE_TOGGLE_MUTE = "toggle_mute_remote";
 const EVENT_TYPE_TOGGLE_MEDIA = "request_toggle_media";
 const wsbroker = "localhost"; // mqtt websocket enabled broker
 const wsport = 15675; // port for above
-const client = new Paho.MQTT.Client(
-  wsbroker,
-  wsport,
-  "/ws",
-  "myclientid_" + parseInt(Math.random() * 100, 10)
-);
+var mqtt = mqtt;
+var client = mqtt.connect({ host: wsbroker, port: wsport,  protocol: "ws", path:"/ws", clientId: "myclientid_" + parseInt(Math.random() * 100, 10) });
+client.on('connect', function () {
+  client.subscribe(window.location.pathname, function (err) {
+    if (!err) {
+      client.publish(window.location.pathname, 'mqtt connected!')
+    }
+  })
+})
 
-client.onConnectionLost = function (responseObject) {
-  console.log("Connection Lost: " + responseObject.errorMessage);
-  connectMQTT();
-};
 
-client.onMessageArrived = function (message) {
-  const objData = JSON.parse(message.payloadString);
-  console.log(objData)
-
-  // if (objData.type === EVENT_TYPE_TOGGLE_MUTE && userProfileId === objData.data.user_profile_id) {
-  //   $("#mute").html(objData.data.isMuted ? "Unmute" : "Mute");
-  // }
-
+client.on('message', function (topic, message) {
+  const objData = message.toString();
   if (objData.type === 'moderate_user_source' && Number(userProfileId) === Number(objData.profile_id)) {
 
     if (objData.moderate_audio === true && objData.moderate_audio_change === true) {
@@ -35,7 +28,7 @@ client.onMessageArrived = function (message) {
       let elmMuteBtn = document.getElementById("mute")
       elmMuteBtn.disabled = false;
     }
-  
+
     if (objData.moderate_video === true && objData.moderate_video_change === true) {
       toggleVideo(true)
       let elmMuteBtn = document.getElementById("no-video")
@@ -45,8 +38,7 @@ client.onMessageArrived = function (message) {
       let elmMuteBtn = document.getElementById("no-video")
       elmMuteBtn.disabled = false;
     }
- }
-
+  }
 
   if (objData.type === EVENT_TYPE_TOGGLE_MEDIA) {
     if (Number(userProfileId) === Number(objData.profile_id)) {
@@ -87,25 +79,14 @@ client.onMessageArrived = function (message) {
       location.reload();
     }
   }
-};
-
-const connectMQTT = () => {
-  client.connect({
-    onSuccess: () => {
-      client.subscribe(window.location.pathname);
-      console.log("Connected!");
-    },
-  });
-};
+});
 
 const sendMessageMQTT = (type, data) => {
   const objData = {
     type,
     data,
   };
-  const message = new Paho.MQTT.Message(JSON.stringify(objData));
-  message.destinationName = window.location.pathname;
-  client.send(message);
+  client.publish(window.location.pathname, JSON.stringify(objData))
 };
 
 const handleToggleVideoRemote = (objData, index) => {
@@ -159,20 +140,4 @@ const handleToggleVideoLocal = (objData) => {
     compImage.addClass("d-none").hide();
     compVideo.removeClass("d-none").show();
   }
-  // const compVideo = $(`#remotevideo${index}`);
-  // const compImage = $(`#img${index}`);
-  // if (objData.video === "true") {
-  //   if (objData.profile_image !== null) {
-  //     const width = compVideo.width();
-  //     const height = compVideo.height();
-  //     compImage.attr("src", `${location.origin}/${objData.profile_image}`);
-  //     compImage.width(width);
-  //     compImage.height(height);
-  //   }
-  //   compImage.removeClass("d-none").show();
-  //   compVideo.addClass("d-none").hide();
-  // } else {
-  //   compImage.addClass("d-none").hide();
-  //   compVideo.removeClass("d-none").show();
-  // }
-}
+ }
