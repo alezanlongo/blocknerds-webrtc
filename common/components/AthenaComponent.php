@@ -1,6 +1,7 @@
 <?php
 namespace common\components;
 
+use spec\Prophecy\Doubler\Generator\Node\ReturnTypeNodeSpec;
 use Yii;
 use yii\base\Component;
 use common\components\Athena\AthenaClient;
@@ -21,6 +22,7 @@ use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
+use common\components\Athena\models\ClinicalDocument;
 
 class AthenaComponent extends Component
 {
@@ -583,7 +585,6 @@ class AthenaComponent extends Component
     /**
      * @return Patient
      */
-
     public function updatePatientCase($patientCase, $updatePatientCase)
     {
         $patientCaseModelApi =
@@ -598,6 +599,43 @@ class AthenaComponent extends Component
             $patientCase->patientid,
             $patientCaseModelApi->patientcaseid
         );
+    }
+
+
+    public function getClinicalDocuments($patientId, $flatten = false)
+    {
+        $clinicalDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsClinicaldocument($this->practiceid, $patientId);
+
+        $clinicalDocumentsModels = [];
+
+        foreach ($clinicalDocumentsModelsApi as $clinicalDocumentModelApi) {
+            $clinicalDocumentsModels[] = ClinicalDocument::createFromApiObject($clinicalDocumentModelApi);
+        }
+
+        return $clinicalDocumentsModels;
+    }
+
+
+    public function createClinicalDocument($patientId, $postClinicalDocument)
+    {
+        $postClinicalDocumentsModelsApi = $this->client->postPracticeidPatientsPatientidDocumentsClinicaldocument(
+            $this->practiceid,
+            $patientId,
+            $postClinicalDocument->toArray()
+        );
+
+        if($postClinicalDocumentsModelsApi->success){
+            $clinicalDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid(
+                $this->practiceid,
+                $patientId,
+                $postClinicalDocumentsModelsApi->clinicaldocumentid
+            );
+            $clinicalDocument = ClinicalDocument::createFromApiObject($clinicalDocumentsModelsApi[0]);
+
+             return $clinicalDocument;
+        }
+
+        return $postClinicalDocument;
     }
 
     /* ================================= Begin  Protected methods ============================================== */

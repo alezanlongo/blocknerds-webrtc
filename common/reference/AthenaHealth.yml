@@ -1843,6 +1843,319 @@ paths:
       operationId: getPracticeidDocumentsPatientcaseChanged
       tags:
         - Document Type - Patient Case
+  /v1/{practiceid}/patients/{patientid}/documents/clinicaldocument:
+    post:
+      summary: Add clinical document to patient's chart
+      description: Creates a clinical document record of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClinicalDocument200Response'
+          description: Success
+      operationId: postPracticeidPatientsPatientidDocumentsClinicaldocument
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostClinicalDocument'
+        required: true
+      tags:
+        - Document Type - Clinical Document
+    get:
+      summary: Get list of patient's clinical documents
+      description: Retrieves a list of clinical document information of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: By default, deleted documents are not listed.  Set to list these.
+          in: query
+          name: showdeleted
+          required: false
+          schema:
+            type: boolean
+        - description: The status of the task to filter document results.
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - ADMINISTER
+              - CLOSED
+              - DATAENTRY
+              - DELETED
+              - DISPENSE
+              - FOLLOWUP
+              - HOLD
+              - NOTIFY
+              - PEND
+              - PENDING
+              - PENDINGLABEL
+              - PERFORM
+              - REVIEW
+              - SCHEDULE
+              - SCHEDULED
+              - SUBMIT
+              - SUBMITTED
+            type: string
+            x-enumDescriptions:
+              - ADMINISTER
+              - CLOSED
+              - DATAENTRY
+              - DELETED
+              - DISPENSE
+              - FOLLOWUP
+              - HOLD
+              - NOTIFY
+              - PEND
+              - PENDING
+              - PENDINGLABEL
+              - PERFORM
+              - REVIEW
+              - SCHEDULE
+              - SCHEDULED
+              - SUBMIT
+              - SUBMITTED
+        - description: The athenaNet department id.
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+        - description: Show only documents attached to this encounter.
+          in: query
+          name: encounterid
+          required: false
+          schema:
+            type: integer
+        - description: The document subclass to filter document results.
+          in: query
+          name: documentsubclass
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClinicalDocument'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsClinicaldocument
+      tags:
+        - Document Type - Clinical Document
+  /v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}:
+    get:
+      summary: Get patient's clinical document
+      description: Retrieves a specific clinical document information
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: clinicaldocumentid
+          in: path
+          name: clinicaldocumentid
+          required: true
+          schema:
+            type: integer
+        - description: Default false. If set to true, will include CCDAXML string.
+          in: query
+          name: showccdaxml
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClinicalDocument'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid
+      tags:
+        - Document Type - Clinical Document
+    put:
+      summary: Update patient's clinical document
+      description: Modifies a specific clinical document information
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: clinicaldocumentid
+          in: path
+          name: clinicaldocumentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClinicalDocument200Response'
+          description: Success
+      operationId: putPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutClinicalDocument'
+        required: true
+      tags:
+        - Document Type - Clinical Document
+    delete:
+      summary: Mark patient's clinical document as deleted
+      description: Deletes the record of a specified clinical document
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: clinicaldocumentid
+          in: path
+          name: clinicaldocumentid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClinicalDocument200Response'
+          description: Success
+      operationId: deletePracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid
+      tags:
+        - Document Type - Clinical Document
+  /v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}/pages/{pageid}:
+    get:
+      summary: Get page from patient's clinical document
+      description: Retrieves a specific page from the specific clinical document of the patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: pageid
+          in: path
+          name: pageid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: clinicaldocumentid
+          in: path
+          name: clinicaldocumentid
+          required: true
+          schema:
+            type: integer
+        - description: The file size of the document being requested.
+          in: query
+          name: filesize
+          required: false
+          schema:
+            enum:
+              - SMALL
+              - LARGE
+            type: string
+            x-enumDescriptions:
+              - Small
+              - Large
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClinicalDocumentPage'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentidPagesPageid
+      tags:
+        - Document Type - Clinical Document
 components:
   schemas:
     Patient:
@@ -4667,3 +4980,240 @@ components:
             $ref: '#/components/schemas/PatientCase'
         totalcount:
           type: integer
+    ClinicalDocument200Response:
+      type: object
+      properties:
+        clinicaldocumentid:
+          description: The document ID of the new or modified document.
+          type: integer
+        errormessage:
+          description: If the operation failed, this will contain an error message.
+          type: string
+        success:
+          description: Returns true/false if the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PostClinicalDocument:
+      type: object
+      required:
+        - documentsubclass
+        - departmentid
+      properties:
+        attachmentcontents:
+          description: The file contents that will be attached to this document. PDFs and PNGs are supported file types. Other file types are available only for alpha partners. All files must be Base64 encoded.
+          type: string
+        attachmenttype:
+          default: PDF
+          description: The file type of attachment. PDFs and PNGs are supported. Other file types are available only for alpha partners
+          enum:
+            - ''
+            - BMP
+            - GIF
+            - JPG
+            - JPEG
+            - PDF
+            - PNG
+            - TIF
+            - TIFF
+          type: string
+        autoclose:
+          description: Documents will, normally, automatically appear in the clinical inbox for providers to review. In some cases, you might want to force the document to skip the clinical inbox, and go directly to the patient chart with a "closed" status. For that case, set this to true.
+          type: boolean
+        clinicalproviderid:
+          description: The ID of the external provider/lab/pharmacy associated the document.
+          type: integer
+        departmentid:
+          description: The athenaNet department ID associated with the uploaded document.
+          type: integer
+        documentdata:
+          description: Text data stored with document
+          type: string
+        documentsubclass:
+          description: Subclasses for CLINICALDOCUMENT documents
+          enum:
+            - CLINICALDOCUMENT
+            - ADMISSIONDISCHARGE
+            - CONSULTNOTE
+            - MENTALHEALTH
+            - OPERATIVENOTE
+            - URGENTCARE
+          type: string
+        documenttypeid:
+          description: A specific document type identifier.
+          type: integer
+        internalnote:
+          description: An internal note for the provider or staff. Updating this will append to any previous notes.
+          type: string
+        observationdate:
+          description: The date an observation was made (mm/dd/yyyy).
+          type: string
+        observationtime:
+          description: The time an observation was made (hh24:mi).  24 hour time.
+          type: string
+        priority:
+          description: Priority of this result.  1 is high; 2 is normal.
+          enum:
+            - ''
+            - 1
+            - 2
+          type: string
+        providerid:
+          description: The ID of the ordering provider.
+          type: integer
+    ClinicalDocument:
+      type: object
+      properties:
+        actionnote:
+          description: The most recent action note for a document
+          type: string
+        assignedto:
+          description: Person the document is assigned to
+          type: string
+        clinicaldocumentid:
+          description: The primary key for the clinical document.
+          type: integer
+        clinicalproviderid:
+          description: The ID of the clinical provider associated with this clinical document. Clinical providers are a master list of providers throughout the country.  These include providers as well as radiology centers, labs and pharmacies.
+          type: integer
+        createddate:
+          description: Date the document was created. Please use createddatetime instead.
+          type: string
+        createddatetime:
+          description: Date/Time (ISO 8601) the document was created
+          type: string
+        createduser:
+          description: The user who created this document.
+          type: string
+        departmentid:
+          description: Department for the document
+          type: string
+        documentclass:
+          description: Class of document
+          type: string
+        documentdata:
+          description: Text data associated with this document.
+          type: string
+        documentdescription:
+          description: Description of the document type
+          type: string
+        documentroute:
+          description: Explains method by which the document was entered into the AthenaNet (INTERFACE (digital), FAX, etc.)
+          type: string
+        documentsource:
+          description: Explains where this document originated.
+          enum:
+            - ''
+            - PATIENT
+            - CAREGIVER
+            - PARTNER
+            - PHARMACY
+            - LAB
+            - PCP
+            - SPECIALIST
+            - STAFF
+            - HOSPITAL
+            - OTHER
+            - PORTAL
+            - Live Operator
+          type: string
+        documentsubclass:
+          description: Specific type of document
+          type: string
+        documenttypeid:
+          description: The ID of the description for this document
+          type: integer
+        externalnote:
+          description: External note for the patient.
+          type: string
+        internalnote:
+          description: The 'Internal Note' attached to this document
+          type: string
+        lastmodifieddate:
+          type: string
+        lastmodifieddatetime:
+          description: Date/time (ISO 8601) the document was last modified
+          type: string
+        lastmodifieduser:
+          description: The user who last modified this document.
+          type: string
+        observationdate:
+          description: Date of the encounter associated with this document
+          type: string
+        ordertype:
+          description: Order type group name
+          type: string
+        pages:
+          description: An array of image pages associated with this document.
+          items:
+            $ref: '#/components/schemas/ClinicalDocumentPageDetail'
+          type: array
+        priority:
+          description: Document priority, when available. 1 is high, 2 is normal. Some labs use other numbers or characters that are lab-specific.
+          type: string
+        providerid:
+          description: Provider ID for this document
+          type: integer
+        providerusername:
+          description: The username of the provider associated with this lab result document.
+          type: string
+        status:
+          description: Status of the document
+          type: string
+        tietoorderid:
+          description: Order ID of the order this document is tied to, if any
+          type: integer
+    ClinicalDocumentPageDetail:
+      type: object
+      properties:
+        contenttype:
+          description: The content-type that will be returned by the page image call.
+          type: string
+        href:
+          description: The URL to get the document image.
+          type: string
+        pageid:
+          description: The ID to use in a call to get the page image.
+          type: string
+        pageordering:
+          description: Within this list of pages, the ordering (starting with 1).
+          type: string
+    ClinicalDocumentPage:
+      type: object
+      properties:
+        attachment:
+          description: The image of the page in jpeg format.
+          type: string
+    PutClinicalDocument:
+      type: object
+      properties:
+        clinicalproviderid:
+          description: The ID of the external provider/lab/pharmacy associated the document.
+          type: integer
+        documenttypeid:
+          description: A specific document type identifier.
+          type: integer
+        internalnote:
+          description: An internal note for the provider or staff. Updating this will append to any previous notes if replaceinternalnote is not set.
+          type: string
+        observationdate:
+          description: The date an observation was made (mm/dd/yyyy).
+          type: string
+        observationtime:
+          description: The time an observation was made (hh24:mi).  24 hour time.
+          type: string
+        priority:
+          description: Priority of this result.  1 is high; 2 is normal.
+          enum:
+            - ''
+            - 1
+            - 2
+          type: string
+        providerid:
+          description: The ID of the ordering provider.
+          type: integer
+        replaceinternalnote:
+          description: If true, will replace the existing internal note with the new one. If false, will append to the existing note.
+          type: boolean
