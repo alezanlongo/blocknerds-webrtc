@@ -82,8 +82,6 @@ class m130524_201442_init extends Migration
             true
         );
 
-
-
         // meeting
         $this->createTable('{{%meeting}}', [
             'id' => $this->primaryKey(),
@@ -202,6 +200,7 @@ class m130524_201442_init extends Migration
             'from_profile_id' => $this->integer()->notNull(),
             'to_profile_id' => $this->integer(),
             'room_id' => $this->integer(),
+            'channel' => $this->string(32)->notNull(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
@@ -233,15 +232,15 @@ class m130524_201442_init extends Migration
             'CASCADE'
         );
 
-        // chat
+        // chat_message
         $this->createTable('{{%chat_message}}', [
             'id' => $this->primaryKey(),
             'chat_id' => $this->integer()->notNull(),
-            'message' => $this->string(),
-            'file_url' => $this->string(),
+            'text' => $this->string()->notNull(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
+
         $this->addForeignKey(
             '{{%fk-chat_message-chat_id}}',
             '{{%chat_message}}',
@@ -257,9 +256,8 @@ class m130524_201442_init extends Migration
         // chat_message
         $this->dropForeignKey(
             '{{%fk-chat_message-chat_id}}',
-            '{{%chat_message}}',
+            '{{%chat_message}}'
         );
-
         $this->dropTable('{{%chat_message}}');
 
         // chat

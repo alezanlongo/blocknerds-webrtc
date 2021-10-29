@@ -10,8 +10,7 @@ use yii\behaviors\TimestampBehavior;
  *
  * @property int $id
  * @property int $chat_id
- * @property string|null $message
- * @property string|null $file_url
+ * @property string $text
  * @property int $created_at
  * @property int $updated_at
  *
@@ -27,24 +26,24 @@ class ChatMessage extends \yii\db\ActiveRecord
         return 'chat_message';
     }
 
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['chat_id'], 'required'],
+            [['chat_id', 'text'], 'required'],
             [['chat_id', 'created_at', 'updated_at'], 'default', 'value' => null],
-            [['chat_id'], 'integer'],
-            [['message', 'file_url'], 'string', 'max' => 255],
+            [['chat_id', 'created_at', 'updated_at'], 'integer'],
+            [['text'], 'string', 'max' => 255],
             [['chat_id'], 'exist', 'skipOnError' => true, 'targetClass' => Chat::class, 'targetAttribute' => ['chat_id' => 'id']],
-        ];
-    }
-   
-    public function behaviors()
-    {
-        return [
-            TimestampBehavior::class,
         ];
     }
 
@@ -56,8 +55,7 @@ class ChatMessage extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'chat_id' => 'Chat ID',
-            'message' => 'Message',
-            'file_url' => 'File Url',
+            'text' => 'Text',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -70,6 +68,6 @@ class ChatMessage extends \yii\db\ActiveRecord
      */
     public function getChat()
     {
-        return $this->hasOne(Chat::className(), ['id' => 'chat_id']);
+        return $this->hasOne(Chat::class, ['id' => 'chat_id']);
     }
 }

@@ -1,5 +1,5 @@
 const openBox = (profile_id, username) => {
-  $.get('/chat/get-chat/' + profile_id).then(data => {
+  $.get(`/chat/${profile_id}`).then(data => {
     $('.chat-zone').append(chatBox(data, {username}))
   }).catch(err => {
     console.log(err)
