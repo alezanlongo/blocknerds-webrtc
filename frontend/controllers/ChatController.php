@@ -5,6 +5,7 @@ namespace frontend\controllers;
 
 use common\models\Chat;
 use common\models\ChatForm;
+use common\models\ChatQueries;
 use common\models\EditProfileForm;
 use common\models\User;
 use common\models\UserProfile;
@@ -23,14 +24,14 @@ use yii\web\UploadedFile;
 
 class ChatController extends Controller
 {
-   
+
 
     public function behaviors()
     {
         return [
             'access' => [
                 "class" => AccessControl::class,
-                "only" => ['get-form'],
+                "only" => [],
                 "rules" => [
                     [
                         'allow' => true,
@@ -43,14 +44,32 @@ class ChatController extends Controller
 
     public function actionSendMessage()
     {
-        // TODO: send message
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $message = $this->request->post('message');
+        $to = $this->request->post('targetId');
+        $from = Yii::$app->user->identity->userProfile->id;
+
+        $chat = new Chat();
+        $chat->to_profile_id = $to;
+        $chat->from_profile_id = $from;
+        $chat->message = $message;
+        $chat->save();
+
+        // TODO: send message mqtt
+
+        return [
+            'status' => 200,
+            'data' => $chat,
+        ];
     }
 
-    public function actionGetChat()
+    public function actionGetChat($withId)
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         // TODO: get message with pagination
-        return [];
+        $me = Yii::$app->user->identity->userProfile->id;
+        
+        return ChatQueries::getChat($me, $withId );
     }
     public function actionRecentChat()
     {

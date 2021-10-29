@@ -2,7 +2,10 @@
 
 /** @var \yii\web\View $this */
 
+use common\models\Chat;
+use common\models\ChatQueries;
 use common\models\User;
+use common\models\UserProfile;
 use common\widgets\chat\ChatBoxWidget;
 use common\widgets\chat\ChatListWidget;
 use frontend\widgets\adminlte\Menu;
@@ -81,6 +84,10 @@ function generateRecentChat($howMuch)
 
   return $chats;
 }
+$profileId = Yii::$app->user->identity->userProfile->id;
+$chats = ChatQueries::getRecentChats($profileId);
+$users = [];
+$userProfiles = UserProfile::find()->where(['!=', 'user_id', Yii::$app->user->id])->all();
 
 ?>
 
@@ -105,32 +112,30 @@ function generateRecentChat($howMuch)
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Recent Chats</h5>
-   <div class="btns">
-   <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#newChat">
-      <i class="fas fa-plus"></i>
-    </button>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-   </div>
+    <div class="btns">
+      <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#newChat">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
   </div>
   <div class="offcanvas-body">
     <?=
     ChatListWidget::widget([
-      'recentChat' => generateRecentChat(10),
+      'recentChat' => $chats,
     ])
     ?>
   </div>
 </div>
 
-<?php 
-
-$users = User::find()->all();
+<?php
 Modal::begin([
   'title' => 'New Chat ',
   'id' => 'newChat',
 ]);
 
 echo ChatBoxWidget::widget([
-    'users'=> $users,
+  'users' => $userProfiles,
 ]);
 
 Modal::end();

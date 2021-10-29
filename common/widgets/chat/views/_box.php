@@ -67,8 +67,9 @@
             <?php if ($isNew) { ?>
                 <select class="form-select" aria-label="select users" name="user_target">
                     <option selected>Select user to init the chat</option>
-                    <?php foreach ($users as $user) { ?>
-                        <option value="<?= $user->id ?>"><?= $user->username ?></option>
+                    <!-- TODO: change User to USerProfile -->
+                    <?php foreach ($users as $userProf) { ?>
+                        <option value="<?= $userProf->id ?>"><?= $userProf->user->username ?></option>
                     <?php } ?>
                 </select>
             <?php } ?>

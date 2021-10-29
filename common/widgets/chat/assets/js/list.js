@@ -1,33 +1,50 @@
 const openBox = (id, username) => {
-    console.log('user',id, username)
-    const user = {id, username}
-    $.post('/chat/get-chat', user).then(data=>{
-        $('.chat-zone').append(chatBox(data, user))
-    }).catch(err=>{
-        console.log(err)
-    })
+  console.log('user', id, username)
+  const user = { id, username }
+  $.get('/chat/get-chat/' + id).then(data => {
+    $('.chat-zone').append(chatBox(data, user))
+  }).catch(err => {
+    console.log(err)
+  })
 }
 
-const buildContent = (content) => {
-    console.log(content)
-    return ""
+const buildMessage = (chat) => {
+  return `<div class="direct-chat-msg ${chat.wasMe ? 'end' : ''}">
+  <div class="direct-chat-infos clearfix">
+    <span class="direct-chat-timestamp float-end">${chat.sent_at}</span>
+  </div>
+  <img class="direct-chat-img" src="${chat.image || '/img/default-user.png'}" alt="message user image">
+  <div class="direct-chat-text">
+  ${chat.message}
+  </div>
+</div>`
 }
 
-const sendMessage = (targetUserId) =>{
-    const text = $(`#message_to_${targetUserId}`).val()
-    if(text.trim() === ''){
-        return;
-    }
+const buildContent = (chats) => {
+  let str = '';
+  chats.forEach(chat => {
+    console.log(chat)
+    str += buildMessage(chat);
+  });
 
-    const message = {
-        targetId : targetUserId,
-        text
-    }
-    console.log('request message and update box', message)
+  return str;
 }
 
-const chatBox = (content, userTarget) =>{
-    return `<div class="card direct-chat direct-chat-primary m-0">
+const sendMessage = (targetUserId) => {
+  const text = $(`#message_to_${targetUserId}`).val()
+  if (text.trim() === '') {
+    return;
+  }
+
+  const message = {
+    targetId: targetUserId,
+    text
+  }
+  console.log('request message and update box', message)
+}
+
+const chatBox = (content, userTarget) => {
+  return `<div class="card direct-chat direct-chat-primary m-0">
     <div class="card-header">
       <h3 class="card-title">${userTarget.username}</h3>
 
