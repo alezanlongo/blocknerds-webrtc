@@ -633,6 +633,17 @@ class AthenaComponent extends Component
     }
 
 
+    public function createChartAlert($patient, $chartAlert)
+    {
+        $chartAlertModelApi =
+            $this->client->postPracticeidPatientsPatientidChartalert(
+                $this->practiceid,
+                $patient->externalId,
+                $chartAlert->toArray()
+            );
+    }
+
+
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
     {

@@ -3,11 +3,12 @@
 namespace frontend\controllers;
 
 use Yii;
-use yii\data\ActiveDataProvider;
-use yii\filters\AccessControl;
+use common\components\AthenaComponent;
 use common\components\Athena\models\Insurance;
 use common\components\Athena\models\Patient;
-use common\components\AthenaComponent;
+use common\components\Athena\models\RequestChartAlert;
+use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
 class PatientInsuranceController extends \yii\web\Controller
@@ -174,6 +175,33 @@ class PatientInsuranceController extends \yii\web\Controller
             'model' => $model,
             'patientId' => $patient->externalId,
             'insurancePackages' => $this->component->getInsurancepackages(true)
+        ]);
+    }
+
+    /**
+     * Creates a new Patient model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+
+    public function actionCreateChartAlert($patientId)
+    {
+
+        $model = new RequestChartAlert;
+        $patient = $this->findPatientModel($patientId);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->createChartAlert(
+                $patient,
+                $model
+            );
+
+            return;
+        }
+
+        return $this->render('/patient/create-chart-alert', [
+            'model' => $model,
+            'patient' => $patient,
         ]);
     }
 

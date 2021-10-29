@@ -2044,6 +2044,45 @@ paths:
       operationId: getPracticeidReferenceDocumentsPatientcaseClosereasons
       tags:
         - Document Type - Patient Case
+  /v1/{practiceid}/patients/{patientid}/chartalert:
+    post:
+      summary: Create new department specific patient's chart-alert
+      description: Create a chart alert record for a patient in a specific department
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostChartAlert200Response'
+          description: Success
+      operationId: postPracticeidPatientsPatientidChartalert
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestChartAlert'
+        required: true
+      tags:
+        - Chart Alert
 components:
   schemas:
     Patient:
@@ -4984,4 +5023,26 @@ components:
           type: integer
         status:
           description: Status given for this document action.
+          type: string
+    RequestChartAlert:
+      properties:
+        departmentid:
+          description: >-
+            The department ID; needed because charts, and thus chart
+            notes, may be department-specific
+          type: integer
+        notetext:
+          description: >-
+            The note text.  Use PUT to add to any existing text and POST
+            if you want to add new or replace the full note
+          type: string
+      required:
+        - notetext
+        - departmentid
+      type: object
+    PostChartAlert200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful
           type: string
