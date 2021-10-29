@@ -2,8 +2,8 @@
 
 /** @var \yii\web\View $this */
 
+use common\models\ChatRepository;
 use common\models\Chat;
-use common\models\ChatQueries;
 use common\models\User;
 use common\models\UserProfile;
 use common\widgets\chat\ChatBoxWidget;
@@ -70,23 +70,7 @@ $items[] = [
   'visible' => !Yii::$app->user->isGuest,
 ];
 
-function generateRecentChat($howMuch)
-{
-  $chats = [];
-
-  for ($i = 1; $i <= $howMuch; $i++) {
-    $chats[] = [
-      "id" => $i,
-      "chat_with" => "User$i",
-      "last_chat" => "something",
-    ];
-  }
-
-  return $chats;
-}
 $profileId = Yii::$app->user->identity->userProfile->id;
-$chats = ChatQueries::getRecentChats($profileId);
-$users = [];
 $userProfiles = UserProfile::find()->where(['!=', 'user_id', Yii::$app->user->id])->all();
 
 ?>
@@ -122,7 +106,7 @@ $userProfiles = UserProfile::find()->where(['!=', 'user_id', Yii::$app->user->id
   <div class="offcanvas-body">
     <?=
     ChatListWidget::widget([
-      'recentChat' => $chats,
+      'recentChat' => ChatRepository::getRecentChats($profileId),
     ])
     ?>
   </div>

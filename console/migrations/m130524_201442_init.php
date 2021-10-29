@@ -202,8 +202,6 @@ class m130524_201442_init extends Migration
             'from_profile_id' => $this->integer()->notNull(),
             'to_profile_id' => $this->integer(),
             'room_id' => $this->integer(),
-            'message' => $this->string()->notNull(),
-            'file_url' => $this->string(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
@@ -234,10 +232,36 @@ class m130524_201442_init extends Migration
             'id',
             'CASCADE'
         );
+
+        // chat
+        $this->createTable('{{%chat_message}}', [
+            'id' => $this->primaryKey(),
+            'chat_id' => $this->integer()->notNull(),
+            'message' => $this->string(),
+            'file_url' => $this->string(),
+            'created_at' => $this->integer()->notNull(),
+            'updated_at' => $this->integer()->notNull(),
+        ]);
+        $this->addForeignKey(
+            '{{%fk-chat_message-chat_id}}',
+            '{{%chat_message}}',
+            'chat_id',
+            '{{%chat}}',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()
     {
+        // chat_message
+        $this->dropForeignKey(
+            '{{%fk-chat_message-chat_id}}',
+            '{{%chat_message}}',
+        );
+
+        $this->dropTable('{{%chat_message}}');
+
         // chat
         $this->dropForeignKey(
             '{{%fk-chat-room_id}}',

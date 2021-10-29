@@ -44,10 +44,9 @@ class Chat extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['from_profile_id', 'message'], 'required'],
+            [['from_profile_id'], 'required'],
             [['from_profile_id', 'to_profile_id', 'room_id', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['from_profile_id', 'to_profile_id', 'room_id', 'created_at', 'updated_at'], 'integer'],
-            [['message', 'file_url'], 'string', 'max' => 255],
             [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::class, 'targetAttribute' => ['room_id' => 'id']],
             [['from_profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserProfile::class, 'targetAttribute' => ['from_profile_id' => 'id']],
             [['to_profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserProfile::class, 'targetAttribute' => ['to_profile_id' => 'id']],
@@ -99,5 +98,14 @@ class Chat extends \yii\db\ActiveRecord
     public function getToProfile()
     {
         return $this->hasOne(UserProfile::class, ['id' => 'to_profile_id']);
+    }
+    /**
+     * Gets query for [[ChatMessages]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getChatMessages()
+    {
+        return $this->hasMany(ChatMessage::class, ['chat_id' => 'id']);
     }
 }
