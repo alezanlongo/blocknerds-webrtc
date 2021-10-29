@@ -4,6 +4,7 @@ namespace common\models;
 
 use Carbon\Carbon;
 use common\models\Chat;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
@@ -14,13 +15,37 @@ class ChatRepository extends Chat
 
     public static function getRecentChats(int $profileId): array
     {
-        $chats = Chat::find()
-            ->where(['from_profile_id' => $profileId])
-            ->orWhere(['to_profile_id' => $profileId])
-            ->orderBy('created_at', 'desc')
-            ->all();
+        $connection = Yii::$app->getDb();
+        $command = $connection->createCommand(
+            "select max(id) as id
+        from chat
+        where from_profile_id = :profileId or to_profile_id = :profileId
+        group by channel 
+        order by id desc
+        limit 10",
+            [':profileId' => $profileId]
+        );
+
+        $chatIds = $command->queryAll();
+
+        // $chats = Chat::find()->select(['from_profile_id','to_profile_id', 'channel', 'max(id) as id'])
+        //     ->where(['from_profile_id' => $profileId])
+        //     ->orWhere(['to_profile_id' => $profileId])
+        //     ->groupBy('channel')
+        //     ->orderBy('id', 'desc');
+        // ->max('id');
+
+
+        // $chats =   (new \yii\db\Query())
+        //     // ->select(['from_profile_id', 'to_profile_id', 'channel', 'id'])
+        //     ->from('chat')
+        //     ->where(['from_profile_id' => $profileId])
+        //     ->orWhere(['to_profile_id' => $profileId])
+        //     ->groupBy('channel')
+        //     ->max('id')
+        //     ->all();
         $lastChats = [];
-        $ids = [];
+        $chats = Chat::find()->where(['in', 'id', $chatIds])->all();
 
         foreach ($chats as $chat) {
             $with = $chat->from_profile_id === $profileId ?  [
@@ -31,15 +56,13 @@ class ChatRepository extends Chat
                 'username' => $chat->fromProfile->user->username,
             ];
 
-            if (!ArrayHelper::isIn($with['profile_id'], $ids)) {
-                $ids[] = $with['profile_id'];
-                $lastChat = ChatRepository::getChatByRelation($profileId, $with['profile_id']);
-                $lastMessage = $lastChat->chatMessages[array_key_last($lastChat->chatMessages)];
-                $with['message'] = $lastMessage->message;
-                $with['created_at'] = $lastMessage->created_at;
 
-                $lastChats[] = $with;
-            }
+            $lastChat = ChatRepository::getChatByRelation($profileId, $with['profile_id']);
+            $lastMessage = $lastChat->messages[array_key_last($lastChat->messages)];
+            $with['message'] = $lastMessage->text;
+            $with['created_at'] = $lastMessage->created_at;
+
+            $lastChats[] = $with;
         }
 
         return $lastChats;
@@ -66,10 +89,10 @@ class ChatRepository extends Chat
 
     public static function getChat(int $ownerProfileId, int $otherProfileId): array
     {
-        $chat = ChatRepository::getChatByRelation($ownerProfileId,$otherProfileId);
+        $chat = ChatRepository::getChatByRelation($ownerProfileId, $otherProfileId);
 
-        if(empty($chat)){
-            throw new NotFoundHttpException("Chat not found"); 
+        if (empty($chat)) {
+            throw new NotFoundHttpException("Chat not found");
         }
 
         $messages = [];
