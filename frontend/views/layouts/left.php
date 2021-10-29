@@ -13,6 +13,7 @@ use yii\bootstrap5\Modal;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
+use yii\web\View;
 
 /** @var string $directoryAsset */
 
@@ -72,6 +73,7 @@ $items[] = [
 
 $profileId = Yii::$app->user->identity->userProfile->id;
 $userProfiles = UserProfile::find()->where(['!=', 'user_id', Yii::$app->user->id])->all();
+$this->registerJsVar('myToken', md5($profileId), View::POS_END);
 
 ?>
 

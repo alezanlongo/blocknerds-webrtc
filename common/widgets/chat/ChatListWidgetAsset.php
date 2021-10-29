@@ -10,6 +10,7 @@ class ChatListWidgetAsset extends AssetBundle
 
     public $js = [
         'js/list.js',
+        'js/mqttChatTestHandler.js',
     ];
 
     public $css = [

@@ -1,5 +1,6 @@
 <?php 
 
+
 ?>
 <ul class="list-group">
     <?php foreach ($recentChat as $chat) { ?>

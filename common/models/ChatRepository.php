@@ -56,6 +56,7 @@ class ChatRepository extends Chat
                 'username' => $chat->fromProfile->user->username,
             ];
 
+            // $with['channel'] = $chat->channel;
 
             $lastChat = ChatRepository::getChatByRelation($profileId, $with['profile_id']);
             $lastMessage = $lastChat->messages[array_key_last($lastChat->messages)];
@@ -66,6 +67,12 @@ class ChatRepository extends Chat
         }
 
         return $lastChats;
+
+    }
+
+    public static function getChatsByChannel(string $channel):array
+    {
+        return Chat::find()->where(['channel'=>$channel])->all();
     }
 
     public static function getChatByRelation(int $from, int $to)
@@ -99,9 +106,9 @@ class ChatRepository extends Chat
         $wasMe = $chat->from_profile_id === $ownerProfileId;
         $profile = $wasMe ? $chat->toProfile : $chat->fromProfile;
 
-        foreach ($chat->chatMessages as $msg) {
+        foreach ($chat->messages as $msg) {
             $messages[] = [
-                'message' => $msg->message,
+                'message' => $msg->text,
                 'wasMe' => $wasMe,
                 'username' => $profile->user->username,
                 'img' => $profile->image,
