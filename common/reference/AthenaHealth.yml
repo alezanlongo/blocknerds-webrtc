@@ -1925,6 +1925,125 @@ paths:
         required: true
       tags:
         - Document Type - Patient Case
+  /v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/assign:
+    put:
+      summary: Reassign patient case document
+      description: Reassigns a specific patient case document
+      parameters:
+        - description: patientcaseid
+          in: path
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutReassignPatient200Response'
+          description: Success
+      operationId: putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidAssign
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestReassignPatientCase'
+        required: true
+      tags:
+        - Document Type - Patient Case
+  /v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/close:
+    put:
+      summary: Close patient case document
+      description: Closes a specific patient case document
+      parameters:
+        - description: patientcaseid
+          in: path
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutClosePatient200Response'
+          description: Success
+      operationId: putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidClose
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestClosePatientCase'
+        required: true
+      tags:
+        - Document Type - Patient Case
+  /v1/{practiceid}/reference/documents/patientcase/closereasons:
+    get:
+      summary: Get list of close-reasons for patient cases
+      description: Retrieves a list of reasons to be used to close patient cases
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: denotes the id of the patient case.
+          in: query
+          name: patientcaseid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CloseReason'
+          description: Success
+      operationId: getPracticeidReferenceDocumentsPatientcaseClosereasons
+      tags:
+        - Document Type - Patient Case
 components:
   schemas:
     Patient:
