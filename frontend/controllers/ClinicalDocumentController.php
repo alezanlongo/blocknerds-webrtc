@@ -100,14 +100,7 @@ class ClinicalDocumentController extends Controller
             $model->attachmentcontents = chunk_split(base64_encode($fc));
 
             $model = $this->component->createClinicalDocument($patientid, $model);
-            $pagesDetails = $model->pages;
-            if($model->save()){
-                foreach ($pagesDetails as $key => $value){
-                    $value->save();
-                }
-
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
         $model->departmentid = $departmentid;

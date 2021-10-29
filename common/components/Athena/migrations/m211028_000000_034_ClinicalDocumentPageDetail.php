@@ -3,7 +3,7 @@
 /**
  * Table for ClinicalDocumentPageDetail
  */
-class m211027_000000_034_ClinicalDocumentPageDetail extends \yii\db\Migration
+class m211028_000000_034_ClinicalDocumentPageDetail extends \yii\db\Migration
 {
     public function up()
     {
@@ -25,7 +25,6 @@ class m211027_000000_034_ClinicalDocumentPageDetail extends \yii\db\Migration
             'id',
             'CASCADE'
         );
-
     }
 
     public function down()

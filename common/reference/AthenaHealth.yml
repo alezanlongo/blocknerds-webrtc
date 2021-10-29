@@ -5168,7 +5168,10 @@ components:
           type: integer
     ClinicalDocumentPageDetail:
       type: object
+      x-external-id: pageid
       properties:
+        clinicalDocument:
+          $ref: '#/components/schemas/ClinicalDocument'
         contenttype:
           description: The content-type that will be returned by the page image call.
           type: string
