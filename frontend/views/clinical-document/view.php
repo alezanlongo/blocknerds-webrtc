@@ -1,7 +1,9 @@
 <?php
 
+use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
 
 /* @var $this yii\web\View */
 /* @var $model common\components\Athena\models\ClinicalDocument */
@@ -11,6 +13,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Clinical Documents', 'url' => ['in
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
+
 <div class="clinical-document-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -64,4 +67,28 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+    <?= GridView::widget([
+        'dataProvider' => $pageDetail,
+        'options' => [
+            'class' => 'table table-striped table-bordered bg-light'
+        ],
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            //'clinicalDocument_id',
+            'contenttype',
+            //'href',
+            'pageid',
+            'pageordering',
+            'externalId',
+            'id',
+
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view}',
+            ],
+        ],
+    ]); ?>
+
 </div>
+

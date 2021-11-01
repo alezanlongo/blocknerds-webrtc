@@ -2,9 +2,9 @@
 
 namespace frontend\controllers;
 
-use common\components\Athena\models\PostClinicalDocument;
+
+use spec\Prophecy\Doubler\Generator\Node\ReturnTypeNodeSpec;
 use Yii;
-use common\components\Athena\models\ClinicalDocument;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -12,6 +12,9 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
 
+use common\components\Athena\models\ClinicalDocument;
+use common\components\Athena\models\ClinicalDocumentPageDetail;
+use common\components\Athena\models\PostClinicalDocument;
 use common\components\AthenaComponent;
 
 /**
@@ -75,8 +78,13 @@ class ClinicalDocumentController extends Controller
      */
     public function actionView($id)
     {
+        $dataProviderPageDetail = new ActiveDataProvider([
+            'query' => $this->findPageDetail($id),
+        ]);
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model'         => $this->findModel($id),
+            'pageDetail'    => $dataProviderPageDetail
         ]);
     }
 
@@ -167,5 +175,14 @@ class ClinicalDocumentController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    protected function findPageDetail($clinicalDocument_id)
+    {
+        $clinicalDocumentPageDetail = ClinicalDocumentPageDetail::find()
+            ->where(['clinicalDocument_id' => $clinicalDocument_id]);
+
+        return $clinicalDocumentPageDetail;
     }
 }
