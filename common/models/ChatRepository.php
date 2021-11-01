@@ -64,12 +64,11 @@ class ChatRepository extends Chat
         }
 
         return $lastChats;
-
     }
 
-    public static function getChatsByChannel(string $channel):array
+    public static function getChatsByChannel(string $channel): array
     {
-        return Chat::find()->where(['channel'=>$channel])->orderBy('id', 'desc')->all();
+        return Chat::find()->where(['channel' => $channel])->orderBy('id', 'desc')->all();
     }
 
     public static function getChatByRelation(int $from, int $to)
@@ -80,18 +79,9 @@ class ChatRepository extends Chat
             ->limit(1)->one();
     }
 
-    public static function lastMessage(int $ownerProfileId, int $otherProfileId)
-    {
-        // VarDumper::dump( [$ownerProfileId, $otherProfileId], $depth = 10, $highlight = true);
-        // TODO WITH MAX 
-        return  Chat::find()
-            ->where(['from_profile_id' => $ownerProfileId, 'to_profile_id' => $otherProfileId])
-            ->orWhere(['from_profile_id' => $otherProfileId, 'to_profile_id' => $ownerProfileId])
-            ->orderBy('created_at', 'desc')
-            ->limit(1)->one();
-    }
 
-    public static function getChat(int $ownerProfileId, string $channel): array
+
+    public static function getChats(int $ownerProfileId, string $channel): array
     {
         $chats = ChatRepository::getChatsByChannel($channel);
 
@@ -99,21 +89,16 @@ class ChatRepository extends Chat
             throw new NotFoundHttpException("Chat not found");
         }
 
-        $messages = [];
-        
-        
-        foreach ($chats as $msg) {
+        return array_map(function ($msg) use ($ownerProfileId) {
             $wasMe = $msg->from_profile_id === $ownerProfileId;
             $profile = $wasMe ? $msg->toProfile : $msg->fromProfile;
-            $messages[] = [
+            return [
                 'message' => $msg->text,
                 'wasMe' => $wasMe,
                 'username' => $profile->user->username,
                 'img' => $profile->image,
-                'sent_at' => Carbon::parse($msg->created_at)->format('l jS \\of F h:i:s A'),
+                'sent_at' => 'fecha',
             ];
-        }
-
-        return $messages;
+        }, $chats);
     }
 }

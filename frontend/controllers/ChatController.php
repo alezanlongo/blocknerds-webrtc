@@ -154,7 +154,7 @@ class ChatController extends Controller
         // TODO: get message with pagination
         $me = Yii::$app->user->identity->userProfile->id;
 
-        return ChatRepository::getChat($me, $channel);
+        return ChatRepository::getChats($me, $channel);
     }
     public function actionRecentChat()
     {
