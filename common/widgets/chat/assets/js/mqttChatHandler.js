@@ -32,19 +32,21 @@ client.onConnectionLost = function (responseObject) {
 client.onMessageArrived = function (message) {
     const objData = JSON.parse(message.payloadString);
     console.log(objData)
-    const type = objData.type;
+    const {type, channel} = objData;
 
     if (!type) {
         console.log("Message arrived with wrong type", objData)
     }
 
     if (type === 'requestToSubscribeChannel') {
-        if (channels.indexOf(objData.channel) === -1) {
-            channels.push(objData.channel);
+        if (channels.indexOf(channel) === -1) {
+            channels.push(channel);
         }
-        client.subscribe(objData.channel);
+        client.subscribe(channel);
     } else {
-        $("." + objData.type).append('<p>' + objData.message + '</p>');
+        // $("." + type).append('<p>' + objData.message + '</p>');
+        // console.log($(`#message_to_${objData.to}`))
+        
         $.pjax.reload({ container: "#left-chat-list" });
     }
     console.log("Message arrived", objData)

@@ -17,6 +17,11 @@ $(document).ready(function () {
   });
 });
 
+const scrollLast = () => {
+  const d = $(".direct-chat-messages");
+  d.scrollTop(d.prop("scrollHeight"));
+}
+
 const openBox = (to_profile_id, to_username, channel) => {
   const boxes = Array.from($('.direct-chat-gral'))
   if (boxes.length > 0) {
@@ -31,15 +36,18 @@ const openBox = (to_profile_id, to_username, channel) => {
   const chat = { to_profile_id, to_username, channel }
   $.get(`/chat/${channel}`).then(data => {
     $('.chat-zone').append(chatBox(data, chat))
-  }).catch(err => {
-    console.log(err)
+  }).then(() => {
+    scrollLast()
   })
+    .catch(err => {
+      console.log(err)
+    })
 }
 
 const doEfect = (comp, defaultColor, repeats = 2) => {
   if (repeats > 0) {
-     $(comp).css("background-color", (repeats  % 2 !== 0) ? defaultColor : "blue") ;
-    setTimeout(() => doEfect(comp,defaultColor, repeats - 1), 500)
+    $(comp).css("background-color", (repeats % 2 !== 0) ? defaultColor : "blue");
+    setTimeout(() => doEfect(comp, defaultColor, repeats - 1), 500)
   }
 }
 
@@ -88,7 +96,7 @@ const chatBox = (content, userTarget) => {
       </div>
     </div>
     <div class="card-body" id="card_collapse_${userTarget.channel}">
-      <div class="direct-chat-messages">
+      <div class="direct-chat-messages" id="message_to_${userTarget.to_profile_id}">
         ${buildContent(content)}
       </div>
     </div>

@@ -111,7 +111,7 @@ $this->registerJsVar('myToken', md5($profileId), View::POS_END);
 
     <?=
     ChatListWidget::widget([
-      'recentChat' => ChatRepository::getRecentChats($profileId),
+      'recentChat' => array_reverse(ChatRepository::getRecentChats($profileId)),
     ]);
 
     Pjax::end();

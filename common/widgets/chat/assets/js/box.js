@@ -7,6 +7,7 @@ $('.btn-send').on('click', (e) => {
     }
 
     sendMessageMQTT(text, null, to).then(data => {
+        console.log(data)
         closeAndClearNewMessage();
         // TODO: open box
     })
