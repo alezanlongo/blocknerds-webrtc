@@ -45,6 +45,7 @@ client.onMessageArrived = function (message) {
         client.subscribe(objData.channel);
     } else {
         $("." + objData.type).append('<p>' + objData.message + '</p>');
+        $.pjax.reload({ container: "#left-chat-list" });
     }
     console.log("Message arrived", objData)
 };

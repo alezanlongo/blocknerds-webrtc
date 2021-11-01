@@ -7,10 +7,15 @@ $('.btn-send').on('click', (e) => {
     }
 
     sendMessageMQTT(text, null, to).then(data => {
-        console.log(data)
-        $(`input[name=message]`).val('')
-        $('#offcanvasScrolling .offcanvas-header .btn-close').trigger("click")
-        $('#newChat').modal('hide')
+        closeAndClearNewMessage();
         // TODO: open box
     })
+
 })
+
+function closeAndClearNewMessage() {
+    $(`input[name=message]`).val('')
+    $(`select[name=user_target]`).prop("selectedIndex", 0).val();
+    $('#offcanvasScrolling .offcanvas-header .btn-close').trigger("click")
+    $('#newChat').modal('hide')
+}
