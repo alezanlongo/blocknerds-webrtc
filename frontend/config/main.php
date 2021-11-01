@@ -1,5 +1,9 @@
 <?php
 
+use frontend\assets\adminlte\AdminLteAsset;
+use frontend\assets\fontawesome\FontAwesomeAsset;
+use yii\bootstrap5\BootstrapAsset;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -14,6 +18,37 @@ return [
     'controllerNamespace' => 'frontend\controllers',
     'defaultRoute' => 'room/calendar',
     'components' => [
+        'assetManager' => [
+            'bundles' => [
+                // 'appendTimestamp' => true,
+                'yii\web\JqueryAsset' => [
+                    'js' => [
+                        YII_ENV_DEV ? 'jquery.js' : 'jquery.min.js',
+                    ]
+                ],
+               
+                AdminLteAsset::class => [
+                    "css" => [
+                        'css/adminlte.css',
+                        'css/sidebar.css',
+                        'css/dark/adminlte-dark-addon.css',
+                        'lib/overlayscrollbars/css/OverlayScrollbars.min.css',
+                        'lib/@fortawesome/fontawesome-free/css/all.min.css',
+                    ],
+                    'js' => [
+                        'js/adminlte.js',
+                        'js/sidebar.js',
+                        'lib/overlayscrollbars/js/jquery.overlayScrollbars.min.js',
+                    ],
+                    // 'depends' => [FontAwesomeAsset::class]
+                ],
+                // BootstrapAsset::class => [
+                //     'css' => [],
+                //     'js' => [],
+                //     'depends' => [FontAwesomeAsset::class]
+                // ],
+            ]
+        ],
         'request' => [
             'csrfParam' => '_csrf-frontend',
         ],
@@ -45,18 +80,21 @@ return [
                 'POST room/create' => 'room/create',
                 'POST room/create-schedule' => 'room/create-schedule',
                 'GET room/user-list' => 'room/user-list',
+                'GET room/admin-test' => 'room/testing-admin',
                 'GET room/waiting/<uuid>' => 'room/waiting',
                 'GET room/calendar' => 'room/calendar',
                 'GET room/calendar/events/<id>' => 'room/fetch-calendar-events',
                 'GET room/<uuid>' => 'room',
                 'POST room-moderate/<roomUuid>/<profileId>' => 'room/moderate-member',
-                'POST room/<uuid>/kick'=>'room/kick-member',
+                'POST room/<uuid>/kick' => 'room/kick-member',
                 'POST room/join/request' => 'room/join-request',
                 'POST room/time/expired' => 'room/time-expired',
                 'POST room/time/add' => 'room/add-time',
                 'POST room/join/<action:(allow|deny)>' => 'room/join',
                 'GET user/get-profile/<profile_id>' => 'user/get-profile',
                 'POST room/toggle-media' => 'room/toggle-media',
+                'GET chat/<channel>' => 'chat/get-chat',
+                'POST chat-test/message-listener' => 'chat-test/message-listener',
             ],
         ],
     ],
