@@ -6,5 +6,11 @@ $('.btn-send').on('click', (e) => {
         return;
     }
 
-    sendMessageMQTT(text, null, to)
+    sendMessageMQTT(text, null, to).then(data => {
+        console.log(data)
+        $(`input[name=message]`).val('')
+        $('#offcanvasScrolling .offcanvas-header .btn-close').trigger("click")
+        $('#newChat').modal('hide')
+        // TODO: open box
+    })
 })

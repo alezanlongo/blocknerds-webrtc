@@ -10,7 +10,7 @@ $(document).ready(function () {
       const channel = comp.attr('id').split('message_to_')[1]
       sendMessage(to, channel)
         .then(data => {
-          console.log(data, 'op')
+          console.log(data, 'op, do something')
         })
         .catch(err => console.log('ERROR', err))
     }
@@ -18,12 +18,29 @@ $(document).ready(function () {
 });
 
 const openBox = (to_profile_id, to_username, channel) => {
+  const boxes = Array.from($('.direct-chat-gral'))
+  if (boxes.length > 0) {
+    const box = boxes.find(b => Number($(b).attr('data-profile-id')) === to_profile_id)
+    if (box) {
+      const defaultColor = $(box).css("background-color")
+      doEfect(box, defaultColor)
+      return;
+    }
+  }
+
   const chat = { to_profile_id, to_username, channel }
   $.get(`/chat/${channel}`).then(data => {
     $('.chat-zone').append(chatBox(data, chat))
   }).catch(err => {
     console.log(err)
   })
+}
+
+const doEfect = (comp, defaultColor, repeats = 2) => {
+  if (repeats > 0) {
+     $(comp).css("background-color", (repeats  % 2 !== 0) ? defaultColor : "blue") ;
+    setTimeout(() => doEfect(comp,defaultColor, repeats - 1), 500)
+  }
 }
 
 const buildMessage = (chat) => {
@@ -39,12 +56,7 @@ const buildMessage = (chat) => {
 }
 
 const buildContent = (chats) => {
-  let str = '';
-  chats.forEach(chat => {
-    str += buildMessage(chat);
-  });
-
-  return str;
+  return chats.map(chat => buildMessage(chat)).join('\n')
 }
 
 const sendMessage = (to, channel) => {
@@ -60,10 +72,9 @@ const sendMessage = (to, channel) => {
 }
 
 const chatBox = (content, userTarget) => {
-  return `<div class="card direct-chat direct-chat-primary m-0">
+  return `<div class="card direct-chat direct-chat-gral direct-chat-primary m-0" data-profile-id="${userTarget.to_profile_id}">
     <div class="card-header">
       <h3 class="card-title">${userTarget.to_username}</h3>
-
       <div class="card-tools">
         <a class="btn btn-tool" data-bs-toggle="collapse" href="#card_collapse_${userTarget.channel}" role="button" aria-expanded="false" aria-controls="collapseCard">
         <i class="fas fa-minus"></i>
@@ -77,7 +88,6 @@ const chatBox = (content, userTarget) => {
       </div>
     </div>
     <div class="card-body" id="card_collapse_${userTarget.channel}">
-      <!-- Conversations are loaded here -->
       <div class="direct-chat-messages">
         ${buildContent(content)}
       </div>
