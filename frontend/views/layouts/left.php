@@ -2,18 +2,19 @@
 
 /** @var \yii\web\View $this */
 
-use common\models\ChatRepository;
+use yii\web\View;
+use yii\helpers\Url;
+use yii\helpers\Html;
+use yii\widgets\Pjax;
 use common\models\Chat;
 use common\models\User;
+use yii\bootstrap5\Modal;
+use yii\helpers\VarDumper;
 use common\models\UserProfile;
+use common\models\ChatRepository;
+use frontend\widgets\adminlte\Menu;
 use common\widgets\chat\ChatBoxWidget;
 use common\widgets\chat\ChatListWidget;
-use frontend\widgets\adminlte\Menu;
-use yii\bootstrap5\Modal;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\helpers\VarDumper;
-use yii\web\View;
 
 /** @var string $directoryAsset */
 
@@ -106,10 +107,14 @@ $this->registerJsVar('myToken', md5($profileId), View::POS_END);
     </div>
   </div>
   <div class="offcanvas-body">
+    <? Pjax::begin(['id' => 'left-chat-list']);     ?>
+
     <?=
     ChatListWidget::widget([
       'recentChat' => ChatRepository::getRecentChats($profileId),
-    ])
+    ]);
+
+    Pjax::end();
     ?>
   </div>
 </div>

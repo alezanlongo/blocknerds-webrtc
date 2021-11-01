@@ -6,5 +6,13 @@ $('.btn-send').on('click', (e) => {
         return;
     }
 
-    sendMessageMQTT(text, null, to)
+    sendMessageMQTT(text, null, to);
+
+    closeAndClearNewMessage();
 })
+
+function closeAndClearNewMessage() {
+    $(`input[name=message]`).val("")
+    $(`select[name=user_target]`).prop("selectedIndex", 0).val();
+    $("#newChat").modal('hide');
+}
