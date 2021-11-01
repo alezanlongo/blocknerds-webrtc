@@ -738,6 +738,24 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     /**
      * @param practiceid
      * @param patientid
+     * @return ChartAlert
+     */
+    public function getPracticeidPatientsPatientidChartalert($practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/chartalert';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ChartAlertApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
      * @return PostChartAlert200Response
      */
     public function postPracticeidPatientsPatientidChartalert($practiceid, $patientid, array $body = [])

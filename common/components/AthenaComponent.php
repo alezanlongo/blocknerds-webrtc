@@ -2,26 +2,27 @@
 namespace common\components;
 
 use Yii;
-use yii\base\Component;
 use common\components\Athena\AthenaClient;
+use common\components\Athena\apiModels\AppointmentApi;
+use common\components\Athena\apiModels\EncounterApi;
+use common\components\Athena\apiModels\PatientApi;
+use common\components\Athena\apiModels\PatientCaseApi;
 use common\components\Athena\models\ActionNote;
 use common\components\Athena\models\Appointment;
-use common\components\Athena\apiModels\AppointmentApi;
+use common\components\Athena\models\ChartAlert;
 use common\components\Athena\models\Checkin;
 use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Encounter;
-use common\components\Athena\apiModels\EncounterApi;
 use common\components\Athena\models\Patient;
-use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\models\PatientCase;
-use common\components\Athena\apiModels\PatientCaseApi;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
+use yii\base\Component;
 
 class AthenaComponent extends Component
 {
@@ -641,6 +642,19 @@ class AthenaComponent extends Component
                 $patient->externalId,
                 $chartAlert->toArray()
             );
+    }
+
+    public function retrieveChartAlert($patient)
+    {
+        $chartAlertModelApi = $this->client->getPracticeidPatientsPatientidChartalert(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
+        );
+
+        return ChartAlert::createFromApiObject(
+            $chartAlertModelApi
+        );
     }
 
 

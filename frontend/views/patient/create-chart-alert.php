@@ -7,7 +7,7 @@
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
-$this->title = 'Create Patient';
+$this->title = 'Create Chart Alert';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">

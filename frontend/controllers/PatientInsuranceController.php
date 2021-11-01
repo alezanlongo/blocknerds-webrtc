@@ -93,8 +93,11 @@ class PatientInsuranceController extends \yii\web\Controller
      */
     public function actionViewPatient($id)
     {
+        $patient = $this->findPatientModel($id);
+
         return $this->render('/patient/view', [
-            'model' => $this->findPatientModel($id),
+            'model' => $patient,
+            'chartAlert' => $this->component->retrieveChartAlert($patient)
         ]);
     }
 
@@ -196,7 +199,7 @@ class PatientInsuranceController extends \yii\web\Controller
                 $model
             );
 
-            return;
+            return $this->redirect(['view-patient', 'id' => $patient->id]);
         }
 
         return $this->render('/patient/create-chart-alert', [

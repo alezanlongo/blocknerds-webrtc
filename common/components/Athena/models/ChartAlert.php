@@ -5,26 +5,26 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
- * @property int $departmentid The department ID; needed because charts, and thus chart notes, may be department-specific
- * @property string $notetext The note text.  Use PUT to add to any existing text and POST if you want to add new or replace the full note
+ * @property string $lastmodified The time this note was updated (mm/dd/yyyy hh24:mi:ss; Eastern time), if the note has been updated.
+ * @property string $lastmodifiedby If the note has been modified, the username who last modified this note.
+ * @property string $notetext The text of the note.
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
-class RequestChartAlert extends \yii\db\ActiveRecord
+class ChartAlert extends \yii\db\ActiveRecord
 {
 
     public static function tableName()
     {
-        return '{{%request_chart_alerts}}';
+        return '{{%chart_alerts}}';
     }
 
     public function rules()
     {
         return [
-            [['notetext'], 'trim'],
-            [['departmentid', 'notetext'], 'required'],
-            [['notetext'], 'string'],
-            [['departmentid', 'externalId', 'id'], 'integer'],
+            [['lastmodified', 'lastmodifiedby', 'notetext'], 'trim'],
+            [['lastmodified', 'lastmodifiedby', 'notetext'], 'string'],
+            [['externalId', 'id'], 'integer'],
         ];
     }
 
@@ -33,8 +33,11 @@ class RequestChartAlert extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        if($departmentid = ArrayHelper::getValue($apiObject, 'departmentid')) {
-            $this->departmentid = $departmentid;
+        if($lastmodified = ArrayHelper::getValue($apiObject, 'lastmodified')) {
+            $this->lastmodified = $lastmodified;
+        }
+        if($lastmodifiedby = ArrayHelper::getValue($apiObject, 'lastmodifiedby')) {
+            $this->lastmodifiedby = $lastmodifiedby;
         }
         if($notetext = ArrayHelper::getValue($apiObject, 'notetext')) {
             $this->notetext = $notetext;

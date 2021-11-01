@@ -2083,6 +2083,42 @@ paths:
         required: true
       tags:
         - Chart Alert
+    get:
+      summary: >-
+        Get last modified information of patient's chart specific to a
+        department
+      description: Retrieves the chart alert record for a patient in a specific department
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            The department ID; needed because charts, and thus chart notes, may
+            be department-specific
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChartAlert'
+          description: Success
+      operationId: getPracticeidPatientsPatientidChartalert
+      tags:
+        - Chart Alert
 components:
   schemas:
     Patient:
@@ -5045,4 +5081,20 @@ components:
       properties:
         success:
           description: Returns true/false if the operation was successful
+          type: string
+    ChartAlert:
+      type: object
+      properties:
+        lastmodified:
+          description: >-
+            The time this note was updated (mm/dd/yyyy hh24:mi:ss;
+            Eastern time), if the note has been updated.
+          type: string
+        lastmodifiedby:
+          description: >-
+            If the note has been modified, the username who last
+            modified this note.
+          type: string
+        notetext:
+          description: The text of the note.
           type: string
