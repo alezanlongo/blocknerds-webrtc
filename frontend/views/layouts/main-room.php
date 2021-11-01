@@ -24,12 +24,12 @@ AdminLteAsset::register($this);
 
 <body class="layout-fixed  ">
     <?php $this->beginBody() ?>
-    <div class="wrapper">
+    <div class="wrapper m-0">
         <?= $this->render(
             'header-room.php',
             []
         ) ?>
-        <div class="content-wrapper">
+        <div class="content-wrapper m-0">
             <section class="content">
                 <?= $content ?>
             </section>
