@@ -31,6 +31,7 @@ client.onConnectionLost = function (responseObject) {
 
 client.onMessageArrived = function (message) {
     const objData = JSON.parse(message.payloadString);
+    console.log(objData)
     const type = objData.type;
 
     if (!type) {
@@ -48,12 +49,12 @@ client.onMessageArrived = function (message) {
     console.log("Message arrived", objData)
 };
 
-const sendMessageMQTT = (from, to, room, message) => {
+const sendMessageMQTT = (text, channel = null, to = null, room = null) => {
 
     $.post({
-        url: "/chat-test/message-listener",
+        url: "/chat/send-message",
         data: {
-            from, to, room, message
+            text, channel, to, room
         },
         cache: false,
         error: (err) => {
@@ -65,19 +66,6 @@ const sendMessageMQTT = (from, to, room, message) => {
         },
     });
 
-};
-
-const handleSendMessage = () => {
-
-    if ($('input[name="message1"]').val() && $('input[name="to1"]').val()) {
-        sendMessageMQTT(profile_id, $('input[name="to1"]').val(), null, $('input[name="message1"]').val());
-    } else if ($('input[name="message2"]').val() && $('input[name="to2"]').val() && $('input[name="room2"]').val()) {
-        sendMessageMQTT(profile_id, $('input[name="to2"]').val(), $('input[name="room2"]').val(), $('input[name="message2"]').val());
-    } else if ($('input[name="message3"]').val() && $('input[name="room3"]').val()) {
-        sendMessageMQTT(profile_id, null, $('input[name="room3"]').val(), $('input[name="message3"]').val());
-    }
-
-    $('input[name="message1"], input[name="message2"], input[name="message3"]').val("");
 };
 
 $(document).ready(function () {

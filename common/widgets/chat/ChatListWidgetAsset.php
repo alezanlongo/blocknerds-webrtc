@@ -10,7 +10,7 @@ class ChatListWidgetAsset extends AssetBundle
 
     public $js = [
         'js/list.js',
-        'js/mqttChatTestHandler.js',
+        'js/mqttChatHandler.js',
     ];
 
     public $css = [
@@ -18,7 +18,6 @@ class ChatListWidgetAsset extends AssetBundle
     ];
 
     public $depends = [
-        // 'yii\web\JqueryAsset',
     ];
 
     public $publishOptions = [

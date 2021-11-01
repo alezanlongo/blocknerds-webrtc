@@ -1,16 +1,10 @@
 $('.btn-send').on('click', (e) => {
-    const message = $(`input[name=message]`).val()
-    const targetId = $(`select[name=user_target]`).val()
+    const text = $(`input[name=message]`).val()
+    const to = $(`select[name=user_target]`).val()
 
-    if (message.trim() === '' || !targetId) {
+    if (text.trim() === '' || !to) {
         return;
     }
 
-    $.post('chat/send-message', {
-        targetId,
-        message,
-    }).then(data => {
-        // TODO: update 
-        console.log(data)
-    }).catch(err => console.log(err))
+    sendMessageMQTT(text, null, to)
 })

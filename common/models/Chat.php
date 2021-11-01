@@ -13,13 +13,13 @@ use yii\behaviors\TimestampBehavior;
  * @property int|null $to_profile_id
  * @property int|null $room_id
  * @property string $channel
+ * @property string $text
  * @property int $created_at
  * @property int $updated_at
  *
  * @property Room $room
  * @property UserProfile $fromProfile
  * @property UserProfile $toProfile
- * @property ChatMessage $messages
  */
 class Chat extends \yii\db\ActiveRecord
 {
@@ -44,16 +44,17 @@ class Chat extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['from_profile_id', 'channel'], 'required'],
+            [['from_profile_id', 'channel', 'text'], 'required'],
             [['from_profile_id', 'to_profile_id', 'room_id', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['from_profile_id', 'to_profile_id', 'room_id', 'created_at', 'updated_at'], 'integer'],
             [['channel'], 'string', 'max' => 32],
+            [['text'], 'string', 'max' => 255],
             [['room_id'], 'exist', 'skipOnError' => true, 'targetClass' => Room::class, 'targetAttribute' => ['room_id' => 'id']],
             [['from_profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserProfile::class, 'targetAttribute' => ['from_profile_id' => 'id']],
             [['to_profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => UserProfile::class, 'targetAttribute' => ['to_profile_id' => 'id']],
         ];
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -65,6 +66,7 @@ class Chat extends \yii\db\ActiveRecord
             'to_profile_id' => 'To Profile ID',
             'room_id' => 'Room ID',
             'channel' => 'Channel',
+            'text' => 'Text',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -98,15 +100,5 @@ class Chat extends \yii\db\ActiveRecord
     public function getToProfile()
     {
         return $this->hasOne(UserProfile::class, ['id' => 'to_profile_id']);
-    }
-
-    /**
-     * Gets query for [[ChatMessage]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getMessages()
-    {
-        return $this->hasMany(ChatMessage::class, ['chat_id' => 'id']);
     }
 }

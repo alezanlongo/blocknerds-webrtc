@@ -4,10 +4,7 @@
 namespace frontend\controllers;
 
 use common\models\Chat;
-use common\models\ChatForm;
-use common\models\ChatMessage;
 use common\models\ChatRepository;
-use common\models\EditProfileForm;
 use common\models\RoomMember;
 use common\models\User;
 use common\models\UserProfile;
@@ -28,8 +25,6 @@ use yii\web\UploadedFile;
 
 class ChatController extends Controller
 {
-
-
     public function behaviors()
     {
         return [
@@ -48,29 +43,30 @@ class ChatController extends Controller
 
     public function actionSendMessage()
     {
-        $to = $this->request->post('targetId');
+        $channel_to_talk = $this->request->post('channel');
+        $to = $this->request->post('to');
         $from = Yii::$app->user->identity->userProfile->id;
         $room_id = Yii::$app->request->post("room");
         list($type, $channel) = $this->handleValidation($from, $to, $room_id);
+
+        if (!empty($channel_to_talk) && $channel !== $channel_to_talk) {
+            throw new UnprocessableEntityHttpException("Channels missmatch");
+        }
 
         $chat = new Chat();
         $chat->from_profile_id = $from;
         $chat->to_profile_id = $to;
         $chat->room_id = $room_id;
+        $chat->text = Yii::$app->request->post("text");
         $chat->channel = $channel;
 
         if ($chat->save()) {
-            $message = new ChatMessage();
-            $message->chat_id = $chat->id;
-            $message->text = Yii::$app->request->post("message");
-            $message->save();
-
             $mqttResponse = [
                 'type' => $type,
                 'from' => $from,
                 'to' => $to,
                 'room_id' => $room_id,
-                'message' => $message->text,
+                'message' => $chat->text,
                 'created_at' => $chat->created_at
             ];
 
@@ -152,13 +148,13 @@ class ChatController extends Controller
         return true;
     }
 
-    public function actionGetChat($withId)
+    public function actionGetChat($channel)
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         // TODO: get message with pagination
         $me = Yii::$app->user->identity->userProfile->id;
 
-        return ChatRepository::getChat($me, $withId);
+        return ChatRepository::getChat($me, $channel);
     }
     public function actionRecentChat()
     {

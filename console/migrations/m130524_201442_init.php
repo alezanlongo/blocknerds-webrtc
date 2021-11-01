@@ -201,6 +201,7 @@ class m130524_201442_init extends Migration
             'to_profile_id' => $this->integer(),
             'room_id' => $this->integer(),
             'channel' => $this->string(32)->notNull(),
+            'text' => $this->string()->notNull(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
@@ -232,23 +233,59 @@ class m130524_201442_init extends Migration
             'CASCADE'
         );
 
-        // chat_message
-        $this->createTable('{{%chat_message}}', [
-            'id' => $this->primaryKey(),
-            'chat_id' => $this->integer()->notNull(),
-            'text' => $this->string()->notNull(),
-            'created_at' => $this->integer()->notNull(),
-            'updated_at' => $this->integer()->notNull(),
-        ]);
-
-        $this->addForeignKey(
-            '{{%fk-chat_message-chat_id}}',
-            '{{%chat_message}}',
-            'chat_id',
+        $this->createIndex(
+            '{{%idx-chat-channel}}',
             '{{%chat}}',
-            'id',
-            'CASCADE'
+            'channel',
         );
+
+        // chat_message
+        // $this->createTable('{{%chat_message}}', [
+        //     'id' => $this->primaryKey(),
+        //     'chat_id' => $this->integer()->notNull(),
+        //     'text' => $this->string()->notNull(),
+        //     'from_profile_id' => $this->integer()->notNull(),
+        //     'to_profile_id' => $this->integer(),
+        //     'room_id' => $this->integer(),
+        //     'created_at' => $this->integer()->notNull(),
+        //     'updated_at' => $this->integer()->notNull(),
+        // ]);
+
+        // $this->addForeignKey(
+        //     '{{%fk-chat_message-chat_id}}',
+        //     '{{%chat_message}}',
+        //     'chat_id',
+        //     '{{%chat}}',
+        //     'id',
+        //     'CASCADE'
+        // );
+
+        // $this->addForeignKey(
+        //     '{{%fk-chat_message-room_id}}',
+        //     '{{%chat_message}}',
+        //     'room_id',
+        //     '{{%room}}',
+        //     'id',
+        //     'CASCADE'
+        // );
+
+        // $this->addForeignKey(
+        //     '{{%fk-chat_message-to_profile_id}}',
+        //     '{{%chat_message}}',
+        //     'to_profile_id',
+        //     '{{%user_profile}}',
+        //     'id',
+        //     'CASCADE'
+        // );
+
+        // $this->addForeignKey(
+        //     '{{%fk-chat_message-from_profile_id}}',
+        //     '{{%chat_message}}',
+        //     'from_profile_id',
+        //     '{{%user_profile}}',
+        //     'id',
+        //     'CASCADE'
+        // );
     }
 
     public function down()

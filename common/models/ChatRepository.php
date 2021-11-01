@@ -4,6 +4,7 @@ namespace common\models;
 
 use Carbon\Carbon;
 use common\models\Chat;
+use DateTime;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
@@ -35,7 +36,6 @@ class ChatRepository extends Chat
         //     ->orderBy('id', 'desc');
         // ->max('id');
 
-
         // $chats =   (new \yii\db\Query())
         //     // ->select(['from_profile_id', 'to_profile_id', 'channel', 'id'])
         //     ->from('chat')
@@ -56,12 +56,9 @@ class ChatRepository extends Chat
                 'username' => $chat->fromProfile->user->username,
             ];
 
-            // $with['channel'] = $chat->channel;
-
-            $lastChat = ChatRepository::getChatByRelation($profileId, $with['profile_id']);
-            $lastMessage = $lastChat->messages[array_key_last($lastChat->messages)];
-            $with['message'] = $lastMessage->text;
-            $with['created_at'] = $lastMessage->created_at;
+            $with['channel'] = $chat->channel;
+            $with['message'] = $chat->text;
+            $with['created_at'] = $chat->created_at;
 
             $lastChats[] = $with;
         }
@@ -72,7 +69,7 @@ class ChatRepository extends Chat
 
     public static function getChatsByChannel(string $channel):array
     {
-        return Chat::find()->where(['channel'=>$channel])->all();
+        return Chat::find()->where(['channel'=>$channel])->orderBy('id', 'desc')->all();
     }
 
     public static function getChatByRelation(int $from, int $to)
@@ -94,19 +91,20 @@ class ChatRepository extends Chat
             ->limit(1)->one();
     }
 
-    public static function getChat(int $ownerProfileId, int $otherProfileId): array
+    public static function getChat(int $ownerProfileId, string $channel): array
     {
-        $chat = ChatRepository::getChatByRelation($ownerProfileId, $otherProfileId);
+        $chats = ChatRepository::getChatsByChannel($channel);
 
-        if (empty($chat)) {
+        if (empty($chats)) {
             throw new NotFoundHttpException("Chat not found");
         }
 
         $messages = [];
-        $wasMe = $chat->from_profile_id === $ownerProfileId;
-        $profile = $wasMe ? $chat->toProfile : $chat->fromProfile;
-
-        foreach ($chat->messages as $msg) {
+        
+        
+        foreach ($chats as $msg) {
+            $wasMe = $msg->from_profile_id === $ownerProfileId;
+            $profile = $wasMe ? $msg->toProfile : $msg->fromProfile;
             $messages[] = [
                 'message' => $msg->text,
                 'wasMe' => $wasMe,

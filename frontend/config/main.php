@@ -93,7 +93,7 @@ return [
                 'POST room/join/<action:(allow|deny)>' => 'room/join',
                 'GET user/get-profile/<profile_id>' => 'user/get-profile',
                 'POST room/toggle-media' => 'room/toggle-media',
-                'GET chat/<withId>' => 'chat/get-chat',
+                'GET chat/<channel>' => 'chat/get-chat',
                 'POST chat-test/message-listener' => 'chat-test/message-listener',
             ],
         ],
