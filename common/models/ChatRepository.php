@@ -97,7 +97,7 @@ class ChatRepository extends Chat
                 'wasMe' => $wasMe,
                 'username' => $profile->user->username,
                 'img' => $profile->image,
-                'sent_at' => 'fecha',
+                'sent_at' => Carbon::createFromTimestamp($msg->created_at, $profile->timezone)->format('Y-m-d H:i:s'),
             ];
         }, $chats);
     }

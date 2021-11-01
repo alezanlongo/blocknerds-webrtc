@@ -50,36 +50,12 @@ client.onMessageArrived = function (message) {
 };
 
 const sendMessageMQTT = (text, channel = null, to = null, room = null) => {
-
-    $.post({
+   return $.post({
         url: "/chat/send-message",
         data: {
             text, channel, to, room
         },
         cache: false,
-        error: (err) => {
-            console.log("Error on sendMessageMQTT", err);
-        },
-        success: (data) => {
-            const objData = JSON.parse(data);
-            console.log("Success on sendMessageMQTT", objData)
-        },
     });
 
 };
-
-$(document).ready(function () {
-
-    connectMQTT(myToken);
-
-    // $(".message").keypress(function (e) {
-    //     if (e.which == 13) {
-    //         handleSendMessage();
-    //     }
-    // });
-
-    // $(document).on("click", ".btn-primary", function (e) {
-    //     handleSendMessage();
-    // });
-
-});

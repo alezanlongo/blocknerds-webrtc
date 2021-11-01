@@ -1,3 +1,22 @@
+$(document).ready(function () {
+
+  connectMQTT(myToken);
+
+  $(document).on("keypress", ".messageBox", function (e) {
+    const charKey = e.keyCode || e.which;
+    if (charKey === 13) {
+      const comp = $(e.target)
+      const to = comp.attr('data-to-profile-id')
+      const channel = comp.attr('id').split('message_to_')[1]
+      sendMessage(to, channel)
+        .then(data => {
+          console.log(data, 'op')
+        })
+        .catch(err => console.log('ERROR', err))
+    }
+  });
+});
+
 const openBox = (to_profile_id, to_username, channel) => {
   const chat = { to_profile_id, to_username, channel }
   $.get(`/chat/${channel}`).then(data => {
@@ -34,7 +53,10 @@ const sendMessage = (to, channel) => {
     return;
   }
 
-  sendMessageMQTT(text, channel, to)
+  return sendMessageMQTT(text, channel, to).then(data => {
+    $(`#message_to_${channel}`).val('')
+    return data
+  })
 }
 
 const chatBox = (content, userTarget) => {
@@ -62,7 +84,7 @@ const chatBox = (content, userTarget) => {
     </div>
     <div class="card-footer">
         <div class="input-group">
-          <input type="text" autocomplete="off" name="message" id="message_to_${userTarget.channel}" placeholder="Type Message ..." class="form-control messageBox">
+          <input type="text" autocomplete="off" name="message" id="message_to_${userTarget.channel}" data-to-profile-id="${userTarget.to_profile_id}" placeholder="Type Message ..." class="form-control messageBox">
           <span class="input-group-append">
             <button type="button" class="btn btn-primary" onclick="sendMessage(${userTarget.to_profile_id},'${userTarget.channel}')">Send</button>
           </span>
