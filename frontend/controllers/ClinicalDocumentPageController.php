@@ -2,9 +2,11 @@
 
 namespace frontend\controllers;
 
+use common\components\AthenaComponent;
 use Yii;
 use common\components\Athena\models\ClinicalDocumentPage;
 use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -14,6 +16,18 @@ use yii\filters\VerbFilter;
  */
 class ClinicalDocumentPageController extends Controller
 {
+    private $component;
+
+    public function init()
+    {
+        parent::init();
+        if($user = Yii::$app->user->identity){
+            $practiceId = $user->ext_practice_id;
+            $this->component = Yii::createObject(AthenaComponent::class);
+            $this->component->setPracticeid($practiceId);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -21,9 +35,12 @@ class ClinicalDocumentPageController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
+                "class" => AccessControl::class,
+                "rules" => [
+                    [
+                        'allow' => true,
+                        'roles' => ["@"],
+                    ]
                 ],
             ],
         ];
@@ -50,8 +67,9 @@ class ClinicalDocumentPageController extends Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id, $patienetid, $clinicalDocumentid)
     {
+        $this->component->getClinicalDocumentPage($patienetid, $clinicalDocumentid, $id);
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);

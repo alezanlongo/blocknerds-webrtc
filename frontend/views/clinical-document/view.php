@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -35,6 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'class' => 'table table-striped table-bordered bg-light'
         ],
         'attributes' => [
+            'patientid',
             'actionnote',
             'assignedto',
             'clinicaldocumentid',
@@ -67,28 +69,38 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
-    <?= GridView::widget([
-        'dataProvider' => $pageDetail,
-        'options' => [
-            'class' => 'table table-striped table-bordered bg-light'
-        ],
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            //'clinicalDocument_id',
-            'contenttype',
-            //'href',
-            'pageid',
-            'pageordering',
-            'externalId',
-            'id',
-
-            [
-                'class' => 'yii\grid\ActionColumn',
-                'template' => '{view}',
-            ],
-        ],
-    ]); ?>
-
+    <div class="row">
+        <table class="table table-striped table-bordered bg-light">
+            <thead>
+                <tr>
+                    <th scope="col">pageid</th>
+                    <th scope="col">pageordering</th>
+                    <th scope="col">externalId</th>
+                    <th scope="col">view</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach($pageDetail as $key => $value): ?>
+                <tr>
+                    <th scope="row"><?= $value->pageid ?></th>
+                    <td><?= $value->pageordering ?></td>
+                    <td><?= $value->externalId ?></td>
+                    <td>
+                        <?= Html::a(
+                            'Documnent',
+                            [
+                                'view-page',
+                                'pageid'                => $value->pageid,
+                                'patientid'             => $model->patientid,
+                                'clinicalDocumentid'    => $model->externalId
+                            ],
+                            ['title' => 'Documnent',],
+                        ) ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 

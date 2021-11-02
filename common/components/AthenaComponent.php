@@ -632,8 +632,8 @@ class AthenaComponent extends Component
                 $postClinicalDocumentsModelsApi->clinicaldocumentid
             );
             $clinicalDocument = ClinicalDocument::createFromApiObject($clinicalDocumentsModelsApi[0]);
+            $clinicalDocument->patientid = $patientId;
             $clinicalDocument->save();
-            /*echo "<pre>"; var_dump($clinicalDocument->toArray()); exit();*/
             foreach ($clinicalDocumentsModelsApi[0]['pages'] as $key => $value){
                 $pageDetail = ClinicalDocumentPageDetail::createFromApiObject($value);
                 $pageDetail->link("clinicalDocument", $clinicalDocument);
@@ -644,6 +644,17 @@ class AthenaComponent extends Component
         }
 
         return $postClinicalDocument;
+    }
+
+
+    public function getClinicalDocumentPage($patientId, $clinicalDocumnetid, $pageid, $flatten = false)
+    {
+        $clinicalDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentidPagesPageid(
+            $this->practiceid, $pageid, $patientId, $clinicalDocumnetid);
+
+        echo "<pre>"; var_dump($clinicalDocumnetid); exit();
+
+        return $clinicalDocumentsModelsApi;
     }
 
     /* ================================= Begin  Protected methods ============================================== */

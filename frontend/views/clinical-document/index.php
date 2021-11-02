@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -59,8 +60,24 @@ $this->params['breadcrumbs'][] = $this->title;
             //'tietoorderid',
             //'externalId',
             //'id',
+            [
+                'attribute' => 'Document',
+                'value' => function ($model){
+                    $url = Url::toRoute([
+                        'view',
+                        'id'        => $model->id,
+                        'patientid' => $model->patientid,
 
-            ['class' => 'yii\grid\ActionColumn'],
+                    ]);
+                    return Html::a(
+                        'Documnent',
+                        $url,
+                        ['title' => 'Documnent',],
+                    );
+                },
+                'format' => 'raw',
+            ],
+            //['class'     => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 

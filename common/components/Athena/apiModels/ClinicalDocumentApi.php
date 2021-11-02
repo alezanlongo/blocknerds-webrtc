@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property int $patientid The athenaNet patient ID.
  * @property string $actionnote The most recent action note for a document
  * @property string $assignedto Person the document is assigned to
  * @property int $clinicaldocumentid The primary key for the clinical document.
@@ -40,6 +41,7 @@ use common\models\ApiModel as BaseApiModel;
 class ClinicalDocumentApi extends BaseApiModel
 {
 
+    public $patientid;
     public $actionnote;
     public $assignedto;
     public $clinicaldocumentid;

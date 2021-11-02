@@ -5067,6 +5067,9 @@ components:
       type: object
       x-external-id: clinicaldocumentid
       properties:
+        patientid:
+          description: The athenaNet patient ID.
+          type: integer
         actionnote:
           description: The most recent action note for a document
           type: string

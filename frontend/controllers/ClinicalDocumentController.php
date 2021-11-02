@@ -61,7 +61,7 @@ class ClinicalDocumentController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => ClinicalDocument::find(),
-        ]);
+        ]); //echo"<pre>"; var_dump(ClinicalDocument::find()->all()); exit();
 
         return $this->render('index', [
             'dataProvider'  => $dataProvider,
@@ -73,18 +73,20 @@ class ClinicalDocumentController extends Controller
     /**
      * Displays a single ClinicalDocument model.
      * @param integer $id
+     * @param integer $patientid
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionView($id)
+    public function actionView($id, $patientid)
     {
-        $dataProviderPageDetail = new ActiveDataProvider([
+        /*$dataProviderPageDetail = new ActiveDataProvider([
             'query' => $this->findPageDetail($id),
-        ]);
+        ]);*/
 
         return $this->render('view', [
+            'patientid'     => $patientid,
             'model'         => $this->findModel($id),
-            'pageDetail'    => $dataProviderPageDetail
+            'pageDetail'    => $this->findPageDetail($id)
         ]);
     }
 
@@ -108,7 +110,11 @@ class ClinicalDocumentController extends Controller
             $model->attachmentcontents = chunk_split(base64_encode($fc));
 
             $model = $this->component->createClinicalDocument($patientid, $model);
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect([
+                'view',
+                'id'        => $model->id,
+                'patientid' => $patientid
+            ]);
         }
 
         $model->departmentid = $departmentid;
@@ -161,6 +167,25 @@ class ClinicalDocumentController extends Controller
         return $this->redirect(['index']);
     }
 
+
+    /**
+     * Displays a single ClinicalDocument model.
+     * @param integer $pageid
+     * @param integer $patientid
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionViewPage($pageid, $patientid, $clinicalDocumentid)
+    {
+        $this->component->getClinicalDocumentPage($patientid, $clinicalDocumentid, $pageid);
+
+        /*return $this->render('view', [
+            'patientid'     => $patientid,
+            'model'         => $this->findModel($id),
+            'pageDetail'    => $dataProviderPageDetail
+        ]);*/
+    }
+
     /**
      * Finds the ClinicalDocument model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -183,6 +208,6 @@ class ClinicalDocumentController extends Controller
         $clinicalDocumentPageDetail = ClinicalDocumentPageDetail::find()
             ->where(['clinicalDocument_id' => $clinicalDocument_id]);
 
-        return $clinicalDocumentPageDetail;
+        return $clinicalDocumentPageDetail->all();
     }
 }

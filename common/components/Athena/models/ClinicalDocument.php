@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property int $patientid The athenaNet patient ID.
  * @property string $actionnote The most recent action note for a document
  * @property string $assignedto Person the document is assigned to
  * @property int $clinicaldocumentid The primary key for the clinical document.
@@ -51,7 +52,7 @@ class ClinicalDocument extends \yii\db\ActiveRecord
         return [
             [['actionnote', 'assignedto', 'createddate', 'createddatetime', 'createduser', 'departmentid', 'documentclass', 'documentdata', 'documentdescription', 'documentroute', 'documentsource', 'documentsubclass', 'externalnote', 'internalnote', 'lastmodifieddate', 'lastmodifieddatetime', 'lastmodifieduser', 'observationdate', 'ordertype', 'priority', 'providerusername', 'status'], 'trim'],
             [['actionnote', 'assignedto', 'createddate', 'createddatetime', 'createduser', 'departmentid', 'documentclass', 'documentdata', 'documentdescription', 'documentroute', 'documentsource', 'documentsubclass', 'externalnote', 'internalnote', 'lastmodifieddate', 'lastmodifieddatetime', 'lastmodifieduser', 'observationdate', 'ordertype', 'priority', 'providerusername', 'status'], 'string'],
-            [['clinicaldocumentid', 'clinicalproviderid', 'documenttypeid', 'providerid', 'tietoorderid', 'externalId', 'id'], 'integer'],
+            [['patientid', 'clinicaldocumentid', 'clinicalproviderid', 'documenttypeid', 'providerid', 'tietoorderid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -66,6 +67,9 @@ class ClinicalDocument extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($patientid = ArrayHelper::getValue($apiObject, 'patientid')) {
+            $this->patientid = $patientid;
+        }
         if($actionnote = ArrayHelper::getValue($apiObject, 'actionnote')) {
             $this->actionnote = $actionnote;
         }

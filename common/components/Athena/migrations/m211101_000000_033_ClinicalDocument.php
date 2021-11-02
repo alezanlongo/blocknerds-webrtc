@@ -3,7 +3,7 @@
 /**
  * Table for ClinicalDocument
  */
-class m211027_000000_033_ClinicalDocument extends \yii\db\Migration
+class m211101_000000_033_ClinicalDocument extends \yii\db\Migration
 {
     public function up()
     {
