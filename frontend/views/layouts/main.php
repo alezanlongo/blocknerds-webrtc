@@ -2,7 +2,7 @@
 
 use frontend\assets\adminlte\AdminLteAsset;
 use frontend\assets\AppAsset;
-use frontend\assets\pahoMqtt\PahoMqttAsset;
+use frontend\assets\mqtt\MqttAsset;
 use yii\helpers\Html;
 
 /** @var \yii\web\View $this */
@@ -17,7 +17,7 @@ if (Yii::$app->controller->action->id === 'login') {
 } else {
 
   AppAsset::register($this);
-  $this->registerAssetBundle(PahoMqttAsset::class);
+  $this->registerAssetBundle(MqttAsset::class);
   AdminLteAsset::register($this);
 ?>
 
