@@ -637,7 +637,6 @@ class RoomController extends \yii\web\Controller
     public function actionKickMember()
     {
         $profileId = $this->request->post('profileId');
-        $memberId = $this->request->post('memberId');
         $roomUuid = $this->request->get('uuid');
 
         $roomMember = $this->checkMember($roomUuid, $profileId);
@@ -647,7 +646,7 @@ class RoomController extends \yii\web\Controller
             return throw new ServerErrorHttpException("Only owner of the room is allowed.");
         }
 
-        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token, $memberId)) {
+        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token)) {
             return throw new ServerErrorHttpException("Error kicking member of the room");
         }
 

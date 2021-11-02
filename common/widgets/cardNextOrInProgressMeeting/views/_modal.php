@@ -6,7 +6,7 @@ $formatter = \Yii::$app->formatter;
 
 ?>
 
-<div class="row m-1">
+<div class="row mt-1">
     <div class="col-sm-4">
         <div class="card">
             <div class="card-body d-flex row">

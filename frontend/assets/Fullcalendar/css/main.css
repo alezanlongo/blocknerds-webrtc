@@ -17,3 +17,8 @@ tr.fc-list-event:hover {
 .fc-theme-standard .fc-popover {
   background-color: #202124 ;
 }
+
+table th{
+  /* color: #9e9e9e; */
+  color: #3788d8;
+}

@@ -1,6 +1,6 @@
 <?php
 
-use dmstr\adminlte\widgets\Alert;
+use frontend\widgets\adminlte\Alert;
 
 ?>
 <div class="content-wrapper">

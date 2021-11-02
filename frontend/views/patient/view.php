@@ -19,7 +19,14 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Insurance', ['patient-insurance/create-insurance', 'patientId' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Create Appointment', ['appointment/create', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Create Patient Case', ['patient-case/create', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Create Chart Alert', ['patient-insurance/create-chart-alert', 'patientId' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
+
+    <?php if ($chartAlert->notetext): ?>
+        <div class="alert alert-danger" role="alert">
+            Chart Alert: <?= $chartAlert->notetext ?>
+        </div>
+    <?php endif ?>
 
     <?= DetailView::widget([
         'model' => $model,

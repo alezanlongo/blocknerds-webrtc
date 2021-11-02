@@ -636,6 +636,47 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     /**
      * @param patientcaseid
      * @param practiceid
+     * @return ActionNote
+     */
+    public function getPracticeidDocumentsPatientcasePatientcaseidActions($patientcaseid, $practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/documents/patientcase/{patientcaseid}/actions';
+        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['actionnotes'])) ? $dataResponse['data']['actionnotes'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\ActionNoteApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param patientcaseid
+     * @param practiceid
+     * @return PostActionNote200Response
+     */
+    public function postPracticeidDocumentsPatientcasePatientcaseidActions($patientcaseid, $practiceid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/documents/patientcase/{patientcaseid}/actions';
+        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PostActionNote200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param patientcaseid
+     * @param practiceid
      * @param patientid
      * @return PutReassignPatient200Response
      */
@@ -695,42 +736,37 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
         }
     }
     /**
-     * @param patientcaseid
      * @param practiceid
-     * @return ActionNote
+     * @param patientid
+     * @return ChartAlert
      */
-    public function getPracticeidDocumentsPatientcasePatientcaseidActions($patientcaseid, $practiceid, array $query = [])
+    public function getPracticeidPatientsPatientidChartalert($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/documents/patientcase/{patientcaseid}/actions';
-        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = '/v1/{practiceid}/patients/{patientid}/chartalert';
         $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
         if($dataResponse['success']){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse['data']['actionnotes'])) ? $dataResponse['data']['actionnotes'] : $dataResponse['data'];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Athena\apiModels\ActionNoteApi($value));
-            }
-            return $dataApiModel;
+            return new \common\components\Athena\apiModels\ChartAlertApi($dataResponse['data']);
         }else{
             return $dataResponse['message'];
         }
     }
     /**
-     * @param patientcaseid
      * @param practiceid
-     * @return PostActionNote200Response
+     * @param patientid
+     * @return PostChartAlert200Response
      */
-    public function postPracticeidDocumentsPatientcasePatientcaseidActions($patientcaseid, $practiceid, array $body = [])
+    public function postPracticeidPatientsPatientidChartalert($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/documents/patientcase/{patientcaseid}/actions';
-        $path = str_replace('{patientcaseid}', $patientcaseid, $path);
+        $path = '/v1/{practiceid}/patients/{patientid}/chartalert';
         $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\PostActionNote200ResponseApi($dataResponse['data']);
+            return new \common\components\Athena\apiModels\PostChartAlert200ResponseApi($dataResponse['data']);
         }else{
             return $dataResponse['message'];
         }
