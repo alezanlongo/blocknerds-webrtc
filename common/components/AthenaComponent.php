@@ -684,7 +684,7 @@ class AthenaComponent extends Component
         $changedMedicationsResult = [];
         try {
             foreach( $changedMedications->medications as $medicationApi ) {
-                $medicationModel = $this->obtainMedication($medicationApi->patientid, $medicationApi);
+                $medicationModel = $this->obtainMedication($medicationApi->medicationentryid, $medicationApi);
                 $changedMedicationsResult[] = [$medicationModel->id, $medicationModel->externalId, $medicationModel->save()];
             }
         } catch(\Exception $e) {
