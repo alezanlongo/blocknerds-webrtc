@@ -2,6 +2,7 @@
 namespace common\components;
 
 use Yii;
+use yii\base\Component;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\EncounterApi;
@@ -22,7 +23,8 @@ use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
-use yii\base\Component;
+use common\components\Athena\models\Problem;
+use common\components\Athena\apiModels\ProblemApi;
 
 class AthenaComponent extends Component
 {
@@ -657,6 +659,39 @@ class AthenaComponent extends Component
         );
     }
 
+    public function retrieveProblemSubscriptionStatus()
+    {
+    	$subscriptionStatusApi = $this->client->getPracticeidChartHealthhistoryProblemsChangedSubscription($this->practiceid);
+
+        return $subscriptionStatusApi;
+    }
+
+    public function problemsSubscription($event)
+    {
+    	$subscriptionStatusApi = $this->client->postPracticeidChartHealthhistoryProblemsChangedSubscription($this->practiceid,
+            [
+                'eventname' => $event,
+            ]
+        );
+
+        return $subscriptionStatusApi;
+    }
+
+    public function problemChanges(): array
+    {
+    	$changedProblems = $this->client->getPracticeidChartHealthhistoryProblemsChanged($this->practiceid);
+        $changedProblemResult = [];
+        try {
+            foreach( $changedProblems->problems as $problemApi ) {
+                $problemModel = $this->obtainProblem($problemApi->problemid, $problemApi);
+                $changedProblemResult[] = [$problemModel->id, $problemModel->externalId, $problemModel->save()];
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
+        }
+
+        return $changedProblemResult;
+    }
 
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
@@ -671,7 +706,6 @@ class AthenaComponent extends Component
 
         return $patient->loadApiObject($patientModelApi);
     }
-
 
     protected function obtainAppointment($appointmentId, AppointmentApi $appointmentModelApi): Appointment
     {
@@ -710,6 +744,19 @@ class AthenaComponent extends Component
         }
 
         return $patientCase->loadApiObject($patientCaseModelApi);
+    }
+
+    protected function obtainProblem($problemId, ProblemApi $problemModelApi): Problem
+    {
+        $problem = Problem::find()
+            ->where(['externalId' => $problemId])
+            ->one();
+
+        if (!$problem) {
+            return Patient::createFromApiObject($problemModelApi);
+        }
+
+        return $problem->loadApiObject($problemModelApi);
     }
     /* =================================== End  Protected methods ============================================== */
 }
