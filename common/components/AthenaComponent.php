@@ -5,6 +5,7 @@ use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\EncounterApi;
+use common\components\Athena\apiModels\MedicationApi;
 use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\apiModels\PatientCaseApi;
 use common\components\Athena\models\ActionNote;
@@ -14,6 +15,7 @@ use common\components\Athena\models\Checkin;
 use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Encounter;
+use common\components\Athena\models\Medication;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\PatientLocation;
@@ -657,6 +659,42 @@ class AthenaComponent extends Component
         );
     }
 
+    public function retrieveMedicationSubscriptionStatus()
+    {
+        $subscriptionStatusApi = $this->client->getPracticeidChartHealthhistoryMedicationChangedSubscription($this->practiceid);
+
+        return $subscriptionStatusApi;
+    }
+
+    public function medicationsSubscription($event)
+    {
+        $subscriptionStatusApi = $this->client->postPracticeidChartHealthhistoryMedicationChangedSubscription($this->practiceid,
+            [
+                'eventname' => $event,
+            ]
+        );
+
+        return $subscriptionStatusApi;
+    }
+
+    public function medicationChanges(): array
+    {
+        $changedMedications = $this->client->getPracticeidChartHealthhistoryMedicationChanged($this->practiceid);
+
+        $changedMedicationsResult = [];
+        try {
+            foreach( $changedMedications->medications as $medicationApi ) {
+                $medicationModel = $this->obtainMedication($medicationApi->patientid, $medicationApi);
+                $changedMedicationsResult[] = [$medicationModel->id, $medicationModel->externalId, $medicationModel->save()];
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
+        }
+
+        return $changedMedicationsResult;
+    }
+
+
 
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
@@ -710,6 +748,19 @@ class AthenaComponent extends Component
         }
 
         return $patientCase->loadApiObject($patientCaseModelApi);
+    }
+
+    protected function obtainMedication($medicationId, MedicationApi $medicationModelApi): Medication
+    {
+        $medication = Medication::find()
+            ->where(['externalId' => $medicationId])
+            ->one();
+
+        if (!$medication) {
+            return Medication::createFromApiObject($medicationModelApi);
+        }
+
+        return $medication->loadApiObject($medicationModelApi);
     }
     /* =================================== End  Protected methods ============================================== */
 }

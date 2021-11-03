@@ -45,7 +45,13 @@ class SyncController extends Controller
         'NOTIFY'            => 'PatientCaseNotifyPatient',
     ];
 
-    public function init() 
+    const MEDICATION_EVENTS = [
+        'ADD'               => 'MedicationHxAdd',
+        'UPDATE'            => 'MedicationHxUpdate',
+        'DELETE'            => 'MedicationHxDelete',
+    ];
+
+    public function init()
     {
         parent::init();
         $this->component = Yii::$app->athenaComponent;
@@ -174,6 +180,37 @@ class SyncController extends Controller
             echo Table::widget([
                 'headers' => ['ID', 'ExternalID', 'DB Result'],
                 'rows' => $changedPatiendCasesResult,
+            ]);
+        } catch(\Exception  $e) {
+            echo $e->getMessage()."\n";
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
+    }
+
+    public function actionMedication($practiceId)
+    {
+        $this->component->setPracticeid($practiceId);
+        try {
+            $subscriptionStatus = $this->component->retrieveMedicationSubscriptionStatus();
+            $updateEventSubscription = false;
+            if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
+                $updateEventSubscription = true;
+            } else {
+                foreach( $subscriptionStatus->subscriptions as $event) {
+                    if( $event['eventname'] == self::MEDICATION_EVENTS['UPDATE'] )
+                        $updateEventSubscription = true;
+                }
+            }
+
+            if( !$updateEventSubscription )
+                $this->component->medicationsSubscription(self::MEDICATION_EVENTS['UPDATE']);
+
+            $changedMedicationResult = $this->component->medicationChanges();
+            echo Table::widget([
+                'headers' => ['ID', 'ExternalID', 'DB Result'],
+                'rows' => $changedMedicationResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";
