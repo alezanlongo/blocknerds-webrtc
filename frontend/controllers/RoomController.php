@@ -6,6 +6,7 @@ use Yii;
 use DateTime;
 use Carbon\Carbon;
 use common\components\JanusApiComponent;
+use common\models\Chat;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use common\models\Room;
@@ -160,6 +161,8 @@ class RoomController extends \yii\web\Controller
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
+        $chats = Chat::find()->where(['room_id' => $room->id])->all();
+
         // VarDumper::dump($token, $depth = 10, $highlight = true);
         //     die;
         return $this->render('index', [
@@ -179,7 +182,8 @@ class RoomController extends \yii\web\Controller
             'endTime' => $endTime,
             'own_mute_audio' => $ownSourceStatus['mute_audio'] ?? false,
             'own_mute_video' => $ownSourceStatus['mute_video'] ?? false,
-
+            'myChannel' => md5($profile->id),
+            'chats' => $chats
         ]);
     }
 

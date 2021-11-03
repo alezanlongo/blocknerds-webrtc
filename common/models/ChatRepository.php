@@ -50,7 +50,7 @@ class ChatRepository extends Chat
         foreach ($chats as $chat) {
             $with = $chat->from_profile_id === $profileId ?  [
                 'profile_id' => $chat->to_profile_id,
-                'username' => $chat->toProfile->user->username,
+                'username' => $chat->to_profile_id ? $chat->toProfile->user->username : $chat->room->uuid,
             ] :  [
                 'profile_id' => $chat->from_profile_id,
                 'username' => $chat->fromProfile->user->username,

@@ -9,6 +9,7 @@ use frontend\assets\room\RoomAsset;
 use frontend\assets\Janus\JanusAsset;
 use frontend\assets\mqtt\MqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
+
 /** @var boolean $limit_members Whether to limit members for this room...? */
 
 /** @var \yii\web\View $this */
@@ -30,6 +31,7 @@ $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
 $this->registerJsVar('members', $members, View::POS_END);
 $this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
+$this->registerJsVar('myChannel', $myChannel, View::POS_END);
 
 $config = [
     'janus' => [
@@ -104,9 +106,11 @@ $this->title = 'The Room';
     <?= $this->render(
         '//layouts/right-room.php',
         [
+            'room_id' => $room_id,
             'limit_members' => $limit_members,
             'members' => $members,
             'is_owner' => $is_owner,
+            'chats' => $chats
         ]
     ) ?>
 
