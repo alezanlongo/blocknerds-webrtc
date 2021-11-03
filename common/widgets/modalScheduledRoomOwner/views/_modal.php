@@ -119,7 +119,7 @@ echo Html::input('hidden', 'room_id', $room_id);
 
         <?php
         echo $form->field(new User, 'username')->widget(Select2::class, [
-            'options' => ['placeholder' => 'Search for a user ...', 'multiple' => true],
+            'options' => ['placeholder' => 'Search for a user ...', 'multiple' => true, 'class'=> "text-dark"],
             'pluginOptions' => [
                 'allowClear' => true,
                 'minimumInputLength' => 2,

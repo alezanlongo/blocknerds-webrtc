@@ -2120,6 +2120,165 @@ paths:
       operationId: getPracticeidPatientsPatientidChartalert
       tags:
         - Chart Alert
+  /v1/{practiceid}/chart/healthhistory/medication/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for medication list
+      description: Subscribe for changed historical medications events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: postPracticeidChartHealthhistoryMedicationChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                eventname:
+                  description: >-
+                    By default, you are subscribed to all possible events.  If
+                    you only wish to subscribe to an individual event, pass the
+                    event name with this argument.
+                  type: string
+              type: object
+        required: true
+      tags:
+        - Historical Medication
+    get:
+      summary: Get list of medication list change subscription(s)
+      description: Retrieves list of events for Historical Medications
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryMedicationChangedSubscription
+      tags:
+        - Historical Medication
+    delete:
+      summary: Unsubscribe to all/specific change events for medication list
+      description: Delete an specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, you are unsubscribed from all possible events.  If you
+            only wish to unsubscribe from an individual event, pass the event
+            name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidChartHealthhistoryMedicationChangedSubscription
+      tags:
+        - Historical Medication
+  /v1/{practiceid}/chart/healthhistory/medication/changed:
+    get:
+      summary: Get list of changes in medication list based on subscribed events
+      description: Retrieves list of  modified historical medications
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: See showprocessedstartdatetime
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Patient ID. Multiple Patient IDs are allowed, either comma separated
+            or with multiple values.
+          in: query
+          name: patientid
+          required: false
+          schema:
+            items:
+              type: integer
+            type: array
+        - description: >-
+            Show already processed changes.  This will show changes that you
+            previously retrieved at some point after this datetime mm/dd/yyyy
+            hh24:mi:ss (Eastern). Can be used to refetch data if there was an
+            error, such as a timeout, and records are marked as already
+            retrieved. This is intended to be used with showprocessedenddatetime
+            and for a short period of time only. Also note that all messages
+            will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Number of entries to return (default 1000, max 5000)Please note that
+            this endpoint has a different default than normal.
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicationChanged'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryMedicationChanged
+      tags:
+        - Historical Medication
   /v1/{practiceid}/chart/healthhistory/problems/changed/subscription:
     post:
       summary: Subscribe to all/specific change events for problems
@@ -5256,6 +5415,170 @@ components:
           type: string
         notetext:
           description: The text of the note.
+          type: string
+    MedicationChanged:
+      type: object
+      properties:
+        medications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Medication'
+        totalcount:
+          type: integer
+    Medication:
+      x-external-id: medicationentryid
+      x-external-id-type: string
+      type: object
+      properties:
+        approvedby:
+          description: >-
+            For clinical prescriptions, the athenaNet username of the
+            person who approved this prescription.
+          type: string
+        billingndc:
+          description: The billing NDC code for this medication.
+          type: string
+        chartsharinggroupid:
+          description: >-
+            The chart charing group for this medication. For more
+            information on chart sharing groups see
+            /configuration/chartsharinggroups.
+          type: integer
+        createdby:
+          description: >-
+            The athenaNet username of the person who entered or
+            ordered the medication. Downloaded medications have
+            INTERFACE for this field.
+          type: string
+        deletedby:
+          description: >-
+            The athenaNet username of the person who deleted the
+            medication.
+          type: string
+        earliestfilldate:
+          description: >-
+            The earliest date a prescription may be filled, in the
+            format mm/dd/yyyy.
+          type: string
+        encounterid:
+          description: >-
+            If this was a prescription, this contains the ID of the
+            encounter where it was ordered or administered
+          type: integer
+        futuresubmitdate:
+          description: >-
+            The date a medication will be submitted. Included if the
+            medication is in PEND status and attached to a approved
+            future order.
+          type: string
+        issafetorenew:
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        isstructuredsig:
+          description: Whether the sig for this entry is structured.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        lastupdated:
+          description: The last time any of the medications were updated
+          type: string
+        medication:
+          description: The name of the medication.
+          type: string
+        medicationentryid:
+          description: >-
+            Primary ID for this medication entry. Those starting with
+            C are clinical prescriptions, and those starting with H
+            are historical (entered, downloaded, etc).
+          type: string
+        medicationid:
+          description: Athena ID for this medication.
+          type: integer
+        ndcoptions:
+          description: >-
+            The list of NDC numbers that correspond to this
+            medication.
+          type: string
+        orderingmode:
+          description: >-
+            The ordering mode for prescriptions. Can be PRESCRIBE,
+            DISPENSE, or ADMINISTER.
+          type: string
+        organclass:
+          description: >-
+            The organ class for this medication. This is equivalent to
+            a medication class.
+          type: string
+        patientid:
+          description: The patient that this medication was prescribed to.
+          type: integer
+        patientnote:
+          description: >-
+            Patient-facing note for this prescription. Labeled "note"
+            in the UI.
+          type: string
+        pharmacy:
+          description: The name of the pharmacy where this medication was filled.
+          type: string
+        pharmacyncpdpid:
+          description: >-
+            The NCPDP ID of the pharmacy for this medication..  See
+            http://www.ncpdp.org/ for details.
+          type: string
+        prescribedby:
+          description: The user who prescribed this medication.
+          type: string
+        providernote:
+          description: >-
+            Non-patient facing note for ths prescription. Labeled
+            "internal note" in the UI.
+          type: string
+        refillsallowed:
+          description: >-
+            The number of refills allowed when this medication was
+            ordered.
+          type: integer
+        route:
+          description: The route for the prescription.
+          type: string
+        rxnorm:
+          description: >-
+            The list of RxNorm Identifiers that correspond to this
+            medication. This list may contain both branded and generic
+            identifiers. Note: Not All medications would include RX
+            Norm.
+          type: string
+        source:
+          description: >-
+            How this medication was entered. This can be the ordering
+            provider, a medication history download (express scripts,
+            medco, etc), ATHENA (which means it was entered manually),
+            etc.
+          type: string
+        status:
+          description: >-
+            The status of this medication. Medications in PEND status
+            are associated with approved future orders and have not
+            yet been submitted.
+          type: string
+        stopreason:
+          description: The reason why this medication was stopped.
+          type: string
+        therapeuticclass:
+          description: >-
+            The therapeutic class for this medication. This is
+            equivalent to a medication subclass.
+          type: string
+        unstructuredsig:
+          description: >-
+            The unstructured sig for this medication, if any. If there
+            is a structured sig, this will contain the formatted
+            version of that sig.
           type: string
     ProblemChanged:
       type: object
