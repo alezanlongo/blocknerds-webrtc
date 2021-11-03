@@ -5268,6 +5268,7 @@ components:
           type: integer
     Medication:
       x-external-id: medicationentryid
+      x-external-id-type: string
       type: object
       properties:
         approvedby:
