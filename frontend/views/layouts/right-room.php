@@ -1,8 +1,10 @@
 <?php
 
 use yii\helpers\Html;
+use common\widgets\chat\ChatBoxRoomWidget;
+
 ?>
-<aside class="control-sidebar control-sidebar-dark" >
+<aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
     <ul class="nav nav-pills mb-3 d-flex justify-content-around" id="pills-tab" role="tablist">
         <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
@@ -47,6 +49,9 @@ use yii\helpers\Html;
         </div>
         <div class="tab-pane fade option-content" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">
             <?= Html::tag('h3', 'Chat section', ['class' => 'text-center']) ?>
+
+            <?= ChatBoxRoomWidget::widget(['chats' => $chats, 'room_id' => $room_id]); ?>
+
         </div>
     </div>
 

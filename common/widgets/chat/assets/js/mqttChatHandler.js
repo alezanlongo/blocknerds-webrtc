@@ -10,8 +10,8 @@ let channels = [];
 //     });
 // };
 
-const sendMessageMQTT = (text, channel = null, to = null, room = null) => {
-    return $.post({
+const sendChatMessageMQTT = (text, channel = null, to = null, room = null) => {
+    $.post({
         url: "/chat/send-message",
         data: {
             text, channel, to, room
@@ -20,23 +20,29 @@ const sendMessageMQTT = (text, channel = null, to = null, room = null) => {
     });
 };
 
+if (typeof wsbroker !== "undefined") {
+    const wsbroker = "localhost"; // mqtt websocket enabled broker
+}
 
-const wsbroker = "localhost"; // mqtt websocket enabled broker
-const wsport = 15675; // port for above
-// const mqtt = mqtt;
+if (typeof wsport !== "undefined") {
+    const wsport = 15675; // port for above
+}
 
-let client = null;
-const connectMQTT = (channel) => {
-    client = mqtt.connect({ host: wsbroker, port: wsport, protocol: "ws", path: "/ws", clientId: "myclientid_" + parseInt(Math.random() * 100, 10) });
-    client.on('connect', function () {
-        client.subscribe(channel, function (err) {
+let chatClient = null;
+
+const connectChatMQTT = (channel) => {
+    chatClient = mqtt.connect({ host: wsbroker, port: wsport, protocol: "ws", path: "/ws", clientId: "myclientid_" + parseInt(Math.random() * 100, 10) });
+
+    chatClient.on('connect', function () {
+        chatClient.subscribe(channel, function (err) {
             console.log('mqtt', err)
             if (!err) {
-                client.publish(channel, 'mqtt connected!')
+                chatClient.publish(channel, 'mqtt connected!')
             }
         })
     })
-    client.on('message', function (topic, message) {
+
+    chatClient.on('message', function (topic, message) {
         let objData = message.toString();
         console.log('mqtt', objData)
         try {
@@ -57,13 +63,31 @@ const connectMQTT = (channel) => {
             if (channels.indexOf(channel) === -1) {
                 channels.push(channel);
             }
-            client.subscribe(channel);
+            chatClient.subscribe(channel);
         } else {
-            // $("." + type).append('<p>' + objData.message + '</p>');
-            // console.log($(`#message_to_${objData.to}`))
 
-            $.pjax.reload({ container: "#left-chat-list" });
+            $.pjax.reload({ container: "#chat-room" });
+
         }
         console.log("Message arrived", objData)
     });
 };
+
+const chatRoomScrollDown = () => {
+    var d = $(".direct-chat-messages");
+    d.scrollTop(d.prop("scrollHeight"));
+};
+
+$(document).on("pjax:end", function () {
+    chatRoomScrollDown();
+});
+
+$(document).ready(function () {
+
+    connectChatMQTT(myChannel);
+
+    window.setInterval(function () {
+        chatRoomScrollDown();
+    }, 500);
+});
+
