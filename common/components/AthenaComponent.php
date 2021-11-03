@@ -35,6 +35,15 @@ class AthenaComponent extends Component
         $this->client = $client;
     }
 
+    public function getAuthentication()
+    {
+        $dataSession = json_decode($this->client->Authenticate(), TRUE);
+        if((int)$dataSession['expirationTime'] < (int)time()){
+            $dataSession = json_decode($this->client->Authenticate(TRUE), TRUE);
+        }
+         return $dataSession['access_token'];
+    }
+
     public function setPracticeid(int $practiceid)
     {
         $this->practiceid = $practiceid;

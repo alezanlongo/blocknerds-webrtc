@@ -85,14 +85,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     <th scope="row"><?= $value->pageid ?></th>
                     <td><?= $value->pageordering ?></td>
                     <td><?= $value->externalId ?></td>
+                    <td><?= $value->href ?></td>
                     <td>
                         <?= Html::a(
                             'Documnent',
                             [
                                 'view-page',
-                                'pageid'                => $value->pageid,
-                                'patientid'             => $model->patientid,
-                                'clinicalDocumentid'    => $model->externalId
+                                'pageid'    => $value->pageid,
                             ],
                             ['title' => 'Documnent',],
                         ) ?>
