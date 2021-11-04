@@ -6,6 +6,7 @@ use Yii;
 use DateTime;
 use Carbon\Carbon;
 use common\components\JanusApiComponent;
+use common\models\Chat;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use common\models\Room;
@@ -160,6 +161,8 @@ class RoomController extends \yii\web\Controller
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
+        $chats = Chat::find()->where(['room_id' => $room->id])->all();
+
         // VarDumper::dump($token, $depth = 10, $highlight = true);
         //     die;
         return $this->render('index', [
@@ -179,7 +182,8 @@ class RoomController extends \yii\web\Controller
             'endTime' => $endTime,
             'own_mute_audio' => $ownSourceStatus['mute_audio'] ?? false,
             'own_mute_video' => $ownSourceStatus['mute_video'] ?? false,
-
+            'myChannel' => md5($profile->id),
+            'chats' => $chats
         ]);
     }
 
@@ -637,7 +641,6 @@ class RoomController extends \yii\web\Controller
     public function actionKickMember()
     {
         $profileId = $this->request->post('profileId');
-        $memberId = $this->request->post('memberId');
         $roomUuid = $this->request->get('uuid');
 
         $roomMember = $this->checkMember($roomUuid, $profileId);
@@ -647,7 +650,7 @@ class RoomController extends \yii\web\Controller
             return throw new ServerErrorHttpException("Only owner of the room is allowed.");
         }
 
-        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token, $memberId)) {
+        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token)) {
             return throw new ServerErrorHttpException("Error kicking member of the room");
         }
 

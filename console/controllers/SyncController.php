@@ -45,7 +45,18 @@ class SyncController extends Controller
         'NOTIFY'            => 'PatientCaseNotifyPatient',
     ];
 
-    public function init() 
+    const MEDICATION_EVENTS = [
+        'ADD'               => 'MedicationHxAdd',
+        'UPDATE'            => 'MedicationHxUpdate',
+        'DELETE'            => 'MedicationHxDelete',
+    ];
+
+    const PROBLEM_EVENTS = [
+        'ADD'               => 'ProblemAdd',
+        'UPDATE'            => 'ProblemUpdate',
+    ];
+
+    public function init()
     {
         parent::init();
         $this->component = Yii::$app->athenaComponent;
@@ -68,10 +79,10 @@ class SyncController extends Controller
             if( !$updateEventSubscription )
                 $this->component->patientsSubscription(self::PATIENT_EVENTS['UPDATE']);
 
-            $changedPatiendResult = $this->component->patientChanges();
+            $changedPatientResult = $this->component->patientChanges();
             echo Table::widget([
                 'headers' => ['ID', 'ExternalID', 'DB Result'],
-                'rows' => $changedPatiendResult,
+                'rows' => $changedPatientResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";
@@ -170,10 +181,10 @@ class SyncController extends Controller
             if( !$updateEventSubscription )
                 $this->component->patientCasesSubscription(self::PATIENTCASE_EVENTS['UPDATE']);
 
-            $changedPatiendCasesResult = $this->component->patientCasesChanges();
+            $changedPatientCasesResult = $this->component->patientCasesChanges();
             echo Table::widget([
                 'headers' => ['ID', 'ExternalID', 'DB Result'],
-                'rows' => $changedPatiendCasesResult,
+                'rows' => $changedPatientCasesResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";
@@ -182,4 +193,66 @@ class SyncController extends Controller
 
         return ExitCode::OK;
     }
+
+    public function actionMedication($practiceId)
+    {
+        $this->component->setPracticeid($practiceId);
+        try {
+            $subscriptionStatus = $this->component->retrieveMedicationSubscriptionStatus();
+            $updateEventSubscription = false;
+            if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
+                $updateEventSubscription = true;
+            } else {
+                foreach( $subscriptionStatus->subscriptions as $event) {
+                    if( $event['eventname'] == self::MEDICATION_EVENTS['UPDATE'] )
+                        $updateEventSubscription = true;
+                }
+            }
+
+            if( !$updateEventSubscription )
+                $this->component->medicationsSubscription(self::MEDICATION_EVENTS['UPDATE']);
+
+            $changedMedicationResult = $this->component->medicationChanges();
+            echo Table::widget([
+                'headers' => ['ID', 'ExternalID', 'DB Result'],
+                'rows' => $changedMedicationResult,
+            ]);
+        } catch(\Exception  $e) {
+            echo $e->getMessage()."\n";
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
+    }
+
+    public function actionProblem($practiceId)
+    {
+        $this->component->setPracticeid($practiceId);
+        try {
+            $subscriptionStatus = $this->component->retrieveProblemSubscriptionStatus();
+            $updateEventSubscription = false;
+            if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
+                $updateEventSubscription = true;
+            } else {
+                foreach( $subscriptionStatus->subscriptions as $event) {
+                    if( $event['eventname'] == self::PROBLEM_EVENTS['UPDATE'] )
+                        $updateEventSubscription = true;
+                }
+            }
+            if( !$updateEventSubscription )
+                $this->component->problemSubscription(self::PROBLEM_EVENTS['UPDATE']);
+
+            $changedProblemResult = $this->component->problemChanges();
+            echo Table::widget([
+                'headers' => ['ID', 'ExternalID', 'DB Result'],
+                'rows' => $changedProblemResult,
+            ]);
+        } catch(\Exception  $e) {
+            echo $e->getMessage()."\n";
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
+    }
+
 }

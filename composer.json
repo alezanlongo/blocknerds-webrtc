@@ -32,9 +32,7 @@
     "kartik-v/yii2-widget-select2": "2.2.x-dev",
     "nesbot/carbon": "3.x-dev",
     "cebe/php-openapi": "^1.5.2",
-    "cebe/yii2-openapi": "1.0.2",
-    "dmstr/yii2-adminlte-asset": "3.x-dev",
-    "symfony/yaml": "5.4.x-dev"
+    "cebe/yii2-openapi": "1.0.2"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",
@@ -45,7 +43,8 @@
     "codeception/module-yii2": "^1.0",
     "codeception/module-filesystem": "^1.0",
     "codeception/verify": "~0.5.0 || ~1.1.0",
-    "symfony/browser-kit": ">=2.7 <=4.2.4"
+    "symfony/browser-kit": ">=2.7 <=4.2.4",
+    "swoole/ide-helper": "@dev"
   },
   "config": {
     "process-timeout": 1800,
