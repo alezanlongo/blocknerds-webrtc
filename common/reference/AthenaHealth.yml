@@ -2436,7 +2436,153 @@ paths:
       operationId: getPracticeidChartHealthhistoryProblemsChanged
       tags:
         - Problems
-
+  /v1/{practiceid}/chart/healthhistory/allergies/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for allergies
+      description: Subscribes for changed allergy events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: postPracticeidChartHealthhistoryAllergiesChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                eventname:
+                  description: >-
+                    By default, you are subscribed to all possible events.  If
+                    you only wish to subscribe to an individual event, pass the
+                    event name with this argument.
+                  type: string
+              type: object
+        required: true
+      tags:
+        - Allergy
+    get:
+      summary: Get list of allergy change subscription(s)
+      description: Retrieves list of events applicable for allergies
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryAllergiesChangedSubscription
+      tags:
+        - Allergy
+    delete:
+      summary: Unsubscribe to all/specific change events for allergies
+      description: Delete an specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, you are unsubscribed from all possible events.  If you
+            only wish to unsubscribe from an individual event, pass the event
+            name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidChartHealthhistoryAllergiesChangedSubscription
+      tags:
+        - Allergy
+  /v1/{practiceid}/chart/healthhistory/allergies/changed:
+    get:
+      summary: Get list of changes in allergies based on subscribed events
+      description: Retrieves list of records of modified patient allergy data
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: See showprocessedstartdatetime
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Show already processed changes.  This will show changes that you
+            previously retrieved at some point after this datetime mm/dd/yyyy
+            hh24:mi:ss (Eastern). Can be used to refetch data if there was an
+            error, such as a timeout, and records are marked as already
+            retrieved. This is intended to be used with showprocessedenddatetime
+            and for a short period of time only. Also note that all messages
+            will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllergyChanged'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryAllergiesChanged
+      tags:
+        - Allergy
 components:
   schemas:
     Patient:
@@ -5717,3 +5863,56 @@ components:
             Diagnosis name. Might be different than
             problem name.
           type: string
+    Allergy:
+      type: object
+      x-external-id: allergenid
+      properties:
+        allergenid:
+          description: Athena ID for this allergen.
+          type: integer
+        allergenname:
+          description: The name of the allergen.
+          type: string
+        deactivatedate:
+          description: >-
+            Date of allergy deactivation. Set to deactivate the
+            allergy.
+          type: string
+        note:
+          description: Note about this allergy.
+          type: string
+        onsetdate:
+          description: Date of allergy onset.
+          type: string
+        patientid:
+          description: The Patient ID associated with the allergy.
+          type: string
+        reactions:
+          description: List of documented reactions.
+          items:
+            $ref: '#/components/schemas/Reaction'
+          type: array
+    Reaction:
+      type: object
+      properties:
+        reactionname:
+          description: Name of the reaction.
+          type: string
+        severity:
+          description: Severity of the reaction.
+          type: string
+        severitysnomedcode:
+          description: SNOMED code for the severity of this reaction.
+          type: integer
+        snomedcode:
+          description: SNOMED code for this reaction.
+          type: integer
+    AllergyChanged:
+      type: object
+      properties:
+        medications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Allergy'
+        totalcount:
+          type: integer
