@@ -178,37 +178,11 @@ class ClinicalDocumentController extends Controller
     public function actionViewPage($pageid)
     {
         $model = $this->findOnePageDetail($pageid);
-
-        $curl = curl_init();
-
         $link = $model->href."?filesize=SMALL";
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $link,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer '.$this->component->getAuthentication(),
-                'Cookie: dtCookie=5CF2D18D631F6D578123C785EF66ECEA|RUM+Default+Application|1'
-            ),
-        ));
 
-        $response = curl_exec($curl);
-
-        curl_close($curl);
         header("Content-type: image/jpeg");
-        echo $response;
+        echo $this->component->getClinicalDocumentPage($link);
         exit();
-
-        /*return $this->render('view', [
-            'patientid'     => $patientid,
-            'model'         => $this->findModel($id),
-            'pageDetail'    => $dataProviderPageDetail
-        ]);*/
     }
 
     /**

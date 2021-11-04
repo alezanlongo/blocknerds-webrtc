@@ -35,15 +35,6 @@ class AthenaComponent extends Component
         $this->client = $client;
     }
 
-    public function getAuthentication()
-    {
-        $dataSession = json_decode($this->client->Authenticate(), TRUE);
-        if((int)$dataSession['expirationTime'] < (int)time()){
-            $dataSession = json_decode($this->client->Authenticate(TRUE), TRUE);
-        }
-         return $dataSession['access_token'];
-    }
-
     public function setPracticeid(int $practiceid)
     {
         $this->practiceid = $practiceid;
@@ -656,14 +647,30 @@ class AthenaComponent extends Component
     }
 
 
-    public function getClinicalDocumentPage($patientId, $clinicalDocumnetid, $pageid, $flatten = false)
+    public function getClinicalDocumentPage($link, $flatten = false)
     {
-        $clinicalDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentidPagesPageid(
-            $this->practiceid, $pageid, $patientId, $clinicalDocumnetid);
+        $curl = curl_init();
 
-        echo "<pre>"; var_dump($clinicalDocumnetid); exit();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $link,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer '.$this->getAuthentication(),
+                'Cookie: dtCookie=5CF2D18D631F6D578123C785EF66ECEA|RUM+Default+Application|1'
+            ),
+        ));
 
-        return $clinicalDocumentsModelsApi;
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $response;
     }
 
     /* ================================= Begin  Protected methods ============================================== */
@@ -718,6 +725,16 @@ class AthenaComponent extends Component
         }
 
         return $patientCase->loadApiObject($patientCaseModelApi);
+    }
+
+
+    protected function getAuthentication()
+    {
+        $dataSession = json_decode($this->client->Authenticate(), TRUE);
+        if((int)$dataSession['expirationTime'] < (int)time()){
+            $dataSession = json_decode($this->client->Authenticate(TRUE), TRUE);
+        }
+        return $dataSession['access_token'];
     }
     /* =================================== End  Protected methods ============================================== */
 }
