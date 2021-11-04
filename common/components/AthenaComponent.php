@@ -731,7 +731,6 @@ class AthenaComponent extends Component
 
         return $changedProblemResult;
     }
-    
 
     public function getClinicalDocuments($patientId, $flatten = false)
     {
