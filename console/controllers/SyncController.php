@@ -51,6 +51,11 @@ class SyncController extends Controller
         'DELETE'            => 'MedicationHxDelete',
     ];
 
+    const PROBLEM_EVENTS = [
+        'ADD'               => 'ProblemAdd',
+        'UPDATE'            => 'ProblemUpdate',
+    ];
+
     public function init()
     {
         parent::init();
@@ -74,10 +79,10 @@ class SyncController extends Controller
             if( !$updateEventSubscription )
                 $this->component->patientsSubscription(self::PATIENT_EVENTS['UPDATE']);
 
-            $changedPatiendResult = $this->component->patientChanges();
+            $changedPatientResult = $this->component->patientChanges();
             echo Table::widget([
                 'headers' => ['ID', 'ExternalID', 'DB Result'],
-                'rows' => $changedPatiendResult,
+                'rows' => $changedPatientResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";
@@ -176,10 +181,10 @@ class SyncController extends Controller
             if( !$updateEventSubscription )
                 $this->component->patientCasesSubscription(self::PATIENTCASE_EVENTS['UPDATE']);
 
-            $changedPatiendCasesResult = $this->component->patientCasesChanges();
+            $changedPatientCasesResult = $this->component->patientCasesChanges();
             echo Table::widget([
                 'headers' => ['ID', 'ExternalID', 'DB Result'],
-                'rows' => $changedPatiendCasesResult,
+                'rows' => $changedPatientCasesResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";
@@ -230,17 +235,17 @@ class SyncController extends Controller
                 $updateEventSubscription = true;
             } else {
                 foreach( $subscriptionStatus->subscriptions as $event) {
-                    if( $event['eventname'] == self::PATIENT_EVENTS['UPDATE'] )
+                    if( $event['eventname'] == self::PROBLEM_EVENTS['UPDATE'] )
                         $updateEventSubscription = true;
                 }
             }
             if( !$updateEventSubscription )
-                $this->component->problemSubscription(self::PATIENT_EVENTS['UPDATE']);
+                $this->component->problemSubscription(self::PROBLEM_EVENTS['UPDATE']);
 
-            $changedPatiendResult = $this->component->patientChanges();
+            $changedProblemResult = $this->component->problemChanges();
             echo Table::widget([
                 'headers' => ['ID', 'ExternalID', 'DB Result'],
-                'rows' => $changedPatiendResult,
+                'rows' => $changedProblemResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";
