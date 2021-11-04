@@ -16,6 +16,7 @@ tags:
     description: 'Person requesting a medical appointment Events'
   - name: AppointmentSubscription
     description: 'Appointment Events'
+  - name: Problems
 paths:
   /v1/{practiceid}/patients:
     post:
@@ -2278,6 +2279,164 @@ paths:
       operationId: getPracticeidChartHealthhistoryMedicationChanged
       tags:
         - Historical Medication
+  /v1/{practiceid}/chart/healthhistory/problems/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for problems
+      description: Subscribe for changed problem events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: postPracticeidChartHealthhistoryProblemsChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                eventname:
+                  description: >-
+                    By default, you are subscribed to all possible events.  If
+                    you only wish to subscribe to an individual event, pass the
+                    event name with this argument.
+                  type: string
+              type: object
+        required: true
+      tags:
+        - Problems
+    get:
+      summary: Get list of problems change subscription(s)
+      description: Retrieves list of events for Problems
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryProblemsChangedSubscription
+      tags:
+        - Problems
+    delete:
+      summary: Unsubscribe to all/specific change events for problems
+      description: Delete an specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, you are unsubscribed from all possible events.  If you
+            only wish to unsubscribe from an individual event, pass the event
+            name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidChartHealthhistoryProblemsChangedSubscription
+      tags:
+        - Problems
+  /v1/{practiceid}/chart/healthhistory/problems/changed:
+    get:
+      summary: Get list of changes in problems based on subscribed events
+      description: Retrieves list of modified problems for a patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: See showprocessedstartdatetime
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Patient ID. Multiple Patient IDs are allowed, either comma separated
+            or with multiple values.
+          in: query
+          name: patientid
+          required: false
+          schema:
+            items:
+              type: integer
+            type: array
+        - description: >-
+            Show already processed changes.  This will show changes that you
+            previously retrieved at some point after this datetime mm/dd/yyyy
+            hh24:mi:ss (Eastern). Can be used to refetch data if there was an
+            error, such as a timeout, and records are marked as already
+            retrieved. This is intended to be used with showprocessedenddatetime
+            and for a short period of time only. Also note that all messages
+            will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemChanged'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryProblemsChanged
+      tags:
+        - Problems
+
 components:
   schemas:
     Patient:
@@ -5420,4 +5579,141 @@ components:
             The unstructured sig for this medication, if any. If there
             is a structured sig, this will contain the formatted
             version of that sig.
+          type: string
+    ProblemChanged:
+      type: object
+      properties:
+        problems:
+          type: array
+          items:
+            $ref: '#/components/schemas/Problem'
+        totalcount:
+          type: integer
+    Problem:
+      type: object
+      properties:
+        bestmatchicd10code:
+          description: >-
+            If this was added from the chart or from an
+            encounter without a selected ICD10 code, and if the
+            primary codeset is SNOMED, then this contains the
+            best matching ICD10 code mapped. Because SNOMED to
+            ICD10 is a many to many map, this will tend to give
+            the most generic diagnosis.
+          type: string
+        code:
+          description: Problem code
+          type: string
+        codeset:
+          description: Problem codeset (SNOMED, ICD9, ICD10, etc)
+          type: string
+        deactivateddate:
+          description: Date of problem deactivation.
+          type: string
+        deactivateduser:
+          description: The name of the user who deactivated the problem.
+          type: string
+        events:
+          description: >-
+            List of start and stop events for this problem,
+            which can occur multiple times.
+          items:
+            $ref: '#/components/schemas/Event'
+          type: array
+        lastmodifiedby:
+          description: >-
+            The username of the user who last modified this
+            problem.
+          type: string
+        lastmodifieddatetime:
+          description: >-
+            The date the problem was last modified. Currently
+            only date precision.
+          type: string
+        mostrecentdiagnosisnote:
+          description: >-
+            The data will be displayed when the
+            showdiagnosisinfo flag is set to true
+          type: string
+        name:
+          description: Problem name
+          type: string
+        problemid:
+          description: Athena ID for this problem
+          type: integer
+    Event:
+      type: object
+      properties:
+        createdby:
+          description: The name of the user who entered this problem.
+          type: string
+        createddate:
+          description: The date that the user entered this problem.
+          type: string
+        diagnoses:
+          description: >-
+            List of encounter diagnoses that triggered
+            this problem.
+          items:
+            $ref: '#/components/schemas/Diagnose'
+          type: array
+        encounterdate:
+          description: >-
+            The date of the encounter where a diagnosis
+            matching this problem was used.
+          type: string
+        enddate:
+          description: >-
+            The date this problem event ended or was
+            hidden
+          type: string
+        eventtype:
+          description: >-
+            The type of this event: START, END, HIDDEN,
+            REACTIVATED, or ENCOUNTER
+          type: string
+        laterality:
+          description: >-
+            The laterality of this problem. Can be null,
+            LEFT, RIGHT, or BILATERAL.
+          type: string
+        note:
+          description: The note attached to this event.
+          type: string
+        onsetdate:
+          description: >-
+            The specified onset date for this problem, as
+            entered by the practice. If available this is
+            more accurate than the start date.
+          type: string
+        source:
+          description: 'The source of this event: ENCOUNTER or HISTORY'
+          type: string
+        startdate:
+          description: >-
+            The date this problem event started or was
+            restarted. Uses the onsetdate if available,
+            otherwise uses the date the problem was
+            entered into the system.
+          type: string
+        status:
+          description: >-
+            The status of this problem event: CHRONIC or
+            ACUTE
+          type: string
+    Diagnose:
+      type: object
+      properties:
+        code:
+          description: Diagnosis code
+          type: string
+        codeset:
+          description: >-
+            Diagnosis codeset (SNOMED, ICD9, ICD10,
+            etc)
+          type: string
+        name:
+          description: >-
+            Diagnosis name. Might be different than
+            problem name.
           type: string
