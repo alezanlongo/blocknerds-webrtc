@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\components\JanusAmqpComponent;
 use common\components\janusApi\JanusCommonException;
 use common\components\JanusApiComponent;
 use common\models\Meeting;
@@ -9,6 +10,8 @@ use common\models\Room;
 use common\models\RoomMember;
 use common\models\RoomMemberRepository;
 use common\models\RoomRequest;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 use Yii;
 use yii\console\Controller;
 use yii\console\ExitCode;
@@ -18,6 +21,106 @@ use yii\helpers\VarDumper;
 class RoomController extends Controller
 {
     private $debug = true;
+
+    public function actionEventListener($admin = false)
+    {
+        /** @var JanusAmqpComponent $janus */
+        $janus = Yii::$app->janusAmqp;
+
+
+        $connection = new AMQPStreamConnection('rabbitmq', 5672, 'guest', 'guest');
+
+
+        $channel1 = $connection->channel(1);
+        $channel2 = $connection->channel(2);
+
+        $callback = function (AMQPMessage $msg) use ($janus) {
+            //echo ' [x] Received r', $msg->body, "\n";
+            $janus->handleJanusMessage($msg->body);
+        };
+
+        if (!$admin) {
+            echo "client";
+            $channel2->basic_consume('from-janus', '', false, true, false, false, $callback);
+            while ($channel2->is_consuming()) {
+                $channel2->wait();
+            }
+        } else {
+echo "asd";
+            $channel1->basic_consume('from-janus-admin', '', false, true, false, false, $callback);
+            while ($channel1->is_consuming()) {
+                $channel1->wait();
+            }
+        }
+        // $ch = $connection->channel();
+        // $ch->basic_consume('to-janus-admin','fanout',true,false,false,function($msg){
+        //    echo "asdas";
+        // });
+        // while($ch->is_consuming()){
+        //     echo "wa";
+        //     $ch->wait();
+        // }
+        // $ch->close();
+        // $connection->close();
+
+
+        // $server = new \Swoole\Http\Server('localhost', 9501, SWOOLE_PROCESS, \SWOOLE_SOCK_TCP);
+        $server = new \Swoole\Server('localhost', 9501);
+        $server->set([
+            'daemonize' => false,
+            'pid_file' => __DIR__ . '/../runtime/server.pid',
+            'reactor_num' => 2,
+            'worker_num' => 5,
+            'log_level' => 0
+        ]);
+        $server->on('start', function ($server) {
+            $connection = new AMQPStreamConnection('rabbitmq', 5672, 'guest', 'guest');
+            $ch = $connection->channel();
+            $ch->basic_consume('from-janus', 'from-janus-admin', true, false, false, function ($msg) {
+                \yii\helpers\VarDumper::dump($msg);
+            });
+            while ($ch->is_consuming()) {
+                $ch->wait();
+            }
+            $ch->close();
+            $connection->close();
+            printf("listen on %s:%d\n", $server->host, $server->port);
+        });
+        $server->on('receive', function (\Swoole\Server $server, $fd, $from_id, $data) {
+            echo "asda";
+
+            //$server->close($fd);
+        });
+        $server->on("WorkerStart", function ($server, $workerId) {
+            //echo "$workerId\n";
+        });
+
+        // Triggered when the HTTP Server starts, connections are accepted after this callback is executed
+        // $server->on("Start", function ($server, $workerId) {
+
+        //     // \printf("Swoole server running on: %s port: %d",$server->host,$server->port);
+        // });
+
+        // The main HTTP server request callback event, entry point for all incoming HTTP requests
+        $server->on('Request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
+
+            $c = $request->getContent();
+            /** @var JanusEventLoggerComponent $je */
+            $je = \yii::$app->janusEvents;
+            $je->pushEvent(json_decode($c, true));
+        });
+
+        // Triggered when the server is shutting down
+        $server->on("Shutdown", function ($server, $workerId) {
+            echo "shutdown";
+        });
+
+        // Triggered when worker processes are being stopped
+        $server->on("WorkerStop", function ($server, $workerId) {
+        });
+        // $server->start();
+    }
+
     public function actionCreateMeetingRooms()
     {
         $rooms = Room::find()->select(['id', 'uuid', 'status'])
@@ -82,7 +185,7 @@ class RoomController extends Controller
             if (false !== $uTokens && !\in_array($m->token, \array_column($uTokens, 'token'))) {
                 $janus->addUserToken($roomUuid, $m->token);
                 $rr = RoomRequest::find()->where(['user_profile_id' => $m->user_profile_id, 'room_id' => $m->room_id])->limit(1)->one();
-                if(!$rr){
+                if (!$rr) {
                     $rr = new RoomRequest();
                     $rr->user_profile_id = $m->user_profile_id;
                     $rr->room_id = $m->room_id;

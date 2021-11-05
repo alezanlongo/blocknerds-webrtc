@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\components\JanusAmqpComponent;
 use common\models\ChatForm;
 use common\models\LoginForm;
 use common\models\RoomMemberRepository;
@@ -14,6 +15,8 @@ use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 
 use frontend\models\VerifyEmailForm;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\filters\AccessControl;
@@ -146,10 +149,61 @@ class SiteController extends Controller
     public function actionIndex()
     // {
     {
+
+        /** @var JanusAmqpComponent $janus */
+        $janus = Yii::$app->janusAmqp;
+        $janus->videoRoomCreate("97d299ac-926f-40f4-8a74-4c8b336365f1");
+        return;
+        
+        $connection = new AMQPStreamConnection('rabbitmq', 5672, 'guest', 'guest', '/');
+
+
+        
+        
+        $channel = $connection->channel();
+        if (null !== \yii::$app->request->get('declare', null)) {
+            $channel->exchange_delete("janus-exchange");
+            $channel->queue_delete('to-janus');
+            $channel->queue_delete('from-janus');
+            $channel->queue_delete('to-janus-admin');
+            $channel->queue_delete('from-janus-admin');
+
+                    $channel->exchange_declare('janus-exchange', 'direct', false, false, false);
+                    $channel->queue_declare('to-janus', false, false, false, false);
+                    $channel->queue_declare('from-janus', false, false, false, false);
+                    $channel->queue_declare('to-janus-admin', false, false, false, false);
+                    $channel->queue_declare('from-janus-admin', false, false, false, false);
+                    $channel->queue_bind('to-janus', 'janus-exchange','to-janus');
+                    $channel->queue_bind('from-janus', 'janus-exchange','from-janus');
+                    $channel->queue_bind('to-janus-admin', 'janus-exchange','to-janus-admin');
+                    $channel->queue_bind('from-janus-admin', 'janus-exchange','from-janus-admin');
+                    return;
+        }
+        // return;
+        $msg = new AMQPMessage(\json_encode(['janus' => 'info', 'transaction' => "12345"]));
+        $channel->basic_publish($msg, 'janus-exchange','to-janus-admin');
+
+        //echo " [x] Sent 'Hello World!'\n";
+
+        $channel->close();
+        $connection->close();
+
+        return;
+        $ch = $connection->channel();
+
+        //$ch->exchange_declare('fanout', 'direct', false, false, false);
+        //$ch->queue_declare('to-janus-admin', false, false, false, false);
+        $ch->queue_bind('from-janus-admin', 'fanout');
+
+        // $msg = new AMQPMessage(\json_encode([
+        //     'janus' => 'serverinfo',
+        // ]));
+        $msg = new AMQPMessage('serverinfo');
+        $ch->basic_publish($msg, 'from-janus-admin');
         // $res = UserSetting::setValue(Yii::$app->getUser()->getId(), 'view_mode2', 'calendar', 'month');
         // $res = UserSetting::getSetting(Yii::$app->getUser()->getId(), 'test', 'calendar');
         $res = \strtotime('2021-08-27 11:00:00');
-        \var_dump($res,date('Y-m-d H:i:s','1630072316'));
+        \var_dump($res, date('Y-m-d H:i:s', '1630072316'));
         die;
         return $this->render('index');
     }
