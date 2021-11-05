@@ -6,7 +6,7 @@ use yii\helpers\ArrayHelper;
 /**
  *  *
  * @property string $attachment The image of the page in jpeg format.
- * @property string $externalId API Primary Key
+ * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class ClinicalDocumentPage extends \yii\db\ActiveRecord
@@ -20,9 +20,9 @@ class ClinicalDocumentPage extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['attachment', 'externalId'], 'trim'],
-            [['attachment', 'externalId'], 'string'],
-            [['id'], 'integer'],
+            [['attachment'], 'trim'],
+            [['attachment'], 'string'],
+            [['externalId', 'id'], 'integer'],
         ];
     }
 

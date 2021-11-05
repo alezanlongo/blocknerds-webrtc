@@ -7,7 +7,7 @@ use yii\helpers\ArrayHelper;
  *  *
  * @property Problem[] $problems
  * @property int $totalcount
- * @property string $externalId API Primary Key
+ * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class ProblemChanged extends \yii\db\ActiveRecord
@@ -23,9 +23,7 @@ class ProblemChanged extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['externalId'], 'trim'],
-            [['externalId'], 'string'],
-            [['totalcount', 'id'], 'integer'],
+            [['totalcount', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

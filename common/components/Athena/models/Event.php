@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
  * @property string $source The source of this event: ENCOUNTER or HISTORY
  * @property string $startdate The date this problem event started or was restarted. Uses the onsetdate if available, otherwise uses the date the problem was entered into the system.
  * @property string $status The status of this problem event: CHRONIC or ACUTE
- * @property string $externalId API Primary Key
+ * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class Event extends \yii\db\ActiveRecord
@@ -33,9 +33,9 @@ class Event extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['createdby', 'createddate', 'encounterdate', 'enddate', 'eventtype', 'laterality', 'note', 'onsetdate', 'source', 'startdate', 'status', 'externalId'], 'trim'],
-            [['createdby', 'createddate', 'encounterdate', 'enddate', 'eventtype', 'laterality', 'note', 'onsetdate', 'source', 'startdate', 'status', 'externalId'], 'string'],
-            [['id'], 'integer'],
+            [['createdby', 'createddate', 'encounterdate', 'enddate', 'eventtype', 'laterality', 'note', 'onsetdate', 'source', 'startdate', 'status'], 'trim'],
+            [['createdby', 'createddate', 'encounterdate', 'enddate', 'eventtype', 'laterality', 'note', 'onsetdate', 'source', 'startdate', 'status'], 'string'],
+            [['externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

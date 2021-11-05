@@ -85,7 +85,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     <th scope="row"><?= $value->pageid ?></th>
                     <td><?= $value->pageordering ?></td>
                     <td><?= $value->externalId ?></td>
-                    <td><?= $value->href ?></td>
                     <td>
                         <?= Html::a(
                             'Documnent',
