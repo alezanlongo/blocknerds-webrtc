@@ -5655,7 +5655,7 @@ components:
             List of encounter diagnoses that triggered
             this problem.
           items:
-            $ref: '#/components/schemas/Diagnose'
+            $ref: '#/components/schemas/EventDiagnose'
           type: array
         encounterdate:
           description: >-
@@ -5701,7 +5701,7 @@ components:
             The status of this problem event: CHRONIC or
             ACUTE
           type: string
-    Diagnose:
+    EventDiagnose:
       type: object
       properties:
         code:
