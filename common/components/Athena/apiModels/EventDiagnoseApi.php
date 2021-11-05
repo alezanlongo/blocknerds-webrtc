@@ -12,7 +12,7 @@ use common\models\ApiModel as BaseApiModel;
  * @property string $codeset Diagnosis codeset (SNOMED, ICD9, ICD10, etc)
  * @property string $name Diagnosis name. Might be different than problem name.
  */
-class DiagnoseApi extends BaseApiModel
+class EventDiagnoseApi extends BaseApiModel
 {
 
     public $code;
