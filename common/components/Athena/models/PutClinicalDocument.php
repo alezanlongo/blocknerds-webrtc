@@ -13,7 +13,7 @@ use yii\helpers\ArrayHelper;
  * @property string $priority Priority of this result.  1 is high; 2 is normal.
  * @property int $providerid The ID of the ordering provider.
  * @property bool $replaceinternalnote If true, will replace the existing internal note with the new one. If false, will append to the existing note.
- * @property integer $externalId API Primary Key
+ * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class PutClinicalDocument extends \yii\db\ActiveRecord
@@ -27,9 +27,9 @@ class PutClinicalDocument extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['internalnote', 'observationdate', 'observationtime', 'priority'], 'trim'],
-            [['internalnote', 'observationdate', 'observationtime', 'priority'], 'string'],
-            [['clinicalproviderid', 'documenttypeid', 'providerid', 'externalId', 'id'], 'integer'],
+            [['internalnote', 'observationdate', 'observationtime', 'priority', 'externalId'], 'trim'],
+            [['internalnote', 'observationdate', 'observationtime', 'priority', 'externalId'], 'string'],
+            [['clinicalproviderid', 'documenttypeid', 'providerid', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

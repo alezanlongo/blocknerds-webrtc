@@ -18,7 +18,7 @@ use yii\helpers\ArrayHelper;
  * @property string $observationtime The time an observation was made (hh24:mi).  24 hour time.
  * @property string $priority Priority of this result.  1 is high; 2 is normal.
  * @property int $providerid The ID of the ordering provider.
- * @property integer $externalId API Primary Key
+ * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class PostClinicalDocument extends \yii\db\ActiveRecord
@@ -32,10 +32,10 @@ class PostClinicalDocument extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['attachmentcontents', 'attachmenttype', 'documentdata', 'documentsubclass', 'internalnote', 'observationdate', 'observationtime', 'priority'], 'trim'],
+            [['attachmentcontents', 'attachmenttype', 'documentdata', 'documentsubclass', 'internalnote', 'observationdate', 'observationtime', 'priority', 'externalId'], 'trim'],
             [['departmentid', 'documentsubclass'], 'required'],
-            [['attachmentcontents', 'attachmenttype', 'documentdata', 'documentsubclass', 'internalnote', 'observationdate', 'observationtime', 'priority'], 'string'],
-            [['clinicalproviderid', 'departmentid', 'documenttypeid', 'providerid', 'externalId', 'id'], 'integer'],
+            [['attachmentcontents', 'attachmenttype', 'documentdata', 'documentsubclass', 'internalnote', 'observationdate', 'observationtime', 'priority', 'externalId'], 'string'],
+            [['clinicalproviderid', 'departmentid', 'documenttypeid', 'providerid', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

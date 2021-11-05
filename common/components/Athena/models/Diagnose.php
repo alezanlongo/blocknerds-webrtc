@@ -8,7 +8,7 @@ use yii\helpers\ArrayHelper;
  * @property string $code Diagnosis code
  * @property string $codeset Diagnosis codeset (SNOMED, ICD9, ICD10, etc)
  * @property string $name Diagnosis name. Might be different than problem name.
- * @property integer $externalId API Primary Key
+ * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class Diagnose extends \yii\db\ActiveRecord
@@ -22,9 +22,9 @@ class Diagnose extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['code', 'codeset', 'name'], 'trim'],
-            [['code', 'codeset', 'name'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['code', 'codeset', 'name', 'externalId'], 'trim'],
+            [['code', 'codeset', 'name', 'externalId'], 'string'],
+            [['id'], 'integer'],
         ];
     }
 

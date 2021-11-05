@@ -34,7 +34,7 @@ use yii\helpers\ArrayHelper;
  * @property string $providerusername The username of the provider associated with this lab result document.
  * @property string $status Status of the document
  * @property int $tietoorderid Order ID of the order this document is tied to, if any
- * @property integer $externalId API Primary Key
+ * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class ClinicalDocument extends \yii\db\ActiveRecord
@@ -50,9 +50,9 @@ class ClinicalDocument extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['actionnote', 'assignedto', 'createddate', 'createddatetime', 'createduser', 'departmentid', 'documentclass', 'documentdata', 'documentdescription', 'documentroute', 'documentsource', 'documentsubclass', 'externalnote', 'internalnote', 'lastmodifieddate', 'lastmodifieddatetime', 'lastmodifieduser', 'observationdate', 'ordertype', 'priority', 'providerusername', 'status'], 'trim'],
-            [['actionnote', 'assignedto', 'createddate', 'createddatetime', 'createduser', 'departmentid', 'documentclass', 'documentdata', 'documentdescription', 'documentroute', 'documentsource', 'documentsubclass', 'externalnote', 'internalnote', 'lastmodifieddate', 'lastmodifieddatetime', 'lastmodifieduser', 'observationdate', 'ordertype', 'priority', 'providerusername', 'status'], 'string'],
-            [['patientid', 'clinicaldocumentid', 'clinicalproviderid', 'documenttypeid', 'providerid', 'tietoorderid', 'externalId', 'id'], 'integer'],
+            [['actionnote', 'assignedto', 'createddate', 'createddatetime', 'createduser', 'departmentid', 'documentclass', 'documentdata', 'documentdescription', 'documentroute', 'documentsource', 'documentsubclass', 'externalnote', 'internalnote', 'lastmodifieddate', 'lastmodifieddatetime', 'lastmodifieduser', 'observationdate', 'ordertype', 'priority', 'providerusername', 'status', 'externalId'], 'trim'],
+            [['actionnote', 'assignedto', 'createddate', 'createddatetime', 'createduser', 'departmentid', 'documentclass', 'documentdata', 'documentdescription', 'documentroute', 'documentsource', 'documentsubclass', 'externalnote', 'internalnote', 'lastmodifieddate', 'lastmodifieddatetime', 'lastmodifieduser', 'observationdate', 'ordertype', 'priority', 'providerusername', 'status', 'externalId'], 'string'],
+            [['patientid', 'clinicaldocumentid', 'clinicalproviderid', 'documenttypeid', 'providerid', 'tietoorderid', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

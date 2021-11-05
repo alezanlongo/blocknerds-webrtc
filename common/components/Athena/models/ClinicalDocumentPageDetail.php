@@ -11,7 +11,7 @@ use yii\helpers\ArrayHelper;
  * @property string $href The URL to get the document image.
  * @property string $pageid The ID to use in a call to get the page image.
  * @property string $pageordering Within this list of pages, the ordering (starting with 1).
- * @property integer $externalId API Primary Key
+ * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class ClinicalDocumentPageDetail extends \yii\db\ActiveRecord
@@ -25,9 +25,9 @@ class ClinicalDocumentPageDetail extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['contenttype', 'href', 'pageid', 'pageordering'], 'trim'],
-            [['contenttype', 'href', 'pageid', 'pageordering'], 'string'],
-            [['clinicalDocument_id', 'externalId', 'id'], 'integer'],
+            [['contenttype', 'href', 'pageid', 'pageordering', 'externalId'], 'trim'],
+            [['contenttype', 'href', 'pageid', 'pageordering', 'externalId'], 'string'],
+            [['clinicalDocument_id', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

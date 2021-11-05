@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
  * @property string $mostrecentdiagnosisnote The data will be displayed when the showdiagnosisinfo flag is set to true
  * @property string $name Problem name
  * @property int $problemid Athena ID for this problem
- * @property integer $externalId API Primary Key
+ * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class Problem extends \yii\db\ActiveRecord
@@ -32,9 +32,9 @@ class Problem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['bestmatchicd10code', 'code', 'codeset', 'deactivateddate', 'deactivateduser', 'lastmodifiedby', 'lastmodifieddatetime', 'mostrecentdiagnosisnote', 'name'], 'trim'],
-            [['bestmatchicd10code', 'code', 'codeset', 'deactivateddate', 'deactivateduser', 'lastmodifiedby', 'lastmodifieddatetime', 'mostrecentdiagnosisnote', 'name'], 'string'],
-            [['problemid', 'externalId', 'id'], 'integer'],
+            [['bestmatchicd10code', 'code', 'codeset', 'deactivateddate', 'deactivateduser', 'lastmodifiedby', 'lastmodifieddatetime', 'mostrecentdiagnosisnote', 'name', 'externalId'], 'trim'],
+            [['bestmatchicd10code', 'code', 'codeset', 'deactivateddate', 'deactivateduser', 'lastmodifiedby', 'lastmodifieddatetime', 'mostrecentdiagnosisnote', 'name', 'externalId'], 'string'],
+            [['problemid', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }

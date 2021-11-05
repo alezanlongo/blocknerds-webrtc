@@ -8,7 +8,7 @@ use yii\helpers\ArrayHelper;
  * @property int $clinicaldocumentid The document ID of the new or modified document.
  * @property string $errormessage If the operation failed, this will contain an error message.
  * @property string $success Returns true/false if the operation was successful.
- * @property integer $externalId API Primary Key
+ * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class ClinicalDocument200Response extends \yii\db\ActiveRecord
@@ -22,9 +22,9 @@ class ClinicalDocument200Response extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['errormessage', 'success'], 'trim'],
-            [['errormessage', 'success'], 'string'],
-            [['clinicaldocumentid', 'externalId', 'id'], 'integer'],
+            [['errormessage', 'success', 'externalId'], 'trim'],
+            [['errormessage', 'success', 'externalId'], 'string'],
+            [['clinicaldocumentid', 'id'], 'integer'],
         ];
     }
 
