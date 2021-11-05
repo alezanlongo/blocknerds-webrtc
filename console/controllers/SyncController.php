@@ -56,6 +56,11 @@ class SyncController extends Controller
         'UPDATE'            => 'ProblemUpdate',
     ];
 
+    const ALLERGY_EVENTS = [
+        'ADD'               => 'AllergyAdd',
+        'UPDATE'            => 'AllergyUpdate',
+    ];
+
     public function init()
     {
         parent::init();
@@ -246,6 +251,38 @@ class SyncController extends Controller
             echo Table::widget([
                 'headers' => ['ID', 'ExternalID', 'DB Result'],
                 'rows' => $changedProblemResult,
+            ]);
+        } catch(\Exception  $e) {
+            echo $e->getMessage()."\n";
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
+    }
+
+    public function actionAllergy($practiceId)
+    {
+        $this->component->setPracticeid($practiceId);
+        try {
+            $subscriptionStatus = $this->component->retrieveAllergySubscriptionStatus();
+
+            $updateEventSubscription = false;
+            if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
+                $updateEventSubscription = true;
+            } else {
+                foreach( $subscriptionStatus->subscriptions as $event) {
+                    if( $event['eventname'] == self::ALLERGY_EVENTS['UPDATE'] )
+                        $updateEventSubscription = true;
+                }
+            }
+
+            if( !$updateEventSubscription )
+                $this->component->allergiesSubscription(self::ALLERGY_EVENTS['UPDATE']);
+
+            $changedAllergyResult = $this->component->allergyChanges();
+            echo Table::widget([
+                'headers' => ['ID', 'ExternalID', 'DB Result'],
+                'rows' => $changedAllergyResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";
