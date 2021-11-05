@@ -8,15 +8,15 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
- * @property Allergy[] $medications
+ * @property Allergy[] $allergies
  * @property int $totalcount
  */
 class AllergyChangedApi extends BaseApiModel
 {
 
-    public $medications;
+    public $allergies;
  
-    protected $_medicationsAr;
+    protected $_allergiesAr;
     public $totalcount;
 
     public function rules()
@@ -27,12 +27,12 @@ class AllergyChangedApi extends BaseApiModel
     public function init()
     {
         parent::init();
-        if (!empty($this->medications) && is_array($this->medications)) {
-            foreach($this->medications as $medications) {
-                $this->_medicationsAr[] = new AllergyApi($medications);
+        if (!empty($this->allergies) && is_array($this->allergies)) {
+            foreach($this->allergies as $allergies) {
+                $this->_allergiesAr[] = new AllergyApi($allergies);
             }
-            $this->medications = $this->_medicationsAr;
-            $this->_medicationsAr = [];//CHECKME
+            $this->allergies = $this->_allergiesAr;
+            $this->_allergiesAr = [];//CHECKME
         }
     }
 

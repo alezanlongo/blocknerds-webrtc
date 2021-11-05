@@ -5910,7 +5910,7 @@ components:
     AllergyChanged:
       type: object
       properties:
-        medications:
+        allergies:
           type: array
           items:
             $ref: '#/components/schemas/Allergy'

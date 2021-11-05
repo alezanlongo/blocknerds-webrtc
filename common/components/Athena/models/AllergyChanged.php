@@ -5,7 +5,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
- * @property Allergy[] $medications
+ * @property Allergy[] $allergies
  * @property int $totalcount
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
@@ -13,7 +13,7 @@ use yii\helpers\ArrayHelper;
 class AllergyChanged extends \yii\db\ActiveRecord
 {
  
-    protected $_medicationsAr;
+    protected $_allergiesAr;
 
     public static function tableName()
     {
@@ -28,7 +28,7 @@ class AllergyChanged extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getMedications()
+    public function getAllergies()
     {
         return $this->hasMany(Allergy::class, ['allergy_changed_id' => 'id']);
     }
@@ -38,8 +38,8 @@ class AllergyChanged extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        if($medications = ArrayHelper::getValue($apiObject, 'medications')) {
-            $this->_medicationsAr = $medications;
+        if($allergies = ArrayHelper::getValue($apiObject, 'allergies')) {
+            $this->_allergiesAr = $allergies;
         }
         if($totalcount = ArrayHelper::getValue($apiObject, 'totalcount')) {
             $this->totalcount = $totalcount;
@@ -62,10 +62,10 @@ class AllergyChanged extends \yii\db\ActiveRecord
     /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
-        if( !empty($this->_medicationsAr) and is_array($this->_medicationsAr) ) {
-            foreach($this->_medicationsAr as $medicationsApi) {
+        if( !empty($this->_allergiesAr) and is_array($this->_allergiesAr) ) {
+            foreach($this->_allergiesAr as $allergiesApi) {
                 $allergy = new Allergy();
-                $allergy->loadApiObject($medicationsApi);
+                $allergy->loadApiObject($allergiesApi);
                 $allergy->link('allergyChanged', $this);
                 $allergy->save();
             }
