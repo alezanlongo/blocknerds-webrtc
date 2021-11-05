@@ -11,12 +11,12 @@ use yii\helpers\ArrayHelper;
  * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
-class Diagnose extends \yii\db\ActiveRecord
+class EventDiagnose extends \yii\db\ActiveRecord
 {
 
     public static function tableName()
     {
-        return '{{%diagnoses}}';
+        return '{{%event_diagnoses}}';
     }
 
     public function rules()

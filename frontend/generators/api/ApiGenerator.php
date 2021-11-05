@@ -214,12 +214,12 @@ class ApiGenerator extends ParentApiGenerator
     {
         $models = [];
         $externalId = 'externalId';
-        $extIdType = 'integer';
         foreach ($this->getOpenApi()->components->schemas as $schemaName => $schema) {
             if ($schema instanceof Reference) {
                 $schema = $schema->resolve();
             }
             $extIdField = false;
+            $extIdType = 'integer';
             if( array_key_exists('x-external-id', $schema->getExtensions()) ) {
                 $extIdField = $schema->getExtensions()['x-external-id'];
             }
