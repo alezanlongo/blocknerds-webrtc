@@ -29,6 +29,10 @@ use common\components\Athena\models\Problem;
 use common\components\Athena\apiModels\ProblemApi;
 use common\components\Athena\models\ClinicalDocument;
 use common\components\Athena\models\ClinicalDocumentPageDetail;
+use common\components\Athena\models\EncounterVitals;
+use common\components\Athena\models\VitalsConfiguration;
+use common\components\Athena\models\Vitals;
+use common\components\Athena\models\Readings;
 
 class AthenaComponent extends Component
 {
@@ -800,6 +804,93 @@ class AthenaComponent extends Component
         curl_close($curl);
 
         return $response;
+    }
+
+    public function getVitalsConfiguration($flatten = false)
+    {
+
+        $vitalsConfigurationModelsApi = $this->client->getPracticeidChartConfigurationVitals($this->practiceid);
+
+        $vitalsConfigurationModels = [];
+
+        foreach ($vitalsConfigurationModelsApi as $vitalsConfigurationModelApi) {
+            $vitalsConfigurationModels[] =
+                VitalsConfiguration::createFromApiObject(
+                    $vitalsConfigurationModelApi
+                );
+        }
+
+
+        if ($flatten) {
+            return array_column($vitalsConfigurationModels, 'attributes', 'abreviation');
+        }
+
+        return $vitalsConfigurationModels;
+    }
+
+    public function createVitals($internalEncounterId, $encounterId, $vitals, $posting){
+
+        $this->client->postPracticeidChartEncounterEncounteridVitals($this->practiceid, $encounterId, $vitals);
+        $getVitals = $this->client->getPracticeidChartEncounterEncounteridVitals($this->practiceid, $encounterId);
+
+        if(!empty($getVitals)){
+            $readingsMatrix = [];
+
+            foreach ($getVitals as $vitals) {
+                foreach ($vitals->readings as $key => $reading) {
+                    $readingsMatrix[$reading['clinicalelementid']][$reading['readingid']] = $reading;
+                    $readingsMatrix[$reading['clinicalelementid']][$reading['readingid']]['abbreviation'] = $vitals->abbreviation;
+                    $readingsMatrix[$reading['clinicalelementid']][$reading['readingid']]['key'] = $vitals->key;
+                    $readingsMatrix[$reading['clinicalelementid']][$reading['readingid']]['ordering'] = $vitals->ordering;
+                }
+            }
+
+            $clinicalelementArr = [];
+
+
+            $encounterVitals = new EncounterVitals();
+            $encounterVitals->posting = $posting;
+            $encounterVitals->encounter_id = $internalEncounterId;
+            $encounterVitals->save();
+
+            foreach($readingsMatrix as $clinicalelementid => $readings){
+                $clinicalelementArr[$clinicalelementid] = max(array_keys($readings));
+
+                $vitalExists = Vitals::find()
+                    ->where( [ 'vitalid' => $readingsMatrix[$clinicalelementid][$clinicalelementArr[$clinicalelementid]]['vitalid'] ] )
+                    ->exists();
+
+                if(!$vitalExists){
+                    $vital =
+                        Vitals::createFromApiObject(
+                            $readingsMatrix[$clinicalelementid][$clinicalelementArr[$clinicalelementid]]
+                        );
+
+                    $vital->link('encounterVital', $encounterVitals);
+                    $vital->save();
+
+                }
+
+            }
+
+            return $encounterVitals;
+        }
+
+    }
+
+    public function updateVital($encounterId, $vitalId, $value)
+    {
+        $vitalUpdateApiModel = $this->client->putPracticeidChartEncounterEncounteridVitalsVitalid($this->practiceid, $encounterId, $vitalId, ['value'=> $value]);
+
+        if($vitalUpdateApiModel->success){
+            $vital = Vitals::findOne(['vitalid' => $vitalId]);
+
+            $vital->value = $value;
+            $vital->save();
+
+            return $vital;
+        }
+
     }
 
     /* ================================= Begin  Protected methods ============================================== */
