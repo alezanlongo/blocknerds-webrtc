@@ -21,6 +21,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'id'            => $model->id,
             'departmentId'  => $model->departmentid
         ], ['class' => 'btn btn-primary']) ?>
+
+        <?= Html::a('Vitals', ['vitals/index', 'encounterId' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([

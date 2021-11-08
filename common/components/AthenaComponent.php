@@ -2,16 +2,14 @@
 namespace common\components;
 
 use Yii;
+use yii\base\Component;
 use common\components\Athena\AthenaClient;
-use common\components\Athena\apiModels\AllergyApi;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\EncounterApi;
 use common\components\Athena\apiModels\MedicationApi;
 use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\apiModels\PatientCaseApi;
-use common\components\Athena\apiModels\ProblemApi;
 use common\components\Athena\models\ActionNote;
-use common\components\Athena\models\Allergy;
 use common\components\Athena\models\Appointment;
 use common\components\Athena\models\ChartAlert;
 use common\components\Athena\models\Checkin;
@@ -23,12 +21,18 @@ use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
-use common\components\Athena\models\Problem;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
-use yii\base\Component;
+use common\components\Athena\models\Problem;
+use common\components\Athena\apiModels\ProblemApi;
+use common\components\Athena\models\ClinicalDocument;
+use common\components\Athena\models\ClinicalDocumentPageDetail;
+use common\components\Athena\models\EncounterVitals;
+use common\components\Athena\models\VitalsConfiguration;
+use common\components\Athena\models\Vitals;
+use common\components\Athena\models\Readings;
 
 class AthenaComponent extends Component
 {
@@ -47,16 +51,16 @@ class AthenaComponent extends Component
 
     public function getDepartments($flatten = false)
     {
-    	$departmentsModelsApi = $this->client->getPracticeidDepartments($this->practiceid
+        $departmentsModelsApi = $this->client->getPracticeidDepartments($this->practiceid
         );
 
         $departmentsModels = [];
 
         foreach ($departmentsModelsApi as $departmentsModelApi) {
-        	$departmentsModels[] =
-        		Department::createFromApiObject(
-        			$departmentsModelApi
-        		);
+            $departmentsModels[] =
+                Department::createFromApiObject(
+                    $departmentsModelApi
+                );
         }
 
         if ($flatten) {
@@ -185,7 +189,7 @@ class AthenaComponent extends Component
             'departmentid'      => $departmentid,
             'showalltypes'      => "Y",
             'showallstatuses'   => "Y",
-		    'encountertype'     => "INCLUDEALLSTATUSES",
+            'encountertype'     => "INCLUDEALLSTATUSES",
         ];
         if($appointmentid !== ""){
             $queryparams['appointmentid'] = $appointmentid;
@@ -402,14 +406,14 @@ class AthenaComponent extends Component
 
     public function retrievePatientSubscriptionStatus()
     {
-    	$subscriptionStatusApi = $this->client->getPracticeidPatientsChangedSubscription($this->practiceid);
+        $subscriptionStatusApi = $this->client->getPracticeidPatientsChangedSubscription($this->practiceid);
 
         return $subscriptionStatusApi;
     }
 
     public function patientsSubscription($event)
     {
-    	$subscriptionStatusApi = $this->client->postPracticeidPatientsChangedSubscription($this->practiceid,
+        $subscriptionStatusApi = $this->client->postPracticeidPatientsChangedSubscription($this->practiceid,
             [
                 'eventname' => $event,
             ]
@@ -420,7 +424,7 @@ class AthenaComponent extends Component
 
     public function patientChanges(): array
     {
-    	$changedPatients = $this->client->getPracticeidPatientsChanged($this->practiceid);
+        $changedPatients = $this->client->getPracticeidPatientsChanged($this->practiceid);
         $changedPatientResult = [];
         try {
             foreach( $changedPatients->patients as $patientApi ) {
@@ -487,14 +491,14 @@ class AthenaComponent extends Component
 
     public function retrievePatientCaseSubscriptionStatus()
     {
-    	$subscriptionStatusApi = $this->client->getPracticeidDocumentsPatientcaseChangedSubscription($this->practiceid);
+        $subscriptionStatusApi = $this->client->getPracticeidDocumentsPatientcaseChangedSubscription($this->practiceid);
 
         return $subscriptionStatusApi;
     }
 
     public function patientsCaseSubscription($event)
     {
-    	$subscriptionStatusApi = $this->client->postPracticeidDocumentsPatientcaseChangedSubscription($this->practiceid,
+        $subscriptionStatusApi = $this->client->postPracticeidDocumentsPatientcaseChangedSubscription($this->practiceid,
             [
                 'eventname' => $event,
             ]
@@ -505,7 +509,7 @@ class AthenaComponent extends Component
 
     public function patientCasesChanges(): array
     {
-    	$changedPatientCases = $this->client->getPracticeidDocumentsPatientcaseChanged($this->practiceid);
+        $changedPatientCases = $this->client->getPracticeidDocumentsPatientcaseChanged($this->practiceid);
         $changedPatientCasesResult = [];
         try {
             foreach( $changedPatientCases->patientcases as $patientCaseApi ) {
@@ -700,14 +704,14 @@ class AthenaComponent extends Component
 
     public function retrieveProblemSubscriptionStatus()
     {
-    	$subscriptionStatusApi = $this->client->getPracticeidChartHealthhistoryProblemsChangedSubscription($this->practiceid);
+        $subscriptionStatusApi = $this->client->getPracticeidChartHealthhistoryProblemsChangedSubscription($this->practiceid);
 
         return $subscriptionStatusApi;
     }
 
     public function problemsSubscription($event)
     {
-    	$subscriptionStatusApi = $this->client->postPracticeidChartHealthhistoryProblemsChangedSubscription($this->practiceid,
+        $subscriptionStatusApi = $this->client->postPracticeidChartHealthhistoryProblemsChangedSubscription($this->practiceid,
             [
                 'eventname' => $event,
             ]
@@ -718,7 +722,7 @@ class AthenaComponent extends Component
 
     public function problemChanges(): array
     {
-    	$changedProblems = $this->client->getPracticeidChartHealthhistoryProblemsChanged($this->practiceid);
+        $changedProblems = $this->client->getPracticeidChartHealthhistoryProblemsChanged($this->practiceid);
         $changedProblemResult = [];
         try {
             foreach( $changedProblems->problems as $problemApi ) {
@@ -730,6 +734,163 @@ class AthenaComponent extends Component
         }
 
         return $changedProblemResult;
+    }
+
+    public function getClinicalDocuments($patientId, $flatten = false)
+    {
+        $clinicalDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsClinicaldocument($this->practiceid, $patientId);
+
+        $clinicalDocumentsModels = [];
+
+        foreach ($clinicalDocumentsModelsApi as $clinicalDocumentModelApi) {
+            $clinicalDocumentsModels[] = ClinicalDocument::createFromApiObject($clinicalDocumentModelApi);
+        }
+
+        return $clinicalDocumentsModels;
+    }
+
+
+    public function createClinicalDocument($patientId, $postClinicalDocument)
+    {
+        $postClinicalDocumentsModelsApi = $this->client->postPracticeidPatientsPatientidDocumentsClinicaldocument(
+            $this->practiceid,
+            $patientId,
+            $postClinicalDocument->toArray()
+        );
+
+        if($postClinicalDocumentsModelsApi->success){
+            $clinicalDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid(
+                $this->practiceid,
+                $patientId,
+                $postClinicalDocumentsModelsApi->clinicaldocumentid
+            );
+            $clinicalDocument = ClinicalDocument::createFromApiObject($clinicalDocumentsModelsApi[0]);
+            $clinicalDocument->patientid = $patientId;
+            $clinicalDocument->save();
+            foreach ($clinicalDocumentsModelsApi[0]['pages'] as $key => $value){
+                $pageDetail = ClinicalDocumentPageDetail::createFromApiObject($value);
+                $pageDetail->link("clinicalDocument", $clinicalDocument);
+                $pageDetail->save();
+            }
+
+            return $clinicalDocument;
+        }
+
+        return $postClinicalDocument;
+    }
+
+
+    public function getClinicalDocumentPage($link, $flatten = false)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $link,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer '.$this->getAuthentication(),
+                'Cookie: dtCookie=5CF2D18D631F6D578123C785EF66ECEA|RUM+Default+Application|1'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $response;
+    }
+
+    public function getVitalsConfiguration($flatten = false)
+    {
+
+        $vitalsConfigurationModelsApi = $this->client->getPracticeidChartConfigurationVitals($this->practiceid);
+
+        $vitalsConfigurationModels = [];
+
+        foreach ($vitalsConfigurationModelsApi as $vitalsConfigurationModelApi) {
+            $vitalsConfigurationModels[] =
+                VitalsConfiguration::createFromApiObject(
+                    $vitalsConfigurationModelApi
+                );
+        }
+
+
+        if ($flatten) {
+            return array_column($vitalsConfigurationModels, 'attributes', 'abreviation');
+        }
+
+        return $vitalsConfigurationModels;
+    }
+
+    public function createVitals($internalEncounterId, $encounterId, $vitals, $posting){
+
+        $this->client->postPracticeidChartEncounterEncounteridVitals($this->practiceid, $encounterId, $vitals);
+        $getVitals = $this->client->getPracticeidChartEncounterEncounteridVitals($this->practiceid, $encounterId);
+
+        if(!empty($getVitals)){
+            $readingsMatrix = [];
+
+            foreach ($getVitals as $vitals) {
+                foreach ($vitals->readings as $key => $reading) {
+                    $readingsMatrix[$reading['clinicalelementid']][$reading['readingid']] = $reading;
+                    $readingsMatrix[$reading['clinicalelementid']][$reading['readingid']]['abbreviation'] = $vitals->abbreviation;
+                    $readingsMatrix[$reading['clinicalelementid']][$reading['readingid']]['key'] = $vitals->key;
+                    $readingsMatrix[$reading['clinicalelementid']][$reading['readingid']]['ordering'] = $vitals->ordering;
+                }
+            }
+
+            $clinicalelementArr = [];
+
+
+            $encounterVitals = new EncounterVitals();
+            $encounterVitals->posting = $posting;
+            $encounterVitals->encounter_id = $internalEncounterId;
+            $encounterVitals->save();
+
+            foreach($readingsMatrix as $clinicalelementid => $readings){
+                $clinicalelementArr[$clinicalelementid] = max(array_keys($readings));
+
+                $vitalExists = Vitals::find()
+                    ->where( [ 'vitalid' => $readingsMatrix[$clinicalelementid][$clinicalelementArr[$clinicalelementid]]['vitalid'] ] )
+                    ->exists();
+
+                if(!$vitalExists){
+                    $vital =
+                        Vitals::createFromApiObject(
+                            $readingsMatrix[$clinicalelementid][$clinicalelementArr[$clinicalelementid]]
+                        );
+
+                    $vital->link('encounterVital', $encounterVitals);
+                    $vital->save();
+
+                }
+
+            }
+
+            return $encounterVitals;
+        }
+
+    }
+
+    public function updateVital($encounterId, $vitalId, $value)
+    {
+        $vitalUpdateApiModel = $this->client->putPracticeidChartEncounterEncounteridVitalsVitalid($this->practiceid, $encounterId, $vitalId, ['value'=> $value]);
+
+        if($vitalUpdateApiModel->success){
+            $vital = Vitals::findOne(['vitalid' => $vitalId]);
+
+            $vital->value = $value;
+            $vital->save();
+
+            return $vital;
+        }
+
     }
 
     public function retrieveAllergySubscriptionStatus()
@@ -857,6 +1018,16 @@ class AthenaComponent extends Component
         }
 
         return $allergy->loadApiObject($allergyModelApi);
+    }
+
+
+    protected function getAuthentication()
+    {
+        $dataSession = json_decode($this->client->Authenticate(), TRUE);
+        if((int)$dataSession['expirationTime'] < (int)time()){
+            $dataSession = json_decode($this->client->Authenticate(TRUE), TRUE);
+        }
+        return $dataSession['access_token'];
     }
     /* =================================== End  Protected methods ============================================== */
 }

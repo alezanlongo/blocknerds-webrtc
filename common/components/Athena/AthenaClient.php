@@ -901,6 +901,134 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
+     * @param patientid
+     * @return ClinicalDocument
+     */
+    public function getPracticeidPatientsPatientidDocumentsClinicaldocument($practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['clinicaldocument'])) ? $dataResponse['data']['clinicaldocument'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\ClinicalDocumentApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return ClinicalDocument200Response
+     */
+    public function postPracticeidPatientsPatientidDocumentsClinicaldocument($practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ClinicalDocument200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param clinicaldocumentid
+     * @return ClinicalDocument
+     */
+    public function getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid($practiceid, $patientid, $clinicaldocumentid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{clinicaldocumentid}', $clinicaldocumentid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['{clinicaldocumentid}'])) ? $dataResponse['data']['{clinicaldocumentid}'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\ClinicalDocumentApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param clinicaldocumentid
+     * @return ClinicalDocument200Response
+     */
+    public function putPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid($practiceid, $patientid, $clinicaldocumentid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{clinicaldocumentid}', $clinicaldocumentid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ClinicalDocument200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param clinicaldocumentid
+     * @return ClinicalDocument200Response
+     */
+    public function deletePracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid($practiceid, $patientid, $clinicaldocumentid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{clinicaldocumentid}', $clinicaldocumentid, $path);
+
+        $dataResponse = $this->callMethod($path, 'delete' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ClinicalDocument200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param pageid
+     * @param patientid
+     * @param clinicaldocumentid
+     * @return ClinicalDocumentPage
+     */
+    public function getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentidPagesPageid($practiceid, $pageid, $patientid, $clinicaldocumentid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}/pages/{pageid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{pageid}', $pageid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{clinicaldocumentid}', $clinicaldocumentid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ClinicalDocumentPageApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
      * @return ChangedSubscription
      */
     public function getPracticeidChartHealthhistoryAllergiesChangedSubscription($practiceid, array $query = [])
