@@ -158,15 +158,16 @@ class JanusAmqpComponent extends Component
         }
         if (true === $handleStatus && null !== $message->parent_id) {
             $parent = $message->getParent()->one();
+            echo "callback";
             return $this->runHandler($parent, []);
         }
     }
 
     public function handleVideoRoomCreate(JanusAmqpMessage $message, array $janusMessage, bool $isRetry)
     {
+        \print_r("handle");
 
         if ($message->status == JanusAmqpMessage::STATUS_COMPLETED) {
-            echo "asdas";
             return true;
         }
         if (!empty($janusMessage) && isset($janusMessage['plugindata']['data']['videoroom'])) {
@@ -178,11 +179,13 @@ class JanusAmqpComponent extends Component
                 $message->save(false);
                 return true;
             }
+            echo "asdas 1";
             return false;
         }
         if (isset($janusMessage['janus']['error'])) {
             $message->status = JanusAmqpMessage::STATUS_FAIL;
             $message->save(false);
+            echo "asdas 2";
             return false;
         }
 
@@ -193,6 +196,7 @@ class JanusAmqpComponent extends Component
         $admToken = $this->getAdminToken($message);
         if (null === $admToken) {
             $this->requestAdminToken($message);
+            echo "asdas 3";
             return false;
         }
         if (!isset($message->attributes['token'])) {
@@ -205,6 +209,7 @@ class JanusAmqpComponent extends Component
         if (null === $message->session) {
             if (null === $sess) {
                 $this->createAdminSession($admToken, $message->id);
+                echo "asdas 4";
                 return false;
             }
             $message->session = $sess;
@@ -217,6 +222,7 @@ class JanusAmqpComponent extends Component
         $ap = $this->getAttachedPlugin($message);
         if (null === $ap) {
             $this->attachPlugin('janus.plugin.videoroom', $message->attributes['token'], $message->session, $message);
+            echo "asdas 5";
             return false;
         }
 
@@ -226,7 +232,7 @@ class JanusAmqpComponent extends Component
             $message->attributes = $attr;
             $message->save(false);
         }
-         $this->publish($message->attributes);
+        $this->publish($message->attributes);
         return false;
     }
 
@@ -580,12 +586,22 @@ class JanusAmqpComponent extends Component
 
         // check expiration
 
+
         if ($storedMessage->count() > 0) {
-            return $storedMessage->one()->status;
+            if ($storedMessage->one()->status === JanusAmqpMessage::STATUS_COMPLETED) {
+                return $storedMessage->one()->status;
+            }
+            if ($storedMessage->one()->attempts <= 100) {
+                $storedMessage->one()->increaseAttempt();
+                $tr = $storedMessage->one()->transaction_id;
+            } else {
+                return false;
+            }
+        } else {
+            $tr = $this->createRandStr();
+            $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_GET_ADMIN_TOKEN, ($message->isParent() ? $message->id : $message->parent_id));
         }
 
-        $tr = $this->createRandStr();
-        $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_GET_ADMIN_TOKEN, ($message->isParent() ? $message->id : $message->parent_id));
         $this->publish(['janus' => 'list_tokens', 'transaction' => $tr, 'admin_secret' => $this->adminSecret], true);
         return true;
     }
@@ -617,10 +633,10 @@ class JanusAmqpComponent extends Component
         return false;
     }
 
-    private function getStoredTokens()
-    {
-        $this->publish(['janus' => 'list_tokens', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret]);
-    }
+    // private function getStoredTokens()
+    // {
+    //     $this->publish(['janus' => 'list_tokens', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret]);
+    // }
 
 
     private function storeToken($token, $parentId = null)
@@ -634,7 +650,12 @@ class JanusAmqpComponent extends Component
     {
         if (isset($janusMessage['janus']) && $janusMessage['janus'] == 'success') {
             $message->status = JanusAmqpMessage::STATUS_COMPLETED;
+            $message->save(false);
             return true;
+        }
+        if ($janusMessage['janus'] == 'error') {
+            $message->status = JanusAmqpMessage::STATUS_FAIL;
+            $message->save(false);
         }
         return false;
     }

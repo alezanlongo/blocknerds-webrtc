@@ -102,6 +102,11 @@ class JanusAmqpMessage extends \yii\db\ActiveRecord
         return $this->hasOne(self::class, ['id' => 'parent_id']);
     }
 
+    public function increaseAttempt(){
+        $this->attempts = ($this->attempts === null ? 0 : $this->attempts + 1);
+        $this->save(false);
+    }
+
 
     public function beforeSave($insert)
     {
