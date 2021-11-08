@@ -1091,4 +1091,86 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param encounterid
+     * @return Vitals
+     */
+    public function getPracticeidChartEncounterEncounteridVitals($practiceid, $encounterid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/vitals';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{encounterid}', $encounterid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['vitals'])) ? $dataResponse['data']['vitals'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\VitalsCustomApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param encounterid
+     * @return VitalsResponse
+     */
+    public function postPracticeidChartEncounterEncounteridVitals($practiceid, $encounterid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/vitals';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{encounterid}', $encounterid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\VitalsResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param encounterid
+     * @param vitalid
+     * @return PutVitalsResponse
+     */
+    public function putPracticeidChartEncounterEncounteridVitalsVitalid($practiceid, $encounterid, $vitalid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/vitals/{vitalid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{encounterid}', $encounterid, $path);
+        $path = str_replace('{vitalid}', $vitalid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutVitalsResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return VitalsConfiguration
+     */
+    public function getPracticeidChartConfigurationVitals($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/configuration/vitals';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['vitals'])) ? $dataResponse['data']['vitals'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\VitalsConfigurationApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }
