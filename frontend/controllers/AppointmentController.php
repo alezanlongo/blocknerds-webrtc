@@ -82,7 +82,6 @@ class AppointmentController extends \yii\web\Controller
             }
         }
 
-
         return $this->render('create', [
             'model' => $model,
             'providers' => $this->component->getProviders(true),
