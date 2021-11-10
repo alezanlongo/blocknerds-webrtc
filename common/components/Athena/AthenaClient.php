@@ -1173,4 +1173,68 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @return ChangedSubscription
+     */
+    public function getPracticeidChartHealthhistoryVaccineChangedSubscription($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ChangedSubscriptionApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return ChangedSubscription200Response
+     */
+    public function postPracticeidChartHealthhistoryVaccineChangedSubscription($practiceid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ChangedSubscription200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return ChangedSubscription200Response
+     */
+    public function deletePracticeidChartHealthhistoryVaccineChangedSubscription($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'delete' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ChangedSubscription200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return VaccineChanged
+     */
+    public function getPracticeidChartHealthhistoryVaccineChanged($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/healthhistory/vaccine/changed';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\VaccineChangedApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }

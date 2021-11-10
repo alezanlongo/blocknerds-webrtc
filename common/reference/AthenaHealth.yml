@@ -7111,6 +7111,7 @@ components:
     Vaccine:
       type: object
       x-external-id: vaccineid
+      x-external-id-type: string
       properties:
         administerdate:
           description: >-

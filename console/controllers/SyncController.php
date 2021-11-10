@@ -61,6 +61,12 @@ class SyncController extends Controller
         'UPDATE'            => 'AllergyUpdate',
     ];
 
+    const VACCINE_EVENTS = [
+        'ADD'               => 'HxVaccineAdd',
+        'UPDATE'            => 'HxVaccineUpdate',
+        'DELETE'            => 'HxVaccineDelete',
+    ];
+
     public function init()
     {
         parent::init();
@@ -283,6 +289,38 @@ class SyncController extends Controller
             echo Table::widget([
                 'headers' => ['ID', 'ExternalID', 'DB Result'],
                 'rows' => $changedAllergyResult,
+            ]);
+        } catch(\Exception  $e) {
+            echo $e->getMessage()."\n";
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
+    }
+
+    public function actionVaccine($practiceId)
+    {
+        $this->component->setPracticeid($practiceId);
+        try {
+            $subscriptionStatus = $this->component->retrieveVaccineSubscriptionStatus();
+
+            $updateEventSubscription = false;
+            if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
+                $updateEventSubscription = true;
+            } else {
+                foreach( $subscriptionStatus->subscriptions as $event) {
+                    if( $event['eventname'] == self::VACCINE_EVENTS['UPDATE'] )
+                        $updateEventSubscription = true;
+                }
+            }
+
+            if( !$updateEventSubscription )
+                $this->component->vaccinesSubscription(self::VACCINE_EVENTS['UPDATE']);
+
+            $changedVaccineResult = $this->component->vaccineChanges();
+            echo Table::widget([
+                'headers' => ['ID', 'ExternalID', 'DB Result'],
+                'rows' => $changedVaccineResult,
             ]);
         } catch(\Exception  $e) {
             echo $e->getMessage()."\n";
