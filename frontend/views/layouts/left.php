@@ -27,6 +27,14 @@ $items[] =  [
   'icon' => 'far fa-comments"',
   'visible' => !Yii::$app->user->isGuest,
 ];
+// $items[] =  [
+//   'label' => 'Sets',
+//   'template' => '<a class="nav-link" href="{url}">{icon}{label}</a>',
+//   'url' => 'set/index',
+//   'icon' => 'far fa-comments"',
+//   'visible' => !Yii::$app->user->isGuest,
+// ];
+$items[] = ['label' => 'Sets', 'icon' => 'fas fa-images', 'url' => ['/set/index'], 'visible' => !Yii::$app->user->isGuest,];
 
 if (Url::home() === Yii::$app->request->url) {
   $items[] = ['template' => '<hr>'];
