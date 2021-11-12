@@ -2,37 +2,39 @@
 namespace common\components;
 
 use Yii;
-use yii\base\Component;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\EncounterApi;
 use common\components\Athena\apiModels\MedicationApi;
 use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\apiModels\PatientCaseApi;
+use common\components\Athena\apiModels\ProblemApi;
+use common\components\Athena\apiModels\VaccineApi;
 use common\components\Athena\models\ActionNote;
 use common\components\Athena\models\Appointment;
 use common\components\Athena\models\ChartAlert;
 use common\components\Athena\models\Checkin;
+use common\components\Athena\models\ClinicalDocument;
+use common\components\Athena\models\ClinicalDocumentPageDetail;
 use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Encounter;
+use common\components\Athena\models\EncounterVitals;
 use common\components\Athena\models\Medication;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
+use common\components\Athena\models\Problem;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
+use common\components\Athena\models\Readings;
+use common\components\Athena\models\Vaccine;
+use common\components\Athena\models\Vitals;
+use common\components\Athena\models\VitalsConfiguration;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
-use common\components\Athena\models\Problem;
-use common\components\Athena\apiModels\ProblemApi;
-use common\components\Athena\models\ClinicalDocument;
-use common\components\Athena\models\ClinicalDocumentPageDetail;
-use common\components\Athena\models\EncounterVitals;
-use common\components\Athena\models\VitalsConfiguration;
-use common\components\Athena\models\Vitals;
-use common\components\Athena\models\Readings;
+use yii\base\Component;
 
 class AthenaComponent extends Component
 {
@@ -930,6 +932,41 @@ class AthenaComponent extends Component
         return $changedAllergiesResult;
     }
 
+    public function retrieveVaccineSubscriptionStatus()
+    {
+        $subscriptionStatusApi = $this->client->getPracticeidChartHealthhistoryVaccineChangedSubscription($this->practiceid);
+
+        return $subscriptionStatusApi;
+    }
+
+    public function vaccinesSubscription($event)
+    {
+        $subscriptionStatusApi = $this->client->postPracticeidChartHealthhistoryVaccineChangedSubscription($this->practiceid,
+            [
+                'eventname' => $event,
+            ]
+        );
+
+        return $subscriptionStatusApi;
+    }
+
+    public function vaccineChanges(): array
+    {
+        $changedVaccines = $this->client->getPracticeidChartHealthhistoryVaccineChanged($this->practiceid);
+
+        $changedVaccinesResult = [];
+        try {
+            foreach( $changedVaccines->vaccines as $vaccineApi ) {
+                $vaccineModel = $this->obtainVaccine($vaccineApi->vaccineid, $vaccineApi);
+                $changedVaccinesResult[] = [$vaccineModel->id, $vaccineModel->externalId, $vaccineModel->save()];
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
+        }
+
+        return $changedVaccinesResult;
+    }
+
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
     {
@@ -1020,6 +1057,19 @@ class AthenaComponent extends Component
         }
 
         return $allergy->loadApiObject($allergyModelApi);
+    }
+
+    protected function obtainVaccine($vaccineId, VaccineApi $vaccineModelApi): Vaccine
+    {
+        $vaccine = Vaccine::find()
+            ->where(['externalId' => $vaccineId])
+            ->one();
+
+        if (!$vaccine) {
+            return Vaccine::createFromApiObject($vaccineModelApi);
+        }
+
+        return $vaccine->loadApiObject($vaccineModelApi);
     }
 
 

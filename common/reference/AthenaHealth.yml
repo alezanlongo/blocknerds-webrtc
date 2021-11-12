@@ -3100,6 +3100,155 @@ paths:
       operationId: getPracticeidChartConfigurationVitals
       tags:
         - Vitals
+  /v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for vaccines
+      description: Subscribe for changed Vaccines events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: postPracticeidChartHealthhistoryVaccineChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                eventname:
+                  description: >-
+                    By default, you are subscribed to all possible events.  If
+                    you only wish to subscribe to an individual event, pass the
+                    event name with this argument.
+                  type: string
+              type: object
+        required: true
+      tags:
+        - Vaccines
+    get:
+      summary: Get list of vaccine change subscription(s)
+      description: Retrieves list of events for Vaccines
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryVaccineChangedSubscription
+      tags:
+        - Vaccines
+    delete:
+      summary: Unsubscribe to all/specific change events for vaccines
+      description: Delete an specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, you are unsubscribed from all possible events.  If you
+            only wish to unsubscribe from an individual event, pass the event
+            name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidChartHealthhistoryVaccineChangedSubscription
+      tags:
+        - Vaccines
+  /v1/{practiceid}/chart/healthhistory/vaccine/changed:
+    get:
+      summary: Get list of changes in vaccines based on subscription
+      description: Retrieves list of modified vaccines data of a patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: See showprocessedstartdatetime
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Show already processed changes.  This will show changes that you
+            previously retrieved at some point after this datetime mm/dd/yyyy
+            hh24:mi:ss (Eastern). Can be used to refetch data if there was an
+            error, such as a timeout, and records are marked as already
+            retrieved. This is intended to be used with showprocessedenddatetime
+            and for a short period of time only. Also note that all messages
+            will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Number of entries to return (default 1000, max 5000)Please note that
+            this endpoint has a different default than normal.
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaccineChanged'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryVaccineChanged
+      tags:
+        - Vaccines
 components:
   schemas:
     Patient:
@@ -6959,3 +7108,237 @@ components:
             - true
           type: string
       type: object
+    Vaccine:
+      type: object
+      x-external-id: vaccineid
+      x-external-id-type: string
+      properties:
+        administerdate:
+          description: >-
+            Date when this vaccine was administered (if administered).
+            Can be in YYYY, MM/YYYY, or MM/DD/YYYY format.
+          type: string
+        administernote:
+          description: >-
+            Note associated with administering the vaccine, if
+            available
+          type: string
+        administerroute:
+          description: Route by which this vaccine was administered
+          type: string
+        administerroutedescription:
+          description: >-
+            Description of the route by which this vaccine was
+            administered
+          type: string
+        administersite:
+          description: Site where the vaccine was administered
+          type: string
+        amount:
+          description: Quantity of the vaccine that was adminsitered
+          type: number
+        approvedby:
+          description: >-
+            The username of the user who approved this vaccine order,
+            if clinical
+          type: string
+        approveddate:
+          description: Date when this vaccine order was approved, if clinical
+          type: string
+        chartsharinggroupid:
+          description: >-
+            ID of the chart sharing group that the vaccine is
+            associated with. This can be used to determine what
+            department a vaccine belongs with.
+          type: integer
+        clinicalorderclasses:
+          description: >-
+            The various Clinical Order Classes associated with this
+            Vaccine
+          items:
+            $ref: '#/components/schemas/ClinicalOrderClass'
+          type: array
+        contraindicationreason:
+          description: >-
+            List of codes indicating why the order was contraindicated
+            (for vaccines only). If this field is not present, the
+            order does not contain a contraindication reason.
+          items:
+            $ref: '#/components/schemas/ContraindicationReason'
+          type: array
+        cvx:
+          description: Vaccine Administered Code
+          type: integer
+        declinedreason:
+          description: >-
+            List of codes indicating why the order was not given. If
+            this field is not present, the order was not declined. If
+            the array is empty, no reason has been chosen.
+          items:
+            $ref: '#/components/schemas/DeclinedReason'
+          type: array
+        declinedreasontext:
+          description: >-
+            The user-facing description of the reason the order was
+            not given.
+          type: string
+        deleteddate:
+          description: Date when this vaccine was deleted (if deleted)
+          type: string
+        description:
+          description: Vaccine description
+          type: string
+        enteredby:
+          description: >-
+            The username of the user who entered the historic vaccine
+            information into the chart
+          type: string
+        entereddate:
+          description: >-
+            Date when the vaccine information was entered into the
+            chart
+          type: string
+        expirationdate:
+          description: Date to administer vaccine by
+          type: string
+        genusname:
+          description: >-
+            The name of the vaccine that appears in the UI of the
+            chart
+          type: string
+        lotnumber:
+          description: >-
+            The lot number of the vaccine that was administered. This
+            is an identifier assigned to a batch of medications by the
+            manufacturer.
+          type: string
+        mvx:
+          description: Manufacturer code
+          type: string
+        ndc:
+          description: The National Drug Code for the administered vaccine.
+          type: string
+        orderedby:
+          description: The username of the user who ordered the vaccine
+          type: string
+        ordereddate:
+          description: Date the vaccine was ordered
+          type: string
+        partiallyadministered:
+          description: Whether this vaccine was partially administered or not.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        patientid:
+          description: ID of the patient that the vaccine is associated with.
+          type: integer
+        prescribeddate:
+          description: Date when this vaccine was prescribed (if prescribed)
+          type: string
+        refuseddate:
+          description: Date when this vaccine was refused (if refused)
+          type: string
+        refusednote:
+          description: Note associated with refusal, if available
+          type: string
+        refusedreason:
+          description: Reason for refusal, if available
+          type: string
+        status:
+          description: >-
+            Status of this vaccine (one of: ADMINISTERED, REFUSED,
+            PRESCRIBED but not adminstered yet)
+          type: string
+        submitdate:
+          description: Date when this vaccine order was submitted, if clinical
+          type: string
+        units:
+          description: Units corresponding to the above quantity
+          type: string
+        vaccinator:
+          description: Individual who has administered the vaccine
+          type: string
+        vaccineid:
+          description: >-
+            Athena ID for this vaccine (prefix of H for historical, C
+            for clinical)
+          type: string
+        vaccineinformationstatements:
+          description: >-
+            The Vaccine Information Statements (VIS) that were given
+            to the patient, grouped by Clinical Order Class
+          items:
+            $ref: '#/components/schemas/VaccineInformationStatements'
+          type: array
+        vaccinetype:
+          description: >-
+            Type of vaccine (either CLINICAL - ordered/administered by
+            the practice, or HISTORICAL - from patient's previous
+            medical history or alternative source)
+          type: string
+        visgivendate:
+          description: >-
+            Date when the Vaccine Information Statement was given to
+            the patient
+          type: string
+    ClinicalOrderClass:
+      type: object
+      properties:
+        clinicalorderclassid:
+          description: The clinical order class id
+          type: number
+        name:
+          description: The name for this clinical order class
+          type: string
+    ContraindicationReason:
+      type: object
+      properties:
+        code:
+          description: >-
+            The code indicating why the order was
+            contraindicated.
+          type: string
+        codeset:
+          description: The codeset that the code belongs to.
+          type: string
+        description:
+          description: >-
+            The plaintext description of the contraindication
+            reason.
+          type: string
+    DeclinedReason:
+      type: object
+      properties:
+        code:
+          description: The code indicating why the order was not given.
+          type: string
+        codeset:
+          description: The codeset that the code belongs to.
+          type: string
+        description:
+          description: >-
+            The plaintext description of the reason the order
+            was not given.
+          type: string
+    VaccineInformationStatements:
+      type: object
+      properties:
+        clinicalorderclassid:
+          description: The clinical order class id
+          type: number
+        dateonvis:
+          description: >-
+            The VIS date associated with this vaccine and
+            clinical order class id
+          type: string
+    VaccineChanged:
+      type: object
+      properties:
+        vaccines:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vaccine'
+        totalcount:
+          type: integer
