@@ -61,6 +61,12 @@ class SyncController extends Controller
         'UPDATE'            => 'AllergyUpdate',
     ];
 
+    const LABS_RESULTS = [
+        'LABRESULTADD'      => 'LabResultAdd',
+        'LABRESULTUPDATE'   => 'LabResultUpdate',
+        'LABRESULTCLOSE'    => 'LabResultClose',
+    ];
+
     public function init()
     {
         parent::init();

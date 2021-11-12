@@ -297,10 +297,8 @@ class AthenaComponent extends Component
         );
 
         $providersModels = [];
-        //echo "<pre>";
         foreach ($providersModelsApi as $providersModelApi) {
             $arrAux = (array)$providersModelApi;
-            //var_dump($arrAux['createencounterprovideridlist']); echo " => "; var_dump($arrAux['displayname']); echo "<br>";
             if (array_key_exists('createencounterprovideridlist', $arrAux)) {
                 $providersModels[] =
                     Provider::createFromApiObject(
@@ -308,7 +306,6 @@ class AthenaComponent extends Component
                     );
             }
         }
-        //exit();
 
         if ($flatten) {
             return array_column($providersModels, 'displayname', 'externalId');
