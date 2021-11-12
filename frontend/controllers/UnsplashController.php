@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Collection;
+use common\models\UnsplashForm;
 use DateTime;
 use yii\httpclient\Client;
 use Exception;
@@ -10,6 +11,7 @@ use frontend\models\UnsplashSearchForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -24,63 +26,59 @@ class UnsplashController extends Controller
      */
     public function behaviors()
     {
-        return [
-          
-        ];
+        return [];
     }
 
-    public function beforeAction($action): bool {
+    public function beforeAction($action): bool
+    {
         if ($action->actionMethod === 'actionSearch') {
             $dt = new DateTime();
             Yii::info("action method '{$action->actionMethod}' start: {$dt->format('Y-m-d H:i:s')}");
         }
-        
+
         return parent::beforeAction($action);
     }
 
 
     public function actionIndex()
     {
-        $collections = Yii::$app->user->identity->getCollections()->asArray()->all();
-
-        return $this->render('index', [
-            "collections" => $collections
-        ]);
-    }
-
-    public function actionSearch()
-    {
-        $search = Yii::$app->request->post()["search"];
-        $response = UnsplashController::search($search);
+        $unsplashForm = new UnsplashForm();
+        $collections = ArrayHelper::map(Yii::$app->user->identity->userProfile->sets, 'id','title');
         $photos = [];
-
-        if ($response->isOk) {
-            $photos = $response->getData()["results"];
+        if ($this->request->isPost) {
+            $unsplashForm->load($this->request->post());
+            $photos = UnsplashController::search($unsplashForm->search)['results'];
+            // VarDumper::dump($photos, $depth = 10, $highlight = true);
+            // die;
         }
 
-        Yii::$app->response->format = Response::FORMAT_JSON;
-
-        return [
-            "search" => $search,
-            "data" => $photos
-        ];
+        return $this->render('index', [
+            "collections" => $collections,
+            "model" => $unsplashForm,
+            'photos' => $photos,
+        ]);
     }
 
 
     public static function search($search)
     {
-        $server = "https://api.unsplash.com/";
-        $clientId = "Fvl6_IMfndHATC4uEIs5XDwdSFbnBaLam_PWIHSOq-o";
+        $server = Yii::$app->params['unsplash.server'];
+        $clientId = Yii::$app->params['unsplash.clientId'];
         $client = new Client(['baseUrl' => $server]);
+        $response =  $client->get('search/photos', ['client_id' => $clientId, 'query' => $search])->send();
 
-        return $client->get('search/photos', ['client_id' => $clientId, 'query' => $search])->send();
+        if (!$response->isOk) {
+            return null;
+        }
+
+        return $response->getData();
     }
 
 
     public static function searchOne(string $photoId)
     {
-        $server = "https://api.unsplash.com/";
-        $clientId = "Fvl6_IMfndHATC4uEIs5XDwdSFbnBaLam_PWIHSOq-o";
+        $server = Yii::$app->params['unsplash.clientId'];
+        $clientId = Yii::$app->params['unsplash.server'];
         $client = new Client(['baseUrl' => $server]);
         $response = $client->get("photos/$photoId", ['client_id' => $clientId])->send();
 
@@ -89,19 +87,5 @@ class UnsplashController extends Controller
         }
 
         return $photo;
-    }
-
-    public static function downloadOne(string $photoId)
-    {
-        $server = "https://api.unsplash.com/";
-        $clientId = "Fvl6_IMfndHATC4uEIs5XDwdSFbnBaLam_PWIHSOq-o";
-        $client = new Client(['baseUrl' => $server]);
-        $response = $client->get("photos/$photoId/download", ['client_id' => $clientId])->send();
-
-        if ($response->isOk) {
-            $photo = $response->getData();
-        }
-
-        return $photo["url"] ?? null;
     }
 }

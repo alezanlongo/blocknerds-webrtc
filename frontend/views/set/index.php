@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -15,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Create Set', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Add image', Url::to('/unsplash'), ['class' => 'btn btn-success']) ?>
     </p>
 
 

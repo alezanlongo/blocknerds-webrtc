@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\VarDumper;
 
 /**
  * ProtoController implements the CRUD actions for Photo model.
@@ -21,7 +22,7 @@ class ProtoController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -73,6 +74,16 @@ class ProtoController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);
+    }
+
+    public function actionAdd()
+    {
+        // if (!$this->request->isPost) {
+        //     throw new NotFoundHttpException('Page not found.');
+        // }
+
+        VarDumper::dump( $this->request->post(), $depth = 10, $highlight = true);
+        die;
     }
 
     /**
