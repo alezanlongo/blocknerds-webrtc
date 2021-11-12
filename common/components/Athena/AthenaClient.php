@@ -1237,4 +1237,40 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return ListMedications
+     */
+    public function getPracticeidChartPatientidMedications($practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/{patientid}/medications';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ListMedicationsApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return PostMedication200Response
+     */
+    public function postPracticeidChartPatientidMedications($practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/{patientid}/medications';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PostMedication200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }

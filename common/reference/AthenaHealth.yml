@@ -3249,6 +3249,130 @@ paths:
       operationId: getPracticeidChartHealthhistoryVaccineChanged
       tags:
         - Vaccines
+  /v1/{practiceid}/chart/{patientid}/medications:
+    post:
+      summary: Add medication to patient's medication list
+      description: Add a new medication to the patient's medication list
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostMedication200Response'
+          description: Success
+      operationId: postPracticeidChartPatientidMedications
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateMedication'
+        required: true
+      tags:
+        - Medication
+    get:
+      summary: Get patient's medication list
+      description: Retrieves list of patient's medication and medication details
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            Include pending medications associated with approved future orders.
+            These medications have not yet been submitted.
+          in: query
+          name: showpend
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Shows the list of RxNorm Identifiers related to the medication. The
+            list may contain both branded and generic identifiers. Note: Not All
+            medications would include RX Norm.
+          in: query
+          name: showrxnorm
+          required: false
+          schema:
+            type: boolean
+        - description: The athenanet department ID
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            Historical or Active or Denied. Will return a list of a patient's
+            active or historical or denied medications.
+          in: query
+          name: medicationtype
+          required: false
+          schema:
+            enum:
+              - ACTIVE
+              - DENIED
+              - HISTORICAL
+            type: string
+            x-enumDescriptions:
+              - Active
+              - Denied
+              - Historical
+        - description: Shows the list of NDC numbers related to the medication.
+          in: query
+          name: showndc
+          required: false
+          schema:
+            type: boolean
+        - description: User name of the patient in the third party application.
+          in: query
+          name: THIRDPARTYUSERNAME
+          required: false
+          schema:
+            type: string
+        - description: >-
+            When 'true' is passed we will collect relevant data and store in our
+            database.
+          in: query
+          name: PATIENTFACINGCALL
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListMedications'
+          description: Success
+      operationId: getPracticeidChartPatientidMedications
+      tags:
+        - Medication
 components:
   schemas:
     Patient:
@@ -7342,3 +7466,137 @@ components:
             $ref: '#/components/schemas/Vaccine'
         totalcount:
           type: integer
+    RequestCreateMedication:
+      properties:
+        PATIENTFACINGCALL:
+          description: >-
+            When 'true' is passed we will collect relevant data and
+            store in our database.
+          type: boolean
+        THIRDPARTYUSERNAME:
+          description: User name of the patient in the third party application.
+          type: string
+        departmentid:
+          description: The athenanet department ID
+          type: integer
+        hidden:
+          description: Set whether the medication is hidden in the UI.
+          type: boolean
+        medicationid:
+          description: The athena medication ID
+          type: integer
+        patientnote:
+          description: A patient-facing note
+          type: string
+        providernote:
+          description: An internal note
+          type: string
+        startdate:
+          description: Start date for this medication
+          type: string
+        stopdate:
+          description: Stop date for this medication
+          type: string
+        stopreason:
+          description: >-
+            The reason the medication was stopped. If set, it it
+            recommended but not required that a stop date is also set.
+          type: string
+        unstructuredsig:
+          description: >-
+            Can only be used to update historical (entered, downloaded,
+            etc) medications. Will override a structured sig if there is
+            one.
+          type: string
+      required:
+        - medicationid
+        - departmentid
+      type: object
+    PostMedication200Response:
+      x-external-id: medicationentryid
+      type: object
+      properties:
+        errormessage:
+          description: >-
+            If the operation failed, this will contain any error
+            messages.
+          type: string
+        medicationentryid:
+          description: >-
+            If successful, the athena ID of the newly created
+            historical medication
+          type: string
+        success:
+          description: Whether the operation was successful or not.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    ListMedications:
+      type: object
+      properties:
+        lastdownloaddenialreason:
+          description: >-
+            BETA FIELD: The reason the last medication history
+            download was denied.
+          type: string
+        lastdownloaddenied:
+          description: >-
+            BETA FIELD: Whether or not the last medication history
+            download was denied.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        lastdownloadeddate:
+          description: >-
+            The time of the last attempted medication history download
+            from SureScripts.
+          type: string
+        lastupdated:
+          description: The last time any of the medications were updated
+          type: string
+        medications:
+          description: The list of medications
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/Medication'
+        nomedicationsreported:
+          description: Whether the patient explicitly has no reported medications
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        patientdownloadconsent:
+          description: >-
+            Whether or not the patient has consented to have their
+            medication history downloaded. There are plans to
+            deprecate this field.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        patientneedsdownloadconsent:
+          description: >-
+            Whether or not the patient needs to consent to have
+            medication history downloaded. This will be true if either
+            the patient has not currently consented, or the practice
+            is not enabled for these downloads.  This field is
+            typically used when determining whether to message to the
+            patient that they have not consented to these downloads.
+            Note that regardless of this setting, medication history
+            that has already been downloaded will remain available.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        sectionnote:
+          description: A section-wide note
+          type: string

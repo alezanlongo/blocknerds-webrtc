@@ -5,6 +5,8 @@ namespace frontend\controllers;
 use Yii;
 use common\components\AthenaComponent;
 use common\components\Athena\models\Medication;
+use common\components\Athena\models\Patient;
+use common\components\Athena\models\RequestCreateMedication;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 
@@ -67,6 +69,36 @@ class MedicationController extends \yii\web\Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Creates a new Patient model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+
+    public function actionCreate($patientid)
+    {
+        $model = new RequestCreateMedication;
+        $patient = Patient::findOne($patientid);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->createMedication(
+                $patient,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+            else{
+                var_dump($model->getErrors());die;
+            }
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+            'patient' => $patient,
         ]);
     }
 
