@@ -56,6 +56,7 @@ class ChatRepository extends Chat
                 'username' => $chat->fromProfile->user->username,
             ];
 
+            $with['room_id'] = $chat->room_id;
             $with['channel'] = $chat->channel;
             $with['message'] = $chat->text;
             $with['created_at'] = $chat->created_at;
@@ -79,14 +80,12 @@ class ChatRepository extends Chat
             ->limit(1)->one();
     }
 
-
-
     public static function getChats(int $ownerProfileId, string $channel): array
     {
         $chats = ChatRepository::getChatsByChannel($channel);
 
         if (empty($chats)) {
-            throw new NotFoundHttpException("Chat not found");
+            return [];
         }
 
         return array_map(function ($msg) use ($ownerProfileId) {

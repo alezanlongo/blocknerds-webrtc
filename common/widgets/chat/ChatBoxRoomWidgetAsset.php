@@ -9,12 +9,13 @@ class ChatBoxRoomWidgetAsset extends AssetBundle
     public $sourcePath = '@common/widgets/chat/assets';
 
     public $js = [
+        'js/moment.min.js',
         'js/mqttChatHandler.js',
         'js/boxRoom.js',
     ];
 
     public $css = [
-        'css/boxRoom.css',
+        'css/box.css',
     ];
 
     public $depends = [

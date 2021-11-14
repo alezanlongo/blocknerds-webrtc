@@ -28,23 +28,31 @@ use common\widgets\chat\ChatBoxRoomWidget;
                 <li class="list-group-item list-group-item-light bg-dark position-relative" data-user-id="<?= Yii::$app->getUser()->getId() ?>" data-index="0">
                     <span class="p-1 username-member text-success"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
                 </li>
-                <?php for ($i = 1; $i < $limit_members; $i++) {
-                    $member = (count($members) > $i) ? $members[$i] : null;
+                <?php
+                $i = 1;
+                foreach ($members as $member) {
+                    if ($member->user_profile_id != $user_profile_id) {
                 ?>
-                    <li class="list-group-item list-group-item-light bg-dark position-relative <?= ($member) ? 'profile_id_' . $member['id'] : 'd-none' ?>" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                        <span class="p-1 username-member usernameFeed<?= $i ?>"><?= ($member) ? $member['username'] : '' ?></span>
-                        <?php if ($is_owner) { ?>
-                            <div class="position-absolute pt-1 top-0 end-0 member-controls d-none">
-                                <button class="btn btn-link text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
-                                    <i class="fas fa-microphone icon-option-member"></i></button> |
-                                <button class="btn btn-link text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
-                                    <i class="fas fa-video icon-option-member"></i></button> |
-                                <button class="btn btn-link text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
-                                    <i class="fas fa-user-times icon-option-member"></i></button>
+                        <li class="list-group-item list-group-item-light bg-dark position-relative profile_id_-<?= $member->user_profile_id ?>" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
+                            <span class="p-1 username-member usernameFeed<?= $i ?>"><?= $member->user->username ?></span>
+                            <div class="position-absolute pt-1 top-0 end-0 member-controls">
+                                <button class="btn btn-link text-light btn-remote-chat" data-bs-toggle="tooltip" data-bs-placement="top" title="Chat with member">
+                                    <i class="fas fa-comment-dots icon-option-member" onclick="openChatBox(parseInt(<?= $member->user_profile_id ?>), '<?= $member->user->username ?>', parseInt(<?= $room_id ?>))"></i>
+                                </button>
+                                <?php if ($is_owner) { ?>
+                                    <button class="btn btn-link text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
+                                        <i class="fas fa-microphone icon-option-member"></i></button>
+                                    <button class="btn btn-link text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
+                                        <i class="fas fa-video icon-option-member"></i></button>
+                                    <button class="btn btn-link text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
+                                        <i class="fas fa-user-times icon-option-member"></i></button>
+                                <?php } ?>
                             </div>
-                        <?php } ?>
-                    </li>
-                <?php  } ?>
+                        </li>
+                <?php
+                    }
+                    $i++;
+                } ?>
             </ul>
         </div>
         <div class="tab-pane fade option-content" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">

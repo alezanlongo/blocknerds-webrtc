@@ -64,8 +64,11 @@ class ChatController extends Controller
             $mqttResponse = [
                 'type' => $type,
                 'from' => $from,
+                'from_username' => Yii::$app->user->identity->username,
                 'to' => $to,
+                'to_username' => $chat->to_profile_id ? $chat->toProfile->user->username : null,
                 'room_id' => $room_id,
+                'channel' => $channel,
                 'message' => $chat->text,
                 'created_at' => $chat->created_at
             ];
@@ -136,6 +139,25 @@ class ChatController extends Controller
         return [$type, md5($channel)];
     }
 
+    public function actionRequestToSubscribeChannel()
+    {
+        $to = $this->request->post('to');
+        $from = Yii::$app->user->identity->userProfile->id;
+        $room_id = Yii::$app->request->post("room");
+        list($type, $channel) = $this->handleValidation($from, $to, $room_id);
+
+        $this->requestToSubscribeChannel($from, $channel);
+        $this->requestToSubscribeChannel($to, $channel);
+
+        return Json::encode([
+            'type' => $type,
+            'from' => $from,
+            'to' => $to,
+            'room_id' => $room_id,
+            'channel' => $channel,
+        ]);
+    }
+
     private function requestToSubscribeChannel($to, $channel)
     {
         $mqttResponse = [
@@ -145,7 +167,7 @@ class ChatController extends Controller
 
         Yii::$app->mqtt->sendMessage(md5((int)$to), $mqttResponse);
 
-        return true;
+        return $mqttResponse;
     }
 
     public function actionGetChat($channel)
@@ -156,6 +178,7 @@ class ChatController extends Controller
 
         return ChatRepository::getChats($me, $channel);
     }
+
     public function actionRecentChat()
     {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

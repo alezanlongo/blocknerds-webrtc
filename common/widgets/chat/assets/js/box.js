@@ -6,11 +6,16 @@ $('.btn-send').on('click', (e) => {
         return;
     }
 
-    sendMessageMQTT(text, null, to).then(data => {
-        console.log(data)
-        closeAndClearNewMessage();
-        // TODO: open box
-    })
+    var chat = sendChatMessageMQTT(text, null, to);
+    chat = JSON.parse(chat.responseText);
+
+    closeAndClearNewMessage();
+
+    if (openChatBox(parseInt(to), chat.to_username, null, chat.channel) === false) {
+        handleMessageToUser(true, chat.created_at, chat.channel, chat.message);
+    }
+
+    chatScrollDown(`oneTone_${chat.channel}`);
 
 })
 

@@ -91,21 +91,22 @@ class RoomController extends \yii\web\Controller
                 ->all();
         }
 
-        $profileIds = RoomMember::find()
-            ->where(['room_id' => $room->id])
-            ->select('user_profile_id');
+        // $profileIds = RoomMember::find()
+        //     ->where(['room_id' => $room->id])
+        //     ->select('user_profile_id');
 
-        $members = [];
-        foreach ($profileIds->all() as $member) {
-            if ($member->user_profile_id !== $profile->id) {
-                $members[] =  [
-                    'id' => $member->user_profile_id,
-                    'user_id' => $member->getUser()->id,
-                    'username' => $member->getUser()->username,
-                ];
-            }
-        }
+        // $members = [];
+        // foreach ($profileIds->all() as $member) {
+        //     if ($member->user_profile_id !== $profile->id) {
+        //         $members[] =  [
+        //             'id' => $member->user_profile_id,
+        //             'user_id' => $member->getUser()->id,
+        //             'username' => $member->getUser()->username,
+        //         ];
+        //     }
+        // }
 
+        $members = RoomMemberRepository::getMembersByRoom($room->uuid);
 
         if (count($members) > $limit_members) {
             var_dump("No possible add more members can't be in this room. The limit is " . $limit_members);
@@ -161,7 +162,7 @@ class RoomController extends \yii\web\Controller
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
-        $chats = Chat::find()->where(['room_id' => $room->id])->all();
+        $chats = Chat::find()->where(['room_id' => $room->id, 'to_profile_id' => null])->all();
 
         // VarDumper::dump($token, $depth = 10, $highlight = true);
         //     die;
@@ -616,7 +617,8 @@ class RoomController extends \yii\web\Controller
             'roomSelected' => $roomSelected,
             'roomMembers' => $roomMembers,
             'initialView' => $initialView ? $initialView->value : 'timeGridWeek',
-            'cardNextOrInProgressMeetingWidget' => $cardNextOrInProgressMeetingWidget
+            'cardNextOrInProgressMeetingWidget' => $cardNextOrInProgressMeetingWidget,
+            'myChannel' => md5($profile->id),
         ]);
     }
 
