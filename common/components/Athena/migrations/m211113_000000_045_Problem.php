@@ -3,11 +3,12 @@
 /**
  * Table for Problem
  */
-class m211105_000000_045_Problem extends \yii\db\Migration
+class m211113_000000_045_Problem extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%problems}}', [
+            'patient_id' => $this->integer(),
             'bestmatchicd10code' => $this->string(),
             'code' => $this->string(),
             'codeset' => $this->string(),
@@ -22,6 +23,14 @@ class m211105_000000_045_Problem extends \yii\db\Migration
             'id' => $this->primaryKey(),
         ]);
 
+        $this->addForeignKey(
+            'fk-patient-patient_id',
+            '{{%problems}}',
+            'patient_id',
+            'patients',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()

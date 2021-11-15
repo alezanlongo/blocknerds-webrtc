@@ -3,7 +3,7 @@
 /**
  * Table for EventDiagnose
  */
-class m211105_000000_047_EventDiagnose extends \yii\db\Migration
+class m211113_000000_047_EventDiagnose extends \yii\db\Migration
 {
     public function up()
     {

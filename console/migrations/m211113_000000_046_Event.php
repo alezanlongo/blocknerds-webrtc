@@ -3,7 +3,7 @@
 /**
  * Table for Event
  */
-class m211105_000000_046_Event extends \yii\db\Migration
+class m211113_000000_046_Event extends \yii\db\Migration
 {
     public function up()
     {

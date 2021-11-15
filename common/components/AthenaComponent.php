@@ -2,6 +2,7 @@
 namespace common\components;
 
 use Yii;
+use Yii\helpers\ArrayHelper;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\EncounterApi;
@@ -1085,4 +1086,76 @@ class AthenaComponent extends Component
         return $dataSession['access_token'];
     }
     /* =================================== End  Protected methods ============================================== */
+
+    /**
+     * @return Problem
+     */
+    public function createProblem($problem, $patient)
+    {
+        $problemModelApi =
+            $this->client->postPracticeidChartPatientidProblems(
+                $this->practiceid,
+                $patient->externalId,
+                $problem->toArray()
+            );
+//var_dump(__METHOD__.__LINE__, $problemModelApi);die;
+
+        //FIXME if($problemModelApi->success == true)
+        return $this->retrieveProblem(
+            $patient,
+            $problemModelApi->problemid
+        );
+    }
+
+    /**
+     * @return Problem
+     */
+    public function retrieveProblem($patient, $problemId)
+    {
+        $problemModelApi = $this->client->getPracticeidChartPatientidProblems(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
+        );
+
+        $result = ArrayHelper::index($problemModelApi->problems, 'problemid');
+//var_dump(__METHOD__.__LINE__, $result);die;
+
+        /*
+        foreach($problemModelApi->problems as $problemApi) {
+            if($problemApi->problemid == $problemId)
+                exit;
+        }//IMPROVEME https://www.yiiframework.com/doc/guide/2.0/en/helper-array#reindexing-arrays
+        */
+
+        $problem = Problem::find()
+            ->where(['externalId' => $problemId])
+            ->one();
+
+        if (!$problem) {
+            return Problem::createFromApiObject($result[$problemId]);
+        }
+
+        return $problem->loadApiObject($result[$problemId]);
+    }
+
+    /**
+     * @return Problem
+     */
+    public function updateProblem($problem, $updateProblem)
+    {
+        $problemModelApi =
+            $this->client->putPracticeidChartPatientidProblemsProblemid(
+                $problem->externalId,
+                $this->practiceid,
+                $problem->patientid,
+                $updateProblem->toArray()
+            );
+
+        return $this->retrievePatientCase(
+            $problem->patientid,
+            $problemModelApi->patientcaseid
+        );
+    }
+
 }

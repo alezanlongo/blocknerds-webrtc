@@ -1237,4 +1237,60 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return GetProblem200Response
+     */
+    public function getPracticeidChartPatientidProblems($practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/{patientid}/problems';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\GetProblem200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return PostProblem200Response
+     */
+    public function postPracticeidChartPatientidProblems($practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/{patientid}/problems';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PostProblem200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param problemid
+     * @return PostProblem200Response
+     */
+    public function putPracticeidChartPatientidProblemsProblemid($practiceid, $patientid, $problemid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/{patientid}/problems/{problemid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{problemid}', $problemid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PostProblem200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }
