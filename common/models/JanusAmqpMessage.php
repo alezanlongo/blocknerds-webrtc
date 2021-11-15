@@ -23,13 +23,15 @@ use yii\behaviors\TimestampBehavior;
  */
 class JanusAmqpMessage extends \yii\db\ActiveRecord
 {
-
     const ACTION_TYPE_CREATE_ROOM = 1;
-    const ACTION_TYPE_CREATE_SESSION = 2;
-    const ACTION_TYPE_ATTACH_PLUGIN = 3;
-    const ACTION_TYPE_GET_STORED_TOKEN = 4;
-    const ACTION_TYPE_GET_ADMIN_TOKEN = 5;
-    const ACTION_TYPE_CREATE_TOKEN = 6;
+    const ACTION_TYPE_CREATE_ADMIN_SESSION = 2;
+    const ACTION_TYPE_REFRESH_ADMIN_SESSION = 3;
+    const ACTION_TYPE_CALLBACK = 4;
+    const ACTION_TYPE_ATTACH_PLUGIN = 5;
+    const ACTION_TYPE_GET_STORED_TOKEN = 6;
+    const ACTION_TYPE_REQUEST_ADMIN_TOKEN = 7;
+    const ACTION_TYPE_CREATE_TOKEN = 8;
+
     const STATUS_PENDING = 0;
     const STATUS_PROCESSING = 1;
     const STATUS_COMPLETED = 10;
@@ -102,7 +104,8 @@ class JanusAmqpMessage extends \yii\db\ActiveRecord
         return $this->hasOne(self::class, ['id' => 'parent_id']);
     }
 
-    public function increaseAttempt(){
+    public function increaseAttempt()
+    {
         $this->attempts = ($this->attempts === null ? 0 : $this->attempts + 1);
         $this->save(false);
     }

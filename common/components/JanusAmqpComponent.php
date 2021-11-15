@@ -11,10 +11,13 @@ use yii\httpclient\Exception;
 use yii\base\InvalidConfigException;
 use phpDocumentor\Reflection\Types\Boolean;
 use common\components\janusApi\JanusCommonException;
+use common\models\JanusAmqpAdmin;
 use common\models\JanusAmqpMessage;
+use Exception as GlobalException;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use yii\db\ActiveRecordInterface;
+use yii\db\conditions\BetweenCondition;
 use yii\db\StaleObjectException;
 use yii\db\Exception as DbException;
 use yii\helpers\VarDumper;
@@ -89,12 +92,12 @@ class JanusAmqpComponent extends Component
 
     private function publish(array $message, $admin = false)
     {
-        $channel1 = $this->amqpConnection->channel(1);
-        $channel2 = $this->amqpConnection->channel(2);
         $msg = new AMQPMessage(\json_encode($message));
         if ($admin === true) {
+            $channel1 = $this->amqpConnection->channel(1);
             $channel1->basic_publish($msg, 'janus-exchange', 'to-janus-admin');
         } else {
+            $channel2 = $this->amqpConnection->channel(2);
             $channel2->basic_publish($msg, 'janus-exchange', 'to-janus');
         }
     }
@@ -136,37 +139,38 @@ class JanusAmqpComponent extends Component
         }
     }
 
-    private function runHandler(JanusAmqpMessage $message, array $janusMessage, $isRetry = false)
+    private function runHandler(JanusAmqpMessage $message, array $janusMessage = [])
     {
         $handleStatus = false;
         switch ($message->action_type) {
-            case JanusAmqpMessage::ACTION_TYPE_GET_ADMIN_TOKEN:
-                $handleStatus = $this->handleRequestAdminToken($message, $janusMessage, $isRetry);
+            case JanusAmqpMessage::ACTION_TYPE_REQUEST_ADMIN_TOKEN:
+                $handleStatus = $this->handleRequestAdminToken($message, $janusMessage);
                 break;
             case JanusAmqpMessage::ACTION_TYPE_CREATE_TOKEN:
-                $handleStatus = $this->handleStoreToken($message, $janusMessage, $isRetry);
+                $handleStatus = $this->handleStoreToken($message, $janusMessage);
                 break;
             case JanusAmqpMessage::ACTION_TYPE_CREATE_ROOM:
-                $handleStatus = $this->handleVideoRoomCreate($message, $janusMessage, $isRetry);
+                $handleStatus = $this->handleVideoRoomCreate($message, $janusMessage);
                 break;
-            case JanusAmqpMessage::ACTION_TYPE_CREATE_SESSION:
-                $handleStatus = $this->handleCreateAdminSession($message, $janusMessage, $isRetry);
+            case JanusAmqpMessage::ACTION_TYPE_CREATE_ADMIN_SESSION:
+                $handleStatus = $this->handleCreateAdminSession($message, $janusMessage);
+                break;
+            case JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION:
+                $handleStatus = $this->handleRefreshAdminSession($message, $janusMessage);
                 break;
             case JanusAmqpMessage::ACTION_TYPE_ATTACH_PLUGIN:
-                $handleStatus = $this->handleAttachPlugin($message, $janusMessage, $isRetry);
+                $handleStatus = $this->handleAttachPlugin($message, $janusMessage);
                 break;
         }
         if (true === $handleStatus && null !== $message->parent_id) {
             $parent = $message->getParent()->one();
-            echo "callback";
+            echo "self call";
             return $this->runHandler($parent, []);
         }
     }
 
-    public function handleVideoRoomCreate(JanusAmqpMessage $message, array $janusMessage, bool $isRetry)
+    public function handleVideoRoomCreate(JanusAmqpMessage $message, array $janusMessage)
     {
-        \print_r("handle");
-
         if ($message->status == JanusAmqpMessage::STATUS_COMPLETED) {
             return true;
         }
@@ -205,13 +209,12 @@ class JanusAmqpComponent extends Component
             $message->attributes = $attr;
             $message->save(false);
         }
-        $sess = $this->getAdminSession($message);
+        $sess = $this->getAdminSession();
+        if (null === $sess) {
+            $sess = $this->createAdminSession($admToken, $message);
+            return false;
+        }
         if (null === $message->session) {
-            if (null === $sess) {
-                $this->createAdminSession($admToken, $message->id);
-                echo "asdas 4";
-                return false;
-            }
             $message->session = $sess;
             $attr = $message->attributes;
             $attr['session_id'] = $message->session;
@@ -266,348 +269,51 @@ class JanusAmqpComponent extends Component
         $this->runHandler($mRes, []);
     }
 
-    /**
-     * 
-     * @param string $roomUuid
-     * @return Boolean true if room exists, false if not
-     */
-    public function videoRoomExists(string $roomUuid): bool
+    private function getAdminToken(): string|null
     {
-        try {
-            //$this->attach('janus.plugin.videoroom');
-            $res = $this->apiCall(
-                'POST',
-                [
-                    'janus' => 'message',
-                    'body' => [
-                        'request' => 'exists',
-                        'room' => $roomUuid
-                    ],
-                    'transaction' => $this->createRandStr(),
-                    'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()
-                ],
-                $this->createAdminSession() . '/' . $this->handleID
-            );
-
-            $data = $res->getData();
-        } catch (Exception $e) {
-            $this->lastError = $this->exceptionFormatter('janus server not found', $e);
-            throw new JanusCommonException($this->lastError, 404);
-        }
-        if (isset($data['plugindata']['data']['videoroom']) && isset($data['plugindata']['data']['exists']) && $data['plugindata']['data']['videoroom'] == 'success') {
-            return \boolval($data['plugindata']['data']['exists']);
-        }
-        return false;
-    }
-
-    /**
-     * Returns an array with all members already connected to an room. If are not members in rooms, return an empty array.
-     * @param string $roomUuid uuid of room
-     * @return false|array return false if this api call fails
-     */
-    public function getInRoomMembers(string $roomUuid): false|array
-    {
-        //$this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall(
-            'POST',
-            [
-                'janus' => 'message',
-                'body' => [
-                    'request' => 'listparticipants',
-                    'room' => $roomUuid
-                ],
-                'transaction' => $this->createRandStr(),
-                'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()
-            ],
-            $this->createAdminSession() . '/' . $this->handleID
-        );
-        if (!$res->isOk) {
-            return false;
-        }
-        $data = $res->getData();
-        if (!isset($data['janus']) || $data['janus'] !== 'success') {
-            //log error
-            return false;
-        }
-        $participants = [];
-        if (!empty($data['plugindata']['data']['participants'])) {
-            foreach ($data['plugindata']['data']['participants'] as $k => $v) {
-                $participants[$k] = ['id' => $v['id']];
-                $userHandle = $this->getUserHandle($v['id']);
-                if (!empty($userHandle) && isset($userHandle['token'])) {
-                    $participants[$k]['token'] = $userHandle['token'];
-                }
-            }
-        }
-        return $participants;
-    }
-
-
-    /**
-     * Add token to a specific room
-     * @param mixed $roomUuid 
-     * @param mixed $token 
-     * @return bool true or false if an error occurs
-     */
-    public function addUserToken($roomUuid, $token): bool
-    {
-        //$this->attach('janus.plugin.videoroom');
-
-        //this line aren't right. It's added because something it's wrong in the room access 
-        $this->storeToken($token);
-
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'add', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => [$token]], 'transaction' => $this->createRandStr(), 'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()], $this->createAdminSession() . '/' . $this->handleID);
-        if (!$res->isOk) {
-            return \false;
-        }
-        $data = $res->getData();
-        if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
-            return true;
-        } elseif (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] != 'success') {
-            return false;
-        }
-        if (isset($data['error'])) {
-            $this->lastError = $data['error'];
-        }
-        return false;
-    }
-
-    public function getMembersTokenByRoom(string $roomUuid): false|array
-    {
-        //$this->attach('janus.plugin.videoroom');
-
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => 'remove', 'request' => 'allowed', 'plugins' => 'janus.plugin.videoroom', 'room' => $roomUuid, 'allowed' => ['fake']], 'transaction' => $this->createRandStr(), 'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()], $this->createAdminSession() . '/' . $this->handleID);
-        if (!$res->isOk) {
-            return \false;
-        }
-        $data = $res->getData();
-        $res = $this->apiCall('POST', ['janus' => 'list_tokens',  'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], null, true);
-        if (!$res->isOk) {
-            return \false;
-        }
-        $data = $res->getData();
-        if (isset($data['janus']) && $data['janus'] == 'success') {
-            return  $data['data']['tokens'];
-        }
-        if (isset($data['error'])) {
-            $this->lastError = $data['error'];
-        }
-        return false;
-    }
-
-    /**
-     * Mute and unmute an room member
-     * @param string $roomUuid 
-     * @param mixed $token member token
-     * @param bool $apply true(default) fom mute, false unmute
-     * @return bool returns true if the action has completed, false if not 
-     */
-    public function moderateMember(string $roomUuid, $token, string $source = self::SOURCE_AUDIO, bool $apply = true)
-    {
-
-        if (!in_array($source, [self::SOURCE_AUDIO, self::SOURCE_VIDEO])) {
-            $this->lastError = "undefined source: $source";
-            return false;
-        }
-
-        //$this->attach('janus.plugin.videoroom');
-        $members = $this->getInRoomMembers($roomUuid);
-        if (false === $members) {
-            return false;
-        }
-        if (empty($members)) {
-            return false;
-        }
-        $memberId = $members[\array_search($token, \array_column($members, 'token'))]['id'] ?? null;
-        if (null === $memberId) {
-            return false;
-        }
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['mute_' . $source => $apply, 'request' => 'moderate', 'id' => $memberId, 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()], $this->createAdminSession() . '/' . $this->handleID);
-
-        if (!$res->isOk) {
-            return false;
-        }
-        $data = $res->getData();
-        if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
-            return true;
-        }
-        $this->lastError = $data['plugindata']['data']['error'] ?? null;
-        return false;
-    }
-
-    private function getMemberRoomToken(string $roomUuid, string $token): ?string
-    {
-        $members = $this->getInRoomMembers($roomUuid);
-        if (false === $members || empty($members)) {
+        $tkn = JanusAmqpAdmin::getActiveAdminToken();
+        if (null === $tkn) {
             return null;
         }
-
-        return $members[\array_search($token, \array_column($members, 'token'))]['id'] ?? null;
+        return $tkn->one()->value;
     }
 
-    public function kickMember(string $roomUuid, string $token, string $memberId)
+    private function requestAdminToken(?JanusAmqpMessage $callback = null): bool
     {
-        //$this->attach('janus.plugin.videoroom');
-        $memberTokenId = $this->getMemberRoomToken($roomUuid, $token);
-        if (!$memberTokenId || $memberTokenId !== $memberId) {
-            return false;
-        }
 
-        $res = $this->apiCall(
-            'POST',
-            [
-                'janus' => 'message',
-                'body' => [
-                    'request' => 'kick',
-                    'id' => $memberId,
-                    'room' => $roomUuid
-                ],
-                'transaction' => $this->createRandStr(),
-                'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()
-            ],
-            $this->createAdminSession() . '/' . $this->handleID
-        );
 
-        if (!$res->isOk) {
-            return false;
-        }
-
-        $data = $res->getData();
-        if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
-            return true;
-        }
-
-        $this->lastError = $data['plugindata']['data']['error'] ?? null;
-        return false;
-    }
-
-    public function getDataMembers(string $roomUuid)
-    {
-        //$this->attach('janus.plugin.videoroom');
-        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['request' => 'listparticipants', 'room' => $roomUuid], 'transaction' => $this->createRandStr(), 'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()], $this->createAdminSession() . '/' . $this->handleID);
-        if (!$res->isOk) {
-            return false;
-        }
-        $members = $res->getData()['plugindata']['data']['participants'] ?? null;
-        // VarDumper::dump( $members, $depth = 10, $highlight = true);
-        // die;
-        $dataMembers = [];
-
-        if (!empty($members)) {
-            foreach ($members as $k => $v) {
-                $userHandle = $this->getUserHandle($v['id']);
-                $dataMembers[] = [
-                    'id' => $userHandle['plugin_specific']['id'],
-                    'display' => $userHandle['plugin_specific']['display'],
-                    'media' => $userHandle['plugin_specific']['media'],
-                ];
+        $admTknMessage = JanusAmqpMessage::findOne(['action_type' => JanusAmqpMessage::ACTION_TYPE_REQUEST_ADMIN_TOKEN, 'status' => [JanusAmqpMessage::STATUS_PENDING, JanusAmqpMessage::STATUS_PROCESSING]]);
+        if (null !== $admTknMessage) {
+            if ($callback) {
+                return $this->_createCallback($admTknMessage, $callback);
             }
         }
 
-        return $dataMembers;
-    }
-
-
-    public function createHmacToken()
-    {
-        $expire = \floor(\time()) + (12 * 60 * 60);
-        $str = join(',', [$expire, 'janus', join(',', ['janus.plugin.videoroom'])]);
-
-        $hmac =  \hash_hmac('sha1', $str, $this->tokenAuthSecret, true);
-        return join(':', [$str, \base64_encode($hmac)]);
-    }
-
-
-    private function getSessions()
-    {
-        $res = $this->apiCall('POST', ['janus' => 'list_sessions', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], null, true);
-        if (!$res->isOk) {
-            return false;
+        $tr = $this->createRandStr();
+        $nMsg = $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_REQUEST_ADMIN_TOKEN, null, null);
+        if ($callback) {
+            $this->_createCallback($nMsg, $callback);
         }
-        if ($res->getData()['janus'] !== 'success') {
-            return false;
-        }
-        return $res->getData()['sessions'];
-    }
-
-    private function getUserHandle(string $janusUserId)
-    {
-        $sess = $this->getSessions();
-        if (false === $sess) {
-            return false;
-        }
-        if (empty($sess)) {
-            return [];
-        }
-        for ($i = 0; $i < count($sess); $i++) {
-            $resHandle = $this->apiCall('POST', ['janus' => 'list_handles', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], $sess[$i], true);
-            if (!$resHandle->isOk || $resHandle->getData()['janus'] !== 'success') {
-                return false;
-            }
-            if (!empty($resHandle->getData()['handles'])) {
-                $handles[$sess[$i]] = $resHandle->getData()['handles'];
-            }
-        }
-        if (empty($handles)) {
-            return [];
-        }
-        foreach ($handles as $k => $v) {
-            for ($i = 0; $i < count($v); $i++) {
-
-                $handleInfoRes = $this->apiCall('POST', ['janus' => 'handle_info', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], $k . '/' . $v[$i], true);
-                if (!$handleInfoRes->isOk || $handleInfoRes->getData()['janus'] !== 'success') {
-                    return false;
-                }
-                if (isset($handleInfoRes->getData()['info']['plugin_specific']['id']) && $handleInfoRes->getData()['info']['plugin_specific']['id'] === $janusUserId) {
-                    return $handleInfoRes->getData()['info'];
-                }
-            }
-        }
-        return [];
-    }
-
-    private function getAdminToken(JanusAmqpMessage $message)
-    {
-        $storedMessage = ($message->isParent() ? $message->getChildren() : $message->find())
-            ->where(['parent_id' => ($message->isParent() ? $message->id : $message->parent_id), 'action_type' => JanusAmqpMessage::ACTION_TYPE_GET_ADMIN_TOKEN, 'status' => JanusAmqpMessage::STATUS_COMPLETED])
-            ->limit(1)->one();
-        if (null !== $storedMessage) {
-            return $storedMessage->attributes[0];
-        }
-        return null;
-    }
-
-    private function requestAdminToken(JanusAmqpMessage $message): int|bool
-    {
-
-        $storedMessage = ($message->isParent() ? $message->getChildren() : $message->find())
-            ->where(['parent_id' => ($message->isParent() ? $message->id : $message->parent_id), 'action_type' => JanusAmqpMessage::ACTION_TYPE_GET_ADMIN_TOKEN])
-            ->andWhere('status!=:status', ['status' => JanusAmqpMessage::STATUS_FAIL]);
-
-        // check expiration
-
-
-        if ($storedMessage->count() > 0) {
-            if ($storedMessage->one()->status === JanusAmqpMessage::STATUS_COMPLETED) {
-                return $storedMessage->one()->status;
-            }
-            if ($storedMessage->one()->attempts <= 100) {
-                $storedMessage->one()->increaseAttempt();
-                $tr = $storedMessage->one()->transaction_id;
-            } else {
-                return false;
-            }
-        } else {
-            $tr = $this->createRandStr();
-            $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_GET_ADMIN_TOKEN, ($message->isParent() ? $message->id : $message->parent_id));
-        }
-
         $this->publish(['janus' => 'list_tokens', 'transaction' => $tr, 'admin_secret' => $this->adminSecret], true);
         return true;
     }
 
-    private function handleRequestAdminToken(JanusAmqpMessage $message, array $janusMessage, bool $isRetry): bool
+    private function _retryRequestAdminToken(JanusAmqpMessage $message)
     {
+        if ($message->status != JanusAmqpMessage::STATUS_PROCESSING) {
+            return false;
+        }
+        $this->publish(['janus' => 'list_tokens', 'transaction' => $message->transaction_id, 'admin_secret' => $this->adminSecret], true);
+    }
+
+    private function handleRequestAdminToken(JanusAmqpMessage $message, array $janusMessage): bool
+    {
+
+        if (empty($janusMessage)) {
+            $this->_retryRequestAdminToken($message);
+            return true;
+        }
+
         $token = null;
         if (isset($janusMessage['data']) && !empty($janusMessage['data']['tokens'])) {
             $grep = \preg_grep("/^{$this->adminTokenPrefix}.*/", \array_column($janusMessage['data']['tokens'], 'token'));
@@ -621,22 +327,19 @@ class JanusAmqpComponent extends Component
                 $message->status = JanusAmqpMessage::STATUS_COMPLETED;
                 $message->attributes = [$token];
                 $message->save(false);
+                JanusAmqpAdmin::addAdminToken($token);
+                $this->_processCallback($message);
                 return true;
             } else {
                 $message->status = JanusAmqpMessage::STATUS_PROCESSING;
                 $message->attributes = [false];
                 $message->save(false);
                 $newToken = $this->adminTokenPrefix . $this->createRandStr(32);
-                $this->storeToken($newToken, $message->parent_id);
+                $this->storeToken($newToken, $message->id);
             }
         }
         return false;
     }
-
-    // private function getStoredTokens()
-    // {
-    //     $this->publish(['janus' => 'list_tokens', 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret]);
-    // }
 
 
     private function storeToken($token, $parentId = null)
@@ -672,11 +375,12 @@ class JanusAmqpComponent extends Component
         return false;
     }
 
-    private function handleAttachPlugin(JanusAmqpMessage $message, array $janusMessage, bool $isRetry)
+    private function handleAttachPlugin(JanusAmqpMessage $message, array $janusMessage)
     {
         if (isset($janusMessage['data']['id'])) {
             $attr['plugin']  = $message->attributes;
             $attr['handle_id'] = $janusMessage['data']['id'];
+            $message->reference_id = $janusMessage['data']['id'];
             $message->attributes = $attr;
             $message->status = JanusAmqpMessage::STATUS_COMPLETED;
             $message->save(false);
@@ -714,42 +418,115 @@ class JanusAmqpComponent extends Component
         return null;
     }
 
-    private function getAdminSession(JanusAmqpMessage $message)
+    private function getAdminSession(): ?int
     {
-        $storedMessage = ($message->isParent() ? $message->getChildren() : $message->find())
-            ->where(['parent_id' => ($message->isParent() ? $message->id : $message->parent_id), 'action_type' => JanusAmqpMessage::ACTION_TYPE_CREATE_SESSION])
-            ->andWhere('status!=:status', ['status' => JanusAmqpMessage::STATUS_FAIL]);
-
-        // check expiration
-
-        if ($storedMessage->count() > 0) {
-            return $storedMessage->one()->session;
+        $sess = JanusAmqpAdmin::getActiveAdminSession();
+        if (null !== $sess) {
+            return \intval($sess->one()->value);
         }
         return null;
     }
 
-    /**
-     * 
-     * @param string $adminToken 
-     * @param int|null $parentId 
-     * @return true 
-     */
-    private function createAdminSession(string $adminToken, int $parentId)
+    private function _createCallback(JanusAmqpMessage $parentMessage, $requesterMessage)
     {
-
-        $sess = JanusAmqpMessage::findOne(['parent_id' => $parentId, 'action_type' => JanusAmqpMessage::ACTION_TYPE_CREATE_SESSION]);
-
-        if (null !== $sess) {
-            return $sess->status;
+        $storedMessage = JanusAmqpMessage::findOne(['parent_id' => $parentMessage->id, 'reference_id' => $requesterMessage->id, 'action_type' => JanusAmqpMessage::ACTION_TYPE_CALLBACK, 'status' => JanusAmqpMessage::STATUS_PENDING]);
+        if (null !== $storedMessage) {
+            return false;
         }
-
         $tr = $this->createRandStr();
-        $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_CREATE_SESSION, $parentId, null, ['token' => $adminToken]);
-        $this->publish(['janus' => 'create', 'transaction' => $tr, 'admin_secret' => $this->adminSecret, 'token' => $adminToken]);
+        $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_CALLBACK, $parentMessage->id, $requesterMessage->id, ['requester_action_type' => $requesterMessage->action_type]);
         return true;
     }
 
-    private function handleCreateAdminSession(JanusAmqpMessage $message, array $janusMessage, bool $isRetry): bool
+    private function _processCallback(JanusAmqpMessage $message)
+    {
+        $storedMessage = ($message->isParent() ? $message->getChildren() : $message->find())
+            ->where(['parent_id' => ($message->isParent() ? $message->id : $message->parent_id), 'action_type' => JanusAmqpMessage::ACTION_TYPE_CALLBACK, 'status' => JanusAmqpMessage::STATUS_PENDING]);
+        if ($storedMessage->count() == 0) {
+            return;
+        }
+        /** @var JanusAmqpMessage $v */
+        foreach ($storedMessage->all() as $v) {
+            $v->status = JanusAmqpMessage::STATUS_COMPLETED;
+            $v->save(false);
+            $msg = JanusAmqpMessage::findOne(['id' => $v->reference_id, 'action_type' => JanusAmqpMessage::ACTION_TYPE_CALLBACK]);
+            if (null === $msg) {
+                continue;
+            }
+            try {
+                $this->runHandler($msg, []);
+            } catch (GlobalException $e) {
+            }
+        }
+    }
+
+
+
+    public function refreshAdminSession()
+    {
+        $sess = $this->getAdminSession();
+        if (null === $sess) {
+            return false;
+        }
+        $tkn = $this->getAdminToken();
+        if (null === $tkn) {
+            $this->requestAdminToken();
+            return false;
+        }
+        $storedMessage = JanusAmqpMessage::findOne(['action_type' => JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION, 'status' => JanusAmqpMessage::STATUS_PENDING]);
+        if (null !== $storedMessage) {
+            return false;
+        }
+
+        $tr = $this->createRandStr();
+        $message = $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION, null, $sess);
+        $this->publish(['janus' => 'keepalive', 'transaction' => $tr, 'session_id' => $sess, 'admin_secret' => $this->adminSecret, 'token' => $tkn]);
+    }
+
+    private function handleRefreshAdminSession(JanusAmqpMessage $message, array $janusMessage)
+    {
+        if (isset($janusMessage['janus']) && $janusMessage['janus'] == 'ack') {
+            $message->status = JanusAmqpMessage::STATUS_COMPLETED;
+            $message->save(false);
+            JanusAmqpAdmin::sessionRefreshCount();
+            return true;
+        }
+        $message->status = JanusAmqpMessage::STATUS_FAIL;
+        $message->save(false);
+        return false;
+    }
+
+    /**
+     * when int is returned, it is createSession parent message  
+     * @param string $adminToken 
+     * @return JanusAmqpAdmin|bool 
+     */
+    private function createAdminSession(string $adminToken, ?JanusAmqpMessage $callback = null): int|bool
+    {
+
+        $admSess = $this->getAdminSession();
+
+        if (null !== $admSess) {
+            return $admSess;
+        }
+        $admSessMsg = JanusAmqpMessage::findOne(['action_type' => JanusAmqpMessage::ACTION_TYPE_CREATE_ADMIN_SESSION, 'status' => [JanusAmqpMessage::STATUS_PENDING, JanusAmqpMessage::STATUS_PROCESSING]]);
+        if (null !== $admSessMsg) {
+            if ($callback) {
+                return $this->_createCallback($admSessMsg, $callback);
+            }
+        }
+
+        $tr = $this->createRandStr();
+        $nMsg = $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_CREATE_ADMIN_SESSION, null, null, ['token' => $adminToken]);
+        $this->publish(['janus' => 'create', 'transaction' => $tr, 'admin_secret' => $this->adminSecret, 'token' => $adminToken]);
+        if ($callback) {
+            return $this->_createCallback($nMsg, $callback);
+        }
+        return true;
+    }
+
+
+    private function handleCreateAdminSession(JanusAmqpMessage $message, array $janusMessage): bool
     {
         if (isset($janusMessage['janus']) && $janusMessage['janus'] == 'error') {
             $message->status = JanusAmqpMessage::STATUS_FAIL;
@@ -762,6 +539,10 @@ class JanusAmqpComponent extends Component
             $message->status = JanusAmqpMessage::STATUS_COMPLETED;
             $message->session = $janusMessage['data']['id'];
             $message->save(false);
+            $admSess = JanusAmqpAdmin::addAdminSession($message->session);
+            if (true === $admSess) {
+                $this->_processCallback($message);
+            }
             return true;
         }
 
@@ -770,27 +551,6 @@ class JanusAmqpComponent extends Component
         return false;
     }
 
-    private function apiCall(string $type, $params = [], $uri = null, $isAdmin = false)
-    {
-        try {
-            return match ($type) {
-                'POST' => $this->getHttpClient($uri, $isAdmin)->post(null, $params)->setFormat(Client::FORMAT_JSON)->send(),
-                default => false
-            };
-        } catch (HttpClientException $ex) {
-            // Log error
-            throw new Exception('Internal error ' . $ex->getMessage());
-        }
-    }
-
-
-    private function getResponseErrors(Response $res): ?string
-    {
-        if ($res->getData()['errors']) {
-            return join(' / ', $res->getData()['errors']);
-        }
-        return null;
-    }
 
 
     private function createRandStr($length = 15)
@@ -804,17 +564,6 @@ class JanusAmqpComponent extends Component
         return $randomStr;
     }
 
-    /**
-     * Get Yii2-httpclient
-     * @return Client
-     */
-    private function getHttpClient($uri = null, $isAdmin = null): Client
-    {
-        return \Yii::createObject([
-            'class' => Client::class,
-            'baseUrl' => ($isAdmin === true ? $this->adminBaseUrl : $this->baseUrl) . ($uri !== null ? '/' . $uri : null)
-        ]);
-    }
 
     private function exceptionFormatter($message, Exception $e)
     {

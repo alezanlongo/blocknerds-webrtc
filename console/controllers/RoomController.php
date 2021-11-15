@@ -46,7 +46,7 @@ class RoomController extends Controller
                 $channel2->wait();
             }
         } else {
-echo "asd";
+            echo "admin";
             $channel1->basic_consume('from-janus-admin', '', false, true, false, false, $callback);
             while ($channel1->is_consuming()) {
                 $channel1->wait();
@@ -65,6 +65,14 @@ echo "asd";
 
 
         // $server = new \Swoole\Http\Server('localhost', 9501, SWOOLE_PROCESS, \SWOOLE_SOCK_TCP);
+    }
+
+    public function actionSwoole()
+    {
+        $refreshTime = 50;
+        $sessionId = null;
+        $lastRefresh = null;
+
         $server = new \Swoole\Server('localhost', 9501);
         $server->set([
             'daemonize' => false,
@@ -73,18 +81,10 @@ echo "asd";
             'worker_num' => 5,
             'log_level' => 0
         ]);
-        $server->on('start', function ($server) {
-            $connection = new AMQPStreamConnection('rabbitmq', 5672, 'guest', 'guest');
-            $ch = $connection->channel();
-            $ch->basic_consume('from-janus', 'from-janus-admin', true, false, false, function ($msg) {
-                \yii\helpers\VarDumper::dump($msg);
-            });
-            while ($ch->is_consuming()) {
-                $ch->wait();
-            }
-            $ch->close();
-            $connection->close();
-            printf("listen on %s:%d\n", $server->host, $server->port);
+        $server->on('start', function (\Swoole\Server $server) {
+            echo "aca1";
+            //$server->task([]);
+
         });
         $server->on('receive', function (\Swoole\Server $server, $fd, $from_id, $data) {
             echo "asda";
@@ -92,6 +92,23 @@ echo "asd";
             //$server->close($fd);
         });
         $server->on("WorkerStart", function ($server, $workerId) {
+            echo "work start";
+            // \go(function () {
+
+            //     $connection = new AMQPStreamConnection('rabbitmq', 5672, 'guest', 'guest');
+            //     $ch = $connection->channel();
+            //     $ch->basic_consume('from-janus', 'from-janus-admin', true, false, false, function ($msg) {
+            //         \yii\helpers\VarDumper::dump($msg);
+            //     });
+            //     while ($ch->is_consuming()) {
+            //         $ch->wait();
+            //     }
+            //     echo "aca2";
+            //     $ch->close();
+            //     $connection->close();
+            //     // printf("listen on %s:%d\n", $server->host, $server->port);
+            // });
+
             //echo "$workerId\n";
         });
 
@@ -118,7 +135,12 @@ echo "asd";
         // Triggered when worker processes are being stopped
         $server->on("WorkerStop", function ($server, $workerId) {
         });
-        // $server->start();
+        /** @var JanusAmqpComponent $janus */
+        $janus = \Yii::$app->janusAmqp;
+        \Swoole\Timer::tick(30000, function ($tid) use ($janus) {
+            $janus->refreshAdminSession();
+        }, [$refreshTime]);
+        $server->start();
     }
 
     public function actionCreateMeetingRooms()
