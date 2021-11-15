@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use common\components\AthenaComponent;
 use common\components\Athena\models\Medication;
+use common\components\Athena\models\MedicationReference;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\RequestCreateMedication;
 use yii\data\ActiveDataProvider;
@@ -100,6 +101,25 @@ class MedicationController extends \yii\web\Controller
             'model' => $model,
             'patient' => $patient,
         ]);
+    }
+
+    public function actionMedications($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['medicationid' => '', 'medication' => '']];
+
+        if (!is_null($q)) {
+
+            $medications = MedicationReference::find()
+                ->select(['medicationid as id', 'medication'])
+                ->andWhere(['LIKE', 'medication', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($medications->all());
+        }
+
+        return $out;
     }
 
     /**

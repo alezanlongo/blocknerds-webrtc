@@ -3373,6 +3373,35 @@ paths:
       operationId: getPracticeidChartPatientidMedications
       tags:
         - Medication
+  /v1/{practiceid}/reference/medications:
+    get:
+      summary: Search for available medications
+      description: Retrieves a list of medications for a given search parameters
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationReference'
+          description: Success
+      operationId: getPracticeidReferenceMedications
+      tags:
+        - Medication
 components:
   schemas:
     Patient:
@@ -7600,3 +7629,12 @@ components:
         sectionnote:
           description: A section-wide note
           type: string
+    MedicationReference:
+      type: object
+      properties:
+        medication:
+          description: The name of the medication
+          type: string
+        medicationid:
+          description: The athena ID of the medication
+          type: integer
