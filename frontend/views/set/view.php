@@ -1,5 +1,6 @@
 <?php
 
+use common\widgets\gallery\GalleryWidget;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -26,15 +27,10 @@ $this->params['breadcrumbs'][] = $this->title;
         ]) ?>
     </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'profile_id',
-            'title',
-            'created_at',
-            'updated_at',
-        ],
-    ]) ?>
+    <?= GalleryWidget::widget([
+        'photos' => $photos,
+    ]);
+    
+    ?>
 
 </div>

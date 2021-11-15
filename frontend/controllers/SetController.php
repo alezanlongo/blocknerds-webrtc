@@ -54,8 +54,12 @@ class SetController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        // VarDumper::dump( $model, $depth = 10, $highlight = true);
+        // die;
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'photos' => $model->photos,
+            'model' => $model,
         ]);
     }
 
