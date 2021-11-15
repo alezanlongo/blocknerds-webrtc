@@ -37,7 +37,7 @@ if (Yii::$app->controller->action->id === 'login') {
         /* width: fit-content;
         float: right; */
         position: fixed;
-        z-index: 99;
+        z-index: 9999;
         top: 0;
         right: 0;
       }

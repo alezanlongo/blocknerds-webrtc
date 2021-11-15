@@ -88,13 +88,14 @@ class PhotoController extends Controller
         }
 
         $photoUnsplush = UnsplashController::searchOne($this->request->post('photo_id'));
-        $set = Set::findOne(['id' =>$this->request->post('set_id'), 'profile_id' =>  Yii::$app->user->identity->userProfile->id]);
-     
-        if(empty($photoUnsplush) || empty($set)){
+        $setId = intval($this->request->post('set_id'));
+        $set = Set::findOne(['id' => $setId, 'profile_id' =>  Yii::$app->user->identity->userProfile->id]);
+
+        if (empty($photoUnsplush) || empty($set)) {
             throw new NotFoundHttpException("Photo or Set not found");
         }
         try {
-            Yii::$app->session->setFlash('success', "Photo added.");
+           
             $size = $this->request->post('size_image_default') ?? UnsplashController::SIZE_IMAGE_DEFAULT;
             $photo = new Photo();
             $photo->set_id = $set->id;
@@ -102,8 +103,9 @@ class PhotoController extends Controller
             $photo->description = $photoUnsplush['description'];
             $photo->alt_description = $photoUnsplush['alt_description'];
             $photo->url = $photoUnsplush['urls'][$size];
-    
+
             $photo->save();
+            Yii::$app->session->setFlash('success', "Photo added to set $set->title.");
         } catch (Exception $e) {
             Yii::$app->session->setFlash('error', "Error adding photo.");
 
@@ -111,9 +113,10 @@ class PhotoController extends Controller
         }
         // VarDumper::dump( $photoUnsplush, $depth = 10, $highlight = true);
         // die;
-        
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        return $this->request->post();
+
+        // Yii::$app->response->format = Response::FORMAT_JSON;
+        // return $this->request->post();
+        return $photoUnsplush['id'];
     }
 
     /**
