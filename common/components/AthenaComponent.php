@@ -10,6 +10,7 @@ use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\apiModels\PatientCaseApi;
 use common\components\Athena\apiModels\ProblemApi;
 use common\components\Athena\apiModels\VaccineApi;
+use common\components\Athena\apiModels\FamilyHistoryApi;
 use common\components\Athena\models\ActionNote;
 use common\components\Athena\models\Appointment;
 use common\components\Athena\models\ChartAlert;
@@ -34,6 +35,7 @@ use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
+use common\components\Athena\models\FamilyHistory;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -956,7 +958,6 @@ class AthenaComponent extends Component
     public function vaccineChanges(): array
     {
         $changedVaccines = $this->client->getPracticeidChartHealthhistoryVaccineChanged($this->practiceid);
-
         $changedVaccinesResult = [];
         try {
             foreach( $changedVaccines->vaccines as $vaccineApi ) {
@@ -968,6 +969,39 @@ class AthenaComponent extends Component
         }
 
         return $changedVaccinesResult;
+    }
+
+    public function retrieveFamilyHealthHistorySubscriptionStatus()
+    {
+        $subscriptionStatusApi = $this->client->getPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($this->practiceid);
+        return $subscriptionStatusApi;
+    }
+
+    public function familyHealthSubscription($event)
+    {
+        $subscriptionStatusApi = $this->client->postPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($this->practiceid,
+            [
+                'eventname' => $event,
+            ]
+        );
+
+        return $subscriptionStatusApi;
+    }
+
+    public function familyHealthHistoryChanges(): array
+    {
+        $changedFamilyHistory = $this->client->getPracticeidChartHealthhistoryFamilyhistoryChanged($this->practiceid);
+        $changedFamilyHistoryResult = [];
+        try {
+            foreach($changedFamilyHistory->problems as $familyHistoryApi ) {
+                $familyHistoryModel = $this->obtainFamilyHistory($familyHistoryApi->problemId, $familyHistoryApi);
+                $changedFamilyHistoryResult[] = [$familyHistoryModel->id, $familyHistoryModel->externalId, $familyHistoryModel->save()];
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
+        }
+
+        return $changedFamilyHistoryResult;
     }
 
     /* ================================= Begin  Protected methods ============================================== */
@@ -1073,6 +1107,19 @@ class AthenaComponent extends Component
         }
 
         return $vaccine->loadApiObject($vaccineModelApi);
+    }
+
+    protected function obtainFamilyHistory($problemId, FamilyHistoryApi $familyHistoryModelApi): FamilyHistory
+    {
+        $familyHistory = FamilyHistory::find()
+            ->where(['externalId' => $problemId])
+            ->one();
+
+        if (!$familyHistory) {
+            return FamilyHistory::createFromApiObject($familyHistoryModelApi);
+        }
+
+        return $familyHistory->loadApiObject($familyHistoryModelApi);
     }
 
 
