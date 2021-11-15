@@ -60,7 +60,7 @@ class SyncController extends Controller
         'ADD'               => 'AllergyAdd',
         'UPDATE'            => 'AllergyUpdate',
     ];
-    
+
     const LABS_RESULTS = [
         'LABRESULTADD'      => 'LabResultAdd',
         'LABRESULTUPDATE'   => 'LabResultUpdate',

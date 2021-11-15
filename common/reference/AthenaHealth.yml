@@ -3249,6 +3249,566 @@ paths:
       operationId: getPracticeidChartHealthhistoryVaccineChanged
       tags:
         - Vaccines
+  /v1/{practiceid}/patients/{patientid}/documents/labresult:
+    get:
+      summary: Get list of patient's lab result documents
+      description: Retrieves a list of lab result document information of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: By default, deleted documents are not listed.  Set to list these.
+          in: query
+          name: showdeleted
+          required: false
+          schema:
+            type: boolean
+        - description: If true, only documents published to the portal at the time of this call are returned.
+          in: query
+          name: showportalonly
+          required: false
+          schema:
+            type: boolean
+        - description: The status of the task to filter document results.
+          in: query
+          name: status
+          required: false
+          schema:
+            enum:
+              - ADMINISTER
+              - CLOSED
+              - DATAENTRY
+              - DELETED
+              - DISPENSE
+              - FOLLOWUP
+              - HOLD
+              - NOTIFY
+              - PEND
+              - PENDING
+              - PENDINGLABEL
+              - PERFORM
+              - REVIEW
+              - SCHEDULE
+              - SCHEDULED
+              - SUBMIT
+              - SUBMITTED
+            type: string
+            x-enumDescriptions:
+              - ADMINISTER
+              - CLOSED
+              - DATAENTRY
+              - DELETED
+              - DISPENSE
+              - FOLLOWUP
+              - HOLD
+              - NOTIFY
+              - PEND
+              - PENDING
+              - PENDINGLABEL
+              - PERFORM
+              - REVIEW
+              - SCHEDULE
+              - SCHEDULED
+              - SUBMIT
+              - SUBMITTED
+        - description: The athenaNet department id.
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+        - description: Show only documents attached to this encounter.
+          in: query
+          name: encounterid
+          required: false
+          schema:
+            type: integer
+        - description: If true, interpretation template added to the document is also returned.
+          in: query
+          name: showtemplate
+          required: false
+          schema:
+            type: boolean
+        - description: The document subclass to filter document results.
+          in: query
+          name: documentsubclass
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LabResult'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsLabresult
+      tags:
+        - Document Type - Lab Result
+    post:
+      summary: Add lab result document to patient's chart
+      description: Creates a lab result document record of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResult200Response'
+          description: Success
+      operationId: postPracticeidPatientsPatientidDocumentsLabresult
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostLabResult'
+        required: true
+      tags:
+        - Document Type - Lab Result
+  /v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}:
+    get:
+      summary: Get patient's lab result document
+      description: 'Retrieves a specific lab result document information Note: This endpoint may rely on specific settings to be enabled in athenaNet Production to function properly that are not required in other environments. Please see <a href="https://docs.athenahealth.com/api/resources/best-practices-and-troubleshooting#Handling_Beta_APIs">Permissioned Rollout of APIs</a> for more information if you are experiencing issues.'
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: labresultid
+          in: path
+          name: labresultid
+          required: true
+          schema:
+            type: integer
+        - description: If true, interpretation template added to the document is also returned.
+          in: query
+          name: showtemplate
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResult'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsLabresultLabresultid
+      tags:
+        - Document Type - Lab Result
+    put:
+      summary: Update patient's lab result document
+      description: Modifies a specific lab result document information
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: labresultid
+          in: path
+          name: labresultid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResult200Response'
+          description: Success
+      operationId: putPracticeidPatientsPatientidDocumentsLabresultLabresultid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutLabResult'
+        required: true
+      tags:
+        - Document Type - Lab Result
+    delete:
+      summary: Mark patient's lab result document as deleted
+      description: Deletes the record of a specified lab result document
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: labresultid
+          in: path
+          name: labresultid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResult200Response'
+          description: Success
+      operationId: deletePracticeidPatientsPatientidDocumentsLabresultLabresultid
+      tags:
+        - Document Type - Lab Result
+  /v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}/pages/{pageid}:
+    get:
+      summary: Get page from patient's lab result document
+      description: Retrieves a specific page from the specific lab result document of the patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: pageid
+          in: path
+          name: pageid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: labresultid
+          in: path
+          name: labresultid
+          required: true
+          schema:
+            type: integer
+        - description: The file size of the document being requested.
+          in: query
+          name: filesize
+          required: false
+          schema:
+            enum:
+              - SMALL
+              - LARGE
+            type: string
+            x-enumDescriptions:
+              - Small
+              - Large
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClinicalDocumentPage'
+          description: Success
+      operationId: getPracticeidPatientsPatientidDocumentsLabresultLabresultidPagesPageid
+      tags:
+        - Document Type - Lab Result
+  /v1/{practiceid}/documents/labresult/{documentid}/dataentrycompleted:
+    put:
+      summary: This endpoint is used to apply a document action on a specific document.
+      description: Returns a success message pertaining to the update.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: documentid
+          in: path
+          name: documentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResultSuccessProcess'
+          description: Success
+      operationId: putPracticeidDocumentsLabresultDocumentidDataentrycompleted
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutLabResultDataEntryComplete'
+        required: true
+      tags:
+        - Document Type - Lab Result
+  /v1/{practiceid}/documents/labresult/{labresultid}/close:
+    put:
+      summary: Close a lab result
+      description: 'Advances a lab result to a closed status. Note: This endpoint may rely on specific settings to be enabled in athenaNet Production to function properly that are not required in other environments. Please see <a href="https://docs.athenahealth.com/api/resources/best-practices-and-troubleshooting#Handling_Beta_APIs">Permissioned Rollout of APIs</a> for more information if you are experiencing issues.'
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: labresultid
+          in: path
+          name: labresultid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResultSuccessProcess'
+          description: Success
+      operationId: putPracticeidDocumentsLabresultLabresultidClose
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutLabResultClose'
+        required: true
+      tags:
+        - Document Type - Lab Result
+  /v1/{practiceid}/labresults/changed/subscription/events:
+    get:
+      summary: Get list of lab result change events to which you can subscribe
+      description: Retrieve list of all events that can be input for this subscription.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResultSuscriptionEvent'
+          description: Success
+      operationId: getPracticeidLabresultsChangedSubscriptionEvents
+      tags:
+        - Document Type - Lab Result
+  /v1/{practiceid}/labresults/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for lab results
+      description: Subscribes for changed lab results events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResultSuscriptionSuccess'
+          description: Success
+      operationId: postPracticeidLabresultsChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostLabResultSuscrioption'
+        required: true
+      tags:
+        - Document Type - Lab Result
+    get:
+      summary: Get list of lab result change subscription(s)
+      description: Retrieves list of events applicable for lab results changes
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResultSuscriptionEvent'
+          description: Success
+      operationId: getPracticeidLabresultsChangedSubscription
+      tags:
+        - Document Type - Lab Result
+    delete:
+      summary: Unsubscribe to all/specific change events for lab events
+      description: Deletes a specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: By default, you are unsubscribed from all possible events.  If you only wish to unsubscribe from an individual event, pass the event name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LabResultSuscriptionSuccess'
+          description: Success
+      operationId: deletePracticeidLabresultsChangedSubscription
+      tags:
+        - Document Type - Lab Result
+  /v1/{practiceid}/labresults/changed:
+    get:
+      summary: Get list of changes in lab results based on subscription
+      description: Retrieves list of records of modified lab results of patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: If true, only documents published to the portal at the time of this call are returned.
+          in: query
+          name: showportalonly
+          required: false
+          schema:
+            type: boolean
+        - description: For testing purposes, do not mark records as processed
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: See showprocessedstartdatetime
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: Show already processed changes.  This will show changes that you previously retrieved at some point after this datetime mm/dd/yyyy hh24:mi:ss (Eastern). Can be used to refetch data if there was an error, such as a timeout, and records are marked as already retrieved. This is intended to be used with showprocessedenddatetime and for a short period of time only. Also note that all messages will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LabResult'
+          description: Success
+      operationId: getPracticeidLabresultsChanged
+      tags:
+        - Document Type - Lab Result
 components:
   schemas:
     Patient:
@@ -6724,6 +7284,8 @@ components:
       properties:
         clinicalDocument:
           $ref: '#/components/schemas/ClinicalDocument'
+        labResult:
+          $ref: '#/components/schemas/LabResult'
         contenttype:
           description: The content-type that will be returned by the page image call.
           type: string
@@ -7342,3 +7904,705 @@ components:
             $ref: '#/components/schemas/Vaccine'
         totalcount:
           type: integer
+    Finding:
+      type: object
+      properties:
+        findingname:
+          description: The name of the finding.
+          type: string
+        findingnote:
+          description: The note for the finding selected.
+          type: string
+        findingtype:
+          description: Describes the finding - either NORMAL, ABNORMAL, or NEUTRAL.
+          type: string
+        freetext:
+          description: Freetext that could be associated with this finding.
+          type: string
+        selectedoptions:
+          description: The option in the finding that was selected by the user.
+          items:
+            type: string
+          type: array
+    Sentence:
+      type: object
+      properties:
+        findings:
+          type: array
+          description: The findings in the sentence
+          items:
+            $ref: '#/components/schemas/Finding'
+        sentencename:
+          description: The name of the sentence in the paragraph.
+          type: string
+        sentencenote:
+          description: The note that goes along with this sentence.
+          type: string
+    Paragraph:
+      type: object
+      properties:
+        paragraphname:
+          description: The name of the interpretation paragraph.
+          type: string
+        sentences:
+          type: array
+          description: The sentences in the paragraph.
+          items:
+            $ref: '#/components/schemas/Sentence'
+    InterpretationTemplate:
+      type: object
+      properties:
+        interpretationtemplatename:
+          description: The name of the interpretation template.
+          type: string
+        interpretationtemplatenote:
+          description: The interpretation note.
+          type: string
+        paragraphs:
+          type: array
+          description: The paragraphs in the template.
+          items:
+            $ref: '#/components/schemas/Paragraph'
+    ObservationLabResult:
+      type: object
+      x-external-id: observationidentifier
+      x-external-id-type: string
+      properties:
+        labResult:
+          $ref: '#/components/schemas/LabResult'
+        abnormalflag:
+          description: The level of normality for this result.
+          type: string
+        analyteid:
+          description: The athena ID for this analyte. Used to update the analyte.
+          type: integer
+        analytename:
+          description: The name / identifier text for this analyte.
+          type: string
+        loinc:
+          description: The LOINC code for this analyte
+          type: string
+        note:
+          description: Any additional notes about this analyte.
+          type: string
+        observationidentifier:
+          description: The local lab ID for this analyte.
+          type: string
+        referencerange:
+          description: The normal range for this lab analyte.
+          type: string
+        resultstatus:
+          description: Whether this observation is a prelimary, corrected, final, etc result.
+          type: string
+        units:
+          description: The units the value is in.
+          type: string
+        value:
+          description: The observation value for this analyte.
+          type: string
+    LabResult:
+      type: object
+      x-external-id: labresultid
+      properties:
+        actionnote:
+          description: The most recent action note for a document
+          type: string
+        alarmdays:
+          description: The number days, weeks, months, or year until a lab result document will go into followup after being sent to the portal.
+          type: string
+        appointmentid:
+          description: The appointment ID for this document
+          type: integer
+        assignedto:
+          description: Person the document is assigned to
+          type: string
+        createddate:
+          description: Date the document was created. Please use createddatetime instead.
+          type: string
+        createddatetime:
+          description: Date/Time (ISO 8601) the document was created
+          type: string
+        createduser:
+          description: The user who created this document.
+          type: string
+        deleteddatetime:
+          description: Date/time (ISO 8601) the document was deleted
+          type: string
+        departmentid:
+          description: Department for the document
+          type: string
+        description:
+          description: Description of the document type
+          type: string
+        documentclass:
+          description: Class of document
+          type: string
+        documentroute:
+          description: Explains method by which the document was entered into the AthenaNet (INTERFACE (digital), FAX, etc.)
+          type: string
+        documentsource:
+          description: Explains where this document originated.
+          enum:
+            - ''
+            - PATIENT
+            - CAREGIVER
+            - PARTNER
+            - PHARMACY
+            - LAB
+            - PCP
+            - SPECIALIST
+            - STAFF
+            - HOSPITAL
+            - OTHER
+            - PORTAL
+            - Live Operator
+          type: string
+        documentsubclass:
+          description: Specific type of document
+          type: string
+        documenttypeid:
+          description: The ID of the description for this document
+          type: integer
+        encounterdate:
+          description: Date of the encounter associated with this document
+          type: string
+        encounterid:
+          description: Encounter ID
+          type: string
+        externalaccessionid:
+          description: The external accession ID for this document. Format depends on the system the ID belongs to.
+          type: string
+        externalnoteonly:
+          description: External note for the patient.
+          type: string
+        facilityid:
+          description: The ID of the clinical provider associated with this clinical document. Clinical providers are a master list of providers throughout the country.  These include providers as well as radiology centers, labs and pharmacies.
+          type: integer
+        internalaccessionid:
+          description: The internal accession ID for this document. Format depends on the system the ID belongs to.
+          type: string
+        internalnote:
+          description: The 'Internal Note' attached to this document
+          type: string
+        interpretation:
+          description: The practice entered interpretation of this result.
+          type: string
+        interpretationtemplate:
+          description: The interpretation template added to the imaging result.
+          $ref: '#/components/schemas/InterpretationTemplate'
+        isconfidential:
+          description: If true, this result document should not be shown to the patient.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        labresultid:
+          description: The primary key for labresult class of documents
+          type: integer
+        labresultloinc:
+          description: Laboratory code that identifies the overall result.
+          type: string
+        lastmodifieddate:
+          description: Date/time (ISO 8601) the document was last modified
+          type: string
+        lastmodifieddatetime:
+          description: Date/time (ISO 8601) the document was last modified
+          type: string
+        lastmodifieduser:
+          description: The user who last modified this document.
+          type: string
+        notefromlab:
+          description: A note from lab.
+          type: string
+        observationdate:
+          description: Date/time the observation was taken
+          type: string
+        observationdatetime:
+          description: Date/time (ISO 8601) the observation was taken
+          type: string
+        observations:
+          description: Individual observation details
+          items:
+            $ref: '#/components/schemas/ObservationLabResult'
+          required:
+            - analytename
+          type: array
+        ordertype:
+          description: Order type group name
+          type: string
+        pages:
+          description: An array of image pages associated with this document.
+          items:
+            $ref: '#/components/schemas/ClinicalDocumentPageDetail'
+          type: array
+        patientnote:
+          description: A note about this lab result for the patient.  This may or may not have been sent to the patient.
+          type: string
+        performinglabaddress1:
+          description: This is the address1 field of the performing lab. For point-of-care tests this is the department. Otherwise, it is the clinical provider
+          type: string
+        performinglabaddress2:
+          description: This is the address2 field of the performing lab. For point-of-care tests this is the department. Otherwise, it is the clinical provider
+          type: string
+        performinglabcity:
+          description: This is the city of the performing lab. For point-of-care tests this is the department. Otherwise, it is the clinical provider
+          type: string
+        performinglabname:
+          description: This is the name of the performing lab. For point-of-care tests this is the department. Otherwise, it is the clinical provider
+          type: string
+        performinglabstate:
+          description: This is the state of the performing lab. For point-of-care tests this is the department. Otherwise, it is the clinical provider
+          type: string
+        performinglabzip:
+          description: This is the zip code of the performing lab. For point-of-care tests this is the department. Otherwise, it is the clinical provider
+          type: string
+        portalpublisheddatetime:
+          description: The date the document was published to the portal in format (yyyy-mm-ddThh:mm:ss).
+          type: string
+        priority:
+          description: Document priority, when available. 1 is high, 2 is normal. Some labs use other numbers or characters that are lab-specific.
+          type: string
+        providerid:
+          description: Provider ID for this document
+          type: integer
+        providerusername:
+          description: The username of the provider associated with this lab result document.
+          type: string
+        receivedfacilityordercode:
+          description: The code as received from the facility via HL7 in OBR.4.
+          properties:
+            code:
+              description: The code received in OBR.4.1.
+              type: string
+            description:
+              description: The description of the code received in OBR.4.2.
+              type: string
+          type: object
+        reportstatus:
+          description: The status of the report.
+          enum:
+            - ''
+            - Final
+            - Partial
+            - Pending
+            - Preliminary
+            - Complete
+            - Incomplete
+          type: string
+        resultcategory:
+          description: The category of the result.
+          type: string
+        resultnotes:
+          description: Result note on a document.
+          type: string
+        resultstatus:
+          description: The status of the result.
+          enum:
+            - ''
+            - Final
+            - Partial
+            - Pending
+            - Preliminary
+            - Corrected
+            - Cancelled
+          type: string
+        status:
+          description: Status of the document
+          type: string
+        subject:
+          description: Subject of the document
+          type: string
+        tietoorderid:
+          description: Order ID of the order this document is tied to, if any
+          type: integer
+    LabResult200Response:
+      type: object
+      properties:
+        errormessage:
+          description: If the operation failed, this will contain an error message.
+          type: string
+        labresultid:
+          description: The document ID of the new or modified document.
+          type: integer
+        success:
+          description: Returns true/false if the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PostLabResult:
+      required:
+        - departmentid
+      type: object
+      properties:
+        accessionid:
+          description: A unique identifier given to a document to track it over time.
+          type: string
+        analytes:
+          description: This is an array of hashes in JSON. Each entry contains information for a single analyte. See <a href="https://developer.athenahealth.com/docs/read/workflows/documents/Lab_Analytes">https://developer.athenahealth.com/docs/read/workflows/documents/Lab_Analytes</a> for an example.
+          items:
+            properties:
+              abnormalflag:
+                description: The level of normality for this result.
+                enum:
+                  - ''
+                  - NORMAL
+                  - ABNORMAL
+                  - LOW
+                  - HIGH
+                  - CRITICAL ABNORMAL
+                  - CRITICAL LOW
+                  - CRITICAL HIGH
+                  - SIGNIFICANT CHANGE UP
+                  - SIGNIFICANT CHANGE DOWN
+                  - BETTER
+                  - WORSE
+                  - OFF-SCALE LOW
+                  - OFF-SCALE HIGH
+                  - SUSCEPTIBLE
+                  - RESISTANT
+                  - INTERMEDIATE
+                  - MODERATELY SUSCEPTIBLE
+                  - VERY SUSCEPTIBLE
+                  - POSITIVE
+                  - NEGATIVE
+                  - DELTA
+                  - DELTA LOW
+                  - DELTA HIGH
+                type: string
+              analytename:
+                description: The name / identifier text for this analyte.
+                type: string
+              loinc:
+                description: The LOINC code for this analyte
+                type: string
+              note:
+                description: Any additional notes about this analyte.
+                type: string
+              referencerange:
+                description: The normal range for this lab analyte.
+                type: string
+              resultstatus:
+                description: Whether this observation is a prelimary, corrected, final, etc result.
+                enum:
+                  - ''
+                  - Final
+                  - Corrected
+                  - Pending
+                  - Preliminary
+                  - Unverified
+                  - Deleted
+                  - Unsolicited
+                type: string
+              units:
+                description: The units the value is in.
+                type: string
+              value:
+                description: The observation value for this analyte.
+                type: string
+            type: object
+          required:
+            - analytename
+          type: array
+        attachmentcontents:
+          description: The file contents that will be attached to this document. PDFs and PNGs are supported file types. Other file types are available only for alpha partners. All files must be Base64 encoded.
+          type: string
+        attachmenttype:
+          default: PDF
+          description: The file type of attachment. PDFs and PNGs are supported. Other file types are available only for alpha partners
+          enum:
+            - ''
+            - BMP
+            - GIF
+            - JPG
+            - JPEG
+            - PDF
+            - PNG
+            - TIF
+            - TIFF
+          type: string
+        autoclose:
+          description: Documents will, normally, automatically appear in the clinical inbox for providers to review. In some cases, you might want to force the document to skip the clinical inbox, and go directly to the patient chart with a "closed" status. For that case, set this to true.
+          type: boolean
+        departmentid:
+          description: The athenaNet department ID associated with the uploaded document.
+          type: integer
+        documenttypeid:
+          description: A specific document type identifier.
+          type: integer
+        facilityid:
+          description: The ID of the facility or clinical provider who received the order.
+          type: integer
+        internalnote:
+          description: An internal note for the provider or staff. Updating this will append to any previous notes.
+          type: string
+        interpretation:
+          description: The practice entered interpretation of this result. Updating this will append to any previous values.
+          type: string
+        notetopatient:
+          description: This is a note specifically for the patient to view or action on. Updating this will append to any previous notes.
+          type: string
+        observationdate:
+          description: The date an observation was made (mm/dd/yyyy).
+          type: string
+        observationtime:
+          description: The time an observation was made (hh24:mi).  24 hour time.
+          type: string
+        priority:
+          description: Priority of this result.  1 is high; 2 is normal.
+          enum:
+            - ''
+            - 1
+            - 2
+          type: string
+        providerid:
+          description: The ID of the ordering provider.
+          type: integer
+        reportstatus:
+          description: The status of the report.
+          enum:
+            - ''
+            - Final
+            - Partial
+            - Pending
+            - Preliminary
+            - Complete
+            - Incomplete
+          type: string
+        resultnotes:
+          description: Result notes of a document.
+          type: string
+        resultstatus:
+          description: The status of the result.
+          enum:
+            - ''
+            - Final
+            - Partial
+            - Pending
+            - Preliminary
+            - Corrected
+            - Cancelled
+          type: string
+        specimenreceiveddatetime:
+          description: Date-time indicating when the specimen was received in format (yyyy-mm-ddThh:mm:ss).
+          type: string
+        specimenreporteddatetime:
+          description: Date-time indicating when the specimen was reported in format (yyyy-mm-ddThh:mm:ss).
+          type: string
+        tietoorderid:
+          description: Tie the result document to this order.
+          type: integer
+    PutLabResult:
+      type: object
+      properties:
+        accessionid:
+          description: A unique identifier given to a document to track it over time.
+          type: string
+        analytes:
+          description: This is an array of hashes in JSON. Each entry contains information for a single analyte. See <a href="https://developer.athenahealth.com/docs/read/workflows/documents/Lab_Analytes">https://developer.athenahealth.com/docs/read/workflows/documents/Lab_Analytes</a> for an example.
+          items:
+            properties:
+              abnormalflag:
+                description: The level of normality for this result.
+                enum:
+                  - ''
+                  - NORMAL
+                  - ABNORMAL
+                  - LOW
+                  - HIGH
+                  - CRITICAL ABNORMAL
+                  - CRITICAL LOW
+                  - CRITICAL HIGH
+                  - SIGNIFICANT CHANGE UP
+                  - SIGNIFICANT CHANGE DOWN
+                  - BETTER
+                  - WORSE
+                  - OFF-SCALE LOW
+                  - OFF-SCALE HIGH
+                  - SUSCEPTIBLE
+                  - RESISTANT
+                  - INTERMEDIATE
+                  - MODERATELY SUSCEPTIBLE
+                  - VERY SUSCEPTIBLE
+                  - POSITIVE
+                  - NEGATIVE
+                  - DELTA
+                  - DELTA LOW
+                  - DELTA HIGH
+                type: string
+              analyteid:
+                description: The athena ID for this analyte. Used to update the analyte.
+                type: integer
+              analytename:
+                description: The name / identifier text for this analyte.
+                type: string
+              loinc:
+                description: The LOINC code for this analyte
+                type: string
+              note:
+                description: Any additional notes about this analyte.
+                type: string
+              referencerange:
+                description: The normal range for this lab analyte.
+                type: string
+              resultstatus:
+                description: Whether this observation is a prelimary, corrected, final, etc result.
+                enum:
+                  - ''
+                  - Final
+                  - Corrected
+                  - Pending
+                  - Preliminary
+                  - Unverified
+                  - Deleted
+                  - Unsolicited
+                type: string
+              units:
+                description: The units the value is in.
+                type: string
+              value:
+                description: The observation value for this analyte.
+                type: string
+            type: object
+          required:
+            - analytename
+          type: array
+        documenttypeid:
+          description: A specific document type identifier.
+          type: integer
+        facilityid:
+          description: The ID of the facility or clinical provider who received the order.
+          type: integer
+        internalnote:
+          description: An internal note for the provider or staff. Updating this will append to any previous notes if replaceinternalnote is not set.
+          type: string
+        interpretation:
+          description: The practice entered interpretation of this result. Updating this will append to any previous values.
+          type: string
+        notetopatient:
+          description: This is a note specifically for the patient to view or action on. Updating this will append to any previous notes.
+          type: string
+        observationdate:
+          description: The date an observation was made (mm/dd/yyyy).
+          type: string
+        observationtime:
+          description: The time an observation was made (hh24:mi).  24 hour time.
+          type: string
+        priority:
+          description: Priority of this result.  1 is high; 2 is normal.
+          enum:
+            - ''
+            - 1
+            - 2
+          type: string
+        providerid:
+          description: The ID of the ordering provider.
+          type: integer
+        replaceinternalnote:
+          description: If true, will replace the existing internal note with the new one. If false, will append to the existing note.
+          type: boolean
+        replacepatientnote:
+          description: If true, will replace the existing patient note with the new one. If false, will append to the existing note.
+          type: boolean
+        reportstatus:
+          description: The status of the report.
+          enum:
+            - ''
+            - Final
+            - Partial
+            - Pending
+            - Preliminary
+            - Complete
+            - Incomplete
+          type: string
+        resultnotes:
+          description: Result notes of a document.
+          type: string
+        resultstatus:
+          description: The status of the result.
+          enum:
+            - ''
+            - Final
+            - Partial
+            - Pending
+            - Preliminary
+            - Corrected
+            - Cancelled
+          type: string
+        specimenreceiveddatetime:
+          description: Date-time indicating when the specimen was received in format (yyyy-mm-ddThh:mm:ss).
+          type: string
+        specimenreporteddatetime:
+          description: Date-time indicating when the specimen was reported in format (yyyy-mm-ddThh:mm:ss).
+          type: string
+        tietoorderid:
+          description: Tie the result document to this order.
+          type: integer
+    LabResultSuccessProcess:
+      type: object
+      properties:
+        errormessage:
+          description: If there was an error with this call and SUCCESS is set to false, this field may provide additional information.
+          type: string
+        success:
+          description: Returns true if the update was a success.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PutLabResultDataEntryComplete:
+      type: object
+      properties:
+        actionnote:
+          description: The note to be added to the document
+          type: string
+    PutLabResultClose:
+      type: object
+      properties:
+        actionnote:
+          description: The note to be added to the document
+          type: string
+        actionreasonid:
+          description: An alternate action reason to be applied the document
+          type: integer
+    LabResultSuscription:
+      type: object
+      properties:
+        eventname:
+          description: Name of event
+          type: string
+    LabResultSuscriptionEvent:
+      type: object
+      properties:
+        status:
+          description: 'Will return one of following statuses: ACTIVE, INACTIVE, or PARTIAL. The PARTIAL status means that not all events are subscribed to. In the event of a problem, UNKNOWN may be returned.'
+          type: string
+        subscriptions:
+          description: List of events you are subscribed to.
+          items:
+            $ref: '#/components/schemas/LabResultSuscription'
+          type: array
+    LabResultSuscriptionSuccess:
+      type: object
+      properties:
+        success:
+          description: Returns if the call to manipulate subscriptions for labresults was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PostLabResultSuscrioption:
+      type: object
+      properties:
+        departmentids:
+          description: 'For every New/Update Subscriptions complete list of departmentids should be passed. NOTE: Without DepartmentIDs entire Context/Practice will be subscribed.'
+          items:
+            type: integer
+          type: array
+        eventname:
+          description: By default, you are subscribed to all possible events.  If you only wish to subscribe to an individual event, pass the event name with this argument.
+          type: string
