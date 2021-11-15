@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Collection;
+use common\models\Set;
 use common\models\UnsplashForm;
 use DateTime;
 use yii\httpclient\Client;
@@ -55,10 +56,21 @@ class UnsplashController extends Controller
     }
 
 
-    public function actionIndex()
+    public function actionIndex($setId = null)
     {
         $unsplashForm = new UnsplashForm();
-        $collections = ArrayHelper::map(Yii::$app->user->identity->userProfile->sets, 'id', 'title');
+
+        if (empty($setId)) {
+            $collections = ['' => "Select set"] + ArrayHelper::map(Yii::$app->user->identity->userProfile->sets, 'id', 'title');
+        } else {
+            $set = Set::findOne($setId);
+            if (empty($set)) {
+                $collections = [];
+            } else {
+                $collections = [$set->id => $set->title];
+            }
+        }
+
         $photos = [];
         if ($this->request->isPost) {
             $unsplashForm->load($this->request->post());
@@ -91,7 +103,7 @@ class UnsplashController extends Controller
     {
         $response =  self::doRequest(self::SOURCE_SEARCH_PHOTO . $photoId);
 
-        if (empty($response) ) {
+        if (empty($response)) {
             return null;
         }
 

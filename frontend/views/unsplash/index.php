@@ -40,7 +40,7 @@ $this->registerJsFile(
                     <?= Html::hiddenInput("size_image_default", $size) ?>
 
                     <div class="form-group">
-                        <?= Html::dropDownList('set_id', null, ['' => "Select set"] + $collections, ['class' => 'form-control', 'required' => true]) ?>
+                        <?= Html::dropDownList('set_id', $collections[0] ?? null, $collections, ['class' => 'form-control', 'required' => true]) ?>
                     </div>
 
                     <div class="form-group">

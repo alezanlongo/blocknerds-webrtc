@@ -2,14 +2,11 @@
 
 use common\widgets\gallery\GalleryWidget;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Set */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Sets', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
 <div class="set-view">
@@ -25,6 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+         <?= Html::a('Add image', Url::to(['/unsplash', 'setId'=> $model->id]), ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GalleryWidget::widget([
