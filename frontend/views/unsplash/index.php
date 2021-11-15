@@ -18,6 +18,7 @@ $size = 'small'
 <?php ActiveForm::end() ?>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
+    
     <?php foreach ($photos as $photo) { ?>
         <div class="col">
             <div class="card">

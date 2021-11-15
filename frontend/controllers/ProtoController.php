@@ -82,7 +82,7 @@ class ProtoController extends Controller
         //     throw new NotFoundHttpException('Page not found.');
         // }
 
-        VarDumper::dump( $this->request->post(), $depth = 10, $highlight = true);
+        VarDumper::dump( 'asd', $depth = 10, $highlight = true);
         die;
     }
 
