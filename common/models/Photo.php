@@ -42,11 +42,11 @@ class Photo extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['set_id', 'url', 'title'], 'required'],
+            [['set_id', 'url'], 'required'],
             [['set_id', 'created_at', 'updated_at'], 'default', 'value' => null],
             [['set_id', 'created_at', 'updated_at'], 'integer'],
-            [['description'], 'string'],
-            [['url', 'title', 'description'], 'string', 'max' => 255],
+            [['description', 'alt_description'], 'string'],
+            // [['url', 'alt_description', 'description'], 'string', 'max' => 255],
             [['set_id'], 'exist', 'skipOnError' => true, 'targetClass' => Set::class, 'targetAttribute' => ['set_id' => 'id']],
         ];
     }

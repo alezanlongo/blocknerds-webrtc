@@ -34,8 +34,12 @@ if (Yii::$app->controller->action->id === 'login') {
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <style>
       .alert-style {
-        width: fit-content;
-        float: right;
+        /* width: fit-content;
+        float: right; */
+        position: fixed;
+        z-index: 99;
+        top: 0;
+        right: 0;
       }
     </style>
   </head>

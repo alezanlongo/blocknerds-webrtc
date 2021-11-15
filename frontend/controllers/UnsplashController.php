@@ -23,13 +23,25 @@ class UnsplashController extends Controller
 
     private const SOURCE_SEARCH_PHOTOS = 'search/photos';
     private const SOURCE_SEARCH_PHOTO = 'photos/';
+    const SIZE_IMAGE_DEFAULT = 'small';
 
     /**
      * {@inheritdoc}
      */
     public function behaviors()
     {
-        return [];
+        return [
+            'access' => [
+                "class" => AccessControl::class,
+                "only" => ['index'],
+                "rules" => [
+                    [
+                        'allow' => true,
+                        'roles' => ["@"],
+                    ]
+                ],
+            ],
+        ];
     }
 
     public function beforeAction($action): bool
@@ -63,9 +75,9 @@ class UnsplashController extends Controller
     }
 
 
-    private function search(string $search): ?array
+    public static function search(string $search): ?array
     {
-        $response =  $this->doRequest(self::SOURCE_SEARCH_PHOTOS, $search);
+        $response =  self::doRequest(self::SOURCE_SEARCH_PHOTOS, $search);
 
         if (empty($response) || !array_key_exists('results', $response)) {
             return null;
@@ -75,18 +87,18 @@ class UnsplashController extends Controller
     }
 
 
-    public function searchOne(string $photoId)
+    public static function searchOne(string $photoId)
     {
-        $response =  $this->doRequest(self::SOURCE_SEARCH_PHOTO + $photoId);
+        $response =  self::doRequest(self::SOURCE_SEARCH_PHOTO . $photoId);
 
-        if (empty($response) || !array_key_exists('results', $response)) {
+        if (empty($response) ) {
             return null;
         }
 
-        return $response['results'];
+        return $response;
     }
 
-    private function doRequest(string $source, ?string $searchParam = null)
+    private static function doRequest(string $source, ?string $searchParam = null)
     {
         $server = Yii::$app->params['unsplash.server'];
         $clientId = Yii::$app->params['unsplash.clientId'];

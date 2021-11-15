@@ -1,11 +1,22 @@
 <?php
 
+use frontend\controllers\UnsplashController;
 use yii\helpers\Html;
+use yii\web\View;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
-$size = 'small'
+$size = UnsplashController::SIZE_IMAGE_DEFAULT;
 
-
+$this->registerJsFile(
+    Yii::$app->request->BaseUrl . '/js/unsplush.js',
+    [
+        'depends' => [
+            "yii\web\JqueryAsset",
+        ],
+        'position' => View::POS_END
+    ]
+);
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -18,23 +29,24 @@ $size = 'small'
 <?php ActiveForm::end() ?>
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
-    
     <?php foreach ($photos as $photo) { ?>
         <div class="col">
             <div class="card">
-                <img src="<?= $photo['urls'][$size] ?>" class="card-img-top" alt="">
+                <?= Html::img($photo['urls'][$size], ['class' => 'card-img-top', 'alt' => "image"]) ?>
                 <div class="card-body">
-                    <p class="card-text"><?= $photo['description'] ?? $photo['alt_description'] ?></p>
-                    <form action="/photo/add" method="post" class="form-inline">
-                        <div class="form-group">
-                            <input type="hidden" name="id" value="<?= $photo['id'] ?>">
-                            <?= Html::dropDownList('set_id', null, ['' => "Select set"] + $collections, ['class' => 'form-control', 'required' => true]) ?>
-                        </div>
+                    <?= Html::tag('p', $photo['description'] ?? $photo['alt_description'], ['class' => 'card-text']) ?>
+                    <?= Html::beginForm('photo/add', 'POST', ['id' => 'form-add-photo', 'onsubmit' => "addPhoto(); return false;"]) ?>
+                    <?= Html::hiddenInput("photo_id", $photo['id']) ?>
+                    <?= Html::hiddenInput("size_image_default", $size) ?>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Add image</button>
-                        </div>
-                    </form>
+                    <div class="form-group">
+                        <?= Html::dropDownList('set_id', null, ['' => "Select set"] + $collections, ['class' => 'form-control', 'required' => true]) ?>
+                    </div>
+
+                    <div class="form-group">
+                        <?= Html::submitButton('Add image', ['class' => 'btn btn-primary']) ?>
+                    </div>
+                    <?= Html::endForm() ?>
                 </div>
             </div>
         </div>

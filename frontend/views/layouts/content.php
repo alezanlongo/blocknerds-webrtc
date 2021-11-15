@@ -1,14 +1,17 @@
 <?php
 
 use frontend\widgets\adminlte\Alert;
+use yii\widgets\Pjax;
 
 ?>
 <div class="content-wrapper">
     <section class="content">
         <div class="">
+            <?php Pjax::begin(['id' => 'flash-alert-message']) ?>
             <?= Alert::widget([
                 'options' => ['class' => 'alert-style'],
             ]) ?>
+            <?php Pjax::end() ?>
         </div>
         <?= $content ?>
     </section>

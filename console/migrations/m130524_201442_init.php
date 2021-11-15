@@ -262,10 +262,11 @@ class m130524_201442_init extends Migration
         $this->createTable('{{%photo}}', [
             'id' => $this->primaryKey(),
             'set_id' => $this->integer()->notNull(),
-            // 'photo_id' => $this->string(20)->notNull(),
+            'photo_id' => $this->string(20)->notNull(),
             'url' => $this->string()->notNull(),
-            'title' => $this->string()->notNull(),
+            // 'title' => $this->string()->notNull(),
             'description' => $this->text(),
+            'alt_description' => $this->text(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);

@@ -4,17 +4,22 @@ namespace frontend\controllers;
 
 use Yii;
 use common\models\Photo;
+use common\models\Set;
+use Exception;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\Json;
 use yii\helpers\VarDumper;
+use yii\web\Response;
 
 /**
  * ProtoController implements the CRUD actions for Photo model.
  */
-class ProtoController extends Controller
+class PhotoController extends Controller
 {
+
     /**
      * {@inheritdoc}
      */
@@ -78,12 +83,37 @@ class ProtoController extends Controller
 
     public function actionAdd()
     {
-        // if (!$this->request->isPost) {
-        //     throw new NotFoundHttpException('Page not found.');
-        // }
+        if (!$this->request->isPost) {
+            throw new NotFoundHttpException('Page not found.');
+        }
 
-        VarDumper::dump( 'asd', $depth = 10, $highlight = true);
-        die;
+        $photoUnsplush = UnsplashController::searchOne($this->request->post('photo_id'));
+        $set = Set::findOne(['id' =>$this->request->post('set_id'), 'profile_id' =>  Yii::$app->user->identity->userProfile->id]);
+     
+        if(empty($photoUnsplush) || empty($set)){
+            throw new NotFoundHttpException("Photo or Set not found");
+        }
+        try {
+            Yii::$app->session->setFlash('success', "Photo added.");
+            $size = $this->request->post('size_image_default') ?? UnsplashController::SIZE_IMAGE_DEFAULT;
+            $photo = new Photo();
+            $photo->set_id = $set->id;
+            $photo->photo_id = $photoUnsplush['id'];
+            $photo->description = $photoUnsplush['description'];
+            $photo->alt_description = $photoUnsplush['alt_description'];
+            $photo->url = $photoUnsplush['urls'][$size];
+    
+            $photo->save();
+        } catch (Exception $e) {
+            Yii::$app->session->setFlash('error', "Error adding photo.");
+
+            throw $e;
+        }
+        // VarDumper::dump( $photoUnsplush, $depth = 10, $highlight = true);
+        // die;
+        
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        return $this->request->post();
     }
 
     /**
