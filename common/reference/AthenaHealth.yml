@@ -24,9 +24,7 @@ paths:
         - Patient
       summary: Create a register of a new Patient
       operationId: postPracticeidPatients
-      description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
+      description: By passing in the appropriate options, you can search for available inventory in the system
       parameters:
         - description: practiceid
           in: path
@@ -3802,9 +3800,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/LabResult'
+                $ref: '#/components/schemas/LabResultChanged'
           description: Success
       operationId: getPracticeidLabresultsChanged
       tags:
@@ -7278,26 +7274,6 @@ components:
         tietoorderid:
           description: Order ID of the order this document is tied to, if any
           type: integer
-    ClinicalDocumentPageDetail:
-      type: object
-      x-external-id: pageid
-      properties:
-        clinicalDocument:
-          $ref: '#/components/schemas/ClinicalDocument'
-        labResult:
-          $ref: '#/components/schemas/LabResult'
-        contenttype:
-          description: The content-type that will be returned by the page image call.
-          type: string
-        href:
-          description: The URL to get the document image.
-          type: string
-        pageid:
-          description: The ID to use in a call to get the page image.
-          type: string
-        pageordering:
-          description: Within this list of pages, the ordering (starting with 1).
-          type: string
     ClinicalDocumentPage:
       type: object
       properties:
@@ -7949,57 +7925,6 @@ components:
           description: The sentences in the paragraph.
           items:
             $ref: '#/components/schemas/Sentence'
-    InterpretationTemplate:
-      type: object
-      properties:
-        interpretationtemplatename:
-          description: The name of the interpretation template.
-          type: string
-        interpretationtemplatenote:
-          description: The interpretation note.
-          type: string
-        paragraphs:
-          type: array
-          description: The paragraphs in the template.
-          items:
-            $ref: '#/components/schemas/Paragraph'
-    ObservationLabResult:
-      type: object
-      x-external-id: observationidentifier
-      x-external-id-type: string
-      properties:
-        labResult:
-          $ref: '#/components/schemas/LabResult'
-        abnormalflag:
-          description: The level of normality for this result.
-          type: string
-        analyteid:
-          description: The athena ID for this analyte. Used to update the analyte.
-          type: integer
-        analytename:
-          description: The name / identifier text for this analyte.
-          type: string
-        loinc:
-          description: The LOINC code for this analyte
-          type: string
-        note:
-          description: Any additional notes about this analyte.
-          type: string
-        observationidentifier:
-          description: The local lab ID for this analyte.
-          type: string
-        referencerange:
-          description: The normal range for this lab analyte.
-          type: string
-        resultstatus:
-          description: Whether this observation is a prelimary, corrected, final, etc result.
-          type: string
-        units:
-          description: The units the value is in.
-          type: string
-        value:
-          description: The observation value for this analyte.
-          type: string
     LabResult:
       type: object
       x-external-id: labresultid
@@ -8089,7 +8014,19 @@ components:
           type: string
         interpretationtemplate:
           description: The interpretation template added to the imaging result.
-          $ref: '#/components/schemas/InterpretationTemplate'
+          type: object
+          properties:
+            interpretationtemplatename:
+              description: The name of the interpretation template.
+              type: string
+            interpretationtemplatenote:
+              description: The interpretation note.
+              type: string
+            paragraphs:
+              type: array
+              description: The paragraphs in the template.
+              items:
+                $ref: '#/components/schemas/Paragraph'
         isconfidential:
           description: If true, this result document should not be shown to the patient.
           enum:
@@ -8216,6 +8153,63 @@ components:
         tietoorderid:
           description: Order ID of the order this document is tied to, if any
           type: integer
+    ClinicalDocumentPageDetail:
+      type: object
+      x-external-id: pageid
+      properties:
+        clinicalDocument:
+          $ref: '#/components/schemas/ClinicalDocument'
+        labResult:
+          $ref: '#/components/schemas/LabResult'
+        contenttype:
+          description: The content-type that will be returned by the page image call.
+          type: string
+        href:
+          description: The URL to get the document image.
+          type: string
+        pageid:
+          description: The ID to use in a call to get the page image.
+          type: string
+        pageordering:
+          description: Within this list of pages, the ordering (starting with 1).
+          type: string
+    ObservationLabResult:
+      type: object
+      x-external-id: observationidentifier
+      x-external-id-type: string
+      properties:
+        labResult:
+          $ref: '#/components/schemas/LabResult'
+        abnormalflag:
+          description: The level of normality for this result.
+          type: string
+        analyteid:
+          description: The athena ID for this analyte. Used to update the analyte.
+          type: integer
+        analytename:
+          description: The name / identifier text for this analyte.
+          type: string
+        loinc:
+          description: The LOINC code for this analyte
+          type: string
+        note:
+          description: Any additional notes about this analyte.
+          type: string
+        observationidentifier:
+          description: The local lab ID for this analyte.
+          type: string
+        referencerange:
+          description: The normal range for this lab analyte.
+          type: string
+        resultstatus:
+          description: Whether this observation is a prelimary, corrected, final, etc result.
+          type: string
+        units:
+          description: The units the value is in.
+          type: string
+        value:
+          description: The observation value for this analyte.
+          type: string
     LabResult200Response:
       type: object
       properties:
@@ -8606,3 +8600,14 @@ components:
         eventname:
           description: By default, you are subscribed to all possible events.  If you only wish to subscribe to an individual event, pass the event name with this argument.
           type: string
+    LabResultChanged:
+      type: object
+      properties:
+        labresults:
+          description: 'list of lab results.'
+          items:
+            $ref: '#/components/schemas/LabResult'
+          type: array
+        totalcount:
+          description: By default, you are subscribed to all possible events.  If you only wish to subscribe to an individual event, pass the event name with this argument.
+          type: integer

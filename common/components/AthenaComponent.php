@@ -967,6 +967,31 @@ class AthenaComponent extends Component
         return $changedVaccinesResult;
     }
 
+
+    public function retrieveLabResultSubscriptionStatus()
+    {
+        $subscriptionStatusApi = $this->client->getPracticeidLabresultsChangedSubscription($this->practiceid);
+
+        return $subscriptionStatusApi;
+    }
+
+
+    public function labResultChanges(): array
+    {
+        $changedLabResults = $this->client->getPracticeidLabresultsChanged($this->practiceid);
+        $changedLabResultResult = [];
+        try {
+            foreach( $changedLabResults->labresults as $labResultApi ) {
+                $labResultModel = $this->obtainVaccine($labResultApi->labresultid, $labResultApi);
+                $changedVaccinesResult[] = [$labResultModel->id, $labResultModel->externalId, $labResultModel->save()];
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
+        }
+
+        return $changedLabResultResult;
+    }
+
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
     {

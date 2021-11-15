@@ -9,6 +9,7 @@ use common\models\ApiModel as BaseApiModel;
  * 
  *
  * @property ClinicalDocument $clinicalDocument
+ * @property LabResult $labResult
  * @property string $contenttype The content-type that will be returned by the page image call.
  * @property string $href The URL to get the document image.
  * @property string $pageid The ID to use in a call to get the page image.
@@ -18,6 +19,7 @@ class ClinicalDocumentPageDetailApi extends BaseApiModel
 {
 
     public $clinicalDocument;
+    public $labResult;
     public $contenttype;
     public $href;
     public $pageid;

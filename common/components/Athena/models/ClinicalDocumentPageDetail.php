@@ -7,6 +7,8 @@ use yii\helpers\ArrayHelper;
  *  *
  * @property integer $clinicalDocument_id
  * @property ClinicalDocument $clinicalDocument
+ * @property integer $labResult_id
+ * @property LabResult $labResult
  * @property string $contenttype The content-type that will be returned by the page image call.
  * @property string $href The URL to get the document image.
  * @property string $pageid The ID to use in a call to get the page image.
@@ -27,7 +29,7 @@ class ClinicalDocumentPageDetail extends \yii\db\ActiveRecord
         return [
             [['contenttype', 'href', 'pageid', 'pageordering'], 'trim'],
             [['contenttype', 'href', 'pageid', 'pageordering'], 'string'],
-            [['clinicalDocument_id', 'externalId', 'id'], 'integer'],
+            [['clinicalDocument_id', 'labResult_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -35,6 +37,11 @@ class ClinicalDocumentPageDetail extends \yii\db\ActiveRecord
     public function getClinicalDocument()
     {
         return $this->hasOne(ClinicalDocument::class, ['id' => 'clinicalDocument_id']);
+    }
+
+    public function getLabResult()
+    {
+        return $this->hasOne(LabResult::class, ['id' => 'labResult_id']);
     }
 
 
@@ -47,6 +54,12 @@ class ClinicalDocumentPageDetail extends \yii\db\ActiveRecord
         }
         if($clinicalDocument = ArrayHelper::getValue($apiObject, 'clinicalDocument')) {
             $this->clinicalDocument = $clinicalDocument;
+        }
+        if($labResult_id = ArrayHelper::getValue($apiObject, 'labResult_id')) {
+            $this->labResult_id = $labResult_id;
+        }
+        if($labResult = ArrayHelper::getValue($apiObject, 'labResult')) {
+            $this->labResult = $labResult;
         }
         if($contenttype = ArrayHelper::getValue($apiObject, 'contenttype')) {
             $this->contenttype = $contenttype;

@@ -336,4 +336,42 @@ class SyncController extends Controller
         return ExitCode::OK;
     }
 
+
+    public function actionLabresult($practiceId)
+    {
+        $this->component->setPracticeid($practiceId);
+        try {
+            /*$departments = $this->component->getDepartments();
+            foreach ($departments as $key => $value){
+
+            }*/
+
+            $subscriptionStatus = $this->component->retrieveLabResultSubscriptionStatus();
+
+            $updateEventSubscription = false;
+            if( $subscriptionStatus->status == self::ACTIVE_STATUS ) {
+                $updateEventSubscription = true;
+            } else {
+                foreach( $subscriptionStatus->subscriptions as $event) {
+                    if( $event['eventname'] == self::VACCINE_EVENTS['UPDATE'] )
+                        $updateEventSubscription = true;
+                }
+            }
+
+            /*if( !$updateEventSubscription )
+                $this->component->vaccinesSubscription(self::VACCINE_EVENTS['UPDATE']);*/
+
+            $changedLabResultResult = $this->component->labResultChanges();
+            echo Table::widget([
+                'headers' => ['ID', 'ExternalID', 'DB Result'],
+                'rows' => $changedLabResultResult,
+            ]);
+        } catch(\Exception  $e) {
+            echo $e->getMessage()."\n";
+            return ExitCode::UNSPECIFIED_ERROR;
+        }
+
+        return ExitCode::OK;
+    }
+
 }
