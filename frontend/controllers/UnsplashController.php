@@ -88,17 +88,17 @@ class UnsplashController extends Controller
         ]);
     }
 
-    public static function getRandomImage(): string
+    public static function getRandomImage(): ?string
     {
         $response = self::doRequest(self::SOURCE_SEARCH_PHOTO_RANDOM, ['count' => 1]);
-
+        
         if (empty($response)) {
             $photos = Photo::find();
 
             if ($photos->count() === 0) {
-                return '';
+                return null;
             }
-            
+
             $randomInt = rand(0, $photos->count() - 1);
             $photo = $photos->all()[$randomInt];
 

@@ -15,7 +15,9 @@ $src = UnsplashController::getRandomImage();
 
 <div class="row w-100">
     <div class="col-7 border-end border-white vh-100 p-0">
-        <?= Html::img($src, ['class'=> 'img-fluid w-100 h-100']) ?>
+        <?php if(!empty($src)) {
+            echo Html::img($src, ['class'=> 'img-fluid w-100 h-100']);
+        } ?>
     </div>
     <div class="col-4 mx-auto">
         <h1><?= Html::encode($this->title) ?></h1>
