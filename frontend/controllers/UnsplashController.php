@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use common\models\Collection;
+use common\models\Photo;
 use common\models\Set;
 use common\models\UnsplashForm;
 use DateTime;
@@ -24,6 +25,7 @@ class UnsplashController extends Controller
 
     private const SOURCE_SEARCH_PHOTOS = 'search/photos';
     private const SOURCE_SEARCH_PHOTO = 'photos/';
+    private const SOURCE_SEARCH_PHOTO_RANDOM = 'photos/random';
     const SIZE_IMAGE_DEFAULT = 'small';
 
     /**
@@ -86,6 +88,16 @@ class UnsplashController extends Controller
         ]);
     }
 
+    public static function getRandomImage(): string
+    {
+        $photos = Photo::find();
+        $randomInt = rand(0,$photos->count()-1);
+        $photo = $photos->all()[$randomInt];
+        // self::doRequest(self::SOURCE_SEARCH_PHOTO_RANDOM,)
+
+        return $photo->url;
+    }
+
 
     public static function search(string $search): ?array
     {
@@ -110,7 +122,7 @@ class UnsplashController extends Controller
         return $response;
     }
 
-    private static function doRequest(string $source, ?string $searchParam = null)
+    private static function doRequest(string $source, string $searchParam = null)
     {
         $server = Yii::$app->params['unsplash.server'];
         $clientId = Yii::$app->params['unsplash.clientId'];
