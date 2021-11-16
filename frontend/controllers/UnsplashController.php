@@ -90,18 +90,28 @@ class UnsplashController extends Controller
 
     public static function getRandomImage(): string
     {
-        $photos = Photo::find();
-        $randomInt = rand(0,$photos->count()-1);
-        $photo = $photos->all()[$randomInt];
-        // self::doRequest(self::SOURCE_SEARCH_PHOTO_RANDOM,)
+        $response = self::doRequest(self::SOURCE_SEARCH_PHOTO_RANDOM, ['count' => 1]);
 
-        return $photo->url;
+        if (empty($response)) {
+            $photos = Photo::find();
+
+            if ($photos->count() === 0) {
+                return '';
+            }
+            
+            $randomInt = rand(0, $photos->count() - 1);
+            $photo = $photos->all()[$randomInt];
+
+            return $photo->url;
+        }
+
+        return $response[0]['urls']['full'];
     }
 
 
     public static function search(string $search): ?array
     {
-        $response =  self::doRequest(self::SOURCE_SEARCH_PHOTOS, $search);
+        $response =  self::doRequest(self::SOURCE_SEARCH_PHOTOS, ['query' => $search]);
 
         if (empty($response) || !array_key_exists('results', $response)) {
             return null;
@@ -122,17 +132,12 @@ class UnsplashController extends Controller
         return $response;
     }
 
-    private static function doRequest(string $source, string $searchParam = null)
+    private static function doRequest(string $source, array $customParams = [])
     {
         $server = Yii::$app->params['unsplash.server'];
         $clientId = Yii::$app->params['unsplash.clientId'];
         $client = new Client(['baseUrl' => $server]);
-        $params = ['client_id' => $clientId];
-
-        if (!empty($searchParam)) {
-            $params['query'] =  $searchParam;
-        }
-
+        $params = ['client_id' => $clientId] + $customParams;
         $response = $client->get($source, $params)->send();
 
         if ($response->isOk) {
