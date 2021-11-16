@@ -10,8 +10,9 @@ $(`.btn-add-photo`).on('click', (e)=>{
     
     $.post(url, form.serialize()).then(data => {
         $.pjax.reload({ container: "#flash-alert-message", async: false });
-    })
-    .then(()=>{
+        $(".alert").delay(2000).slideUp(200, function() {
+            $(this).alert('close');
+        });
         form.trigger("reset");
     })
     .catch((err) => {
