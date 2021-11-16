@@ -3402,6 +3402,53 @@ paths:
       operationId: getPracticeidReferenceMedications
       tags:
         - Medication
+  /v1/{practiceid}/chart/{patientid}/medications/{medicationentryid}:
+    put:
+      summary: Update patient's medication list
+      description: >-
+        Modifies the properties of a given medication. E.g. reason to stop
+        having the medication, etc.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: medicationentryid
+          in: path
+          name: medicationentryid
+          required: true
+          schema:
+            type: string
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutMedication200Response'
+          description: Success
+      operationId: putPracticeidChartPatientidMedicationsMedicationentryid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateMedication'
+        required: true
+      tags:
+        - Medication
 components:
   schemas:
     Patient:
@@ -6545,6 +6592,8 @@ components:
             is a structured sig, this will contain the formatted
             version of that sig.
           type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
     ProblemChanged:
       type: object
       properties:
@@ -7638,3 +7687,52 @@ components:
         medicationid:
           description: The athena ID of the medication
           type: integer
+    RequestUpdateMedication:
+      properties:
+        departmentid:
+          description: The athenanet department ID
+          type: integer
+        hidden:
+          description: Set whether the medication is hidden in the UI.
+          type: boolean
+        patientnote:
+          description: A patient-facing note
+          type: string
+        providernote:
+          description: An internal note
+          type: string
+        startdate:
+          description: Start date for this medication
+          type: string
+        stopdate:
+          description: Stop date for this medication
+          type: string
+        stopreason:
+          description: >-
+            The reason the medication was stopped. If set, it it
+            recommended but not required that a stop date is also set.
+          type: string
+        unstructuredsig:
+          description: >-
+            Can only be used to update historical (entered, downloaded,
+            etc) medications. Will override a structured sig if there is
+            one.
+          type: string
+      required:
+        - departmentid
+      type: object
+    PutMedication200Response:
+      type: object
+      properties:
+        errormessage:
+          description: >-
+            If the operation failed, this will contain any error
+            messages.
+          type: string
+        success:
+          description: Whether the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string

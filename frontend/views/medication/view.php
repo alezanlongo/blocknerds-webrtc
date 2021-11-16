@@ -25,6 +25,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'externalId',
             'organclass',
             'therapeuticclass',
+            'patientnote',
+            'providernote',
             'patientid',
             'medicationid',
             'medication',

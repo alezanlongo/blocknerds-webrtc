@@ -39,6 +39,7 @@ use common\models\ApiModel as BaseApiModel;
  * @property string $stopreason The reason why this medication was stopped.
  * @property string $therapeuticclass The therapeutic class for this medication. This is equivalent to a medication subclass.
  * @property string $unstructuredsig The unstructured sig for this medication, if any. If there is a structured sig, this will contain the formatted version of that sig.
+ * @property Patient $patient
  */
 class MedicationApi extends BaseApiModel
 {
@@ -74,6 +75,7 @@ class MedicationApi extends BaseApiModel
     public $stopreason;
     public $therapeuticclass;
     public $unstructuredsig;
+    public $patient;
 
     public function rules()
     {

@@ -1002,8 +1002,35 @@ class AthenaComponent extends Component
                 return $m['medicationentryid'] == $medicationentryid;
         });
 
-        return Medication::createFromApiObject(
-            end($medication)
+        $medicationModel = Medication::find()
+            ->where(['externalId' => $medicationentryid])
+            ->one();
+
+        if (!$medicationModel) {
+            return Medication::createFromApiObject(end($medication));
+        }
+
+        return $medicationModel->loadApiObject(end($medication));
+    }
+
+    /**
+     * @return Medication
+     */
+
+    public function updateMedication($medication, $updateMedication)
+    {
+
+        $this->client->putPracticeidChartPatientidMedicationsMedicationentryid(
+            $this->practiceid,
+            $medication->medicationentryid,
+            $medication->patient->externalId,
+            $updateMedication->toArray()
+        );
+
+        return $this->retrieveMedication(
+            $medication->patient,
+            $medication->medicationentryid,
+            $medication->medicationid
         );
     }
 

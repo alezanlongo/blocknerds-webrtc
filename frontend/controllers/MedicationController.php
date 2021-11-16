@@ -8,8 +8,10 @@ use common\components\Athena\models\Medication;
 use common\components\Athena\models\MedicationReference;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\RequestCreateMedication;
+use common\components\Athena\models\RequestUpdateMedication;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\web\NotFoundHttpException;
 
 class MedicationController extends \yii\web\Controller
 {
@@ -90,6 +92,7 @@ class MedicationController extends \yii\web\Controller
                 $model
             );
             if($model->save()){
+                $model->link('patient', $patient);
                 return $this->redirect(['view', 'id' => $model->id]);
             }
             else{
@@ -100,6 +103,34 @@ class MedicationController extends \yii\web\Controller
         return $this->render('create', [
             'model' => $model,
             'patient' => $patient,
+        ]);
+    }
+
+    /**
+     * Updates an existing Medication model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
+    {
+        $model = new RequestUpdateMedication;
+        $medication = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->updateMedication(
+                $medication,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+            'medication' => $medication,
         ]);
     }
 
