@@ -1239,6 +1239,70 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
+     * @return ChangedSubscription
+     */
+    public function getPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ChangedSubscriptionApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return ChangedSubscription200Response
+     */
+    public function postPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($practiceid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ChangedSubscription200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return ChangedSubscription200Response
+     */
+    public function deletePracticeidChartHealthhistoryFamilyhistoryChangedSubscription($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'delete' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\ChangedSubscription200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return FamilyHistoryChanged
+     */
+    public function getPracticeidChartHealthhistoryFamilyhistoryChanged($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/healthhistory/familyhistory/changed';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\FamilyHistoryChangedApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
      * @param patientid
      * @return GetProblem200Response
      */

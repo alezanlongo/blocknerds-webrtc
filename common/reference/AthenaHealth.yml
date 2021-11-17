@@ -3249,6 +3249,153 @@ paths:
       operationId: getPracticeidChartHealthhistoryVaccineChanged
       tags:
         - Vaccines
+  /v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for family history
+      description: Subscribes for changed familyhistory events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: postPracticeidChartHealthhistoryFamilyhistoryChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                eventname:
+                  description: >-
+                    By default, you are subscribed to all possible events.  If
+                    you only wish to subscribe to an individual event, pass the
+                    event name with this argument.
+                  type: string
+              type: object
+        required: true
+      tags:
+        - Family History
+    get:
+      summary: Get list of family history change subscription(s)
+      description: Retrieves list of events applicable for family history
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryFamilyhistoryChangedSubscription
+      tags:
+        - Family History
+    delete:
+      summary: Unsubscribe to all/specific change events for family history
+      description: Delete an specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, you are unsubscribed from all possible events.  If you
+            only wish to unsubscribe from an individual event, pass the event
+            name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidChartHealthhistoryFamilyhistoryChangedSubscription
+      tags:
+        - Family History
+  /v1/{practiceid}/chart/healthhistory/familyhistory/changed:
+    get:
+      summary: Get list of changes in family history based on subscribed events
+      description: Retrieves list of records of modified family history data
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: See showprocessedstartdatetime
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Show already processed changes.  This will show changes that you
+            previously retrieved at some point after this datetime mm/dd/yyyy
+            hh24:mi:ss (Eastern). Can be used to refetch data if there was an
+            error, such as a timeout, and records are marked as already
+            retrieved. This is intended to be used with showprocessedenddatetime
+            and for a short period of time only. Also note that all messages
+            will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyHistoryChanged'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryFamilyhistoryChanged
+      tags:
+        - Family History
   /v1/{practiceid}/chart/{patientid}/problems:
     post:
       summary: Add problem to patient's problem list
@@ -7524,6 +7671,53 @@ components:
             $ref: '#/components/schemas/Vaccine'
         totalcount:
           type: integer
+    FamilyHistory:
+      x-external-id: problemid
+      type: object
+      properties:
+        description:
+          description: Brief description for this code/problem
+          type: string
+        diedofage:
+          description: Age when the patient died, if this problem was the cause
+          type: integer
+        note:
+          description: Additional note for this problem
+          type: string
+        onsetage:
+          description: Age when this problem first occured
+          type: integer
+        patientid:
+          description: >-
+            The athenanet patient ID associated with this family
+            problem.
+          type: integer
+        problemid:
+          description: Athena ID for this problem
+          type: integer
+        relation:
+          description: Relationship to the patient
+          type: string
+        relationkeyid:
+          description: >-
+            ID of the relationship (for example, having 2 brothers,
+            one would have ID of 1, another would have ID of 2)
+          type: integer
+        resolvedage:
+          description: Age when the problem was resolved, if applicable
+          type: integer
+        snomedcode:
+          description: SNOMED code for this diagnosis
+          type: integer
+    FamilyHistoryChanged:
+      type: object
+      properties:
+        problems:
+          type: array
+          items:
+            $ref: '#/components/schemas/FamilyHistory'
+        totalcount:
+          type: integer
     PostProblem200Response:
       x-external-id: problemid
       type: object
@@ -7631,4 +7825,3 @@ components:
       required:
         - departmentid
         - snomedcode
-
