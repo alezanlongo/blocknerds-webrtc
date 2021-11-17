@@ -9,6 +9,7 @@ use common\components\Athena\models\Patient;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\RequestAppointmentNote;
 use common\components\Athena\models\RequestCreateAppointment;
+use common\components\Athena\models\RequestUpdateAppointmentNote;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 
@@ -129,6 +130,34 @@ class AppointmentController extends \yii\web\Controller
 
         return $this->render('appointment-note', [
             'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Appointment Note model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdateAppointmentNote($id)
+    {
+        $model = new RequestUpdateAppointmentNote;
+        $appointmentNote = $this->findAppointmentNote($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->updateAppointmentNote(
+                $appointmentNote,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['appointment-note', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('update-appointment-note', [
+            'model' => $model,
+            'appointmentNote' => $appointmentNote
         ]);
     }
 

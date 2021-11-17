@@ -1419,4 +1419,24 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param appointmentid
+     * @param noteid
+     * @return PutAppointmentNote200Response
+     */
+    public function putPracticeidAppointmentsAppointmentidNotesNoteid($practiceid, $appointmentid, $noteid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/appointments/{appointmentid}/notes/{noteid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{appointmentid}', $appointmentid, $path);
+        $path = str_replace('{noteid}', $noteid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutAppointmentNote200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }

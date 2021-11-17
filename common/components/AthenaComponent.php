@@ -4,6 +4,7 @@ namespace common\components;
 use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
+use common\components\Athena\apiModels\AppointmentNoteApi;
 use common\components\Athena\apiModels\EncounterApi;
 use common\components\Athena\apiModels\FamilyHistoryApi;
 use common\components\Athena\apiModels\MedicationApi;
@@ -38,6 +39,7 @@ use common\components\Athena\models\VitalsConfiguration;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
 use yii\base\Component;
+use yii\helpers\ArrayHelper;
 
 class AthenaComponent extends Component
 {
@@ -1085,21 +1087,49 @@ class AthenaComponent extends Component
                 $appointmentNote->toArray()
             );
 
-        return $this->retrieveLastCreatedAppointmentNote(
+        $appointmentNotesModelsApi = $this->retrieveAppointmentNotes(
             $appointment->externalId
         );
+
+        return AppointmentNote::createFromApiObject(
+            end($appointmentNotesModelsApi)
+        );
+
     }
 
-    public function retrieveLastCreatedAppointmentNote($appointmentId)
+    public function retrieveAppointmentNotes($appointmentId)
     {
         $appointmentNotesModelsApi = $this->client->getPracticeidAppointmentsAppointmentidNotes(
             $this->practiceid,
             $appointmentId
         );
 
-        return AppointmentNote::createFromApiObject(
-            end($appointmentNotesModelsApi)
+        return $appointmentNotesModelsApi;
+
+    }
+
+    /**
+     * @return AppointmentNote
+     */
+
+    public function updateAppointmentNote($appointmentNote, $updateAppointmentNote)
+    {
+        $this->client->putPracticeidAppointmentsAppointmentidNotesNoteid(
+            $this->practiceid,
+            $appointmentNote->put_appointment200_response->externalId,
+            $appointmentNote->externalId,
+            $updateAppointmentNote->toArray()
         );
+
+        $appointmentNotesModelsApi = $this->retrieveAppointmentNotes(
+            $appointmentNote->put_appointment200_response->externalId
+        );
+
+        return $this->obtainAppointmentNote(
+            $appointmentNote->externalId,
+            ArrayHelper::index($appointmentNotesModelsApi, 'noteid')[$appointmentNote->noteid]
+        );
+
     }
 
     /* ================================= Begin  Protected methods ============================================== */
@@ -1218,6 +1248,19 @@ class AthenaComponent extends Component
         }
 
         return $familyHistory->loadApiObject($familyHistoryModelApi);
+    }
+
+    protected function obtainAppointmentNote($appointmentNoteId, AppointmentNoteApi $appointmentNoteModelApi): AppointmentNote
+    {
+        $appointmentNote = AppointmentNote::find()
+            ->where(['externalId' => $appointmentNoteId])
+            ->one();
+
+        if (!$appointmentNote) {
+            return AppointmentNote::createFromApiObject($appointmentNoteModelApi);
+        }
+
+        return $appointmentNote->loadApiObject($appointmentNoteModelApi);
     }
 
 

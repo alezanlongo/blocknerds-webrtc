@@ -3684,6 +3684,51 @@ paths:
       operationId: getPracticeidAppointmentsAppointmentidNotes
       tags:
         - Appointment Notes
+  /v1/{practiceid}/appointments/{appointmentid}/notes/{noteid}:
+    put:
+      summary: Update appointment note
+      description: Modifies the note details for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: noteid
+          in: path
+          name: noteid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutAppointmentNote200Response'
+          description: Success
+      operationId: putPracticeidAppointmentsAppointmentidNotesNoteid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateAppointmentNote'
+        required: true
+      tags:
+        - Appointment Notes
 components:
   schemas:
     Patient:
@@ -8076,3 +8121,24 @@ components:
           type: string
         put_appointment200_response:
           $ref: '#/components/schemas/PutAppointment200Response'
+    RequestUpdateAppointmentNote:
+      properties:
+        displayonschedule:
+          description: Add appointment note to homepage display.
+          type: boolean
+        notetext:
+          description: The note text.
+          type: string
+      required:
+        - notetext
+      type: object
+    PutAppointmentNote200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful
+          enum:
+            - ''
+            - false
+            - true
+          type: string
