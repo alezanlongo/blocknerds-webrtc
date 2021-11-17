@@ -1,5 +1,11 @@
 
-
+$(document).ready(function () {
+    $('.unsplash-gallery').masonry({
+        // options
+        itemSelector: '.unsplash-gallery-item',
+        columnWidth: 150
+      });
+})
 $(`.btn-add-photo`).on('click', (e)=>{
     e.preventDefault();
     e.stopPropagation();

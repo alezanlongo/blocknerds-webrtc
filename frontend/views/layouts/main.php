@@ -2,6 +2,7 @@
 
 use frontend\assets\adminlte\AdminLteAsset;
 use frontend\assets\AppAsset;
+use frontend\assets\masonry\MasonryAsset;
 use frontend\assets\mqtt\MqttAsset;
 use yii\helpers\Html;
 use yii\web\View;
@@ -20,6 +21,7 @@ if (Yii::$app->controller->action->id === 'login') {
   AppAsset::register($this);
   $this->registerAssetBundle(MqttAsset::class);
   AdminLteAsset::register($this);
+  MasonryAsset::register($this);
 ?>
 
   <?php $this->beginPage() ?>
@@ -98,6 +100,7 @@ if (Yii::$app->controller->action->id === 'login') {
       })
     
     </script>
+    
   </body>
 
   <?php $this->endPage() ?>
