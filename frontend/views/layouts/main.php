@@ -41,23 +41,20 @@ if (Yii::$app->controller->action->id === 'login') {
         right: 0;
       }
 
-      /* .main-footer {
-        position: fixed;
-        z-index: 999;
-        bottom: 0;
-        width: 100%;
-      } */
+      #offcanvasMainMenu{
+        display: none;
+      }
     </style>
   </head>
 
-  <body class="layout-fixed ">
+  <body class="layout-fixed d-flex ">
     <?php $this->beginBody() ?>
     <?= $this->render(
       'sidebarOffcanvas.php',
       []
     ) ?>
 
-    <div class="wrapper" id="main-wrapper">
+    <div class="wrapper position-relative" id="main-wrapper">
 
       <?= $this->render(
         'header.php',
@@ -82,10 +79,15 @@ if (Yii::$app->controller->action->id === 'login') {
       const myOffcanvasMenu = document.getElementById('offcanvasMainMenu')
       const wrapperContainer = document.getElementById('main-wrapper')
       myOffcanvasMenu.addEventListener('hidden.bs.offcanvas', function() {
-        wrapperContainer.style.marginLeft = `0px`
+        // wrapperContainer.style.marginLeft = `0px`
+        myOffcanvasMenu.style.display = 'none';
+      })
+      myOffcanvasMenu.addEventListener('show.bs.offcanvas', function() {
+        myOffcanvasMenu.style.display = 'block';
+        // wrapperContainer.style.marginLeft = `${myOffcanvasMenu.offsetWidth}px`
       })
       myOffcanvasMenu.addEventListener('shown.bs.offcanvas', function() {
-        wrapperContainer.style.marginLeft = `${myOffcanvasMenu.offsetWidth}px`
+        // wrapperContainer.style.marginLeft = `${myOffcanvasMenu.offsetWidth}px`
       })
     </script>
   </body>
