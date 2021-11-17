@@ -40,9 +40,8 @@ if (Yii::$app->controller->action->id === 'login') {
         top: 0;
         right: 0;
       }
-
       #offcanvasMainMenu{
-        display: none;
+        width: 0;
       }
     </style>
   </head>
@@ -78,17 +77,26 @@ if (Yii::$app->controller->action->id === 'login') {
     <script>
       const myOffcanvasMenu = document.getElementById('offcanvasMainMenu')
       const wrapperContainer = document.getElementById('main-wrapper')
-      myOffcanvasMenu.addEventListener('hidden.bs.offcanvas', function() {
-        // wrapperContainer.style.marginLeft = `0px`
-        myOffcanvasMenu.style.display = 'none';
-      })
-      myOffcanvasMenu.addEventListener('show.bs.offcanvas', function() {
-        myOffcanvasMenu.style.display = 'block';
-        // wrapperContainer.style.marginLeft = `${myOffcanvasMenu.offsetWidth}px`
-      })
+      // myOffcanvasMenu.style.width="0px"
+      
+      
       myOffcanvasMenu.addEventListener('shown.bs.offcanvas', function() {
         // wrapperContainer.style.marginLeft = `${myOffcanvasMenu.offsetWidth}px`
       })
+      myOffcanvasMenu.addEventListener('hidden.bs.offcanvas', function() {
+        Object.assign(wrapperContainer.style, {transition: "0.3s ease-in-out", marginLeft: `0px`})
+        Object.assign(myOffcanvasMenu.style, {width: "0px"})
+
+      })
+      myOffcanvasMenu.addEventListener('show.bs.offcanvas', function() {
+        Object.assign(wrapperContainer.style, {transition: "0.3s ease-in-out",marginLeft: `${myOffcanvasMenu.offsetWidth}px`})
+        Object.assign(myOffcanvasMenu.style, {width: "400px"})
+       
+      })
+      myOffcanvasMenu.addEventListener('hide.bs.offcanvas', function() {
+       
+      })
+    
     </script>
   </body>
 
