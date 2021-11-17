@@ -52,14 +52,15 @@ if (Yii::$app->controller->action->id === 'login') {
 
   <body class="layout-fixed ">
     <?php $this->beginBody() ?>
-    <div class="wrapper">
-      <?= $this->render(
-        'header.php',
-        []
-      ) ?>
+    <?= $this->render(
+      'sidebarOffcanvas.php',
+      []
+    ) ?>
+
+    <div class="wrapper" id="main-wrapper">
 
       <?= $this->render(
-        'sidebarOffcanvas.php',
+        'header.php',
         []
       ) ?>
 
@@ -72,12 +73,21 @@ if (Yii::$app->controller->action->id === 'login') {
         'right.php',
         []
       ) ?>
-      <div class="chat-zone d-flex justify-content-end">
+      <?= Html::tag('div', '', ['class' => 'chat-zone d-flex justify-content-end']) ?>
 
-      </div>
     </div>
 
     <?php $this->endBody() ?>
+    <script>
+      const myOffcanvasMenu = document.getElementById('offcanvasMainMenu')
+      const wrapperContainer = document.getElementById('main-wrapper')
+      myOffcanvasMenu.addEventListener('hidden.bs.offcanvas', function() {
+        wrapperContainer.style.marginLeft = `0px`
+      })
+      myOffcanvasMenu.addEventListener('shown.bs.offcanvas', function() {
+        wrapperContainer.style.marginLeft = `${myOffcanvasMenu.offsetWidth}px`
+      })
+    </script>
   </body>
 
   <?php $this->endPage() ?>
