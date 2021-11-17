@@ -4,6 +4,7 @@ use frontend\assets\adminlte\AdminLteAsset;
 use frontend\assets\AppAsset;
 use frontend\assets\mqtt\MqttAsset;
 use yii\helpers\Html;
+use yii\web\View;
 
 /** @var \yii\web\View $this */
 /** @var string $content */
@@ -39,11 +40,12 @@ if (Yii::$app->controller->action->id === 'login') {
         top: 0;
         right: 0;
       }
-      .main-footer{
+
+      .main-footer {
         position: fixed;
-    z-index: 999;
-    bottom: 0;
-    width: 100%;
+        z-index: 999;
+        bottom: 0;
+        width: 100%;
       }
     </style>
   </head>
@@ -57,7 +59,7 @@ if (Yii::$app->controller->action->id === 'login') {
       ) ?>
 
       <?= $this->render(
-        'left.php',
+        'sidebarOffcanvas.php',
         []
       ) ?>
 
@@ -78,6 +80,7 @@ if (Yii::$app->controller->action->id === 'login') {
     <?php $this->endBody() ?>
   </body>
 
-  </html>
   <?php $this->endPage() ?>
+
+  </html>
 <?php } ?>
