@@ -87,15 +87,9 @@ class ProblemController extends Controller
                 $model,
                 $patient
             );
-            $model->link('patient', $patient);
-            if($model->save()){
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-            else{
-                var_dump($model->getErrors());die;//FIXME
-            }
-        }
 
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
 
         return $this->render('create', [
             'model' => $model,

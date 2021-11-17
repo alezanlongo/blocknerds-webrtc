@@ -6785,6 +6785,8 @@ components:
     Event:
       type: object
       properties:
+        problem:
+          $ref: '#/components/schemas/Problem'
         createdby:
           description: The name of the user who entered this problem.
           type: string
@@ -6845,6 +6847,8 @@ components:
     EventDiagnose:
       type: object
       properties:
+        event:
+          $ref: '#/components/schemas/Event'
         code:
           description: Diagnosis code
           type: string

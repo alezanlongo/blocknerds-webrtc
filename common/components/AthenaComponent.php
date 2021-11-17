@@ -28,6 +28,8 @@ use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
 use common\components\Athena\models\Problem;
+use common\components\Athena\models\Event;
+use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\Readings;
@@ -1139,19 +1141,31 @@ class AthenaComponent extends Component
      */
     public function createProblem($problem, $patient)
     {
-        $problemModelApi =
+        $problemPostApi =
             $this->client->postPracticeidChartPatientidProblems(
                 $this->practiceid,
                 $patient->externalId,
                 $problem->toArray()
             );
-//var_dump(__METHOD__.__LINE__, $problemModelApi);die;
-
         //FIXME if($problemModelApi->success == true)
-        return $this->retrieveProblem(
-            $patient,
-            $problemModelApi->problemid
+
+        $problemGetApi = $this->client->getPracticeidChartPatientidProblems(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
         );
+        $result = ArrayHelper::index($problemGetApi->problems, 'problemid');
+        $problem = Problem::createFromApiObject($result[$problemPostApi->problemid]);
+        $problem->link('patient', $patient);
+        $problem->save();
+        foreach($result[$problemPostApi->problemid]->events as $eventApi) {
+//var_dump(__METHOD__.__LINE__,$eventApi);die;
+            $event = Event::createFromApiObject($eventApi);
+            $event->link('problem', $problem);
+            $event->save();
+        }
+
+        return $problem;
     }
 
     /**
@@ -1166,24 +1180,24 @@ class AthenaComponent extends Component
         );
 
         $result = ArrayHelper::index($problemModelApi->problems, 'problemid');
-//var_dump(__METHOD__.__LINE__, $result);die;
-
-        /*
-        foreach($problemModelApi->problems as $problemApi) {
-            if($problemApi->problemid == $problemId)
-                exit;
-        }//IMPROVEME https://www.yiiframework.com/doc/guide/2.0/en/helper-array#reindexing-arrays
-        */
 
         $problem = Problem::find()
             ->where(['externalId' => $problemId])
             ->one();
 
         if (!$problem) {
-            return Problem::createFromApiObject($result[$problemId]);
-        }
+            $problem = Problem::createFromApiObject($result[$problemId]);
+            foreach($result[$problemId]->events as $eventApi) {
+                $event = new Event($eventApi);
 
-        return $problem->loadApiObject($result[$problemId]);
+            }
+
+            return $problem;
+        } else {
+            $problem->loadApiObject($result[$problemId]);
+        }
+        
+        return $problem;
     }
 
     /**

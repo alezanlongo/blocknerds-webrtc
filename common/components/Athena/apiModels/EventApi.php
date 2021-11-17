@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property Problem $problem
  * @property string $createdby The name of the user who entered this problem.
  * @property string $createddate The date that the user entered this problem.
  * @property EventDiagnose[] $diagnoses List of encounter diagnoses that triggered this problem.
@@ -24,6 +25,7 @@ use common\models\ApiModel as BaseApiModel;
 class EventApi extends BaseApiModel
 {
 
+    public $problem;
     public $createdby;
     public $createddate;
     public $diagnoses;
