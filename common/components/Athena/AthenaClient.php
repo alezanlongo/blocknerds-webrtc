@@ -1378,4 +1378,45 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param appointmentid
+     * @return AppointmentNote
+     */
+    public function getPracticeidAppointmentsAppointmentidNotes($practiceid, $appointmentid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/appointments/{appointmentid}/notes';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{appointmentid}', $appointmentid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['notes'])) ? $dataResponse['data']['notes'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\AppointmentNoteApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param appointmentid
+     * @return PostAppointmentNote200Response
+     */
+    public function postPracticeidAppointmentsAppointmentidNotes($practiceid, $appointmentid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/appointments/{appointmentid}/notes';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{appointmentid}', $appointmentid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PostAppointmentNote200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }

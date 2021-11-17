@@ -5,14 +5,15 @@ use Yii;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\EncounterApi;
+use common\components\Athena\apiModels\FamilyHistoryApi;
 use common\components\Athena\apiModels\MedicationApi;
 use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\apiModels\PatientCaseApi;
 use common\components\Athena\apiModels\ProblemApi;
 use common\components\Athena\apiModels\VaccineApi;
-use common\components\Athena\apiModels\FamilyHistoryApi;
 use common\components\Athena\models\ActionNote;
 use common\components\Athena\models\Appointment;
+use common\components\Athena\models\AppointmentNote;
 use common\components\Athena\models\ChartAlert;
 use common\components\Athena\models\Checkin;
 use common\components\Athena\models\ClinicalDocument;
@@ -21,6 +22,7 @@ use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Encounter;
 use common\components\Athena\models\EncounterVitals;
+use common\components\Athena\models\FamilyHistory;
 use common\components\Athena\models\Medication;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
@@ -35,7 +37,6 @@ use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
-use common\components\Athena\models\FamilyHistory;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -1069,6 +1070,36 @@ class AthenaComponent extends Component
 
         return $changedFamilyHistoryResult;
 
+    }
+
+    /**
+     * @return Patient
+     */
+
+    public function addAppointmentNote($appointment, $appointmentNote)
+    {
+        $appointmentNoteModelApi =
+            $this->client->postPracticeidAppointmentsAppointmentidNotes(
+                $this->practiceid,
+                $appointment->externalId,
+                $appointmentNote->toArray()
+            );
+
+        return $this->retrieveLastCreatedAppointmentNote(
+            $appointment->externalId
+        );
+    }
+
+    public function retrieveLastCreatedAppointmentNote($appointmentId)
+    {
+        $appointmentNotesModelsApi = $this->client->getPracticeidAppointmentsAppointmentidNotes(
+            $this->practiceid,
+            $appointmentId
+        );
+
+        return AppointmentNote::createFromApiObject(
+            end($appointmentNotesModelsApi)
+        );
     }
 
     /* ================================= Begin  Protected methods ============================================== */

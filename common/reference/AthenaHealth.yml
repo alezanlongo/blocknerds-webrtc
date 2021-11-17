@@ -3596,6 +3596,94 @@ paths:
         required: true
       tags:
         - Medication
+  /v1/{practiceid}/appointments/{appointmentid}/notes:
+    post:
+      summary: Create appointment note
+      description: Creates a note for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAppointmentNote200Response'
+          description: Success
+      operationId: postPracticeidAppointmentsAppointmentidNotes
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestAppointmentNote'
+        required: true
+      tags:
+        - Appointment Notes
+    get:
+      summary: Get all appointment notes
+      description: Retrieves note details for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, we prevent deleted appointment notes from being returned
+            via the API.   This flag allows you to show deleted notes in the set
+            of results returned.
+          in: query
+          name: showdeleted
+          required: false
+          schema:
+            type: boolean
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppointmentNote'
+          description: Success
+      operationId: getPracticeidAppointmentsAppointmentidNotes
+      tags:
+        - Appointment Notes
 components:
   schemas:
     Patient:
@@ -7930,3 +8018,61 @@ components:
             - false
             - true
           type: string
+    RequestAppointmentNote:
+      properties:
+        displayonschedule:
+          description: Add appointment note to homepage display (defaults to false)
+          type: boolean
+        notetext:
+          description: The note text.
+          type: string
+      required:
+        - notetext
+      type: object
+    PostAppointmentNote200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful
+          type: string
+    AppointmentNote:
+      type: object
+      x-external-id: noteid
+      properties:
+        created:
+          description: The time this note was created (mm/dd/yyyy hh24:mi:ss)
+          type: string
+        createdby:
+          description: The user that created this note.
+          type: string
+        deleted:
+          description: >-
+            The time this note was deleted (mm/dd/yyyy hh24:mi:ss).
+            Not present if not deleted.
+          type: string
+        deletedby:
+          description: If deleted, the username who deleted this note.
+          type: string
+        displayonschedule:
+          description: >-
+            Determines if an appointment note displays on the homepage
+            schedule view.
+          type: string
+        lastmodified:
+          description: >-
+            The time this note was updated (mm/dd/yyyy hh24:mi:ss), if
+            the note has been updated.
+          type: string
+        lastmodifiedby:
+          description: >-
+            If the note has been modified, the username who last
+            modified this note.
+          type: string
+        noteid:
+          description: The ID for this note, for use with DELETE and PUT calls.
+          type: string
+        notetext:
+          description: The text of the note itself.
+          type: string
+        put_appointment200_response:
+          $ref: '#/components/schemas/PutAppointment200Response'
