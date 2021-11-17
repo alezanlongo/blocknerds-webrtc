@@ -53,7 +53,7 @@ if (Yii::$app->controller->action->id === 'login') {
       []
     ) ?>
 
-    <div class="wrapper position-relative" id="main-wrapper">
+    <div class="wrapper position-relative w-100 h-100" id="main-wrapper">
 
       <?= $this->render(
         'header.php',
