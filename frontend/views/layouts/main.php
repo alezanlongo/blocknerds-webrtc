@@ -41,12 +41,12 @@ if (Yii::$app->controller->action->id === 'login') {
         right: 0;
       }
 
-      .main-footer {
+      /* .main-footer {
         position: fixed;
         z-index: 999;
         bottom: 0;
         width: 100%;
-      }
+      } */
     </style>
   </head>
 
