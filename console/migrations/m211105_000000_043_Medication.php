@@ -39,9 +39,19 @@ class m211105_000000_043_Medication extends \yii\db\Migration
             'stopreason' => $this->string(),
             'therapeuticclass' => $this->string(),
             'unstructuredsig' => $this->string(),
+            'patient_id' => $this->integer(),
             'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
+
+        $this->addForeignKey(
+            'fk-patient-patient_id',
+            '{{%medications}}',
+            'patient_id',
+            'patients',
+            'id',
+            'CASCADE'
+        );
 
     }
 

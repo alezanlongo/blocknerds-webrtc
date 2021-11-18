@@ -974,6 +974,72 @@ class AthenaComponent extends Component
         return $changedVaccinesResult;
     }
 
+
+    public function createMedication($patient, $medication)
+    {
+        $medicationModelApi =
+            $this->client->postPracticeidChartPatientidMedications(
+                $this->practiceid,
+                $patient->externalId,
+                $medication->toArray()
+            );
+
+        return $this->retrieveMedication(
+            $patient,
+            $medicationModelApi->medicationentryid,
+            $medication->toArray()['medicationid']
+        );
+    }
+
+    public function retrieveMedication($patient, $medicationentryid, $medicationid)
+    {
+        $medicationModelApi = $this->client->getPracticeidChartPatientidMedications(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
+        );
+
+        $medicationByMedicationId = array_filter($medicationModelApi->medications,function($m)use($medicationid){
+                return $m[0]['medicationid'] == $medicationid;
+        });
+
+        $medication = array_filter(end($medicationByMedicationId),function($m)use($medicationentryid){
+                return $m['medicationentryid'] == $medicationentryid;
+        });
+
+        $medicationModel = Medication::find()
+            ->where(['externalId' => $medicationentryid])
+            ->one();
+
+        if (!$medicationModel) {
+            return Medication::createFromApiObject(end($medication));
+        }
+
+        return $medicationModel->loadApiObject(end($medication));
+    }
+
+    /**
+     * @return Medication
+     */
+
+    public function updateMedication($medication, $updateMedication)
+    {
+
+        $this->client->putPracticeidChartPatientidMedicationsMedicationentryid(
+            $this->practiceid,
+            $medication->medicationentryid,
+            $medication->patient->externalId,
+            $updateMedication->toArray()
+        );
+
+        return $this->retrieveMedication(
+            $medication->patient,
+            $medication->medicationentryid,
+            $medication->medicationid
+        );
+
+    }
+
     public function retrieveFamilyHealthHistorySubscriptionStatus()
     {
         $subscriptionStatusApi = $this->client->getPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($this->practiceid);
@@ -1005,6 +1071,7 @@ class AthenaComponent extends Component
         }
 
         return $changedFamilyHistoryResult;
+
     }
 
     /* ================================= Begin  Protected methods ============================================== */

@@ -83,4 +83,14 @@ class UserProfile extends \yii\db\ActiveRecord
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
+
+    /**
+     * Gets query for [[Sets]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSets()
+    {
+        return $this->hasMany(Set::class, ['profile_id' => 'id']);
+    }
 }

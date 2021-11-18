@@ -22,14 +22,14 @@ AdminLteAsset::register($this);
     <?php $this->head() ?>
 </head>
 
-<body class="login-page dark-mode">
+<body class="login-page dark-mode w-100 h-100">
     <?php $this->beginBody() ?>
 
-    <div class="login-box w-50">
-        <?= Alert::widget(); ?>
+    <!-- <div class="login-box w-50"> -->
+        <!-- <?= Alert::widget(); ?> -->
 
         <?= $content ?>
-    </div>
+    <!-- </div> -->
 
     <?php $this->endBody() ?>
 </body>
