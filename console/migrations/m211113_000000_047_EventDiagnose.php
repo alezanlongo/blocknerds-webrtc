@@ -3,11 +3,12 @@
 /**
  * Table for EventDiagnose
  */
-class m211105_000000_047_EventDiagnose extends \yii\db\Migration
+class m211113_000000_047_EventDiagnose extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%event_diagnoses}}', [
+            'event_id' => $this->integer(),
             'code' => $this->string(),
             'codeset' => $this->string(),
             'name' => $this->string(),
@@ -15,6 +16,14 @@ class m211105_000000_047_EventDiagnose extends \yii\db\Migration
             'id' => $this->primaryKey(),
         ]);
 
+        $this->addForeignKey(
+            'fk-event-event_id',
+            '{{%event_diagnoses}}',
+            'event_id',
+            'events',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()

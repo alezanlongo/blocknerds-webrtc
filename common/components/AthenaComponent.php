@@ -2,6 +2,7 @@
 namespace common\components;
 
 use Yii;
+use Yii\helpers\ArrayHelper;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\AppointmentNoteApi;
@@ -30,6 +31,8 @@ use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
 use common\components\Athena\models\Problem;
+use common\components\Athena\models\Event;
+use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\Readings;
@@ -1273,4 +1276,88 @@ class AthenaComponent extends Component
         return $dataSession['access_token'];
     }
     /* =================================== End  Protected methods ============================================== */
+
+    /**
+     * @return Problem
+     */
+    public function createProblem($problem, $patient)
+    {
+        $problemPostApi =
+            $this->client->postPracticeidChartPatientidProblems(
+                $this->practiceid,
+                $patient->externalId,
+                $problem->toArray()
+            );
+        //FIXME if($problemModelApi->success == true)
+
+        $problemGetApi = $this->client->getPracticeidChartPatientidProblems(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
+        );
+        $result = ArrayHelper::index($problemGetApi->problems, 'problemid');
+        $problem = Problem::createFromApiObject($result[$problemPostApi->problemid]);
+        $problem->link('patient', $patient);
+        $problem->save();
+        foreach($result[$problemPostApi->problemid]->events as $eventApi) {
+//var_dump(__METHOD__.__LINE__,$eventApi);die;
+            $event = Event::createFromApiObject($eventApi);
+            $event->link('problem', $problem);
+            $event->save();
+        }
+
+        return $problem;
+    }
+
+    /**
+     * @return Problem
+     */
+    public function retrieveProblem($patient, $problemId)
+    {
+        $problemModelApi = $this->client->getPracticeidChartPatientidProblems(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
+        );
+
+        $result = ArrayHelper::index($problemModelApi->problems, 'problemid');
+
+        $problem = Problem::find()
+            ->where(['externalId' => $problemId])
+            ->one();
+
+        if (!$problem) {
+            $problem = Problem::createFromApiObject($result[$problemId]);
+            foreach($result[$problemId]->events as $eventApi) {
+                $event = new Event($eventApi);
+
+            }
+
+            return $problem;
+        } else {
+            $problem->loadApiObject($result[$problemId]);
+        }
+        
+        return $problem;
+    }
+
+    /**
+     * @return Problem
+     */
+    public function updateProblem($problem, $updateProblem)
+    {
+        $problemModelApi =
+            $this->client->putPracticeidChartPatientidProblemsProblemid(
+                $problem->externalId,
+                $this->practiceid,
+                $problem->patientid,
+                $updateProblem->toArray()
+            );
+
+        return $this->retrievePatientCase(
+            $problem->patientid,
+            $problemModelApi->patientcaseid
+        );
+    }
+
 }

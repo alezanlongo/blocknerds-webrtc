@@ -3,11 +3,12 @@
 /**
  * Table for Event
  */
-class m211105_000000_046_Event extends \yii\db\Migration
+class m211113_000000_046_Event extends \yii\db\Migration
 {
     public function up()
     {
         $this->createTable('{{%events}}', [
+            'problem_id' => $this->integer(),
             'createdby' => $this->string(),
             'createddate' => $this->string(),
             'encounterdate' => $this->string(),
@@ -23,6 +24,14 @@ class m211105_000000_046_Event extends \yii\db\Migration
             'id' => $this->primaryKey(),
         ]);
 
+        $this->addForeignKey(
+            'fk-problem-problem_id',
+            '{{%events}}',
+            'problem_id',
+            'problems',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()

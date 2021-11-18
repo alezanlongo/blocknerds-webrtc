@@ -5,6 +5,8 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property integer $patient_id
+ * @property Patient $patient
  * @property string $bestmatchicd10code If this was added from the chart or from an encounter without a selected ICD10 code, and if the primary codeset is SNOMED, then this contains the best matching ICD10 code mapped. Because SNOMED to ICD10 is a many to many map, this will tend to give the most generic diagnosis.
  * @property string $code Problem code
  * @property string $codeset Problem codeset (SNOMED, ICD9, ICD10, etc)
@@ -34,9 +36,14 @@ class Problem extends \yii\db\ActiveRecord
         return [
             [['bestmatchicd10code', 'code', 'codeset', 'deactivateddate', 'deactivateduser', 'lastmodifiedby', 'lastmodifieddatetime', 'mostrecentdiagnosisnote', 'name'], 'trim'],
             [['bestmatchicd10code', 'code', 'codeset', 'deactivateddate', 'deactivateduser', 'lastmodifiedby', 'lastmodifieddatetime', 'mostrecentdiagnosisnote', 'name'], 'string'],
-            [['problemid', 'externalId', 'id'], 'integer'],
+            [['patient_id', 'problemid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getPatient()
+    {
+        return $this->hasOne(Patient::class, ['id' => 'patient_id']);
     }
 
     public function getEvents()
@@ -49,6 +56,12 @@ class Problem extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($patient_id = ArrayHelper::getValue($apiObject, 'patient_id')) {
+            $this->patient_id = $patient_id;
+        }
+        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
+            $this->patient = $patient;
+        }
         if($bestmatchicd10code = ArrayHelper::getValue($apiObject, 'bestmatchicd10code')) {
             $this->bestmatchicd10code = $bestmatchicd10code;
         }
@@ -81,6 +94,9 @@ class Problem extends \yii\db\ActiveRecord
         }
         if($problemid = ArrayHelper::getValue($apiObject, 'problemid')) {
             $this->problemid = $problemid;
+        }
+        if($problemid = ArrayHelper::getValue($apiObject, 'problemid')) {
+            $this->externalId = $problemid;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;

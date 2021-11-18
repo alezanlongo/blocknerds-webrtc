@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property Event $event
  * @property string $code Diagnosis code
  * @property string $codeset Diagnosis codeset (SNOMED, ICD9, ICD10, etc)
  * @property string $name Diagnosis name. Might be different than problem name.
@@ -15,6 +16,7 @@ use common\models\ApiModel as BaseApiModel;
 class EventDiagnoseApi extends BaseApiModel
 {
 
+    public $event;
     public $code;
     public $codeset;
     public $name;

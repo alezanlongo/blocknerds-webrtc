@@ -5,6 +5,8 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property integer $problem_id
+ * @property Problem $problem
  * @property string $createdby The name of the user who entered this problem.
  * @property string $createddate The date that the user entered this problem.
  * @property EventDiagnose[] $diagnoses List of encounter diagnoses that triggered this problem.
@@ -35,9 +37,14 @@ class Event extends \yii\db\ActiveRecord
         return [
             [['createdby', 'createddate', 'encounterdate', 'enddate', 'eventtype', 'laterality', 'note', 'onsetdate', 'source', 'startdate', 'status'], 'trim'],
             [['createdby', 'createddate', 'encounterdate', 'enddate', 'eventtype', 'laterality', 'note', 'onsetdate', 'source', 'startdate', 'status'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['problem_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getProblem()
+    {
+        return $this->hasOne(Problem::class, ['id' => 'problem_id']);
     }
 
     public function getDiagnoses()
@@ -50,6 +57,12 @@ class Event extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($problem_id = ArrayHelper::getValue($apiObject, 'problem_id')) {
+            $this->problem_id = $problem_id;
+        }
+        if($problem = ArrayHelper::getValue($apiObject, 'problem')) {
+            $this->problem = $problem;
+        }
         if($createdby = ArrayHelper::getValue($apiObject, 'createdby')) {
             $this->createdby = $createdby;
         }
