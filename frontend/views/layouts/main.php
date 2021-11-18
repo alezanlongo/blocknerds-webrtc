@@ -11,24 +11,27 @@ use yii\web\View;
 /** @var string $content */
 
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
-if (Yii::$app->controller->action->id === 'login') {
-  echo $this->render(
-    'main-login',
-    ['content' => $content]
-  );
-} else {
 
   AppAsset::register($this);
   $this->registerAssetBundle(MqttAsset::class);
   AdminLteAsset::register($this);
   MasonryAsset::register($this);
+
+  $this->registerJs("var myOffcanvas = document.getElementById('offcanvasMainMenu')
+  myOffcanvas.addEventListener('show.bs.offcanvas', function () {
+    myOffcanvas.classList.remove('d-none')
+  })
+  myOffcanvas.addEventListener('hide.bs.offcanvas', function () {
+    myOffcanvas.classList.add('d-none')
+  })
+  ", View::POS_READY);
 ?>
 
   <?php $this->beginPage() ?>
   <!DOCTYPE html>
-  <html lang="<?= Yii::$app->language ?>">
+  <html lang="<?= Yii::$app->language ?>" class="h-100">
 
-  <head>
+  <head >
     <meta charset="<?= Yii::$app->charset ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?= Html::csrfMetaTags() ?>
@@ -42,20 +45,17 @@ if (Yii::$app->controller->action->id === 'login') {
         top: 0;
         right: 0;
       }
-      #offcanvasMainMenu{
-        width: 0;
-      }
     </style>
   </head>
 
-  <body class="layout-fixed d-flex ">
+  <body class="d-flex min-h-100">
     <?php $this->beginBody() ?>
     <?= $this->render(
       'sidebarOffcanvas.php',
       []
     ) ?>
 
-    <div class="wrapper position-relative w-100 h-100" id="main-wrapper">
+    <div class="min-h-100 d-flex flex-column w-100" id="main-wrapper">
 
       <?= $this->render(
         'header.php',
@@ -67,43 +67,30 @@ if (Yii::$app->controller->action->id === 'login') {
         ['content' => $content]
       ) ?>
 
-      <?= $this->render(
-        'right.php',
-        []
-      ) ?>
       <?= Html::tag('div', '', ['class' => 'chat-zone d-flex justify-content-end']) ?>
-
     </div>
 
     <?php $this->endBody() ?>
     <script>
-      const myOffcanvasMenu = document.getElementById('offcanvasMainMenu')
-      const wrapperContainer = document.getElementById('main-wrapper')
-      // myOffcanvasMenu.style.width="0px"
-      
-      
-      myOffcanvasMenu.addEventListener('shown.bs.offcanvas', function() {
-        // wrapperContainer.style.marginLeft = `${myOffcanvasMenu.offsetWidth}px`
-      })
-      myOffcanvasMenu.addEventListener('hidden.bs.offcanvas', function() {
-        Object.assign(wrapperContainer.style, {transition: "0.3s ease-in-out", marginLeft: `0px`})
-        Object.assign(myOffcanvasMenu.style, {width: "0px"})
-
-      })
-      myOffcanvasMenu.addEventListener('show.bs.offcanvas', function() {
-        Object.assign(wrapperContainer.style, {transition: "0.3s ease-in-out",marginLeft: `${myOffcanvasMenu.offsetWidth}px`})
-        Object.assign(myOffcanvasMenu.style, {width: "400px"})
-       
-      })
-      myOffcanvasMenu.addEventListener('hide.bs.offcanvas', function() {
-       
-      })
-    
+      // const myOffcanvasMenu = document.getElementById('offcanvasMainMenu')
+      // const wrapperContainer = document.getElementById('main-wrapper')
+      // myOffcanvasMenu.addEventListener('shown.bs.offcanvas', function() {
+      //   // wrapperContainer.style.marginLeft = `${myOffcanvasMenu.offsetWidth}px`
+      // })
+      // myOffcanvasMenu.addEventListener('hidden.bs.offcanvas', function() {
+      //   Object.assign(wrapperContainer.style, {transition: "0.3s ease-in-out", marginLeft: `0px`})
+      //   Object.assign(myOffcanvasMenu.style, {width: "0px"})
+      // })
+      // myOffcanvasMenu.addEventListener('show.bs.offcanvas', function() {
+      //   Object.assign(wrapperContainer.style, {transition: "0.3s ease-in-out",marginLeft: `${myOffcanvasMenu.offsetWidth}px`})
+      //   Object.assign(myOffcanvasMenu.style, {width: "400px"})
+      // })
+      // myOffcanvasMenu.addEventListener('hide.bs.offcanvas', function() {
+      // })
     </script>
-    
+
   </body>
 
   <?php $this->endPage() ?>
 
   </html>
-<?php } ?>
