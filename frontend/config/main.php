@@ -37,6 +37,7 @@ return [
                     ],
                     'js' => [
                         'js/adminlte.js',
+                        // 'js/sidebarHandler.js',
                         'js/sidebar.js',
                         'lib/overlayscrollbars/js/jquery.overlayScrollbars.min.js',
                     ],

@@ -74,67 +74,67 @@
   
       var _proto = ControlSidebar.prototype;
   
-      _proto.collapse = function collapse() {
-        var _this = this;
+      // _proto.collapse = function collapse() {
+      //   var _this = this;
   
-        var $body = $__default['default']('body');
-        var $html = $__default['default']('html');
-        var target = this._config.target; // Show the control sidebar
+      //   var $body = $__default['default']('body');
+      //   var $html = $__default['default']('html');
+      //   var target = this._config.target; // Show the control sidebar
   
-        if (this._config.controlsidebarSlide) {
-          $html.addClass(CLASS_NAME_CONTROL_SIDEBAR_ANIMATE);
-          $body.removeClass(CLASS_NAME_CONTROL_SIDEBAR_SLIDE).delay(300).queue(function () {
-            $__default['default'](target).hide();
-            $html.removeClass(CLASS_NAME_CONTROL_SIDEBAR_ANIMATE);
-            $__default['default'](this).dequeue();
-          });
-        } else {
-          $body.removeClass(CLASS_NAME_CONTROL_SIDEBAR_OPEN$1);
-        }
+      //   if (this._config.controlsidebarSlide) {
+      //     $html.addClass(CLASS_NAME_CONTROL_SIDEBAR_ANIMATE);
+      //     $body.removeClass(CLASS_NAME_CONTROL_SIDEBAR_SLIDE).delay(300).queue(function () {
+      //       $__default['default'](target).hide();
+      //       $html.removeClass(CLASS_NAME_CONTROL_SIDEBAR_ANIMATE);
+      //       $__default['default'](this).dequeue();
+      //     });
+      //   } else {
+      //     $body.removeClass(CLASS_NAME_CONTROL_SIDEBAR_OPEN$1);
+      //   }
   
-        $__default['default'](this._element).trigger($__default['default'].Event(EVENT_COLLAPSED$3));
-        setTimeout(function () {
-          $__default['default'](_this._element).trigger($__default['default'].Event(EVENT_COLLAPSED_DONE$1));
-        }, this._config.animationSpeed);
-      };
+      //   $__default['default'](this._element).trigger($__default['default'].Event(EVENT_COLLAPSED$3));
+      //   setTimeout(function () {
+      //     $__default['default'](_this._element).trigger($__default['default'].Event(EVENT_COLLAPSED_DONE$1));
+      //   }, this._config.animationSpeed);
+      // };
   
-      _proto.show = function show() {
-        var $body = $__default['default']('body');
-        var $html = $__default['default']('html'); // Collapse the control sidebar
+      // _proto.show = function show() {
+      //   var $body = $__default['default']('body');
+      //   var $html = $__default['default']('html'); // Collapse the control sidebar
   
-        if (this._config.controlsidebarSlide) {
-          $html.addClass(CLASS_NAME_CONTROL_SIDEBAR_ANIMATE);
-          $__default['default'](this._config.target).show().delay(10).queue(function () {
-            $body.addClass(CLASS_NAME_CONTROL_SIDEBAR_SLIDE).delay(300).queue(function () {
-              $html.removeClass(CLASS_NAME_CONTROL_SIDEBAR_ANIMATE);
-              $__default['default'](this).dequeue();
-            });
-            $__default['default'](this).dequeue();
-          });
-        } else {
-          $body.addClass(CLASS_NAME_CONTROL_SIDEBAR_OPEN$1);
-        }
+      //   if (this._config.controlsidebarSlide) {
+      //     $html.addClass(CLASS_NAME_CONTROL_SIDEBAR_ANIMATE);
+      //     $__default['default'](this._config.target).show().delay(10).queue(function () {
+      //       $body.addClass(CLASS_NAME_CONTROL_SIDEBAR_SLIDE).delay(300).queue(function () {
+      //         $html.removeClass(CLASS_NAME_CONTROL_SIDEBAR_ANIMATE);
+      //         $__default['default'](this).dequeue();
+      //       });
+      //       $__default['default'](this).dequeue();
+      //     });
+      //   } else {
+      //     $body.addClass(CLASS_NAME_CONTROL_SIDEBAR_OPEN$1);
+      //   }
   
-        this._fixHeight();
+      //   this._fixHeight();
   
-        this._fixScrollHeight();
+      //   this._fixScrollHeight();
   
-        $__default['default'](this._element).trigger($__default['default'].Event(EVENT_EXPANDED$2));
-      };
+      //   $__default['default'](this._element).trigger($__default['default'].Event(EVENT_EXPANDED$2));
+      // };
   
-      _proto.toggle = function toggle() {
-        var $body = $__default['default']('body');
-        var shouldClose = $body.hasClass(CLASS_NAME_CONTROL_SIDEBAR_OPEN$1) || $body.hasClass(CLASS_NAME_CONTROL_SIDEBAR_SLIDE);
+      // _proto.toggle = function toggle() {
+      //   var $body = $__default['default']('body');
+      //   var shouldClose = $body.hasClass(CLASS_NAME_CONTROL_SIDEBAR_OPEN$1) || $body.hasClass(CLASS_NAME_CONTROL_SIDEBAR_SLIDE);
   
-        if (shouldClose) {
-          // Close the control sidebar
-          this.collapse();
-        } else {
-          // Open the control sidebar
-          this.show();
-        }
-      } // Private
-      ;
+      //   if (shouldClose) {
+      //     // Close the control sidebar
+      //     this.collapse();
+      //   } else {
+      //     // Open the control sidebar
+      //     this.show();
+      //   }
+      // } // Private
+      // ;
   
       _proto._init = function _init() {
         var _this2 = this;

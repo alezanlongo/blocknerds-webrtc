@@ -18,9 +18,7 @@ if ($image === null) {
       <!-- Left side -->
       <ul class="navbar-nav">
         <li class="nav-item">
-          <button class="btn btn-defautl" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMainMenu" aria-controls="offcanvasMainMenu"> <i class="fas fa-bars"></i></button>
-          <!-- <a class="btn btn-primary" data-bs-toggle="offcanvas" href="#offcanvasMainMenu" aria-controls="offcanvasMainMenu">
-       <i class="fas fa-bars"></i></a> -->
+          <a class="nav-link " id="btn-toggle-sidebar" data-toggle="control-sidebar" data-lte-toggle="sidebar-full" href="#" role="button" ><i class="fas fa-bars"></i></a>
         </li>
       </ul>
       <!-- Right side -->

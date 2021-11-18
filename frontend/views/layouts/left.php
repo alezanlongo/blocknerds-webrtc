@@ -86,7 +86,7 @@ $this->registerJsVar('myToken', md5($profileId), View::POS_END);
 
 ?>
 
-<aside class="main-sidebar sidebar-bg-dark sidebar-color-primary shadow">
+<aside class="main-sidebar sidebar-bg-dark sidebar-color-primary shadow d-block" id="sidebarMenu">
   <div class="brand-container">
     <?= Html::a('<img class="brand-image img-circle elevation-3 opacity-80 shadow" href="javascript:;" src="' . ('/img/AdminLTELogo.png') . '" alt="APP"><span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
     <a class="pushmenu mx-1" data-lte-toggle="sidebar-mini" href="javascript:;" role="button"><i class="fas fa-angle-double-left"></i></a>
