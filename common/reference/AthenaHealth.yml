@@ -24,7 +24,9 @@ paths:
         - Patient
       summary: Create a register of a new Patient
       operationId: postPracticeidPatients
-      description: By passing in the appropriate options, you can search for available inventory in the system
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
       parameters:
         - description: practiceid
           in: path
@@ -3247,6 +3249,664 @@ paths:
       operationId: getPracticeidChartHealthhistoryVaccineChanged
       tags:
         - Vaccines
+  /v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription:
+    post:
+      summary: Subscribe to all/specific change events for family history
+      description: Subscribes for changed familyhistory events
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: postPracticeidChartHealthhistoryFamilyhistoryChangedSubscription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                eventname:
+                  description: >-
+                    By default, you are subscribed to all possible events.  If
+                    you only wish to subscribe to an individual event, pass the
+                    event name with this argument.
+                  type: string
+              type: object
+        required: true
+      tags:
+        - Family History
+    get:
+      summary: Get list of family history change subscription(s)
+      description: Retrieves list of events applicable for family history
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryFamilyhistoryChangedSubscription
+      tags:
+        - Family History
+    delete:
+      summary: Unsubscribe to all/specific change events for family history
+      description: Delete an specific event which is no longer required
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, you are unsubscribed from all possible events.  If you
+            only wish to unsubscribe from an individual event, pass the event
+            name with this argument.
+          in: query
+          name: eventname
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangedSubscription200Response'
+          description: Success
+      operationId: deletePracticeidChartHealthhistoryFamilyhistoryChangedSubscription
+      tags:
+        - Family History
+  /v1/{practiceid}/chart/healthhistory/familyhistory/changed:
+    get:
+      summary: Get list of changes in family history based on subscribed events
+      description: Retrieves list of records of modified family history data
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: For testing purposes, do not mark records as processed
+          in: query
+          name: leaveunprocessed
+          required: false
+          schema:
+            type: boolean
+        - description: See showprocessedstartdatetime
+          in: query
+          name: showprocessedenddatetime
+          required: false
+          schema:
+            type: string
+        - description: >-
+            Show already processed changes.  This will show changes that you
+            previously retrieved at some point after this datetime mm/dd/yyyy
+            hh24:mi:ss (Eastern). Can be used to refetch data if there was an
+            error, such as a timeout, and records are marked as already
+            retrieved. This is intended to be used with showprocessedenddatetime
+            and for a short period of time only. Also note that all messages
+            will eventually be deleted.
+          in: query
+          name: showprocessedstartdatetime
+          required: false
+          schema:
+            type: string
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyHistoryChanged'
+          description: Success
+      operationId: getPracticeidChartHealthhistoryFamilyhistoryChanged
+      tags:
+        - Family History
+  /v1/{practiceid}/chart/{patientid}/medications:
+    post:
+      summary: Add medication to patient's medication list
+      description: Add a new medication to the patient's medication list
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostMedication200Response'
+          description: Success
+      operationId: postPracticeidChartPatientidMedications
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateMedication'
+        required: true
+      tags:
+        - Medication
+    get:
+      summary: Get patient's medication list
+      description: Retrieves list of patient's medication and medication details
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            Include pending medications associated with approved future orders.
+            These medications have not yet been submitted.
+          in: query
+          name: showpend
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Shows the list of RxNorm Identifiers related to the medication. The
+            list may contain both branded and generic identifiers. Note: Not All
+            medications would include RX Norm.
+          in: query
+          name: showrxnorm
+          required: false
+          schema:
+            type: boolean
+        - description: The athenanet department ID
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            Historical or Active or Denied. Will return a list of a patient's
+            active or historical or denied medications.
+          in: query
+          name: medicationtype
+          required: false
+          schema:
+            enum:
+              - ACTIVE
+              - DENIED
+              - HISTORICAL
+            type: string
+            x-enumDescriptions:
+              - Active
+              - Denied
+              - Historical
+        - description: Shows the list of NDC numbers related to the medication.
+          in: query
+          name: showndc
+          required: false
+          schema:
+            type: boolean
+        - description: User name of the patient in the third party application.
+          in: query
+          name: THIRDPARTYUSERNAME
+          required: false
+          schema:
+            type: string
+        - description: >-
+            When 'true' is passed we will collect relevant data and store in our
+            database.
+          in: query
+          name: PATIENTFACINGCALL
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListMedications'
+          description: Success
+      operationId: getPracticeidChartPatientidMedications
+      tags:
+        - Medication
+  /v1/{practiceid}/reference/medications:
+    get:
+      summary: Search for available medications
+      description: Retrieves a list of medications for a given search parameters
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationReference'
+          description: Success
+      operationId: getPracticeidReferenceMedications
+      tags:
+        - Medication
+  /v1/{practiceid}/chart/{patientid}/medications/{medicationentryid}:
+    put:
+      summary: Update patient's medication list
+      description: >-
+        Modifies the properties of a given medication. E.g. reason to stop
+        having the medication, etc.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: medicationentryid
+          in: path
+          name: medicationentryid
+          required: true
+          schema:
+            type: string
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutMedication200Response'
+          description: Success
+      operationId: putPracticeidChartPatientidMedicationsMedicationentryid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateMedication'
+        required: true
+      tags:
+        - Medication
+  /v1/{practiceid}/appointments/{appointmentid}/notes:
+    post:
+      summary: Create appointment note
+      description: Creates a note for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAppointmentNote200Response'
+          description: Success
+      operationId: postPracticeidAppointmentsAppointmentidNotes
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestAppointmentNote'
+        required: true
+      tags:
+        - Appointment Notes
+    get:
+      summary: Get all appointment notes
+      description: Retrieves note details for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, we prevent deleted appointment notes from being returned
+            via the API.   This flag allows you to show deleted notes in the set
+            of results returned.
+          in: query
+          name: showdeleted
+          required: false
+          schema:
+            type: boolean
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppointmentNote'
+          description: Success
+      operationId: getPracticeidAppointmentsAppointmentidNotes
+      tags:
+        - Appointment Notes
+  /v1/{practiceid}/appointments/{appointmentid}/notes/{noteid}:
+    put:
+      summary: Update appointment note
+      description: Modifies the note details for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: noteid
+          in: path
+          name: noteid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutAppointmentNote200Response'
+          description: Success
+      operationId: putPracticeidAppointmentsAppointmentidNotesNoteid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateAppointmentNote'
+        required: true
+      tags:
+        - Appointment Notes
+  /v1/{practiceid}/chart/{patientid}/problems:
+    post:
+      summary: Add problem to patient's problem list
+      description: Records a problem in the patient's active problem list
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostProblem200Response'
+          description: Success
+      operationId: postPracticeidChartPatientidProblems
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateProblem'
+        required: true
+      tags:
+        - Problems
+    get:
+      summary: Get patient's problem list
+      description: Retrieves patient's active problems list
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Also show inactive (but not soft deleted) problems.
+          in: query
+          name: showinactive
+          required: false
+          schema:
+            type: boolean
+        - description: The athenaNet department id.
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            If true, will include every encounter and associated diagnosis with
+            each problem. Also fills the bestmatchicd10code field with the best
+            conversion from the problem SNOMED code to ICD10 code if there is no
+            user-selected ICD10 code in an encounter diagnosis event. Please
+            note that the bestmatchicd10code may not always be accurate.
+          in: query
+          name: showdiagnosisinfo
+          required: false
+          schema:
+            type: boolean
+        - description: User name of the patient in the third party application.
+          in: query
+          name: THIRDPARTYUSERNAME
+          required: false
+          schema:
+            type: string
+        - description: >-
+            When 'true' is passed we will collect relevant data and store in our
+            database.
+          in: query
+          name: PATIENTFACINGCALL
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProblem200Response'
+          description: Success
+      operationId: getPracticeidChartPatientidProblems
+      tags:
+        - Problems
+  /v1/{practiceid}/chart/{patientid}/problems/{problemid}:
+    put:
+      summary: Update patient's problem details
+      description: Modify the information of a specific patient's problem
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: problemid
+          in: path
+          name: problemid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostProblem200Response'
+          description: Success
+      operationId: putPracticeidChartPatientidProblemsProblemid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                departmentid:
+                  description: The athenaNet department id.
+                  type: integer
+                laterality:
+                  description: >-
+                    Update the laterality of this problem. Can be null, LEFT,
+                    RIGHT, or BILATERAL.
+                  enum:
+                    - ''
+                    - LEFT
+                    - RIGHT
+                    - BILATERAL
+                  type: string
+                note:
+                  description: The note to be attached to this problem.
+                  type: string
+                startdate:
+                  description: >-
+                    The onset date to be updated for this problem in MM/DD/YYYY
+                    format.
+                  type: string
+                status:
+                  description: Whether the problem is chronic or acute.
+                  enum:
+                    - ''
+                    - CHRONIC
+                    - ACUTE
+                  type: string
+              required:
+                - departmentid
+              type: object
+        required: true
+      tags:
+        - Problems
   /v1/{practiceid}/patients/{patientid}/documents/labresult:
     get:
       summary: Get list of patient's lab result documents
@@ -6948,6 +7608,8 @@ components:
             is a structured sig, this will contain the formatted
             version of that sig.
           type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
     ProblemChanged:
       type: object
       properties:
@@ -6959,7 +7621,10 @@ components:
           type: integer
     Problem:
       type: object
+      x-external-id: problemid
       properties:
+        patient:
+          $ref: '#/components/schemas/Patient'
         bestmatchicd10code:
           description: >-
             If this was added from the chart or from an
@@ -7012,6 +7677,8 @@ components:
     Event:
       type: object
       properties:
+        problem:
+          $ref: '#/components/schemas/Problem'
         createdby:
           description: The name of the user who entered this problem.
           type: string
@@ -7072,6 +7739,8 @@ components:
     EventDiagnose:
       type: object
       properties:
+        event:
+          $ref: '#/components/schemas/Event'
         code:
           description: Diagnosis code
           type: string
@@ -7880,6 +8549,431 @@ components:
             $ref: '#/components/schemas/Vaccine'
         totalcount:
           type: integer
+    FamilyHistory:
+      x-external-id: problemid
+      type: object
+      properties:
+        description:
+          description: Brief description for this code/problem
+          type: string
+        diedofage:
+          description: Age when the patient died, if this problem was the cause
+          type: integer
+        note:
+          description: Additional note for this problem
+          type: string
+        onsetage:
+          description: Age when this problem first occured
+          type: integer
+        patientid:
+          description: >-
+            The athenanet patient ID associated with this family
+            problem.
+          type: integer
+        problemid:
+          description: Athena ID for this problem
+          type: integer
+        relation:
+          description: Relationship to the patient
+          type: string
+        relationkeyid:
+          description: >-
+            ID of the relationship (for example, having 2 brothers,
+            one would have ID of 1, another would have ID of 2)
+          type: integer
+        resolvedage:
+          description: Age when the problem was resolved, if applicable
+          type: integer
+        snomedcode:
+          description: SNOMED code for this diagnosis
+          type: integer
+    FamilyHistoryChanged:
+      type: object
+      properties:
+        problems:
+          type: array
+          items:
+            $ref: '#/components/schemas/FamilyHistory'
+        totalcount:
+          type: integer
+    RequestCreateMedication:
+      properties:
+        PATIENTFACINGCALL:
+          description: >-
+            When 'true' is passed we will collect relevant data and
+            store in our database.
+          type: boolean
+        THIRDPARTYUSERNAME:
+          description: User name of the patient in the third party application.
+          type: string
+        departmentid:
+          description: The athenanet department ID
+          type: integer
+        hidden:
+          description: Set whether the medication is hidden in the UI.
+          type: boolean
+        medicationid:
+          description: The athena medication ID
+          type: integer
+        patientnote:
+          description: A patient-facing note
+          type: string
+        providernote:
+          description: An internal note
+          type: string
+        startdate:
+          description: Start date for this medication
+          type: string
+        stopdate:
+          description: Stop date for this medication
+          type: string
+        stopreason:
+          description: >-
+            The reason the medication was stopped. If set, it it
+            recommended but not required that a stop date is also set.
+          type: string
+        unstructuredsig:
+          description: >-
+            Can only be used to update historical (entered, downloaded,
+            etc) medications. Will override a structured sig if there is
+            one.
+          type: string
+      required:
+        - medicationid
+        - departmentid
+      type: object
+    PostMedication200Response:
+      x-external-id: medicationentryid
+      type: object
+      properties:
+        errormessage:
+          description: >-
+            If the operation failed, this will contain any error
+            messages.
+          type: string
+        medicationentryid:
+          description: >-
+            If successful, the athena ID of the newly created
+            historical medication
+          type: string
+        success:
+          description: Whether the operation was successful or not.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    ListMedications:
+      type: object
+      properties:
+        lastdownloaddenialreason:
+          description: >-
+            BETA FIELD: The reason the last medication history
+            download was denied.
+          type: string
+        lastdownloaddenied:
+          description: >-
+            BETA FIELD: Whether or not the last medication history
+            download was denied.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        lastdownloadeddate:
+          description: >-
+            The time of the last attempted medication history download
+            from SureScripts.
+          type: string
+        lastupdated:
+          description: The last time any of the medications were updated
+          type: string
+        medications:
+          description: The list of medications
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/Medication'
+        nomedicationsreported:
+          description: Whether the patient explicitly has no reported medications
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        patientdownloadconsent:
+          description: >-
+            Whether or not the patient has consented to have their
+            medication history downloaded. There are plans to
+            deprecate this field.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        patientneedsdownloadconsent:
+          description: >-
+            Whether or not the patient needs to consent to have
+            medication history downloaded. This will be true if either
+            the patient has not currently consented, or the practice
+            is not enabled for these downloads.  This field is
+            typically used when determining whether to message to the
+            patient that they have not consented to these downloads.
+            Note that regardless of this setting, medication history
+            that has already been downloaded will remain available.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        sectionnote:
+          description: A section-wide note
+          type: string
+    MedicationReference:
+      type: object
+      properties:
+        medication:
+          description: The name of the medication
+          type: string
+        medicationid:
+          description: The athena ID of the medication
+          type: integer
+    RequestUpdateMedication:
+      properties:
+        departmentid:
+          description: The athenanet department ID
+          type: integer
+        hidden:
+          description: Set whether the medication is hidden in the UI.
+          type: boolean
+        patientnote:
+          description: A patient-facing note
+          type: string
+        providernote:
+          description: An internal note
+          type: string
+        startdate:
+          description: Start date for this medication
+          type: string
+        stopdate:
+          description: Stop date for this medication
+          type: string
+        stopreason:
+          description: >-
+            The reason the medication was stopped. If set, it it
+            recommended but not required that a stop date is also set.
+          type: string
+        unstructuredsig:
+          description: >-
+            Can only be used to update historical (entered, downloaded,
+            etc) medications. Will override a structured sig if there is
+            one.
+          type: string
+      required:
+        - departmentid
+      type: object
+    PutMedication200Response:
+      type: object
+      properties:
+        errormessage:
+          description: >-
+            If the operation failed, this will contain any error
+            messages.
+          type: string
+        success:
+          description: Whether the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    RequestAppointmentNote:
+      properties:
+        displayonschedule:
+          description: Add appointment note to homepage display (defaults to false)
+          type: boolean
+        notetext:
+          description: The note text.
+          type: string
+      required:
+        - notetext
+      type: object
+    PostAppointmentNote200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful
+          type: string
+    AppointmentNote:
+      type: object
+      x-external-id: noteid
+      properties:
+        created:
+          description: The time this note was created (mm/dd/yyyy hh24:mi:ss)
+          type: string
+        createdby:
+          description: The user that created this note.
+          type: string
+        deleted:
+          description: >-
+            The time this note was deleted (mm/dd/yyyy hh24:mi:ss).
+            Not present if not deleted.
+          type: string
+        deletedby:
+          description: If deleted, the username who deleted this note.
+          type: string
+        displayonschedule:
+          description: >-
+            Determines if an appointment note displays on the homepage
+            schedule view.
+          type: string
+        lastmodified:
+          description: >-
+            The time this note was updated (mm/dd/yyyy hh24:mi:ss), if
+            the note has been updated.
+          type: string
+        lastmodifiedby:
+          description: >-
+            If the note has been modified, the username who last
+            modified this note.
+          type: string
+        noteid:
+          description: The ID for this note, for use with DELETE and PUT calls.
+          type: string
+        notetext:
+          description: The text of the note itself.
+          type: string
+        put_appointment200_response:
+          $ref: '#/components/schemas/PutAppointment200Response'
+    RequestUpdateAppointmentNote:
+      properties:
+        displayonschedule:
+          description: Add appointment note to homepage display.
+          type: boolean
+        notetext:
+          description: The note text.
+          type: string
+      required:
+        - notetext
+      type: object
+    PutAppointmentNote200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PostProblem200Response:
+      x-external-id: problemid
+      type: object
+      properties:
+        errormessage:
+          description: Error message will be returned if show error message flag is set to true and patient match found.
+          type: string
+        problemid:
+          description: Please remember to never disclose this ID to patients since it may result in inadvertant disclosure that a patient exists in a practice already.
+          type: string
+        success:
+          type: string
+    GetProblem200Response:
+      type: object
+      properties:
+        lastmodifiedby:
+          description: >-
+            The username of the user who last modified the note, no
+            known problems checkbox, or problems.
+          type: string
+        lastmodifieddatetime:
+          description: >-
+            The date and time the note, no known problems checkbox, or
+            problems were last updated.
+          type: string
+        lastupdated:
+          description: >-
+            Deprecated, used LASTMODIFIEDDATETIME instead. The last
+            date any of the problems in the returned list were
+            updated. Does not include no known problems or the section
+            note, and is date precision.
+          type: string
+        noknownproblems:
+          description: >-
+            Whether the no known problems checkbox is checked. This is
+            an explicit statement separate from a patient who has no
+            documented problems so far.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        notelastmodifiedby:
+          description: The username of the user who last modified the note.
+          type: string
+        notelastmodifieddatetime:
+          description: The date and time the section note was last updated.
+          type: string
+        problems:
+          description: List of problems, grouped by problem code
+          items:
+            $ref: '#/components/schemas/Problem'
+          type: array
+        sectionnote:
+          description: The problem section note
+          type: string
+        totalcount:
+          description: Total number of problems
+          type: integer
+    RequestCreateProblem:
+      type: object
+      properties:
+        PATIENTFACINGCALL:
+          description: >-
+            When 'true' is passed we will collect relevant data and
+            store in our database.
+          type: boolean
+        THIRDPARTYUSERNAME:
+          description: User name of the patient in the third party application.
+          type: string
+        departmentid:
+          description: The athenaNet department id.
+          type: integer
+        laterality:
+          description: >-
+            Update the laterality of this problem. Can be null, LEFT,
+            RIGHT, or BILATERAL.
+          enum:
+            - ''
+            - LEFT
+            - RIGHT
+            - BILATERAL
+          type: string
+        note:
+          description: The note to be attached to this problem.
+          type: string
+        snomedcode:
+          description: >-
+            The <a
+            href="http://www.nlm.nih.gov/research/umls/Snomed/snomed_browsers.html">SNOMED
+            code</a> of the problem you are adding.
+          type: integer
+        startdate:
+          description: >-
+            The onset date to be updated for this problem in MM/DD/YYYY
+            format.
+          type: string
+        status:
+          description: Whether the problem is chronic or acute.
+          enum:
+            - ''
+            - CHRONIC
+            - ACUTE
+          type: string
+      required:
+        - departmentid
+        - snomedcode
     Finding:
       type: object
       properties:

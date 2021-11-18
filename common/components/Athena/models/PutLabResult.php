@@ -41,6 +41,7 @@ class PutLabResult extends \yii\db\ActiveRecord
             [['accessionid', 'internalnote', 'interpretation', 'notetopatient', 'observationdate', 'observationtime', 'priority', 'reportstatus', 'resultnotes', 'resultstatus', 'specimenreceiveddatetime', 'specimenreporteddatetime'], 'trim'],
             [['accessionid', 'internalnote', 'interpretation', 'notetopatient', 'observationdate', 'observationtime', 'priority', 'reportstatus', 'resultnotes', 'resultstatus', 'specimenreceiveddatetime', 'specimenreporteddatetime'], 'string'],
             [['documenttypeid', 'facilityid', 'providerid', 'tietoorderid', 'externalId', 'id'], 'integer'],
+            [['replaceinternalnote', 'replacepatientnote'], 'boolean'],
             // TODO define more concreate validation rules!
         ];
     }

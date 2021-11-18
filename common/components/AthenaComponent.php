@@ -2,9 +2,13 @@
 namespace common\components;
 
 use Yii;
+use Yii\helpers\ArrayHelper;
+use yii\base\Component;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
+use common\components\Athena\apiModels\AppointmentNoteApi;
 use common\components\Athena\apiModels\EncounterApi;
+use common\components\Athena\apiModels\FamilyHistoryApi;
 use common\components\Athena\apiModels\MedicationApi;
 use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\apiModels\PatientCaseApi;
@@ -12,6 +16,7 @@ use common\components\Athena\apiModels\ProblemApi;
 use common\components\Athena\apiModels\VaccineApi;
 use common\components\Athena\models\ActionNote;
 use common\components\Athena\models\Appointment;
+use common\components\Athena\models\AppointmentNote;
 use common\components\Athena\models\ChartAlert;
 use common\components\Athena\models\Checkin;
 use common\components\Athena\models\ClinicalDocument;
@@ -20,12 +25,15 @@ use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
 use common\components\Athena\models\Encounter;
 use common\components\Athena\models\EncounterVitals;
+use common\components\Athena\models\FamilyHistory;
 use common\components\Athena\models\Medication;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
 use common\components\Athena\models\Problem;
+use common\components\Athena\models\Event;
+use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\Readings;
@@ -34,7 +42,8 @@ use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
-use yii\base\Component;
+use common\components\Athena\apiModels\LabResultApi;
+use common\components\Athena\models\LabResult;
 
 class AthenaComponent extends Component
 {
@@ -299,8 +308,10 @@ class AthenaComponent extends Component
         );
 
         $providersModels = [];
+        //echo "<pre>";
         foreach ($providersModelsApi as $providersModelApi) {
             $arrAux = (array)$providersModelApi;
+            //var_dump($arrAux['createencounterprovideridlist']); echo " => "; var_dump($arrAux['displayname']); echo "<br>";
             if (array_key_exists('createencounterprovideridlist', $arrAux)) {
                 $providersModels[] =
                     Provider::createFromApiObject(
@@ -308,6 +319,7 @@ class AthenaComponent extends Component
                     );
             }
         }
+        //exit();
 
         if ($flatten) {
             return array_column($providersModels, 'displayname', 'externalId');
@@ -953,7 +965,6 @@ class AthenaComponent extends Component
     public function vaccineChanges(): array
     {
         $changedVaccines = $this->client->getPracticeidChartHealthhistoryVaccineChanged($this->practiceid);
-
         $changedVaccinesResult = [];
         try {
             foreach( $changedVaccines->vaccines as $vaccineApi ) {
@@ -967,6 +978,163 @@ class AthenaComponent extends Component
         return $changedVaccinesResult;
     }
 
+
+    public function createMedication($patient, $medication)
+    {
+        $medicationModelApi =
+            $this->client->postPracticeidChartPatientidMedications(
+                $this->practiceid,
+                $patient->externalId,
+                $medication->toArray()
+            );
+
+        return $this->retrieveMedication(
+            $patient,
+            $medicationModelApi->medicationentryid,
+            $medication->toArray()['medicationid']
+        );
+    }
+
+    public function retrieveMedication($patient, $medicationentryid, $medicationid)
+    {
+        $medicationModelApi = $this->client->getPracticeidChartPatientidMedications(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
+        );
+
+        $medicationByMedicationId = array_filter($medicationModelApi->medications,function($m)use($medicationid){
+            return $m[0]['medicationid'] == $medicationid;
+        });
+
+        $medication = array_filter(end($medicationByMedicationId),function($m)use($medicationentryid){
+            return $m['medicationentryid'] == $medicationentryid;
+        });
+
+        $medicationModel = Medication::find()
+            ->where(['externalId' => $medicationentryid])
+            ->one();
+
+        if (!$medicationModel) {
+            return Medication::createFromApiObject(end($medication));
+        }
+
+        return $medicationModel->loadApiObject(end($medication));
+    }
+
+    /**
+     * @return Medication
+     */
+
+    public function updateMedication($medication, $updateMedication)
+    {
+
+        $this->client->putPracticeidChartPatientidMedicationsMedicationentryid(
+            $this->practiceid,
+            $medication->medicationentryid,
+            $medication->patient->externalId,
+            $updateMedication->toArray()
+        );
+
+        return $this->retrieveMedication(
+            $medication->patient,
+            $medication->medicationentryid,
+            $medication->medicationid
+        );
+
+    }
+
+    public function retrieveFamilyHealthHistorySubscriptionStatus()
+    {
+        $subscriptionStatusApi = $this->client->getPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($this->practiceid);
+        return $subscriptionStatusApi;
+    }
+
+    public function familyHealthSubscription($event)
+    {
+        $subscriptionStatusApi = $this->client->postPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($this->practiceid,
+            [
+                'eventname' => $event,
+            ]
+        );
+
+        return $subscriptionStatusApi;
+    }
+
+    public function familyHealthHistoryChanges(): array
+    {
+        $changedFamilyHistory = $this->client->getPracticeidChartHealthhistoryFamilyhistoryChanged($this->practiceid);
+        $changedFamilyHistoryResult = [];
+        try {
+            foreach($changedFamilyHistory->problems as $familyHistoryApi ) {
+                $familyHistoryModel = $this->obtainFamilyHistory($familyHistoryApi->problemId, $familyHistoryApi);
+                $changedFamilyHistoryResult[] = [$familyHistoryModel->id, $familyHistoryModel->externalId, $familyHistoryModel->save()];
+            }
+        } catch(\Exception $e) {
+            throw $e;//TODO handle this
+        }
+
+        return $changedFamilyHistoryResult;
+
+    }
+
+    /**
+     * @return Patient
+     */
+
+    public function addAppointmentNote($appointment, $appointmentNote)
+    {
+        $appointmentNoteModelApi =
+            $this->client->postPracticeidAppointmentsAppointmentidNotes(
+                $this->practiceid,
+                $appointment->externalId,
+                $appointmentNote->toArray()
+            );
+
+        $appointmentNotesModelsApi = $this->retrieveAppointmentNotes(
+            $appointment->externalId
+        );
+
+        return AppointmentNote::createFromApiObject(
+            end($appointmentNotesModelsApi)
+        );
+
+    }
+
+    public function retrieveAppointmentNotes($appointmentId)
+    {
+        $appointmentNotesModelsApi = $this->client->getPracticeidAppointmentsAppointmentidNotes(
+            $this->practiceid,
+            $appointmentId
+        );
+
+        return $appointmentNotesModelsApi;
+
+    }
+
+    /**
+     * @return AppointmentNote
+     */
+
+    public function updateAppointmentNote($appointmentNote, $updateAppointmentNote)
+    {
+        $this->client->putPracticeidAppointmentsAppointmentidNotesNoteid(
+            $this->practiceid,
+            $appointmentNote->put_appointment200_response->externalId,
+            $appointmentNote->externalId,
+            $updateAppointmentNote->toArray()
+        );
+
+        $appointmentNotesModelsApi = $this->retrieveAppointmentNotes(
+            $appointmentNote->put_appointment200_response->externalId
+        );
+
+        return $this->obtainAppointmentNote(
+            $appointmentNote->externalId,
+            ArrayHelper::index($appointmentNotesModelsApi, 'noteid')[$appointmentNote->noteid]
+        );
+
+    }
 
     public function retrieveLabResultSubscriptionStatus()
     {
@@ -982,7 +1150,7 @@ class AthenaComponent extends Component
         $changedLabResultResult = [];
         try {
             foreach( $changedLabResults->labresults as $labResultApi ) {
-                $labResultModel = $this->obtainVaccine($labResultApi->labresultid, $labResultApi);
+                $labResultModel = $this->obtainLabResult($labResultApi->labresultid, $labResultApi);
                 $changedVaccinesResult[] = [$labResultModel->id, $labResultModel->externalId, $labResultModel->save()];
             }
         } catch(\Exception $e) {
@@ -1097,6 +1265,46 @@ class AthenaComponent extends Component
         return $vaccine->loadApiObject($vaccineModelApi);
     }
 
+    protected function obtainFamilyHistory($problemId, FamilyHistoryApi $familyHistoryModelApi): FamilyHistory
+    {
+        $familyHistory = FamilyHistory::find()
+            ->where(['externalId' => $problemId])
+            ->one();
+
+        if (!$familyHistory) {
+            return FamilyHistory::createFromApiObject($familyHistoryModelApi);
+        }
+
+        return $familyHistory->loadApiObject($familyHistoryModelApi);
+    }
+
+    protected function obtainAppointmentNote($appointmentNoteId, AppointmentNoteApi $appointmentNoteModelApi): AppointmentNote
+    {
+        $appointmentNote = AppointmentNote::find()
+            ->where(['externalId' => $appointmentNoteId])
+            ->one();
+
+        if (!$appointmentNote) {
+            return AppointmentNote::createFromApiObject($appointmentNoteModelApi);
+        }
+
+        return $appointmentNote->loadApiObject($appointmentNoteModelApi);
+    }
+
+
+    protected function obtainLabResult($labResultId, LabResultApi $vaccineModelApi): Vaccine
+    {
+        $labResult = LabResult::find()
+            ->where(['externalId' => $labResultId])
+            ->one();
+
+        if (!$labResult) {
+            return LabResult::createFromApiObject($vaccineModelApi);
+        }
+
+        return $labResult->loadApiObject($vaccineModelApi);
+    }
+
 
     protected function getAuthentication()
     {
@@ -1107,4 +1315,87 @@ class AthenaComponent extends Component
         return $dataSession['access_token'];
     }
     /* =================================== End  Protected methods ============================================== */
+
+    /**
+     * @return Problem
+     */
+    public function createProblem($problem, $patient)
+    {
+        $problemPostApi =
+            $this->client->postPracticeidChartPatientidProblems(
+                $this->practiceid,
+                $patient->externalId,
+                $problem->toArray()
+            );
+        //FIXME if($problemModelApi->success == true)
+
+        $problemGetApi = $this->client->getPracticeidChartPatientidProblems(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
+        );
+        $result = ArrayHelper::index($problemGetApi->problems, 'problemid');
+        $problem = Problem::createFromApiObject($result[$problemPostApi->problemid]);
+        $problem->link('patient', $patient);
+        $problem->save();
+        foreach($result[$problemPostApi->problemid]->events as $eventApi) {
+//var_dump(__METHOD__.__LINE__,$eventApi);die;
+            $event = Event::createFromApiObject($eventApi);
+            $event->link('problem', $problem);
+            $event->save();
+        }
+
+        return $problem;
+    }
+
+    /**
+     * @return Problem
+     */
+    public function retrieveProblem($patient, $problemId)
+    {
+        $problemModelApi = $this->client->getPracticeidChartPatientidProblems(
+            $this->practiceid,
+            $patient->externalId,
+            ['departmentid' => $patient->departmentid]
+        );
+
+        $result = ArrayHelper::index($problemModelApi->problems, 'problemid');
+
+        $problem = Problem::find()
+            ->where(['externalId' => $problemId])
+            ->one();
+
+        if (!$problem) {
+            $problem = Problem::createFromApiObject($result[$problemId]);
+            foreach($result[$problemId]->events as $eventApi) {
+                $event = new Event($eventApi);
+
+            }
+
+            return $problem;
+        } else {
+            $problem->loadApiObject($result[$problemId]);
+        }
+
+        return $problem;
+    }
+
+    /**
+     * @return Problem
+     */
+    public function updateProblem($problem, $updateProblem)
+    {
+        $problemModelApi =
+            $this->client->putPracticeidChartPatientidProblemsProblemid(
+                $problem->externalId,
+                $this->practiceid,
+                $problem->patientid,
+                $updateProblem->toArray()
+            );
+
+        return $this->retrievePatientCase(
+            $problem->patientid,
+            $problemModelApi->patientcaseid
+        );
+    }
 }

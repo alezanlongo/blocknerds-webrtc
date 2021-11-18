@@ -5,7 +5,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
- * @property LabResult[] $departmentids list of lab results.
+ * @property LabResult[] $labresults list of lab results.
  * @property int $totalcount By default, you are subscribed to all possible events.  If you only wish to subscribe to an individual event, pass the event name with this argument.
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
@@ -13,7 +13,7 @@ use yii\helpers\ArrayHelper;
 class LabResultChanged extends \yii\db\ActiveRecord
 {
  
-    protected $_departmentidsAr;
+    protected $_labresultsAr;
 
     public static function tableName()
     {
@@ -28,7 +28,7 @@ class LabResultChanged extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getDepartmentids()
+    public function getLabresults()
     {
         return $this->hasMany(LabResult::class, ['lab_result_changed_id' => 'id']);
     }
@@ -38,8 +38,8 @@ class LabResultChanged extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        if($departmentids = ArrayHelper::getValue($apiObject, 'departmentids')) {
-            $this->_departmentidsAr = $departmentids;
+        if($labresults = ArrayHelper::getValue($apiObject, 'labresults')) {
+            $this->_labresultsAr = $labresults;
         }
         if($totalcount = ArrayHelper::getValue($apiObject, 'totalcount')) {
             $this->totalcount = $totalcount;
@@ -62,10 +62,10 @@ class LabResultChanged extends \yii\db\ActiveRecord
     /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
-        if( !empty($this->_departmentidsAr) and is_array($this->_departmentidsAr) ) {
-            foreach($this->_departmentidsAr as $departmentidsApi) {
+        if( !empty($this->_labresultsAr) and is_array($this->_labresultsAr) ) {
+            foreach($this->_labresultsAr as $labresultsApi) {
                 $labresult = new LabResult();
-                $labresult->loadApiObject($departmentidsApi);
+                $labresult->loadApiObject($labresultsApi);
                 $labresult->link('labResultChanged', $this);
                 $labresult->save();
             }

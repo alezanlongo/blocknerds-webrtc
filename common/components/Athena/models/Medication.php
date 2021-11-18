@@ -36,6 +36,8 @@ use yii\helpers\ArrayHelper;
  * @property string $stopreason The reason why this medication was stopped.
  * @property string $therapeuticclass The therapeutic class for this medication. This is equivalent to a medication subclass.
  * @property string $unstructuredsig The unstructured sig for this medication, if any. If there is a structured sig, this will contain the formatted version of that sig.
+ * @property integer $patient_id
+ * @property Patient $patient
  * @property string $externalId API Primary Key
  * @property integer $id Primary Key
  */
@@ -52,8 +54,14 @@ class Medication extends \yii\db\ActiveRecord
         return [
             [['approvedby', 'billingndc', 'createdby', 'deletedby', 'earliestfilldate', 'futuresubmitdate', 'issafetorenew', 'isstructuredsig', 'lastupdated', 'medication', 'medicationentryid', 'ndcoptions', 'orderingmode', 'organclass', 'patientnote', 'pharmacy', 'pharmacyncpdpid', 'prescribedby', 'providernote', 'route', 'rxnorm', 'source', 'status', 'stopreason', 'therapeuticclass', 'unstructuredsig', 'externalId'], 'trim'],
             [['approvedby', 'billingndc', 'createdby', 'deletedby', 'earliestfilldate', 'futuresubmitdate', 'issafetorenew', 'isstructuredsig', 'lastupdated', 'medication', 'medicationentryid', 'ndcoptions', 'orderingmode', 'organclass', 'patientnote', 'pharmacy', 'pharmacyncpdpid', 'prescribedby', 'providernote', 'route', 'rxnorm', 'source', 'status', 'stopreason', 'therapeuticclass', 'unstructuredsig', 'externalId'], 'string'],
-            [['chartsharinggroupid', 'encounterid', 'medicationid', 'patientid', 'refillsallowed', 'id'], 'integer'],
+            [['chartsharinggroupid', 'encounterid', 'medicationid', 'patientid', 'refillsallowed', 'patient_id', 'id'], 'integer'],
+            // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getPatient()
+    {
+        return $this->hasOne(Patient::class, ['id' => 'patient_id']);
     }
 
 
@@ -156,6 +164,12 @@ class Medication extends \yii\db\ActiveRecord
         }
         if($unstructuredsig = ArrayHelper::getValue($apiObject, 'unstructuredsig')) {
             $this->unstructuredsig = $unstructuredsig;
+        }
+        if($patient_id = ArrayHelper::getValue($apiObject, 'patient_id')) {
+            $this->patient_id = $patient_id;
+        }
+        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
+            $this->patient = $patient;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;

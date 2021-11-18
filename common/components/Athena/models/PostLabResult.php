@@ -44,6 +44,7 @@ class PostLabResult extends \yii\db\ActiveRecord
             [['departmentid'], 'required'],
             [['accessionid', 'attachmentcontents', 'attachmenttype', 'internalnote', 'interpretation', 'notetopatient', 'observationdate', 'observationtime', 'priority', 'reportstatus', 'resultnotes', 'resultstatus', 'specimenreceiveddatetime', 'specimenreporteddatetime'], 'string'],
             [['departmentid', 'documenttypeid', 'facilityid', 'providerid', 'tietoorderid', 'externalId', 'id'], 'integer'],
+            [['autoclose'], 'boolean'],
             // TODO define more concreate validation rules!
         ];
     }

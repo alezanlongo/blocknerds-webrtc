@@ -36,7 +36,7 @@ class PostClinicalDocument extends \yii\db\ActiveRecord
             [['departmentid', 'documentsubclass'], 'required'],
             [['attachmentcontents', 'attachmenttype', 'documentdata', 'documentsubclass', 'internalnote', 'observationdate', 'observationtime', 'priority'], 'string'],
             [['clinicalproviderid', 'departmentid', 'documenttypeid', 'providerid', 'externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['autoclose'], 'boolean'],
         ];
     }
 

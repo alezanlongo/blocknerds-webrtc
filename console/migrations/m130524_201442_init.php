@@ -238,6 +238,48 @@ class m130524_201442_init extends Migration
             '{{%chat}}',
             'channel',
         );
+
+        // unsplush set
+        $this->createTable('{{%set}}', [
+            'id' => $this->primaryKey(),
+            'profile_id' => $this->integer()->notNull(),
+            'title' => $this->string()->notNull(),
+            'created_at' => $this->integer()->notNull(),
+            'updated_at' => $this->integer()->notNull(),
+        ]);
+
+        $this->createIndex('{{%idx-set-profile_id}}','{{%set}}','profile_id');
+        $this->addForeignKey(
+            '{{%fk-set-profile_id}}',
+            '{{%set}}',
+            'profile_id',
+            '{{%user_profile}}',
+            'id',
+            'CASCADE'
+        );
+
+        // unsplush photo
+        $this->createTable('{{%photo}}', [
+            'id' => $this->primaryKey(),
+            'set_id' => $this->integer()->notNull(),
+            'photo_id' => $this->string(20)->notNull(),
+            'url' => $this->string()->notNull(),
+            // 'title' => $this->string()->notNull(),
+            'description' => $this->text(),
+            'alt_description' => $this->text(),
+            'created_at' => $this->integer()->notNull(),
+            'updated_at' => $this->integer()->notNull(),
+        ]);
+
+        $this->createIndex('{{%idx-photo-set_id}}','{{%photo}}','set_id');
+        $this->addForeignKey(
+            '{{%fk-photo-set_id}}',
+            '{{%photo}}',
+            'set_id',
+            '{{%set}}',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()

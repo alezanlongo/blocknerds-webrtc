@@ -24,9 +24,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $form->field($model, 'appointmentid')->hiddenInput()->label(false); ?>
 
-    <div class="form-group">
-        <?= Html::submitButton('Checkin', ['class' => 'btn btn-primary']) ?>
-    </div>
+    <p>
+        <div class="form-group">
+            <?= Html::submitButton('Checkin', ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('Add note', ['add-appointment-note', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        </div>
+    </p>
+
+
 
 <?php ActiveForm::end(); ?>
 

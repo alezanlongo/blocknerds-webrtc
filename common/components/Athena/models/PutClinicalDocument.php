@@ -30,7 +30,7 @@ class PutClinicalDocument extends \yii\db\ActiveRecord
             [['internalnote', 'observationdate', 'observationtime', 'priority'], 'trim'],
             [['internalnote', 'observationdate', 'observationtime', 'priority'], 'string'],
             [['clinicalproviderid', 'documenttypeid', 'providerid', 'externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['replaceinternalnote'], 'boolean'],
         ];
     }
 
