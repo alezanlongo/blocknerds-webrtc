@@ -3396,185 +3396,6 @@ paths:
       operationId: getPracticeidChartHealthhistoryFamilyhistoryChanged
       tags:
         - Family History
-
-  /v1/{practiceid}/chart/{patientid}/problems:
-    post:
-      summary: Add problem to patient's problem list
-      description: Records a problem in the patient's active problem list
-      parameters:
-        - description: practiceid
-          in: path
-          name: practiceid
-          required: true
-          schema:
-            type: integer
-        - description: patientid
-          in: path
-          name: patientid
-          required: true
-          schema:
-            type: integer
-        - description: Content type of the payload
-          in: header
-          name: Content-Type
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PostProblem200Response'
-          description: Success
-      operationId: postPracticeidChartPatientidProblems
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/RequestCreateProblem'
-        required: true
-      tags:
-        - Problems
-    get:
-      summary: Get patient's problem list
-      description: Retrieves patient's active problems list
-      parameters:
-        - description: practiceid
-          in: path
-          name: practiceid
-          required: true
-          schema:
-            type: integer
-        - description: patientid
-          in: path
-          name: patientid
-          required: true
-          schema:
-            type: integer
-        - description: Also show inactive (but not soft deleted) problems.
-          in: query
-          name: showinactive
-          required: false
-          schema:
-            type: boolean
-        - description: The athenaNet department id.
-          in: query
-          name: departmentid
-          required: true
-          schema:
-            type: integer
-        - description: >-
-            If true, will include every encounter and associated diagnosis with
-            each problem. Also fills the bestmatchicd10code field with the best
-            conversion from the problem SNOMED code to ICD10 code if there is no
-            user-selected ICD10 code in an encounter diagnosis event. Please
-            note that the bestmatchicd10code may not always be accurate.
-          in: query
-          name: showdiagnosisinfo
-          required: false
-          schema:
-            type: boolean
-        - description: User name of the patient in the third party application.
-          in: query
-          name: THIRDPARTYUSERNAME
-          required: false
-          schema:
-            type: string
-        - description: >-
-            When 'true' is passed we will collect relevant data and store in our
-            database.
-          in: query
-          name: PATIENTFACINGCALL
-          required: false
-          schema:
-            type: boolean
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GetProblem200Response'
-          description: Success
-      operationId: getPracticeidChartPatientidProblems
-      tags:
-        - Problems
-  /v1/{practiceid}/chart/{patientid}/problems/{problemid}:
-    put:
-      summary: Update patient's problem details
-      description: Modify the information of a specific patient's problem
-      parameters:
-        - description: practiceid
-          in: path
-          name: practiceid
-          required: true
-          schema:
-            type: integer
-        - description: patientid
-          in: path
-          name: patientid
-          required: true
-          schema:
-            type: integer
-        - description: problemid
-          in: path
-          name: problemid
-          required: true
-          schema:
-            type: integer
-        - description: Content type of the payload
-          in: header
-          name: Content-Type
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PostProblem200Response'
-          description: Success
-      operationId: putPracticeidChartPatientidProblemsProblemid
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              properties:
-                departmentid:
-                  description: The athenaNet department id.
-                  type: integer
-                laterality:
-                  description: >-
-                    Update the laterality of this problem. Can be null, LEFT,
-                    RIGHT, or BILATERAL.
-                  enum:
-                    - ''
-                    - LEFT
-                    - RIGHT
-                    - BILATERAL
-                  type: string
-                note:
-                  description: The note to be attached to this problem.
-                  type: string
-                startdate:
-                  description: >-
-                    The onset date to be updated for this problem in MM/DD/YYYY
-                    format.
-                  type: string
-                status:
-                  description: Whether the problem is chronic or acute.
-                  enum:
-                    - ''
-                    - CHRONIC
-                    - ACUTE
-                  type: string
-              required:
-                - departmentid
-              type: object
-        required: true
-      tags:
-        - Problems
   /v1/{practiceid}/chart/{patientid}/medications:
     post:
       summary: Add medication to patient's medication list
@@ -3775,6 +3596,317 @@ paths:
         required: true
       tags:
         - Medication
+  /v1/{practiceid}/appointments/{appointmentid}/notes:
+    post:
+      summary: Create appointment note
+      description: Creates a note for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAppointmentNote200Response'
+          description: Success
+      operationId: postPracticeidAppointmentsAppointmentidNotes
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestAppointmentNote'
+        required: true
+      tags:
+        - Appointment Notes
+    get:
+      summary: Get all appointment notes
+      description: Retrieves note details for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            By default, we prevent deleted appointment notes from being returned
+            via the API.   This flag allows you to show deleted notes in the set
+            of results returned.
+          in: query
+          name: showdeleted
+          required: false
+          schema:
+            type: boolean
+        - description: Number of entries to return (default 1500, max 5000)
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AppointmentNote'
+          description: Success
+      operationId: getPracticeidAppointmentsAppointmentidNotes
+      tags:
+        - Appointment Notes
+  /v1/{practiceid}/appointments/{appointmentid}/notes/{noteid}:
+    put:
+      summary: Update appointment note
+      description: Modifies the note details for a specific appointment
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: appointmentid
+          in: path
+          name: appointmentid
+          required: true
+          schema:
+            type: integer
+        - description: noteid
+          in: path
+          name: noteid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutAppointmentNote200Response'
+          description: Success
+      operationId: putPracticeidAppointmentsAppointmentidNotesNoteid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateAppointmentNote'
+        required: true
+      tags:
+        - Appointment Notes
+  /v1/{practiceid}/chart/{patientid}/problems:
+    post:
+      summary: Add problem to patient's problem list
+      description: Records a problem in the patient's active problem list
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostProblem200Response'
+          description: Success
+      operationId: postPracticeidChartPatientidProblems
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateProblem'
+        required: true
+      tags:
+        - Problems
+    get:
+      summary: Get patient's problem list
+      description: Retrieves patient's active problems list
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Also show inactive (but not soft deleted) problems.
+          in: query
+          name: showinactive
+          required: false
+          schema:
+            type: boolean
+        - description: The athenaNet department id.
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            If true, will include every encounter and associated diagnosis with
+            each problem. Also fills the bestmatchicd10code field with the best
+            conversion from the problem SNOMED code to ICD10 code if there is no
+            user-selected ICD10 code in an encounter diagnosis event. Please
+            note that the bestmatchicd10code may not always be accurate.
+          in: query
+          name: showdiagnosisinfo
+          required: false
+          schema:
+            type: boolean
+        - description: User name of the patient in the third party application.
+          in: query
+          name: THIRDPARTYUSERNAME
+          required: false
+          schema:
+            type: string
+        - description: >-
+            When 'true' is passed we will collect relevant data and store in our
+            database.
+          in: query
+          name: PATIENTFACINGCALL
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProblem200Response'
+          description: Success
+      operationId: getPracticeidChartPatientidProblems
+      tags:
+        - Problems
+  /v1/{practiceid}/chart/{patientid}/problems/{problemid}:
+    put:
+      summary: Update patient's problem details
+      description: Modify the information of a specific patient's problem
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: problemid
+          in: path
+          name: problemid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostProblem200Response'
+          description: Success
+      operationId: putPracticeidChartPatientidProblemsProblemid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              properties:
+                departmentid:
+                  description: The athenaNet department id.
+                  type: integer
+                laterality:
+                  description: >-
+                    Update the laterality of this problem. Can be null, LEFT,
+                    RIGHT, or BILATERAL.
+                  enum:
+                    - ''
+                    - LEFT
+                    - RIGHT
+                    - BILATERAL
+                  type: string
+                note:
+                  description: The note to be attached to this problem.
+                  type: string
+                startdate:
+                  description: >-
+                    The onset date to be updated for this problem in MM/DD/YYYY
+                    format.
+                  type: string
+                status:
+                  description: Whether the problem is chronic or acute.
+                  enum:
+                    - ''
+                    - CHRONIC
+                    - ACUTE
+                  type: string
+              required:
+                - departmentid
+              type: object
+        required: true
+      tags:
+        - Problems
 
 components:
   schemas:
@@ -8112,6 +8244,85 @@ components:
           type: string
         success:
           description: Whether the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    RequestAppointmentNote:
+      properties:
+        displayonschedule:
+          description: Add appointment note to homepage display (defaults to false)
+          type: boolean
+        notetext:
+          description: The note text.
+          type: string
+      required:
+        - notetext
+      type: object
+    PostAppointmentNote200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful
+          type: string
+    AppointmentNote:
+      type: object
+      x-external-id: noteid
+      properties:
+        created:
+          description: The time this note was created (mm/dd/yyyy hh24:mi:ss)
+          type: string
+        createdby:
+          description: The user that created this note.
+          type: string
+        deleted:
+          description: >-
+            The time this note was deleted (mm/dd/yyyy hh24:mi:ss).
+            Not present if not deleted.
+          type: string
+        deletedby:
+          description: If deleted, the username who deleted this note.
+          type: string
+        displayonschedule:
+          description: >-
+            Determines if an appointment note displays on the homepage
+            schedule view.
+          type: string
+        lastmodified:
+          description: >-
+            The time this note was updated (mm/dd/yyyy hh24:mi:ss), if
+            the note has been updated.
+          type: string
+        lastmodifiedby:
+          description: >-
+            If the note has been modified, the username who last
+            modified this note.
+          type: string
+        noteid:
+          description: The ID for this note, for use with DELETE and PUT calls.
+          type: string
+        notetext:
+          description: The text of the note itself.
+          type: string
+        put_appointment200_response:
+          $ref: '#/components/schemas/PutAppointment200Response'
+    RequestUpdateAppointmentNote:
+      properties:
+        displayonschedule:
+          description: Add appointment note to homepage display.
+          type: boolean
+        notetext:
+          description: The note text.
+          type: string
+      required:
+        - notetext
+      type: object
+    PutAppointmentNote200Response:
+      type: object
+      properties:
+        success:
+          description: Returns true/false if the operation was successful
           enum:
             - ''
             - false
