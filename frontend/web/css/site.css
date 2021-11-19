@@ -1,6 +1,8 @@
 body {
     --top-nav-height-offset: 56px;
     --footer-height-offset: 60px;
+    background-color: #202124 !important;
+  color: #fafafa !important;
 }
 
 body.fixed-top-navbar
