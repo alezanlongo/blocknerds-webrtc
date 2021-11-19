@@ -4,7 +4,10 @@ use yii\web\View;
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
+use common\models\Chat;
+use common\models\User;
 use yii\bootstrap5\Modal;
+use yii\helpers\VarDumper;
 use common\models\UserProfile;
 use common\models\ChatRepository;
 use frontend\widgets\adminlte\Menu;
@@ -74,9 +77,10 @@ $items[] = [
 ?>
 
 <div class="offcanvas offcanvas-start m-0 p-0 position-relative min-h-100 d-none" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasMainMenu" aria-labelledby="offcanvasMainMenuLabel">
-  <div class="offcanvas-header brand-container">
+  <div class="offcanvas-header">
   <?= Html::a('<img class="m-1 brand-image img-circle elevation-3 opacity-80 shadow" width="50" href="javascript:;" src="' . ('/img/AdminLTELogo.png') . '" alt="APP">  <span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
-  <a class="pushmenu mx-1 rotate" id="btn-toggle-sidebar-mini" data-lte-toggle="sidebar-mini" href="javascript:;"  role="button"><i class="fas fa-angle-double-left"></i></a>
+  <a class="pushmenu mx-1" id="btn-toggle-sidebar-mini" href="javascript:;" role="button"><i class="fas fa-angle-double-left"></i></a>
+    <!-- <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
   </div>
   <div class="offcanvas-body h-100">
   <?= Menu::widget(
