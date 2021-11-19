@@ -18,55 +18,55 @@ $this->registerJsVar('myToken', md5($profileId), View::POS_END);
 
 
 $items = [];
-$items[] = ['label' => 'Home', 'icon' => 'fas fa-home', 'url' => ['/']];
+$items[] = ['label' => 'Home', 'icon' => 'fas fa-home', 'url' => ['/'], "options" => ["data-toggle"=>"tooltip", "data-bs-placement"=>"right", "title"=>"Home"]];
 $items[] =  [
   'label' => 'Chat',
-  'template' => '<a class="nav-link" href="{url}" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvasRecentChat">{icon}{label}</a>',
+  'template' => '<a class="nav-link" href="{url}" data-toggle="tooltip" data-bs-placement="right" title="Chat" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvasRecentChat" >{icon}{label}</a>',
   'url' => '#offcanvasRecentChat',
   'icon' => 'far fa-comments"',
   'visible' => !Yii::$app->user->isGuest,
 ];
-$items[] = ['label' => 'Sets', 'icon' => 'fas fa-images', 'url' => ['/set/index'], 'visible' => !Yii::$app->user->isGuest,];
+$items[] = ['label' => 'Sets', 'icon' => 'fas fa-images', 'url' => ['/set/index'], 'visible' => !Yii::$app->user->isGuest, "options" => ["data-toggle"=>"tooltip", "data-bs-placement"=>"right", "title"=>"Sets"]];
 
 if (Url::home() === Yii::$app->request->url) {
   $items[] = ['template' => '<hr>'];
   $items[] = ['label' => 'Menu room options ', 'header' => true];
   $items[] = [
     'label' => 'Create new meet',
-    'template' => '<a class="nav-link" href="{url}" data-method="post">{icon}{label}</a>',
+    'template' => '<a class="nav-link" data-toggle="tooltip" data-bs-placement="right" title="Create new meet" href="{url}" data-method="post">{icon}{label}</a>',
     'url' => ['room/create'],
     'icon' => 'fas fa-phone-alt',
     'visible' => !Yii::$app->user->isGuest,
   ];
   $items[] =  [
     'label' => 'Planning a meeting',
-    'template' => '<a class="nav-link" href="{url}" onclick="$(\'#planningMeeting\').modal(\'show\');return false;">{icon}{label}</a>',
+    'template' => '<a class="nav-link" data-toggle="tooltip" data-bs-placement="right" title="Planning a meeting" href="{url}" onclick="$(\'#planningMeeting\').modal(\'show\');return false;">{icon}{label}</a>',
     'url' => null,
     'icon' => 'far fa-calendar-plus',
     'visible' => !Yii::$app->user->isGuest,
   ];
   $items[] =  [
     'label' => 'Run diagnostic',
-    'template' => '<a class="nav-link" href="{url}">{icon}{label}</a>',
+    'template' => '<a class="nav-link" data-toggle="tooltip" data-bs-placement="right" title="Run diagnostic"  href="{url}">{icon}{label}</a>',
     'url' => ['/diagnostic'],
     'icon' => 'far fa-bug',
     'visible' => !Yii::$app->user->isGuest,
   ];
   $items[] =  [
     'label' => 'Run echotest',
-    'template' => '<a class="nav-link" href="{url}">{icon}{label}</a>',
+    'template' => '<a class="nav-link" data-toggle="tooltip" data-bs-placement="right" title="Run echotest" href="{url}">{icon}{label}</a>',
     'url' => ['/diagnostic/echo-test'],
     'icon' => 'far fa-bug',
     'visible' => !Yii::$app->user->isGuest,
   ];
 }
 $items[] = ['label' => 'Menu profile options ', 'header' => true];
-$items[] = ['label' => 'Profile', 'icon' => 'far fa-user-circle', 'url' => ['/user/edit-profile']];
+$items[] = ['label' => 'Profile', 'icon' => 'far fa-user-circle', 'url' => ['/user/edit-profile'], "options" => ["data-toggle"=>"tooltip", "data-bs-placement"=>"right", "title"=>"Profile"]];
 $items[] = ['template' => '<hr>'];
 $items[] = ['label' => 'Login', 'url' => ['site/login'], 'visible' => Yii::$app->user->isGuest];
 $items[] = [
   'label' => 'Logout',
-  'template' => '<a class="nav-link" href="{url}" data-method="post">{icon}{label}</a>',
+  'template' => '<a class="nav-link" data-toggle="tooltip" data-bs-placement="right" title="Logout" href="{url}" data-method="post">{icon}{label}</a>',
   'url' => ['site/logout'],
   'icon' => 'sign-out-alt',
   'visible' => !Yii::$app->user->isGuest,
@@ -76,7 +76,7 @@ $items[] = [
 <div class="offcanvas offcanvas-start m-0 p-0 position-relative min-h-100 d-none" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasMainMenu" aria-labelledby="offcanvasMainMenuLabel">
   <div class="offcanvas-header brand-container">
   <?= Html::a('<img class="brand-image img-circle elevation-3 opacity-80 shadow" width="50" href="javascript:;" src="' . ('/img/AdminLTELogo.png') . '" alt="APP">  <span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
-  <a class="pushmenu mx-1 rotate" id="btn-toggle-sidebar-mini" data-lte-toggle="sidebar-mini" href="javascript:;"  role="button"><i class="fas fa-angle-double-left"></i></a>
+  <a class="pushmenu mx-1 rotate"data-toggle="tooltip" data-bs-placement="right" title="Toggle sidebar" id="btn-toggle-sidebar-mini" data-lte-toggle="sidebar-mini" href="javascript:;"  role="button"><i class="fas fa-angle-double-left"></i></a>
   </div>
   <div class="offcanvas-body h-100">
   <?= Menu::widget(
