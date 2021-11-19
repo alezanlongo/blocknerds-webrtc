@@ -1,5 +1,5 @@
 const mySidebar = $('#offcanvasMainMenu')
-const maxWithSidebar = mySidebar.css('width')
+const maxWithSidebar = '400px'
 const btnToggleSidebar = $('#btn-toggle-sidebar-mini');
 
 btnToggleSidebar.on("click", (e)=>{

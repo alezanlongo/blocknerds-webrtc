@@ -75,7 +75,7 @@ $items[] = [
 
 <div class="offcanvas offcanvas-start m-0 p-0 position-relative min-h-100 d-none" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasMainMenu" aria-labelledby="offcanvasMainMenuLabel">
   <div class="offcanvas-header brand-container">
-  <?= Html::a('<img class="m-1 brand-image img-circle elevation-3 opacity-80 shadow" width="50" href="javascript:;" src="' . ('/img/AdminLTELogo.png') . '" alt="APP">  <span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
+  <?= Html::a('<img class="brand-image img-circle elevation-3 opacity-80 shadow" width="50" href="javascript:;" src="' . ('/img/AdminLTELogo.png') . '" alt="APP">  <span class="brand-text font-weight-light">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'brand-link']) ?>
   <a class="pushmenu mx-1 rotate" id="btn-toggle-sidebar-mini" data-lte-toggle="sidebar-mini" href="javascript:;"  role="button"><i class="fas fa-angle-double-left"></i></a>
   </div>
   <div class="offcanvas-body h-100">
