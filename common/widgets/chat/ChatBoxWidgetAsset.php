@@ -9,7 +9,8 @@ class ChatBoxWidgetAsset extends AssetBundle
     public $sourcePath = '@common/widgets/chat/assets';
 
     public $js = [
-        'js/box.js',
+        'js/mqttChatHandler.js',
+        'js/chatHome.js',
     ];
 
     public $css = [

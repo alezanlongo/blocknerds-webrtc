@@ -46,26 +46,26 @@ $(document).on('keypress', ".message-onToOne", function (e) {
   }
 });
 
-const openChatBox = (to_profile_id, to_username, room, channel = null) => {
+const openChatBox = (to_profile_id, to_username, room_id, channel = null) => {
 
   if (!channel) {
-    channel = requestSubscribe(to_profile_id, room);
+    channel = requestSubscribe(to_profile_id, room_id);
   }
 
   const boxes = Array.from($('.direct-chat-gral'))
 
   if (boxes.length > 0) {
-    const box = boxes.find(b => Number($(b).attr('data-profile-id')) === to_profile_id)
+    const box = boxes.find(b => Number($(b).attr('data-profile-id')) === parseInt(to_profile_id))
 
     if (box) {
-      return;
+      return false;
     }
   }
 
   const chat = { to_profile_id, to_username, channel }
 
   $.get(`/chat/${channel}`).then(data => {
-    $('.chat-zone').append(chatBox(data, chat, room))
+    $('.chat-zone').append(chatBox(data, chat, room_id))
   }).then(() => {
     chatScrollDown(`oneTone_${channel}`);
   }).catch(err => {
@@ -108,9 +108,12 @@ const closeChatBox = (channel) => {
 }
 
 const buildMessage = (chat) => {
+  var sent_at = moment.unix(parseInt(chat.created_at)).format("YYYY-MM-DD HH:mm:ss");
+
   return `<div class="direct-chat-msg ${chat.wasMe ? 'end' : ''}">
     <div class="direct-chat-infos clearfix">
-      <span class="direct-chat-timestamp float-end">${chat.sent_at}</span>
+      <span class="direct-chat-name pull-left">${chat.from_username}</span>
+      <span class="direct-chat-timestamp float-end">${sent_at}</span>
     </div>
     <img class="direct-chat-img" src="${chat.image || '/img/default-user.png'}" alt="message user image">
     <div class="direct-chat-text">
@@ -119,27 +122,42 @@ const buildMessage = (chat) => {
   </div>`
 }
 
-const sendMessageToUser = (to, channel, room) => {
+const sendMessageToUser = (to, channel, room = null) => {
   const text = $(`#message_to_${channel}`).val()
 
-  if (to === '' || text.trim() === '') {
+  if (text.trim() === '') {
     return;
+  }
+
+  if (!room) {
+    if (!to) {
+      return;
+    }
   }
 
   var chat = sendChatMessageMQTT(text, channel, to, room);
   chat = JSON.parse(chat.responseText);
 
-  handleMessageToUser(true, chat.created_at, chat.channel, chat.message);
+  handleMessageToUser(chat);
+
+  console.log('nb2', chat);
+
+  if ($('#left-chat-list').length) {
+    $.pjax.reload({ container: "#left-chat-list" });
+  }
+
 }
 
-const handleMessageToUser = (wasMe, created_at, channel, message) => {
-  var sent_at = moment.unix(parseInt(created_at)).format("YYYY-MM-DD HH:mm:ss");
+const handleMessageToUser = (chat) => {
+  chat["wasMe"] = parseInt(chat.from) === parseInt(userProfileId);
 
-  chat = buildMessage({ wasMe, sent_at, channel, message });
+  msg = buildMessage(chat);
 
-  $(`#messages_${channel}`).append(chat);
+  $(`#messages_${chat.channel}`).append(msg);
 
-  $(`#message_to_${channel}`).val('')
+  $(`#message_to_${chat.channel}`).val('')
 
-  chatScrollDown(`oneTone_${channel}`);
+  chatScrollDown(`oneTone_${chat.channel}`);
+
+  console.log('nb1', chat);
 }

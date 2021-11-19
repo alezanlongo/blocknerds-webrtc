@@ -6,7 +6,7 @@ use yii\widgets\Pjax;
 
 ?>
 
-<div class="direct-chat-messages" style="height: 75vh;">
+<div class="direct-chat-messages chat-room-messages" style="height: 75vh;">
 
     <?php
     Pjax::begin(['id' => 'chat-room']);

@@ -67,7 +67,7 @@ class ChatRepository extends Chat
         return $lastChats;
     }
 
-    public static function getChatsByChannel(string $channel): array
+    public static function getChatByChannel(string $channel): array
     {
         return Chat::find()->where(['channel' => $channel])->orderBy('id', 'desc')->all();
     }
@@ -82,22 +82,29 @@ class ChatRepository extends Chat
 
     public static function getChats(int $ownerProfileId, string $channel): array
     {
-        $chats = ChatRepository::getChatsByChannel($channel);
+        $chat = ChatRepository::getChatByChannel($channel);
 
-        if (empty($chats)) {
+        if (empty($chat)) {
             return [];
         }
 
         return array_map(function ($msg) use ($ownerProfileId) {
+
             $wasMe = $msg->from_profile_id === $ownerProfileId;
-            $profile = $wasMe ? $msg->toProfile : $msg->fromProfile;
+
             return [
-                'message' => $msg->text,
                 'wasMe' => $wasMe,
-                'username' => $profile->user->username,
-                'img' => $profile->image,
-                'sent_at' => Carbon::createFromTimestamp($msg->created_at, $profile->timezone)->format('Y-m-d H:i:s'),
+                'channel' => $msg->channel,
+                'created_at' => $msg->created_at,
+                'from' => $msg->from_profile_id,
+                'from_username' => $msg->fromProfile->user->username,
+                'message' => $msg->text,
+                'room_id' => $msg->room_id,
+                'room_uuid' => $msg->room_id ? $msg->room->uuid : null,
+                'to' => $msg->to_profile_id,
+                'to_username' => $msg->to_profile_id ? $msg->toProfile->user->username : null,
+                'type' => null,
             ];
-        }, $chats);
+        }, $chat);
     }
 }

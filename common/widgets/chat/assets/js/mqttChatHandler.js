@@ -1,13 +1,4 @@
 let channels = [];
-// legacy code from paho if we need later
-// client.onConnectionLost = function (responseObject) {
-//     console.log("Connection Lost: " + responseObject.errorMessage);
-//     connectMQTT(myToken);
-//     channels.forEach(function (channel) {
-//         client.subscribe(channel);
-//         console.log("Re-Connected to", channel);
-//     });
-// };
 
 const sendChatMessageMQTT = (text, channel = null, to = null, room = null) => {
     return $.post({
@@ -20,11 +11,12 @@ const sendChatMessageMQTT = (text, channel = null, to = null, room = null) => {
         success: function (data) {
             data = JSON.parse(data);
 
-            if (data.type === 'oneToRoom') {
+            if ($('#left-chat-list').length) {
+                $.pjax.reload({ container: "#left-chat-list" });
+            }
+
+            if ($('#chat-room').length) {
                 $.pjax.reload({ container: "#chat-room" });
-                // console.log("Message arrived #chat-room")
-            } else {
-                // onToOne || oneToOneRoom
             }
         },
     });
@@ -67,20 +59,20 @@ const connectChatMQTT = (channel) => {
             }
             chatClient.subscribe(channel);
         } else if (type === 'oneToRoom') {
-            $.pjax.reload({ container: "#chat-room" });
+            if ($('#chat-room').length) {
+                $.pjax.reload({ container: "#chat-room" });
+            } else {
+                handleArrivedMessage(objData);
+            }
         } else {
             // onToOne || oneToOneRoom
 
-            console.log("Message arrived oneTone", objData);
+            console.log("Message arrived " + type, objData);
 
-            if (parseInt(objData.from) !== parseInt(userProfileId)) {
-                handleMessageToUser(false, objData.created_at, objData.channel, objData.message);
+            handleArrivedMessage(objData);
+        }
 
-                var room_id = objData.room_id ? parseInt(objData.room_id) : null;
-
-                openChatBox(parseInt(objData.from), objData.from_username, room_id, objData.channel);
-            }
-
+        if ($('#left-chat-list').length) {
             $.pjax.reload({ container: "#left-chat-list" });
         }
 
@@ -88,13 +80,34 @@ const connectChatMQTT = (channel) => {
     });
 };
 
+const handleArrivedMessage = (objData) => {
+
+    var room_id = objData.room_id ? parseInt(objData.room_id) : null;
+
+    if (objData.type == "oneToRoom") {
+        openChatBox(null, objData.room_uuid, room_id, objData.channel);
+    } else {
+        if (parseInt(objData.from) !== parseInt(userProfileId)) {
+            openChatBox(parseInt(objData.from), objData.from_username, room_id, objData.channel);
+        }
+    }
+
+    if (parseInt(objData.from) !== parseInt(userProfileId)) {
+        handleMessageToUser(objData);
+    }
+
+    console.log('nb3', objData)
+
+    return false;
+}
+
 const chatScrollDown = (targetClass) => {
     var d = $("." + targetClass);
     d.scrollTop(d.prop("scrollHeight"));
 }
 
 $(document).on("pjax:end", function () {
-    chatScrollDown('direct-chat-messages');
+    chatScrollDown('chat-room-messages');
 });
 
 $(document).ready(function () {

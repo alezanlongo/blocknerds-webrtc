@@ -3,25 +3,25 @@
 
 namespace frontend\controllers;
 
-use common\models\Chat;
-use common\models\ChatRepository;
-use common\models\RoomMember;
-use common\models\User;
-use common\models\UserProfile;
-use DateTimeZone;
-use Locale;
-use ResourceBundle;
 use Yii;
-use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
-use yii\helpers\BaseFileHelper;
+use Locale;
+use DateTimeZone;
+use ResourceBundle;
 use yii\helpers\Json;
-use yii\helpers\VarDumper;
-use yii\web\Controller;
 use yii\web\Response;
+use common\models\Chat;
+use common\models\User;
+use yii\web\Controller;
+use yii\web\UploadedFile;
+use yii\helpers\VarDumper;
+use yii\helpers\ArrayHelper;
+use common\models\RoomMember;
+use common\models\UserProfile;
+use yii\filters\AccessControl;
+use yii\helpers\BaseFileHelper;
+use common\models\ChatRepository;
 use yii\web\ServerErrorHttpException;
 use yii\web\UnprocessableEntityHttpException;
-use yii\web\UploadedFile;
 
 class ChatController extends Controller
 {
@@ -50,7 +50,7 @@ class ChatController extends Controller
         list($type, $channel) = $this->handleValidation($from, $to, $room_id);
 
         if (!empty($channel_to_talk) && $channel !== $channel_to_talk) {
-            throw new UnprocessableEntityHttpException("Channels missmatch");
+            throw new UnprocessableEntityHttpException("Channels mismatch " . $channel);
         }
 
         $chat = new Chat();
@@ -68,6 +68,7 @@ class ChatController extends Controller
                 'to' => $to,
                 'to_username' => $chat->to_profile_id ? $chat->toProfile->user->username : null,
                 'room_id' => $room_id,
+                'room_uuid' => $chat->room_id ? $chat->room->uuid : null,
                 'channel' => $channel,
                 'message' => $chat->text,
                 'created_at' => $chat->created_at
@@ -135,6 +136,10 @@ class ChatController extends Controller
         } else {
             throw new UnprocessableEntityHttpException("Message not allowed.");
         }
+
+        // $channel = [(int)$from, (int)$to];
+        // sort($channel);
+        // $channel = $type . "-" . $channel[0] . "-" . $channel[1] . "-" . $room_id;
 
         return [$type, md5($channel)];
     }
