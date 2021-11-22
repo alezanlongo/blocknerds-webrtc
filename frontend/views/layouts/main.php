@@ -17,7 +17,8 @@ $this->registerAssetBundle(MqttAsset::class);
 AdminLteAsset::register($this);
 MasonryAsset::register($this);
 
-$this->registerJs("var myOffcanvas = document.getElementById('offcanvasMainMenu')
+$this->registerJs("const myOffcanvas = document.getElementById('offcanvasMainMenu')
+  toggleTooltips(false)
   myOffcanvas.addEventListener('show.bs.offcanvas', function () {
     myOffcanvas.classList.remove('d-none')
   })
