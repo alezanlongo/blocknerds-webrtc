@@ -57,6 +57,13 @@ class AthenaOauth
         $link = Yii::$app->params['athena_url'].$path;
         $client = new Client();
         $request = $client->createRequest();
+        $requestOptions = [];
+        if(Yii::$app->params['http_client_timeout']){
+            $requestOptions['timeout'] = Yii::$app->params['http_client_timeout']; // set timeout to 5 seconds for the case server is not responding
+        }
+        if(!empty($requestOptions)){
+            $request->setOptions($requestOptions);
+        }
         $request->setMethod($action)
             ->setUrl($link)
             ->setHeaders([
