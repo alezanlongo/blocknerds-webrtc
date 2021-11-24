@@ -10,9 +10,13 @@ class m211118_000000_016_Diagnoses extends \yii\db\Migration
         $this->createTable('{{%diagnoses}}', [
             'description' => $this->string(),
             'diagnosisid' => $this->integer(),
-            'icdcodes' => $this->string(),
+            'errormessage' => $this->string(),
+            'laterality' => $this->string(),
             'note' => $this->string(),
+            'ranking' => $this->integer(),
             'snomedcode' => $this->integer(),
+            'success' => $this->string(),
+            'supportslaterality' => $this->string(),
             'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);

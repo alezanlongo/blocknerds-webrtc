@@ -69,6 +69,7 @@ class AthenaOauth
         try {
             $response = $request->send();
         }catch(\Exception $e){
+            var_dump($e);die;
             throw new \yii\web\ServerErrorHttpException($e->getMessage());
         }
 
