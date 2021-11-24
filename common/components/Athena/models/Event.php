@@ -5,9 +5,11 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property integer $problem_id
+ * @property Problem $problem
  * @property string $createdby The name of the user who entered this problem.
  * @property string $createddate The date that the user entered this problem.
- * @property Diagnose[] $diagnoses List of encounter diagnoses that triggered this problem.
+ * @property EventDiagnose[] $diagnoses List of encounter diagnoses that triggered this problem.
  * @property string $encounterdate The date of the encounter where a diagnosis matching this problem was used.
  * @property string $enddate The date this problem event ended or was hidden
  * @property string $eventtype The type of this event: START, END, HIDDEN, REACTIVATED, or ENCOUNTER
@@ -35,14 +37,19 @@ class Event extends \yii\db\ActiveRecord
         return [
             [['createdby', 'createddate', 'encounterdate', 'enddate', 'eventtype', 'laterality', 'note', 'onsetdate', 'source', 'startdate', 'status'], 'trim'],
             [['createdby', 'createddate', 'encounterdate', 'enddate', 'eventtype', 'laterality', 'note', 'onsetdate', 'source', 'startdate', 'status'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['problem_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
 
+    public function getProblem()
+    {
+        return $this->hasOne(Problem::class, ['id' => 'problem_id']);
+    }
+
     public function getDiagnoses()
     {
-        return $this->hasMany(Diagnose::class, ['event_id' => 'id']);
+        return $this->hasMany(EventDiagnose::class, ['event_id' => 'id']);
     }
 
 
@@ -50,6 +57,12 @@ class Event extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($problem_id = ArrayHelper::getValue($apiObject, 'problem_id')) {
+            $this->problem_id = $problem_id;
+        }
+        if($problem = ArrayHelper::getValue($apiObject, 'problem')) {
+            $this->problem = $problem;
+        }
         if($createdby = ArrayHelper::getValue($apiObject, 'createdby')) {
             $this->createdby = $createdby;
         }
@@ -106,10 +119,10 @@ class Event extends \yii\db\ActiveRecord
         $saved = parent::save($runValidation, $attributeNames);
         if( !empty($this->_diagnosesAr) and is_array($this->_diagnosesAr) ) {
             foreach($this->_diagnosesAr as $diagnosesApi) {
-                $diagnose = new Diagnose();
-                $diagnose->loadApiObject($diagnosesApi);
-                $diagnose->link('event', $this);
-                $diagnose->save();
+                $eventdiagnose = new EventDiagnose();
+                $eventdiagnose->loadApiObject($diagnosesApi);
+                $eventdiagnose->link('event', $this);
+                $eventdiagnose->save();
             }
         }
 

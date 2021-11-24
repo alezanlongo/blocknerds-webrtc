@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property Patient $patient
  * @property string $bestmatchicd10code If this was added from the chart or from an encounter without a selected ICD10 code, and if the primary codeset is SNOMED, then this contains the best matching ICD10 code mapped. Because SNOMED to ICD10 is a many to many map, this will tend to give the most generic diagnosis.
  * @property string $code Problem code
  * @property string $codeset Problem codeset (SNOMED, ICD9, ICD10, etc)
@@ -23,6 +24,7 @@ use common\models\ApiModel as BaseApiModel;
 class ProblemApi extends BaseApiModel
 {
 
+    public $patient;
     public $bestmatchicd10code;
     public $code;
     public $codeset;

@@ -8,15 +8,15 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
- * @property Problem[] $patients
+ * @property Problem[] $problems
  * @property int $totalcount
  */
 class ProblemChangedApi extends BaseApiModel
 {
 
-    public $patients;
+    public $problems;
  
-    protected $_patientsAr;
+    protected $_problemsAr;
     public $totalcount;
 
     public function rules()
@@ -27,12 +27,12 @@ class ProblemChangedApi extends BaseApiModel
     public function init()
     {
         parent::init();
-        if (!empty($this->patients) && is_array($this->patients)) {
-            foreach($this->patients as $patients) {
-                $this->_patientsAr[] = new ProblemApi($patients);
+        if (!empty($this->problems) && is_array($this->problems)) {
+            foreach($this->problems as $problems) {
+                $this->_problemsAr[] = new ProblemApi($problems);
             }
-            $this->patients = $this->_patientsAr;
-            $this->_patientsAr = [];//CHECKME
+            $this->problems = $this->_problemsAr;
+            $this->_problemsAr = [];//CHECKME
         }
     }
 
