@@ -26,11 +26,12 @@ $this->registerJsFile(
     ]
 );
 
-$this->registerJsVar('user_profile_id', $user_profile_id);
-
+$this->registerJsVar('userProfileId', $user_profile_id);
 $this->registerJsVar('initialView', $initialView);
-
 $this->registerJsVar('roomMaxMembersAllowed', Yii::$app->params['janus.roomMaxMembersAllowed'], View::POS_END);
+$this->registerJsVar('myChannel', $myChannel, View::POS_END);
+$this->registerJsVar('wsbroker', \Yii::$app->params['mqtt.host'], View::POS_END);
+$this->registerJsVar('wsport', \Yii::$app->params['mqtt.port'], View::POS_END);
 
 $this->title = "Room's calendar";
 

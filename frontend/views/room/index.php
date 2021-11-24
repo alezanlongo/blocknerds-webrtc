@@ -32,6 +32,8 @@ $this->registerJsVar('endTime', $endTime, View::POS_END);
 $this->registerJsVar('members', $members, View::POS_END);
 $this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
 $this->registerJsVar('myChannel', $myChannel, View::POS_END);
+$this->registerJsVar('wsbroker', \Yii::$app->params['mqtt.host'], View::POS_BEGIN);
+$this->registerJsVar('wsport', \Yii::$app->params['mqtt.port'], View::POS_BEGIN);
 
 $config = [
     'janus' => [
@@ -106,6 +108,7 @@ $this->title = 'The Room';
     <?= $this->render(
         '//layouts/right-room.php',
         [
+            'user_profile_id' => $user_profile_id,
             'room_id' => $room_id,
             'limit_members' => $limit_members,
             'members' => $members,

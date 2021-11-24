@@ -1,32 +1,26 @@
-
 let channels = [];
-// legacy code from paho if we need later
-// client.onConnectionLost = function (responseObject) {
-//     console.log("Connection Lost: " + responseObject.errorMessage);
-//     connectMQTT(myToken);
-//     channels.forEach(function (channel) {
-//         client.subscribe(channel);
-//         console.log("Re-Connected to", channel);
-//     });
-// };
 
 const sendChatMessageMQTT = (text, channel = null, to = null, room = null) => {
-    $.post({
+    return $.post({
+        async: false,
         url: "/chat/send-message",
         data: {
             text, channel, to, room
         },
         cache: false,
+        success: function (data) {
+            data = JSON.parse(data);
+
+            if ($('#left-chat-list').length) {
+                $.pjax.reload({ container: "#left-chat-list" , async: false});
+            }
+
+            if ($('#chat-room').length) {
+                $.pjax.reload({ container: "#chat-room" , async: false});
+            }
+        },
     });
 };
-
-if (typeof wsbroker !== "undefined") {
-    const wsbroker = "localhost"; // mqtt websocket enabled broker
-}
-
-if (typeof wsport !== "undefined") {
-    const wsport = 15675; // port for above
-}
 
 let chatClient = null;
 
@@ -35,8 +29,10 @@ const connectChatMQTT = (channel) => {
 
     chatClient.on('connect', function () {
         chatClient.subscribe(channel, function (err) {
-            console.log('mqtt', err)
-            if (!err) {
+            if (err) {
+                console.log('mqtt err', err)
+            } else {
+                console.log('mqtt conneted to channel', channel)
                 chatClient.publish(channel, 'mqtt connected!')
             }
         })
@@ -44,14 +40,12 @@ const connectChatMQTT = (channel) => {
 
     chatClient.on('message', function (topic, message) {
         let objData = message.toString();
-        console.log('mqtt', objData)
+
         try {
             objData = JSON.parse(objData)
         } catch (error) {
             return;
         }
-
-        console.log('mqtt', objData)
 
         const { type, channel } = objData;
 
@@ -64,30 +58,62 @@ const connectChatMQTT = (channel) => {
                 channels.push(channel);
             }
             chatClient.subscribe(channel);
+        } else if (type === 'oneToRoom') {
+            if ($('#chat-room').length) {
+                $.pjax.reload({ container: "#chat-room" , async: false});
+            } else {
+                handleArrivedMessage(objData);
+            }
         } else {
+            // onToOne || oneToOneRoom
 
-            $.pjax.reload({ container: "#chat-room" });
+            console.log("Message arrived " + type, objData);
 
+            handleArrivedMessage(objData);
         }
+
+        if ($('#left-chat-list').length) {
+            $.pjax.reload({ container: "#left-chat-list" , async: false});
+        }
+
         console.log("Message arrived", objData)
     });
 };
 
-const chatRoomScrollDown = () => {
-    var d = $(".direct-chat-messages");
+const handleArrivedMessage = (objData) => {
+
+    var room_id = objData.room_id ? parseInt(objData.room_id) : null;
+
+    if (objData.type == "oneToRoom") {
+        openChatBox(null, objData.room_uuid, room_id, objData.channel);
+    } else {
+        if (parseInt(objData.from) !== parseInt(userProfileId)) {
+            openChatBox(parseInt(objData.from), objData.from_username, room_id, objData.channel);
+        }
+    }
+
+    if (parseInt(objData.from) !== parseInt(userProfileId)) {
+        handleMessageToUser(objData);
+    }
+
+    console.log('nb3', objData)
+
+    return false;
+}
+
+const chatScrollDown = (targetClass) => {
+    var d = $("." + targetClass);
     d.scrollTop(d.prop("scrollHeight"));
-};
+}
 
 $(document).on("pjax:end", function () {
-    chatRoomScrollDown();
+    chatScrollDown('chat-room-messages');
 });
 
 $(document).ready(function () {
 
     connectChatMQTT(myChannel);
 
-    window.setInterval(function () {
-        chatRoomScrollDown();
-    }, 500);
-});
+    // window.setInterval(chatScrollDown('direct-chat-messages'), 500);
 
+});
