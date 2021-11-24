@@ -18,7 +18,7 @@ class ChatBoxWidgetAsset extends AssetBundle
     ];
 
     public $depends = [
-        // 'yii\web\JqueryAsset',
+        'yii\web\JqueryAsset',
     ];
 
     public $publishOptions = [

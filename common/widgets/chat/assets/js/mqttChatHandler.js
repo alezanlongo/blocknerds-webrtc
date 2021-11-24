@@ -12,11 +12,11 @@ const sendChatMessageMQTT = (text, channel = null, to = null, room = null) => {
             data = JSON.parse(data);
 
             if ($('#left-chat-list').length) {
-                $.pjax.reload({ container: "#left-chat-list" });
+                $.pjax.reload({ container: "#left-chat-list" , async: false});
             }
 
             if ($('#chat-room').length) {
-                $.pjax.reload({ container: "#chat-room" });
+                $.pjax.reload({ container: "#chat-room" , async: false});
             }
         },
     });
@@ -60,7 +60,7 @@ const connectChatMQTT = (channel) => {
             chatClient.subscribe(channel);
         } else if (type === 'oneToRoom') {
             if ($('#chat-room').length) {
-                $.pjax.reload({ container: "#chat-room" });
+                $.pjax.reload({ container: "#chat-room" , async: false});
             } else {
                 handleArrivedMessage(objData);
             }
@@ -73,7 +73,7 @@ const connectChatMQTT = (channel) => {
         }
 
         if ($('#left-chat-list').length) {
-            $.pjax.reload({ container: "#left-chat-list" });
+            $.pjax.reload({ container: "#left-chat-list" , async: false});
         }
 
         console.log("Message arrived", objData)
