@@ -15,6 +15,8 @@ use yii\helpers\ArrayHelper;
  * @property int $snomedcode SNOMED Code for this diagnosis
  * @property string $success True if successful.
  * @property string $supportslaterality If true, then laterality may chosen for the diagnosis.
+ * @property integer $encounter_id
+ * @property Encounter $encounter
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
@@ -33,7 +35,7 @@ class Diagnoses extends \yii\db\ActiveRecord
         return [
             [['description', 'errormessage', 'laterality', 'note', 'success', 'supportslaterality'], 'trim'],
             [['description', 'errormessage', 'laterality', 'note', 'success', 'supportslaterality'], 'string'],
-            [['diagnosisid', 'ranking', 'snomedcode', 'externalId', 'id'], 'integer'],
+            [['diagnosisid', 'ranking', 'snomedcode', 'encounter_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -41,6 +43,11 @@ class Diagnoses extends \yii\db\ActiveRecord
     public function getIcdcodes()
     {
         return $this->hasMany(ICDCodes::class, ['diagnoses_id' => 'id']);
+    }
+
+    public function getEncounter()
+    {
+        return $this->hasOne(Encounter::class, ['id' => 'encounter_id']);
     }
 
 
@@ -80,6 +87,12 @@ class Diagnoses extends \yii\db\ActiveRecord
         }
         if($supportslaterality = ArrayHelper::getValue($apiObject, 'supportslaterality')) {
             $this->supportslaterality = $supportslaterality;
+        }
+        if($encounter_id = ArrayHelper::getValue($apiObject, 'encounter_id')) {
+            $this->encounter_id = $encounter_id;
+        }
+        if($encounter = ArrayHelper::getValue($apiObject, 'encounter')) {
+            $this->encounter = $encounter;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;

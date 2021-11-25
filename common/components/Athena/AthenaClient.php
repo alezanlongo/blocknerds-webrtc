@@ -1775,4 +1775,24 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param encounterid
+     * @param diagnosisid
+     * @return PutDiagnosis200Response
+     */
+    public function putPracticeidChartEncounterEncounteridDiagnosesDiagnosisid($practiceid, $encounterid, $diagnosisid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/diagnoses/{diagnosisid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{encounterid}', $encounterid, $path);
+        $path = str_replace('{diagnosisid}', $diagnosisid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutDiagnosis200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }

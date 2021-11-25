@@ -18,6 +18,7 @@ use common\models\ApiModel as BaseApiModel;
  * @property int $snomedcode SNOMED Code for this diagnosis
  * @property string $success True if successful.
  * @property string $supportslaterality If true, then laterality may chosen for the diagnosis.
+ * @property Encounter $encounter
  */
 class DiagnosesApi extends BaseApiModel
 {
@@ -34,6 +35,7 @@ class DiagnosesApi extends BaseApiModel
     public $snomedcode;
     public $success;
     public $supportslaterality;
+    public $encounter;
 
     public function rules()
     {

@@ -220,12 +220,41 @@ class EncounterController extends Controller
                 $model
             );
             if($model->save()){
+                $model->link('encounter', $encounter);
                 return $this->redirect(['view-diagnosis', 'id' => $model->id]);
             }
         }
 
         return $this->render('create-diagnosis', [
             'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Diagnoses model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdateDiagnosis($id)
+    {
+        $model = new RequestCreateDiagnosis;
+        $diagnosis = $this->findDiagnosisModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->updateDiagnosis(
+                $diagnosis,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view-diagnosis', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('update-diagnosis', [
+            'model' => $model,
+            'diagnosis' => $diagnosis,
         ]);
     }
 

@@ -1439,4 +1439,24 @@ class AthenaComponent extends Component
 
         return $diagnosis->loadApiObject($diagnosisById[$diagnosisId]);
     }
+
+    /**
+     * @return Diagnoses
+     */
+
+    public function updateDiagnosis($diagnosis, $updateDiagnosis)
+    {
+
+        $this->client->putPracticeidChartEncounterEncounteridDiagnosesDiagnosisid(
+            $this->practiceid,
+            $diagnosis->encounter->externalId,
+            $diagnosis->externalId,
+            $updateDiagnosis->toArray()
+        );
+
+        return $this->retrieveDiagnosis(
+            $diagnosis->encounter->externalId,
+            $diagnosis->externalId
+        );
+    }
 }

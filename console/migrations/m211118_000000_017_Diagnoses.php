@@ -3,7 +3,7 @@
 /**
  * Table for Diagnoses
  */
-class m211118_000000_016_Diagnoses extends \yii\db\Migration
+class m211118_000000_017_Diagnoses extends \yii\db\Migration
 {
     public function up()
     {
@@ -17,9 +17,19 @@ class m211118_000000_016_Diagnoses extends \yii\db\Migration
             'snomedcode' => $this->integer(),
             'success' => $this->string(),
             'supportslaterality' => $this->string(),
+            'encounter_id' => $this->integer(),
             'externalId' => $this->string(),
             'id' => $this->primaryKey(),
         ]);
+
+        $this->addForeignKey(
+            'fk-encounter-encounter_id',
+            '{{%diagnoses}}',
+            'encounter_id',
+            'encounters',
+            'id',
+            'CASCADE'
+        );
 
     }
 
