@@ -3,14 +3,16 @@
 namespace frontend\controllers;
 
 use Yii;
+use common\components\AthenaComponent;
+use common\components\Athena\models\Diagnoses;
 use common\components\Athena\models\Encounter;
 use common\components\Athena\models\PutAppointment200Response;
-use common\components\AthenaComponent;
+use common\components\Athena\models\RequestCreateDiagnosis;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * EncounterController implements the CRUD actions for Encounter model.
@@ -201,6 +203,60 @@ class EncounterController extends Controller
         ]);
     }
 
+    /**
+     * Add note to Appointment model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionCreateDiagnosis($id)
+    {
+        $model = new RequestCreateDiagnosis;
+        $encounter = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->createDiagnosis(
+                $encounter,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view-diagnosis', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('create-diagnosis', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays a single Diagnosis model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionViewDiagnosis($id)
+    {
+        return $this->render('diagnosis', [
+            'model' => $this->findDiagnosisModel($id),
+        ]);
+    }
+
+    /**
+     * Lists all Diagnoses models.
+     * @return mixed
+     */
+    public function actionDiagnoses()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Diagnoses::find(),
+        ]);
+
+        return $this->render('diagnoses', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
 
     /**
      * Finds the Encounter model based on its primary key value.
@@ -222,6 +278,22 @@ class EncounterController extends Controller
     protected function findModelAppointment($id)
     {
         if (($model = PutAppointment200Response::find()->where(['externalId' => $id])->one()) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Finds the Diagnoses model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Diagnoses the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findDiagnosisModel($id)
+    {
+        if (($model = Diagnoses::findOne($id)) !== null) {
             return $model;
         }
 
