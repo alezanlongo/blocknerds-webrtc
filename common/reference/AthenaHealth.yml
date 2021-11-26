@@ -4465,6 +4465,118 @@ paths:
       operationId: getPracticeidLabresultsChanged
       tags:
         - Document Type - Lab Result
+  /v1/{practiceid}/chart/encounter/{encounterid}/diagnoses:
+    post:
+      summary: Create new diagnosis for given encounter
+      description: Create a new record of diagnoses for the specific encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diagnoses'
+          description: Success
+      operationId: postPracticeidChartEncounterEncounteridDiagnoses
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateDiagnosis'
+        required: true
+      tags:
+        - Diagnoses
+    get:
+      summary: Get list of diagnoses for the given encounter
+      description: Retrieve a list of diagnoses for a specific encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Diagnoses'
+          description: Success
+      operationId: getPracticeidChartEncounterEncounteridDiagnoses
+      tags:
+        - Diagnoses
+  /v1/{practiceid}/chart/encounter/{encounterid}/diagnoses/{diagnosisid}:
+    put:
+      summary: Update selected diagnosis for given encounter
+      description: Modifies a diagnosis record for a specific encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: diagnosisid
+          in: path
+          name: diagnosisid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutDiagnosis200Response'
+          description: Success
+      operationId: putPracticeidChartEncounterEncounteridDiagnosesDiagnosisid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateDiagnosis'
+        required: true
+      tags:
+        - Diagnoses
 components:
   schemas:
     Patient:
@@ -6093,37 +6205,6 @@ components:
             - false
             - true
           type: string
-    Diagnoses:
-      x-external-id: diagnosisid
-      properties:
-        description:
-          description: Brief description for this SNOMED Code
-          type: string
-        diagnosisid:
-          description: Athena ID for this diagnosis
-          type: integer
-        icdcodes:
-          description: List of relevant ICD codes for this diagnosis
-          items:
-            properties:
-              code:
-                description: Actual ICD code for this diagnosis
-                type: string
-              codeset:
-                description: Codeset for this code (ICD9 or ICD10)
-                type: string
-              description:
-                description: Brief description for this code
-                type: string
-            type: object
-          type: array
-        note:
-          description: The note entered for this diagnosis.
-          type: string
-        snomedcode:
-          description: SNOMED Code for this diagnosis
-          type: integer
-      type: object
     Encounter:
       x-external-id: encounterid
       type: object
@@ -6201,6 +6282,54 @@ components:
             only OPEN, CLOSED, and REVIEW statuses are shown, use
             INCLUDEALLSTATUSES flag to see others.
           type: string
+    Diagnoses:
+      x-external-id: diagnosisid
+      properties:
+        description:
+          description: Brief description for this SNOMED Code
+          type: string
+        diagnosisid:
+          description: Athena ID for this diagnosis
+          type: integer
+        errormessage:
+          description: If not successful, will contain error message.
+          type: string
+        icdcodes:
+          description: List of relevant ICD codes for this diagnosis
+          items:
+            $ref: '#/components/schemas/ICDCodes'
+          type: array
+        laterality:
+          description: The laterality of the SNOMED Code, if any.
+          type: string
+        note:
+          description: The note entered for this diagnosis.
+          type: string
+        ranking:
+          description: >-
+            Used to specify the position of this diagnosis in the
+            diagnoses section.
+          type: integer
+        snomedcode:
+          description: SNOMED Code for this diagnosis
+          type: integer
+        success:
+          description: True if successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        supportslaterality:
+          description: If true, then laterality may chosen for the diagnosis.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        encounter:
+          $ref: '#/components/schemas/Encounter'
+      type: object
     PutEncounter200Response:
       type: object
       properties:
@@ -9705,3 +9834,64 @@ components:
         totalcount:
           description: By default, you are subscribed to all possible events.  If you only wish to subscribe to an individual event, pass the event name with this argument.
           type: integer
+    RequestCreateDiagnosis:
+      properties:
+        icd10codes:
+          description: ICD-10 code(s) for this diagnosis.
+          items:
+            type: string
+          type: array
+        icd9codes:
+          description: ICD-9 code(s) for this diagnosis.
+          items:
+            type: string
+          type: array
+        laterality:
+          description: Laterality of the SNOMED code.
+          enum:
+            - ''
+            - LEFT
+            - RIGHT
+            - BILATERAL
+          type: string
+        note:
+          description: The note to be entered for this diagnosis.
+          type: string
+        snomedcode:
+          description: SNOMED code for this diagnosis.
+          type: integer
+      required:
+        - snomedcode
+      type: object
+    ICDCodes:
+      properties:
+        code:
+          description: Actual ICD code for this diagnosis
+          type: string
+        codeset:
+          description: Codeset for this code (ICD9 or ICD10)
+          type: string
+        description:
+          description: Brief description for this code
+          type: string
+      type: object
+    PutDiagnosis200Response:
+      type: object
+      properties:
+        errormessage:
+          description: If not successful, will contain error message.
+          type: string
+        success:
+          description: True if successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        supportslaterality:
+          description: If true, then laterality may chosen for the diagnosis.
+          enum:
+            - ''
+            - false
+            - true
+          type: string

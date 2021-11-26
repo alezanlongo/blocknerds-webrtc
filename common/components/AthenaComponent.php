@@ -3,12 +3,12 @@ namespace common\components;
 
 use Yii;
 use Yii\helpers\ArrayHelper;
-use yii\base\Component;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\AppointmentNoteApi;
 use common\components\Athena\apiModels\EncounterApi;
 use common\components\Athena\apiModels\FamilyHistoryApi;
+use common\components\Athena\apiModels\LabResultApi;
 use common\components\Athena\apiModels\MedicationApi;
 use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\apiModels\PatientCaseApi;
@@ -23,17 +23,19 @@ use common\components\Athena\models\ClinicalDocument;
 use common\components\Athena\models\ClinicalDocumentPageDetail;
 use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
+use common\components\Athena\models\Diagnoses;
 use common\components\Athena\models\Encounter;
 use common\components\Athena\models\EncounterVitals;
+use common\components\Athena\models\Event;
+use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\FamilyHistory;
+use common\components\Athena\models\LabResult;
 use common\components\Athena\models\Medication;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
 use common\components\Athena\models\Problem;
-use common\components\Athena\models\Event;
-use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\Readings;
@@ -42,8 +44,7 @@ use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
 use common\components\Athena\models\insurance;
 use common\components\Athena\models\insurancePackages;
-use common\components\Athena\apiModels\LabResultApi;
-use common\components\Athena\models\LabResult;
+use yii\base\Component;
 
 class AthenaComponent extends Component
 {
@@ -1396,6 +1397,66 @@ class AthenaComponent extends Component
         return $this->retrievePatientCase(
             $problem->patientid,
             $problemModelApi->patientcaseid
+        );
+    }
+
+    /**
+     * @return Diagnosis
+     */
+
+    public function createDiagnosis($encounter, $diagnosis)
+    {
+        $diagnosisModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridDiagnoses(
+                $this->practiceid,
+                $encounter->externalId,
+                $diagnosis->toArray()
+            );
+
+        return $this->retrieveDiagnosis(
+            $encounter->externalId,
+            $diagnosisModelApi->diagnosisid
+        );
+
+    }
+
+    public function retrieveDiagnosis($encounterId, $diagnosisId)
+    {
+        $diagnosisModelsApi = $this->client->getPracticeidChartEncounterEncounteridDiagnoses(
+            $this->practiceid,
+            $encounterId
+        );
+
+        $diagnosisById = ArrayHelper::index($diagnosisModelsApi, 'diagnosisid');
+
+        $diagnosis = Diagnoses::find()
+            ->where(['externalId' => $diagnosisId])
+            ->one();
+
+        if (!$diagnosis) {
+            return Diagnoses::createFromApiObject($diagnosisById[$diagnosisId]);
+        }
+
+        return $diagnosis->loadApiObject($diagnosisById[$diagnosisId]);
+    }
+
+    /**
+     * @return Diagnoses
+     */
+
+    public function updateDiagnosis($diagnosis, $updateDiagnosis)
+    {
+
+        $this->client->putPracticeidChartEncounterEncounteridDiagnosesDiagnosisid(
+            $this->practiceid,
+            $diagnosis->encounter->externalId,
+            $diagnosis->externalId,
+            $updateDiagnosis->toArray()
+        );
+
+        return $this->retrieveDiagnosis(
+            $diagnosis->encounter->externalId,
+            $diagnosis->externalId
         );
     }
 }

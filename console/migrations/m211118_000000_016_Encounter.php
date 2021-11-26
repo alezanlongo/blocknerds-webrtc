@@ -3,7 +3,7 @@
 /**
  * Table for Encounter
  */
-class m211118_000000_017_Encounter extends \yii\db\Migration
+class m211118_000000_016_Encounter extends \yii\db\Migration
 {
     public function up()
     {
