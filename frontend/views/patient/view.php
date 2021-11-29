@@ -19,7 +19,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Insurance', ['patient-insurance/create-insurance', 'patientId' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Create Appointment', ['appointment/create', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Create Patient Case', ['patient-case/create', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('See Documents', ['clinical-document/index', 'patientid' => $model->externalId, 'departmentid' => $model->departmentid], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('See Documents', [
+                'document/index',
+            'patientid'     => $model->externalId,
+            'departmentid'  => $model->departmentid,
+            'type'          => 'clinical-document'], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Create Chart Alert', ['patient-insurance/create-chart-alert', 'patientId' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Patient Problems', ['problem/index', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>

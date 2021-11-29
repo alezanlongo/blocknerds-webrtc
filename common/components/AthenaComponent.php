@@ -1,6 +1,8 @@
 <?php
 namespace common\components;
 
+use common\components\Athena\models\AdminDocument;
+use common\components\Athena\models\AdminDocumentPageDetail;
 use Yii;
 use Yii\helpers\ArrayHelper;
 use yii\base\Component;
@@ -1158,6 +1160,77 @@ class AthenaComponent extends Component
         }
 
         return $changedLabResultResult;
+    }
+
+
+    public function getAdminDocuments($patientId, $flatten = false)
+    {
+        $adminDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsAdmin($this->practiceid, $patientId);
+
+        $adminDocumentsModels = [];
+
+        foreach ($adminDocumentsModelsApi as $adminDocumentModelApi) {
+            $adminDocumentsModels[] = AdminDocument::createFromApiObject($adminDocumentModelApi);
+        }
+
+        return $adminDocumentsModels;
+    }
+
+
+    public function createAdminDocument($patientId, $postAdminDocument)
+    {
+        $postAdminDocumentsModelsApi = $this->client->postPracticeidPatientsPatientidDocumentsAdmin(
+            $this->practiceid,
+            $patientId,
+            $postAdminDocument->toArray()
+        );
+
+        if($postAdminDocumentsModelsApi->success){
+            $clinicalDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid(
+                $this->practiceid,
+                $patientId,
+                $postAdminDocumentsModelsApi->adminid
+            );
+            $adminDocument = ClinicalDocument::createFromApiObject($clinicalDocumentsModelsApi[0]);
+            $adminDocument->patientid = $patientId;
+            $adminDocument->save();
+            foreach ($clinicalDocumentsModelsApi[0]['pages'] as $key => $value){
+                $pageDetail = AdminDocumentPageDetail::createFromApiObject($value);
+                $pageDetail->link("adminDocument", $adminDocument);
+                $pageDetail->save();
+            }
+
+            return $adminDocument;
+        }
+
+        return $postAdminDocument;
+    }
+
+
+    public function getAdminDocumentPage($link, $flatten = false)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $link,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer '.$this->getAuthentication(),
+                'Cookie: dtCookie=5CF2D18D631F6D578123C785EF66ECEA|RUM+Default+Application|1'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $response;
     }
 
     /* ================================= Begin  Protected methods ============================================== */

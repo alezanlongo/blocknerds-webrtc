@@ -89,8 +89,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= Html::a(
                             'Documnent',
                             [
-                                'view-page',
+                                'document/view-page',
                                 'pageid'    => $value->pageid,
+                                'type'      => $type
                             ],
                             ['title' => 'Documnent',],
                         ) ?>

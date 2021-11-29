@@ -1734,4 +1734,147 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return AdminDocument
+     */
+    public function getPracticeidPatientsPatientidDocumentsAdmin($practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['admin'])) ? $dataResponse['data']['admin'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\AdminDocumentApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return AdminDocument200Response
+     */
+    public function postPracticeidPatientsPatientidDocumentsAdmin($practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\AdminDocument200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param adminid
+     * @param patientid
+     * @return AdminDocument
+     */
+    public function getPracticeidPatientsPatientidDocumentsAdminAdminid($practiceid, $adminid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{adminid}', $adminid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\AdminDocumentApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param adminid
+     * @param patientid
+     * @return AdminDocument200Response
+     */
+    public function putPracticeidPatientsPatientidDocumentsAdminAdminid($practiceid, $adminid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{adminid}', $adminid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\AdminDocument200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param adminid
+     * @param patientid
+     * @return AdminDocument200Response
+     */
+    public function deletePracticeidPatientsPatientidDocumentsAdminAdminid($practiceid, $adminid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{adminid}', $adminid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'delete' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\AdminDocument200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param pageid
+     * @param adminid
+     * @param patientid
+     * @return AdminDocumentPage
+     */
+    public function getPracticeidPatientsPatientidDocumentsAdminAdminidPagesPageid($practiceid, $pageid, $adminid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}/pages/{pageid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{pageid}', $pageid, $path);
+        $path = str_replace('{adminid}', $adminid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\AdminDocumentPageApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param adminid
+     * @param patientid
+     * @return AdminDocumentOriginalDocument
+     */
+    public function getPracticeidPatientsPatientidDocumentsAdminAdminidOriginaldocument($practiceid, $adminid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}/originaldocument';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{adminid}', $adminid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\AdminDocumentOriginalDocumentApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }
