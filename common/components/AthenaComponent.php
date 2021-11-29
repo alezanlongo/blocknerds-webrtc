@@ -1186,15 +1186,16 @@ class AthenaComponent extends Component
         );
 
         if($postAdminDocumentsModelsApi->success){
-            $clinicalDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid(
+            $adminDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsAdminAdminid(
                 $this->practiceid,
-                $patientId,
-                $postAdminDocumentsModelsApi->adminid
+                $postAdminDocumentsModelsApi->adminid,
+                $patientId
             );
-            $adminDocument = ClinicalDocument::createFromApiObject($clinicalDocumentsModelsApi[0]);
+            $adminDocument = AdminDocument::createFromApiObject($adminDocumentsModelsApi[0]);
             $adminDocument->patientid = $patientId;
+            $adminDocument->originaldocument = json_encode($adminDocumentsModelsApi[0]['originaldocument']);
             $adminDocument->save();
-            foreach ($clinicalDocumentsModelsApi[0]['pages'] as $key => $value){
+            foreach ($adminDocumentsModelsApi[0]['pages'] as $key => $value){
                 $pageDetail = AdminDocumentPageDetail::createFromApiObject($value);
                 $pageDetail->link("adminDocument", $adminDocument);
                 $pageDetail->save();

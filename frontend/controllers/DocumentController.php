@@ -240,8 +240,17 @@ class DocumentController extends Controller
      */
     public function actionViewPage($pageid)
     {
-        $model = $this->findOnePageDetail($pageid);
-        $link = $model->href."?filesize=SMALL";
+        switch ($this->type){
+            case 'clinical-document':
+                $model = $this->findOnePageDetail($pageid);
+                $link = $model->href."?filesize=SMALL";
+            break;
+            case 'admin-document':
+                $model = $this->findOneAdminPageDetail($pageid);
+                $link = $model->href."?filesize=SMALL";
+            break;
+        }
+
 
         header("Content-type: image/jpeg");
         echo $this->component->getClinicalDocumentPage($link);
@@ -296,7 +305,7 @@ class DocumentController extends Controller
     protected function findAdminPageDetail($clinicalDocument_id)
     {
         $clinicalDocumentPageDetail = AdminDocumentPageDetail::find()
-            ->where(['clinicalDocument_id' => $clinicalDocument_id]);
+            ->where(['adminDocument_id' => $clinicalDocument_id]);
 
         return $clinicalDocumentPageDetail->all();
     }

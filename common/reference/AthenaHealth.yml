@@ -4657,7 +4657,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AdminDocument'
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminDocument'
           description: Success
       operationId: getPracticeidPatientsPatientidDocumentsAdminAdminid
       tags:
@@ -10185,6 +10187,9 @@ components:
         providerusername:
           description: The username of the provider associated with this lab result document.
           type: string
+        patientid:
+          description: A patient identifier.
+          type: integer
         status:
           description: Status of the document
           type: string

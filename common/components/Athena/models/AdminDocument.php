@@ -37,6 +37,7 @@ use yii\helpers\ArrayHelper;
  * @property string $priority Document priority, when available. 1 is high, 2 is normal. Some labs use other numbers or characters that are lab-specific.
  * @property int $providerid Provider ID for this document
  * @property string $providerusername The username of the provider associated with this lab result document.
+ * @property int $patientid A patient identifier.
  * @property string $status Status of the document
  * @property string $subject Subject of the document
  * @property int $tietoorderid Order ID of the order this document is tied to, if any
@@ -58,7 +59,7 @@ class AdminDocument extends \yii\db\ActiveRecord
         return [
             [['actionnote', 'assignedto', 'createddate', 'createddatetime', 'createduser', 'deleteddatetime', 'departmentid', 'description', 'documentclass', 'documentdata', 'documentdate', 'documentroute', 'documentsource', 'documentsubclass', 'encounterid', 'entitytype', 'externalaccessionid', 'externalnote', 'internalaccessionid', 'internalnote', 'lastmodifieddate', 'lastmodifieddatetime', 'lastmodifieduser', 'priority', 'providerusername', 'status', 'subject'], 'trim'],
             [['actionnote', 'assignedto', 'createddate', 'createddatetime', 'createduser', 'deleteddatetime', 'departmentid', 'description', 'documentclass', 'documentdata', 'documentdate', 'documentroute', 'documentsource', 'documentsubclass', 'encounterid', 'entitytype', 'externalaccessionid', 'externalnote', 'internalaccessionid', 'internalnote', 'lastmodifieddate', 'lastmodifieddatetime', 'lastmodifieduser', 'priority', 'providerusername', 'status', 'subject'], 'string'],
-            [['adminid', 'appointmentid', 'clinicalproviderid', 'documenttypeid', 'providerid', 'tietoorderid', 'externalId', 'id'], 'integer'],
+            [['adminid', 'appointmentid', 'clinicalproviderid', 'documenttypeid', 'providerid', 'patientid', 'tietoorderid', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -171,6 +172,9 @@ class AdminDocument extends \yii\db\ActiveRecord
         }
         if($providerusername = ArrayHelper::getValue($apiObject, 'providerusername')) {
             $this->providerusername = $providerusername;
+        }
+        if($patientid = ArrayHelper::getValue($apiObject, 'patientid')) {
+            $this->patientid = $patientid;
         }
         if($status = ArrayHelper::getValue($apiObject, 'status')) {
             $this->status = $status;

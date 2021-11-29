@@ -36,6 +36,7 @@ class m211129_000000_101_AdminDocument extends \yii\db\Migration
             'lastmodifieddatetime' => $this->string(),
             'lastmodifieduser' => $this->string(),
             'originaldocument' => $this->string(),
+            'patientid' => $this->integer(),
             'priority' => $this->string(),
             'providerid' => $this->integer(),
             'providerusername' => $this->string(),

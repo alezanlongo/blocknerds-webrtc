@@ -1790,7 +1790,12 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
         if($dataResponse['success']){
-            return new \common\components\Athena\apiModels\AdminDocumentApi($dataResponse['data']);
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['{adminid}'])) ? $dataResponse['data']['{adminid}'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\AdminDocumentApi($value));
+            }
+            return $dataApiModel;
         }else{
             return $dataResponse['message'];
         }

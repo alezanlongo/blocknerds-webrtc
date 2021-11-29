@@ -40,6 +40,7 @@ use common\models\ApiModel as BaseApiModel;
  * @property string $priority Document priority, when available. 1 is high, 2 is normal. Some labs use other numbers or characters that are lab-specific.
  * @property int $providerid Provider ID for this document
  * @property string $providerusername The username of the provider associated with this lab result document.
+ * @property int $patientid A patient identifier.
  * @property string $status Status of the document
  * @property string $subject Subject of the document
  * @property int $tietoorderid Order ID of the order this document is tied to, if any
@@ -81,6 +82,7 @@ class AdminDocumentApi extends BaseApiModel
     public $priority;
     public $providerid;
     public $providerusername;
+    public $patientid;
     public $status;
     public $subject;
     public $tietoorderid;
