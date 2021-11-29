@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property Patient $patient
  * @property string $adjusterfax CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
  * @property string $adjusterfirstname CASE POLICY FIELD - First name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
  * @property string $adjusterlastname CASE POLICY FIELD - Last name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
@@ -77,9 +78,10 @@ use common\models\ApiModel as BaseApiModel;
  * @property int $slidingfeeplanid If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
  * @property string $stateofreportedinjury CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
  */
-class InsuranceApi extends BaseApiModel
+class PatientInsuranceApi extends BaseApiModel
 {
 
+    public $patient;
     public $adjusterfax;
     public $adjusterfirstname;
     public $adjusterlastname;

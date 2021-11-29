@@ -54,6 +54,29 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
+     * @param patientid
+     * @return Patient
+     */
+    public function putPracticeidPatientsPatientid($practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['{patientid}'])) ? $dataResponse['data']['{patientid}'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\PatientApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
      * @return Department
      */
     public function getPracticeidDepartments($practiceid, array $query = [])
@@ -76,7 +99,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     /**
      * @param practiceid
      * @param patientid
-     * @return Insurance
+     * @return PatientInsurance
      */
     public function postPracticeidPatientsPatientidInsurances($practiceid, $patientid, array $body = [])
     {
@@ -89,7 +112,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             $dataApiModel = [];
             $responseData = (isset($dataResponse['data']['insurances'])) ? $dataResponse['data']['insurances'] : $dataResponse['data'];
             foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Athena\apiModels\InsuranceApi($value));
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\PatientInsuranceApi($value));
             }
             return $dataApiModel;
         }else{
@@ -98,19 +121,59 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
-     * @return insurancePackages
+     * @param patientid
+     * @param insuranceid
+     * @return PutInsuranceResponse
      */
-    public function getPracticeidInsurancepackages($practiceid, array $query = [])
+    public function putPracticeidPatientsPatientidInsurancesInsuranceid($practiceid, $patientid, $insuranceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/insurancepackages';
+        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{insuranceid}', $insuranceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutInsuranceResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param insuranceid
+     * @return DeleteInsuranceResponse
+     */
+    public function deletePracticeidPatientsPatientidInsurancesInsuranceid($practiceid, $patientid, $insuranceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{insuranceid}', $insuranceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'delete' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\DeleteInsuranceResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return TopInsurancePackages
+     */
+    public function getPracticeidMiscTopinsurancepackages($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/misc/topinsurancepackages';
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
         if($dataResponse['success']){
             $dataApiModel = [];
-            $responseData = (isset($dataResponse['data']['insurances'])) ? $dataResponse['data']['insurances'] : $dataResponse['data'];
+            $responseData = (isset($dataResponse['data']['insurancepackages'])) ? $dataResponse['data']['insurancepackages'] : $dataResponse['data'];
             foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Athena\apiModels\insurancePackagesApi($value));
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\TopInsurancePackagesApi($value));
             }
             return $dataApiModel;
         }else{

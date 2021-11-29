@@ -210,6 +210,48 @@ paths:
       operationId: getPracticeidPatientsPatientid
       tags:
         - Patient
+    put:
+      summary: Update specific patient record
+      description: Modifies data of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  patientid:
+                    description: >-
+                      Please remember to never disclose this ID to patients
+                      since it may result in inadvertant disclosure that a
+                      patient exists in a practice already.
+                    type: string
+                type: object
+          description: Success
+      operationId: putPracticeidPatientsPatientid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutPatient'
   /v1/{practiceid}/departments:
     get:
       summary: Get list of all departments
@@ -299,7 +341,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Insurance'
+                  $ref: '#/components/schemas/PatientInsurance'
 
           description: Success
       operationId: postPracticeidPatientsPatientidInsurances
@@ -311,10 +353,95 @@ paths:
             schema:
               $ref: '#/components/schemas/RequestInsurance'
         required: true
-  /v1/{practiceid}/insurancepackages:
+  /v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}:
+    put:
+      summary: Update patient's specific insurance-package
+      description: Updates a patient insurances for a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: insuranceid
+          in: path
+          name: insuranceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutInsuranceResponse'
+          description: Success
+      operationId: putPracticeidPatientsPatientidInsurancesInsuranceid
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutInsurance'
+        required: true
+      tags:
+        - Patient Insurance
+    delete:
+      summary: Delete patient's specific insurance-package
+      description: Delete a patient's specific insurance package
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: insuranceid
+          in: path
+          name: insuranceid
+          required: true
+          schema:
+            type: integer
+        - description: Optional note as to why this is being cancelled.
+          in: query
+          name: cancellationnote
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteInsuranceResponse'
+          description: Success
+      operationId: deletePracticeidPatientsPatientidInsurancesInsuranceid
+      tags:
+        - Patient Insurance
+  /v1/{practiceid}/misc/topinsurancepackages:
     get:
-      summary: Get list of standard insurance packages
-      description: Retrieve list of insurance packages for a given search criteria
+      summary: Get list of top insurance packages
+      description: >-
+        Retrieves the list of top athenaNet insurance packages used by the
+        practice
       parameters:
         - description: practiceid
           in: path
@@ -323,103 +450,16 @@ paths:
           schema:
             type: integer
         - description: >-
-            The zipcode of the insurer. Nine digit zipcodes are accepted in the
-            format of 12345-6789.
+            Only look at patients who are associated with this department's
+            provider group in determining which insurance packages to list. Note
+            that insurance packages do not "belong" to a department and thus
+            department ID is not returned in the output. The same insurance
+            packages will (and often do) appear across multiple departments.
           in: query
-          name: insurancezip
+          name: departmentid
           required: false
           schema:
-            type: string
-        - description: The address of the insurer.
-          in: query
-          name: insuranceaddress
-          required: false
-          schema:
-            type: string
-        - description: The name of the insurer.
-          in: query
-          name: insuranceplanname
-          required: true
-          schema:
-            type: string
-        - description: The patient's insurance member ID.
-          in: query
-          name: memberid
-          required: true
-          schema:
-            type: string
-        - description: The two letter state abbreviation of the insurer's location.
-          in: query
-          name: insurancestate
-          required: false
-          schema:
-            type: string
-        - description: The city of the insurer.
-          in: query
-          name: insurancecity
-          required: false
-          schema:
-            type: string
-        - description: The insurance product type ID.
-          in: query
-          name: producttypeid
-          required: false
-          schema:
-            enum:
-              - 21
-              - 22
-              - 6
-              - 10
-              - 2
-              - 5
-              - 23
-              - 24
-              - 3
-              - 12
-              - 7
-              - 4
-              - 8
-              - 1
-              - 11
-              - 25
-              - 9
-              - 26
-              - 27
             type: integer
-            x-enumDescriptions:
-              - Behavioral health
-              - Contracts
-              - EPO
-              - FFS
-              - HMO
-              - Indemnity
-              - Legal
-              - MVA
-              - Medicare Supplement
-              - Other
-              - PFFS
-              - POS
-              - POS II
-              - PPO
-              - QPOS
-              - Radiology
-              - TRICARE Supplement
-              - Vision
-              - Workers Comp
-        - description: The phone number of the insurer.
-          in: query
-          name: insurancephone
-          required: false
-          schema:
-            type: string
-        - description: >-
-            Two letter state abbreviation that filters for insurances that cover
-            this state.
-          in: query
-          name: stateofcoverage
-          required: false
-          schema:
-            type: string
         - description: Number of entries to return (default 1500, max 5000)
           in: query
           name: limit
@@ -439,12 +479,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/insurancePackages'
+                  $ref: '#/components/schemas/TopInsurancePackages'
           description: Success
-      operationId: getPracticeidInsurancepackages
-      x-list-key: 'insurances'
+      operationId: getPracticeidMiscTopinsurancepackages
+      x-list-key: 'insurancepackages'
       tags:
-        - Insurance Package
+        - Top Insurance Packages Reference
   /v1/{practiceid}/providers:
     get:
       summary: Get list of all providers
@@ -4919,7 +4959,7 @@ components:
         insurances:
           description: List of active patient insurance packages. Only shown for a single patient and if SHOWINSURANCE is set.
           items:
-            $ref: '#/components/schemas/InsurancePatient'
+            $ref: '#/components/schemas/PatientInsurance'
           type: array
         language6392code:
           description: 'Language of the patient, using the ISO 639.2 code. (http://www.loc.gov/standards/iso639-2/php/code_list.php; "T" or terminology code) Special case: use "declined" to indicate that the patient declined to answer.'
@@ -5155,232 +5195,6 @@ components:
         patient:
           $ref: '#/components/schemas/Patient'
       type: object
-    InsurancePatient:
-      x-external-id: insuranceid
-      properties:
-        adjusterfax:
-          description: CASE POLICY FIELD - Fax for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterfirstname:
-          description: CASE POLICY FIELD - First name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterlastname:
-          description: CASE POLICY FIELD - Last name of the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        adjusterphone:
-          description: CASE POLICY FIELD - Phone number/other contact info for the adjuster on this case policy.  Only available for auto insurance or worker's comp case policies.
-          type: string
-        anotherpartyresponsibleyn:
-          description: CASE POLICY FIELD - Boolean field indicating if another party was responsible for this accident.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        autoaccidentstate:
-          description: CASE POLICY FIELD - Two-letter abbreviation for the state in which the auto accident took place. Only meaningful for auto insurance case policies.
-          type: string
-        cancelled:
-          description: The date in which the insurance was marked cancelled.
-          type: string
-        caseinjurydate:
-          description: CASE POLICY FIELD - Date of the injury.  Required for auto insurance, legal, and worker's comp case policies.
-          type: string
-        casepolicytypename:
-          description: CASE POLICY FIELD - The name of this type of case policy.
-          type: string
-        ccmstatusid:
-          description: Status ID of current CCM enrollment.
-          type: integer
-        ccmstatusname:
-          description: The name of current CCM enrollment status.
-          type: string
-        coinsurancepercent:
-          description: The coinsurance percentage for this insurance. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before this field populates.
-          type: number
-        copays:
-          description: Details about the copays for this insurance package. If you've just POSTed a new insurance you will have to wait for the auto eligbility check before these populate.
-          type: string
-        descriptionofinjury:
-          description: CASE POLICY FIELD - A description of the injury.  Only available for auto insurance and worker's comp case policies.
-          type: string
-        eligibilitylastchecked:
-          description: Date the eligibility was last checked.
-          type: string
-        eligibilitymessage:
-          description: The message, usually from our engine, of the eligibility check.
-          type: string
-        eligibilityreason:
-          description: The source of the current status. Athena is our eligibility engine.
-          type: string
-        eligibilitystatus:
-          description: Current eligibility status of this insurance package.
-          type: string
-        employerid:
-          description: The employer ID associated with the patient's insurance.
-          type: string
-        expirationdate:
-          description: Date the insurance expires.
-          type: string
-        icd10codes:
-          description: CASE POLICY FIELD - See documentation for ICD9CODES.
-          type: string
-        icd9codes:
-          description: CASE POLICY FIELD - A list of ICD9 accepted diagnosis codes. Only available for worker's comp case policies.
-          type: string
-        injuredbodypart:
-          description: CASE POLICY FIELD - Text field for describing the injured body part.  Only available for auto insurance  and worker's comp case policies.
-          type: string
-        insuranceclaimnumber:
-          description: CASE POLICY FIELD - The auto insurance claim number or the worker's comp claim number.
-          type: string
-        insuranceid:
-          description: The athena insurance policy ID.
-          type: string
-        insuranceidnumber:
-          description: The insurance policy ID number (as presented on the insurance card itself).
-          type: string
-        insurancepackageaddress1:
-          description: Address 1 for the AthenaNet insurance Package.
-          type: string
-        insurancepackageaddress2:
-          description: Address 2 for the AthenaNet insurance Package.
-          type: string
-        insurancepackagecity:
-          description: City for the AthenaNet insurance Package.
-          type: string
-        insurancepackageid:
-          description: The athenaNet insurance package ID.
-          type: integer
-        insurancepackagestate:
-          description: State of the AthenaNet insurance package
-          type: string
-        insurancepackagezip:
-          description: Zip code of the AthenaNet insurance package
-          type: string
-        insurancephone:
-          description: 'The phone number for the insurance company. Note: This defaults to the insurance package phone number. If this is set, it will override it. Likewise if blanked out, it will go back to default.'
-          type: string
-        insuranceplandisplayname:
-          description: Superpackagename of the specific insurance package.
-          type: string
-        insuranceplanname:
-          description: Name of the specific insurance package.
-          type: string
-        insurancepolicyholder:
-          description: The full name of the insurance policy holder.
-          type: string
-        insurancepolicyholderaddress1:
-          description: The first address line of the insurance policy holder.
-          type: string
-        insurancepolicyholderaddress2:
-          description: The second address line of the insurance policy holder.
-          type: string
-        insurancepolicyholdercity:
-          description: The city of the insurance policy holder.
-          type: string
-        insurancepolicyholdercountrycode:
-          description: The country code (3 letter) of the insurance policy holder.
-          type: string
-        insurancepolicyholdercountryiso3166:
-          description: The <a href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO 3166</a> country code of the insurance policy holder.
-          type: string
-        insurancepolicyholderdob:
-          description: The DOB of the insurance policy holder (mm/dd/yyyy).
-          type: string
-        insurancepolicyholderfirstname:
-          description: The first name of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholderlastname:
-          description: The last name of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholdermiddlename:
-          description: The middle name of the insurance policy holder.
-          type: string
-        insurancepolicyholdersex:
-          description: The sex of the insurance policy holder.  Except for self-pay, required for new policies.
-          type: string
-        insurancepolicyholderssn:
-          description: The SSN of the insurance policy holder.
-          type: string
-        insurancepolicyholderstate:
-          description: The state of the insurance policy holder.
-          type: string
-        insurancepolicyholdersuffix:
-          description: The suffix of the insurance policy holder.
-          type: string
-        insurancepolicyholderzip:
-          description: The zip of the insurance policy holder.
-          type: string
-        insurancetype:
-          description: Type of insurance. E.g., Medicare Part B, Group Policy, HMO, etc.
-          type: string
-        insuredentitytypeid:
-          description: The ID of the entity type for this insurance.
-          type: integer
-        insuredpcp:
-          type: string
-        insuredpcpnpi:
-          description: The national provider id of the primary care physcian assicated with the insurance.
-          type: integer
-        ircid:
-          description: Insurance category / company internal ID
-          type: integer
-        ircname:
-          description: Insurance category / company. E.g., United Healthcare, BCBS-MA, etc.
-          type: string
-        issuedate:
-          description: Date the insurance was issued.
-          type: string
-        policynumber:
-          description: The insurance group number.  This is sometimes present on an insurance card.
-          type: string
-        relatedtoautoaccidentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to an auto accident.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relatedtoemploymentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to the patient's employer.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relatedtootheraccidentyn:
-          description: CASE POLICY FIELD - Boolean field indicating whether this case policy is related to another accident.  Only available for worker's comp case policies.
-          enum:
-            - ''
-            - false
-            - true
-          type: string
-        relationshiptoinsured:
-          description: This patient's relationship to the policy holder (text).
-          type: string
-        relationshiptoinsuredid:
-          default: 1
-          description: This patient's relationship to the policy holder (as an ID).  See <a href="/workflows/patient-relationship-mapping">the mapping</a>.
-          type: integer
-        repricername:
-          description: CASE POLICY FIELD - Name for the repricer.  Only available for worker's comp case policies.
-          type: string
-        repricerphone:
-          description: CASE POLICY FIELD - Phone number for the repricer.  Only available for worker's comp case policies.
-          type: string
-        sequencenumber:
-          description: 1 = primary, 2 = secondary, 3 = tertiary, etc.  Must have a primary before a secondary and a secondary before a tertiary, etc.
-          type: integer
-        slidingfeeplanid:
-          description: If the patient is on a sliding fee plan, this is the ID of that plan.  See /slidingfeeplans.
-          type: integer
-        stateofreportedinjury:
-          description: CASE POLICY FIELD - Two-letter state abbreviation for the state this injury was reported in.  Only available for worker's comp case policies.
-          type: string
-        patient:
-          $ref: '#/components/schemas/Patient'
-      type: object
     Department:
       x-external-id: departmentid
       properties:
@@ -5517,9 +5331,11 @@ components:
         copaytype:
           description: What the copay amount applies to.
           type: number
-    Insurance:
+    PatientInsurance:
       x-external-id: insuranceid
       properties:
+        patient:
+          $ref: '#/components/schemas/Patient'
         adjusterfax:
           description: >-
             CASE POLICY FIELD - Fax for the adjuster on this case
@@ -5972,28 +5788,6 @@ components:
           type: boolean
       required:
         - insurancepackageid
-      type: object
-    insurancePackages:
-      x-external-id: insuranceid
-      properties:
-        addresslist:
-          description: >-
-            The addresses associated with this insurance package. The
-            default address is listed first.
-          items:
-            type: string
-          type: array
-        affiliations:
-          description: The affiliations associated with this insurance package.
-          items:
-            type: string
-          type: array
-        insurancepackageid:
-          description: The athena insurance package ID.
-          type: integer
-        insuranceplanname:
-          description: Name of the specific insurance package.
-          type: string
       type: object
     Provider:
       x-external-id: providerid
@@ -9895,3 +9689,1224 @@ components:
             - false
             - true
           type: string
+    PutPatient:
+      properties:
+        PATIENTFACINGCALL:
+          description: >-
+            When 'true' is passed we will collect relevant data and
+            store in our database.
+          type: boolean
+        THIRDPARTYUSERNAME:
+          description: User name of the patient in the third party application.
+          type: string
+        address1:
+          description: 'Patient''s address - 1st line (Max length: 100)'
+          type: string
+        address2:
+          description: 'Patient''s address - 2nd line (Max length: 100)'
+          type: string
+        agriculturalworker:
+          description: >-
+            Used to identify this patient as an agricultural worker.
+            Only settable if client has Social Determinant fields turned
+            on.
+          enum:
+            - ''
+            - 'N'
+            - P
+            - 'Y'
+          type: string
+        agriculturalworkertype:
+          description: >-
+            For patients that are agricultural workers, identifies the
+            type of worker. Only settable if client has Social
+            Determinant fields turned on.
+          enum:
+            - ''
+            - MIGRANT
+            - SEASONAL
+            - UNSPECIFIED
+          type: string
+        altfirstname:
+          description: >-
+            Alternate first name that differs from legal name. This is
+            only available in practices with the appropriate practice
+            settings.
+          type: string
+        assignedsexatbirth:
+          description: >-
+            Sex that this patient was assigned at birth. This is only
+            available in practices with the appropriate practice
+            settings.
+          enum:
+            - ''
+            - M
+            - F
+            - 'N'
+            - U
+          type: string
+        caresummarydeliverypreference:
+          description: The patient's preference for care summary delivery.
+          enum:
+            - ''
+            - PAPER
+            - PORTAL
+          type: string
+        city:
+          description: 'Patient''s city (Max length: 30)'
+          type: string
+        clinicalordertypegroupid:
+          description: >-
+            The clinical order type group of the clinical provider
+            (Prescription: 10, Lab: 11, Vaccinations: 16).
+          type: string
+        consenttocall:
+          description: >-
+            The flag is used to record the consent of a patient to
+            receive automated calls per FCC requirements. The requested
+            legal language is 'Entry of any telephone contact number
+            constitutes written consent to receive any automated,
+            prerecorded, and artificial voice telephone calls initiated
+            by the Practice. To alter or revoke this consent, visit the
+            Patient Portal "Contact Preferences" page.'
+          type: boolean
+        consenttotext:
+          description: >-
+            The flag is used to record the consent of a patient to
+            receive text messages per FCC requirements. In order for
+            this to be true, a valid mobile phone number must be set and
+            the practice setting "Hide SMS Opt-in option" must be set to
+            Off.
+          type: boolean
+        contacthomephone:
+          description: >-
+            Emergency contact home phone.  Invalid numbers in a GET/PUT
+            will be ignored.  Patient phone numbers and other data may
+            change, and one phone number may be associated with multiple
+            patients. You are responsible for taking additional steps to
+            verify patient identity and for using this data in
+            accordance with applicable law, including HIPAA.  Invalid
+            numbers in a POST will be ignored, possibly resulting in an
+            error.
+          type: string
+        contactmobilephone:
+          description: >-
+            Emergency contact mobile phone.  Invalid numbers in a
+            GET/PUT will be ignored.  Patient phone numbers and other
+            data may change, and one phone number may be associated with
+            multiple patients. You are responsible for taking additional
+            steps to verify patient identity and for using this data in
+            accordance with applicable law, including HIPAA.  Invalid
+            numbers in a POST will be ignored, possibly resulting in an
+            error.
+          type: string
+        contactname:
+          description: >-
+            The name of the (emergency) person to contact about the
+            patient. The contactname, contactrelationship,
+            contacthomephone, and contactmobilephone fields are all
+            related to the emergency contact for the patient. They are
+            NOT related to the contractpreference_* fields.
+          type: string
+        contactpreference:
+          description: >-
+            The MU-required field for "preferred contact method". This
+            is not used by any automated systems.
+          enum:
+            - ''
+            - HOMEPHONE
+            - MAIL
+            - MOBILEPHONE
+            - PORTAL
+            - WORKPHONE
+          type: string
+        contactpreference_announcement_email:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "announcement" communications delivered via email.  Note
+            that this will not be present if the practice or patient has
+            not set it.For completeness, turning email off is supported
+            via the API, but it is discouraged. When email is off,
+            patients may not not get messages from the patient portal.
+          type: boolean
+        contactpreference_announcement_phone:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "announcement" communications delivered via phone.  Note
+            that this will not be present if the practice or patient has
+            not set it.
+          type: boolean
+        contactpreference_announcement_sms:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "announcement" communications delivered via SMS.  Note
+            that this will not be present if the practice or patient has
+            not set it.For SMS, there is specific terms of service
+            language that must be used when displaying this as an option
+            to be turned on.  Turning on must be an action by the
+            patient, not a practice user.
+          type: boolean
+        contactpreference_appointment_email:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "appointment" communications delivered via email.  Note
+            that this will not be present if the practice or patient has
+            not set it.For completeness, turning email off is supported
+            via the API, but it is discouraged. When email is off,
+            patients may not not get messages from the patient portal.
+          type: boolean
+        contactpreference_appointment_phone:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "appointment" communications delivered via phone.  Note
+            that this will not be present if the practice or patient has
+            not set it.
+          type: boolean
+        contactpreference_appointment_sms:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "appointment" communications delivered via SMS.  Note
+            that this will not be present if the practice or patient has
+            not set it.For SMS, there is specific terms of service
+            language that must be used when displaying this as an option
+            to be turned on.  Turning on must be an action by the
+            patient, not a practice user.
+          type: boolean
+        contactpreference_billing_email:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "billing" communications delivered via email.  Note that
+            this will not be present if the practice or patient has not
+            set it.For completeness, turning email off is supported via
+            the API, but it is discouraged. When email is off, patients
+            may not not get messages from the patient portal.
+          type: boolean
+        contactpreference_billing_phone:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "billing" communications delivered via phone.  Note that
+            this will not be present if the practice or patient has not
+            set it.
+          type: boolean
+        contactpreference_billing_sms:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "billing" communications delivered via SMS.  Note that
+            this will not be present if the practice or patient has not
+            set it.For SMS, there is specific terms of service language
+            that must be used when displaying this as an option to be
+            turned on.  Turning on must be an action by the patient, not
+            a practice user.
+          type: boolean
+        contactpreference_lab_email:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "lab" communications delivered via email.  Note that
+            this will not be present if the practice or patient has not
+            set it.For completeness, turning email off is supported via
+            the API, but it is discouraged. When email is off, patients
+            may not not get messages from the patient portal.
+          type: boolean
+        contactpreference_lab_phone:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "lab" communications delivered via phone.  Note that
+            this will not be present if the practice or patient has not
+            set it.
+          type: boolean
+        contactpreference_lab_sms:
+          description: >-
+            If set, the patient has indicated a preference to get or not
+            get "lab" communications delivered via SMS.  Note that this
+            will not be present if the practice or patient has not set
+            it.For SMS, there is specific terms of service language that
+            must be used when displaying this as an option to be turned
+            on.  Turning on must be an action by the patient, not a
+            practice user.
+          type: boolean
+        contactrelationship:
+          description: >-
+            Emergency contact relationship (one of SPOUSE, PARENT,
+            CHILD, SIBLING, FRIEND, COUSIN, GUARDIAN, OTHER)
+          enum:
+            - ''
+            - CHILD
+            - COUSIN
+            - FRIEND
+            - GUARDIAN
+            - OTHER
+            - PARENT
+            - SIBLING
+            - SPOUSE
+          type: string
+        countrycode3166:
+          default: US
+          description: Patient's country code (ISO 3166-1)
+          type: string
+        deceaseddate:
+          description: If present, the date on which a patient died.
+          type: string
+        defaultpharmacyncpdpid:
+          description: >-
+            The NCPDP ID of the patient's preferred pharmacy.  See
+            http://www.ncpdp.org/ for details. Note: if updating this
+            field, please make sure to have a CLINICALORDERTYPEGROUPID
+            field as well.
+          type: string
+        departmentid:
+          description: Primary (registration) department ID.
+          type: integer
+        dob:
+          description: Patient's DOB (mm/dd/yyyy)
+          type: string
+        donotcallyn:
+          description: >-
+            Warning! This patient will not receive any communication
+            from the practice if this field is set to true. This field
+            should only be used if you are absolutely certain that's
+            what you want to do.
+          type: boolean
+        driverslicenseexpirationdate:
+          description: The expiration date of the patient's driver's license.
+          type: string
+        driverslicensenumber:
+          description: The number of the patient's driver's license
+          type: string
+        driverslicensestateid:
+          description: >-
+            The state of the patient's driver's license. This is in the
+            form of a 2 letter state code.
+          enum:
+            - ''
+            - AL
+            - AK
+            - AZ
+            - AR
+            - CA
+            - CO
+            - CT
+            - DE
+            - FL
+            - GA
+            - HI
+            - ID
+            - IL
+            - IN
+            - IA
+            - KS
+            - KY
+            - LA
+            - ME
+            - MD
+            - MA
+            - MI
+            - MN
+            - MS
+            - MO
+            - MT
+            - NE
+            - NV
+            - NH
+            - NJ
+            - NM
+            - NY
+            - NC
+            - ND
+            - OH
+            - OK
+            - OR
+            - PA
+            - RI
+            - SC
+            - SD
+            - TN
+            - TX
+            - UT
+            - VT
+            - VA
+            - WA
+            - WV
+            - WI
+            - WY
+            - AS
+            - DC
+            - FM
+            - GU
+            - MH
+            - MP
+            - PW
+            - PR
+            - VI
+            - AE
+            - AA
+            - AP
+          type: string
+        email:
+          description: >-
+            Patient's email address.  'declined' can be used to indicate
+            just that.
+          type: string
+        employerid:
+          description: The patient's employer's ID (from /employers call)
+          type: integer
+        employerphone:
+          description: >-
+            The patient's employer's phone number. Normally, this is set
+            by setting employerid. However, setting this value can be
+            used to override this on an individual patient.  Invalid
+            numbers in a GET/PUT will be ignored.  Patient phone numbers
+            and other data may change, and one phone number may be
+            associated with multiple patients. You are responsible for
+            taking additional steps to verify patient identity and for
+            using this data in accordance with applicable law, including
+            HIPAA.  Invalid numbers in a POST will be ignored, possibly
+            resulting in an error.
+          type: string
+        ethnicitycode:
+          description: >-
+            Ethnicity of the patient, using the 2.16.840.1.113883.5.50
+            codeset. See
+            http://www.hl7.org/implement/standards/fhir/terminologies-v3.html
+            Special case: use "declined" to indicate that the patient
+            declined to answer.
+          type: string
+        firstname:
+          description: Patient's first name
+          type: string
+        genderidentity:
+          description: >-
+            Gender this patient identifies with. This is only available
+            in practices with the appropriate practice settings. To see
+            the available options for this input, please see GET
+            /configuration/patients/genderidentity?show2015edcehrtvalues=true
+          type: string
+        genderidentityother:
+          description: >-
+            Only valid when used in conjunction with a gender identity
+            choice that allows the patient to describe their identity
+            (if it doesn't conform to any other choice).
+          type: string
+        guarantoraddress1:
+          description: 'Guarantor''s address (Max length: 100)'
+          type: string
+        guarantoraddress2:
+          description: 'Guarantor''s address - line 2 (Max length: 100)'
+          type: string
+        guarantoraddresssameaspatient:
+          description: >-
+            If set, the address of the guarantor is the same as the
+            patient.
+          type: boolean
+        guarantorcity:
+          description: 'Guarantor''s city (Max length: 30)'
+          type: string
+        guarantorcountrycode3166:
+          default: US
+          description: Guarantor's country code (ISO 3166-1)
+          type: string
+        guarantordob:
+          description: Guarantor's DOB (mm/dd/yyyy)
+          type: string
+        guarantoremail:
+          description: Guarantor's email address
+          type: string
+        guarantoremployerid:
+          description: The guaranror's employer's ID (from /employers call)
+          type: integer
+        guarantorfirstname:
+          description: Guarantor's first name
+          type: string
+        guarantorlastname:
+          description: Guarantor's last name
+          type: string
+        guarantormiddlename:
+          description: Guarantor's middle name
+          type: string
+        guarantorphone:
+          description: >-
+            Guarantor's phone number.  Invalid numbers in a GET/PUT will
+            be ignored.  Patient phone numbers and other data may
+            change, and one phone number may be associated with multiple
+            patients. You are responsible for taking additional steps to
+            verify patient identity and for using this data in
+            accordance with applicable law, including HIPAA.  Invalid
+            numbers in a POST will be ignored, possibly resulting in an
+            error.
+          type: string
+        guarantorrelationshiptopatient:
+          default: 1
+          description: The guarantor's relationship to the patient
+          enum:
+            - ''
+            - 1
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+            - 16
+            - 17
+            - 18
+            - 19
+            - 2
+            - 21
+            - 22
+            - 23
+            - 24
+            - 25
+            - 26
+            - 27
+            - 28
+            - 29
+            - 3
+            - 30
+            - 31
+            - 32
+            - 4
+            - 5
+            - 6
+            - 7
+            - 9
+          type: string
+        guarantorssn:
+          description: Guarantor's SSN
+          type: string
+        guarantorstate:
+          description: Guarantor's state (2 letter abbreviation)
+          type: string
+        guarantorsuffix:
+          description: Guarantor's name suffix
+          type: string
+        guarantorzip:
+          description: Guarantor's zip
+          type: string
+        guardianfirstname:
+          description: The first name of the patient's guardian.
+          type: string
+        guardianlastname:
+          description: The last name of the patient's guardian.
+          type: string
+        guardianmiddlename:
+          description: The middle name of the patient's guardian.
+          type: string
+        guardiansuffix:
+          description: The suffix of the patient's guardian.
+          type: string
+        hasmobileyn:
+          description: Set to false if a client has declined a phone number.
+          type: boolean
+        homeboundyn:
+          description: If the patient is homebound, this is true.
+          type: boolean
+        homeless:
+          description: >-
+            Used to identify this patient as homeless. Only settable if
+            client has Social Determinant fields turned on.
+          enum:
+            - ''
+            - 'N'
+            - P
+            - 'Y'
+          type: string
+        homelesstype:
+          description: >-
+            For patients that are homeless, provides more detail
+            regarding the patient's homeless situation. Only settable if
+            client has Social Determinant fields turned on.
+          enum:
+            - ''
+            - DOUBLINGUP
+            - OTHER
+            - PERMANENT
+            - SHELTER
+            - STREET
+            - TRANSITIONAL
+            - UNSPECIFIED
+            - UNKNOWN
+          type: string
+        homephone:
+          description: >-
+            The patient's home phone number.  Invalid numbers in a GET
+            will be ignored.  Patient phone numbers and other data may
+            change, and one phone number may be associated with multiple
+            patients. You are responsible for taking additional steps to
+            verify patient identity and for using this data in
+            accordance with applicable law, including HIPAA. Only phone
+            numbers that exist in the North American Naming Plan (NANP)
+            are acceptable for input.
+          type: string
+        ignorerestrictions:
+          description: >-
+            Set to true to allow ability to find patients with record
+            restrictions and blocked patients. This should only be used
+            when there is no reflection to the patient at all that a
+            match was found or not found.
+          type: boolean
+        industrycode:
+          description: >-
+            Industry of the patient, using the US Census industry code
+            (code system 2.16.840.1.113883.6.310).  "other" can be used
+            as well.
+          type: string
+        language6392code:
+          description: >-
+            Language of the patient, using the ISO 639.2 code.
+            (http://www.loc.gov/standards/iso639-2/php/code_list.php;
+            "T" or terminology code) Special case: use "declined" to
+            indicate that the patient declined to answer.
+          type: string
+        lastname:
+          description: Patient's last name
+          type: string
+        lookupdepartmentid:
+          description: >-
+            Use this in practices that register copies of patients in
+            different departments in order to make sure you are updating
+            the correct version of the patient.
+          type: integer
+        maritalstatus:
+          description: >-
+            Marital Status (D=Divorced, M=Married, S=Single, U=Unknown,
+            W=Widowed, X=Separated, P=Partner)
+          enum:
+            - ''
+            - D
+            - M
+            - P
+            - S
+            - U
+            - W
+            - X
+          type: string
+        middlename:
+          description: Patient's middle name
+          type: string
+        mobilecarrierid:
+          description: >-
+            The ID of the mobile carrier, from /mobilecarriers or the
+            list below.
+          enum:
+            - ''
+            - 21
+            - 22
+            - 23
+            - 24
+            - 25
+            - 26
+            - 27
+            - 28
+            - 29
+            - 30
+            - 32
+            - 33
+            - 34
+            - 35
+            - 36
+            - 37
+            - 38
+            - 39
+            - 40
+            - 41
+            - 43
+            - 44
+            - 45
+            - 46
+            - 47
+            - 48
+            - 49
+            - 50
+            - 51
+            - 52
+            - 53
+            - 54
+            - 55
+            - 56
+            - 57
+            - 58
+            - 59
+            - 60
+            - 81
+          type: string
+        mobilephone:
+          description: >-
+            The patient's mobile phone number. On input, 'declined' can
+            be used to indicate no number. (Alternatively, hasmobile can
+            also be set to false. "declined" simply does this for you.)
+            Invalid numbers in a GET will be ignored.  Patient phone
+            numbers and other data may change, and one phone number may
+            be associated with multiple patients. You are responsible
+            for taking additional steps to verify patient identity and
+            for using this data in accordance with applicable law,
+            including HIPAA. Only phone numbers that exist in the North
+            American Naming Plan (NANP) are acceptable for input.
+          type: string
+        nextkinname:
+          description: The full name of the next of kin.
+          type: string
+        nextkinphone:
+          description: >-
+            The next of kin phone number.  Invalid numbers in a GET/PUT
+            will be ignored.  Patient phone numbers and other data may
+            change, and one phone number may be associated with multiple
+            patients. You are responsible for taking additional steps to
+            verify patient identity and for using this data in
+            accordance with applicable law, including HIPAA.  Invalid
+            numbers in a POST will be ignored, possibly resulting in an
+            error.
+          type: string
+        nextkinrelationship:
+          description: >-
+            The next of kin relationship (one of SPOUSE, PARENT, CHILD,
+            SIBLING, FRIEND, COUSIN, GUARDIAN, OTHER)
+          enum:
+            - ''
+            - CHILD
+            - COUSIN
+            - FRIEND
+            - GUARDIAN
+            - OTHER
+            - PARENT
+            - SIBLING
+            - SPOUSE
+          type: string
+        notes:
+          description: Notes associated with this patient.
+          type: string
+        occupationcode:
+          description: >-
+            Occupation of the patient, using the US Census occupation
+            code (code system 2.16.840.1.113883.6.240).  "other" can be
+            used as well.
+          type: string
+        onlinestatementonlyyn:
+          description: >-
+            Set to true if a patient wishes to get e-statements instead
+            of paper statements. Should only be set for patients with an
+            email address and clients with athenaCommunicator. The
+            language we use in the portal is, "Future billing statements
+            will be sent to you securely via your Patient Portal
+            account. You will receive an email notice when new
+            statements are available." This language is not required,
+            but it is given as a suggestion.
+          type: boolean
+        portalaccessgiven:
+          description: >-
+            This flag is set if the patient has been given access to the
+            portal. This may be set by the API user if a patient has
+            been given access to the portal "by providing a preprinted
+            brochure or flyer showing the URL where patients can access
+            their Patient Care Summaries." The practiceinfo endpoint can
+            provide the portal URL. While technically allowed, it would
+            be very unusual to set this to false via the API.
+          type: boolean
+        povertylevelcalculated:
+          description: >-
+            Patient's poverty level (% of the Federal Poverty Level), as
+            calculated from family size, income per pay period, pay
+            period, and state. Typically only valued if client has
+            Federal Poverty Level fields turned on.
+          enum:
+            - ''
+            - 100
+            - 125
+            - 175
+            - 250
+          type: number
+        povertylevelfamilysize:
+          description: >-
+            Patient's family size (used for determining poverty level).
+            Only settable if client has Federal Poverty Level fields
+            turned on.
+          type: number
+        povertylevelfamilysizedeclined:
+          description: >-
+            Indicates if the patient delcines to provide
+            "povertylevelfamilysize". Should be set to Yes if the
+            patient declines.
+          type: boolean
+        povertylevelincomedeclined:
+          description: >-
+            Indicates if the patient delcines to provide
+            "povertylevelincomeperpayperiod". Should be set to Yes if
+            the patient declines.
+          type: boolean
+        povertylevelincomepayperiod:
+          description: >-
+            Patient's pay period (used for determining poverty level).
+            Only settable if client has Federal Poverty Level fields
+            turned on.
+          enum:
+            - ''
+            - BIWEEK
+            - MONTH
+            - WEEK
+            - YEAR
+          type: string
+        povertylevelincomeperpayperiod:
+          description: >-
+            Patient's income per specified pay period (used for
+            determining poverty level). Only settable if client has
+            Federal Poverty Level fields turned on.
+          type: integer
+        povertylevelincomerangedeclined:
+          description: >-
+            Indicates whether or not the patient declines to provide an
+            income level (povertylevelcalculated).
+          type: boolean
+        preferredname:
+          description: The patient's preferred name (i.e. nickname).
+          type: string
+        preferredpronouns:
+          description: >-
+            Pronoun this patient uses.  This is only available in
+            practices with the appropriate practice settings.
+          enum:
+            - ''
+            - he/him
+            - she/her
+            - they/them
+          type: string
+        primarydepartmentid:
+          description: >-
+            The patient's "current" department. This field is not always
+            set by the practice.
+          type: string
+        primaryproviderid:
+          description: The "primary" provider for this patient, if set.
+          type: string
+        publichousing:
+          description: >-
+            Used to identify this patient as living in public housing.
+            Only settable if client has Social Determinant fields turned
+            on.
+          enum:
+            - ''
+            - 'N'
+            - P
+            - 'Y'
+          type: string
+        race:
+          description: >-
+            The patient race, using the 2.16.840.1.113883.5.104 codeset.
+            See
+            http://www.hl7.org/implement/standards/fhir/terminologies-v3.html
+            Special case: use "declined" to indicate that the patient
+            declined to answer. Multiple values or a tab-seperated list
+            of codes is acceptable for multiple races for input. The
+            first race will be considered "primary".  Note: you must
+            update all values at once if you update any.
+          type: string
+        referralsourceid:
+          description: The referral / "how did you hear about us" ID.
+          type: string
+        referralsourceother:
+          description: >-
+            If selecting "other" for referral source, this is the text
+            field that can be filled out.
+          type: string
+        registerpatientindepartment:
+          description: >-
+            If you use LOOKUPDEPARTMENTID to get the local copy of a
+            patient to update, and if the patient is not currently
+            registered in that department, setting this flag will
+            register a new copy of this patient in that department.
+          type: boolean
+        returnerroroninvalidemail:
+          description: Returns Error on invalid email if true, default false.
+          type: boolean
+        schoolbasedhealthcenter:
+          description: >-
+            Used to identify this patient as school-based health center
+            patient. Only settable if client has Social Determinant
+            fields turned on.
+          enum:
+            - ''
+            - 'N'
+            - P
+            - 'Y'
+          type: string
+        sex:
+          description: Patient's sex (M/F)
+          enum:
+            - ''
+            - F
+            - M
+          type: string
+        sexualorientation:
+          description: >-
+            Sexual orientation of this patient. This is only available
+            in practices with the appropriate practice settings.
+          enum:
+            - Straight or heterosexual
+            - Lesbian, gay or homosexual
+            - Bisexual
+            - Don't know
+            - Something else
+            - Choose not to disclose
+            - ''
+            - Something else, please describe
+          type: string
+        sexualorientationother:
+          description: >-
+            Only valid when used in conjunction with a sexual
+            orientation choice that allows the patient to describe their
+            orientation (if it doesn't conform to any other choice).
+          type: string
+        ssn:
+          type: string
+        state:
+          description: Patient's state (2 letter abbreviation)
+          type: string
+        status:
+          default: a
+          description: >-
+            The "status" of the patient, either active, inactive or
+            prospective
+          enum:
+            - ''
+            - a
+            - i
+            - p
+          type: string
+        suffix:
+          description: Patient's name suffix
+          type: string
+        veteran:
+          description: >-
+            Used to identify this patient as a veteran. Only settable if
+            client has Social Determinant fields turned on.
+          enum:
+            - ''
+            - 'N'
+            - P
+            - 'Y'
+          type: string
+        workphone:
+          description: >-
+            The patient's work phone number.  Generally not used to
+            contact a patient.  Invalid numbers in a GET will be
+            ignored.  Patient phone numbers and other data may change,
+            and one phone number may be associated with multiple
+            patients. You are responsible for taking additional steps to
+            verify patient identity and for using this data in
+            accordance with applicable law, including HIPAA. Only phone
+            numbers that exist in the North American Naming Plan (NANP)
+            are acceptable for input.
+          type: string
+        zip:
+          description: Patient's zip.  Matching occurs on first 5 characters.
+          type: string
+      type: object
+    PutInsurance:
+      properties:
+        adjusterfax:
+          description: >-
+            CASE POLICY FIELD - Fax for the adjuster on this case
+            policy. Only available for auto insurance or worker's comp
+            case policies.
+          type: string
+        adjusterfirstname:
+          description: >-
+            CASE POLICY FIELD - First name of the adjuster on this case
+            policy.  Only available for auto insurance or worker's comp
+            case policies.
+          type: string
+        adjusterlastname:
+          description: >-
+            CASE POLICY FIELD - Last name of the adjuster on this case
+            policy.  Only available for auto insurance or worker's comp
+            case policies.
+          type: string
+        adjusterphone:
+          description: >-
+            CASE POLICY FIELD - Phone number/other contact info for the
+            adjuster on this case policy.  Only available for auto
+            insurance or worker's comp case policies.
+          type: string
+        anotherpartyresponsible:
+          description: >-
+            CASE POLICY FIELD - Boolean field indicating if another
+            party was responsible for this accident.
+          type: boolean
+        autoaccidentstate:
+          description: >-
+            CASE POLICY FIELD - Two-letter abbreviation for the state in
+            which the auto accident took place. Only meaningful for auto
+            insurance case policies.
+          type: string
+        caseinjurydate:
+          description: >-
+            CASE POLICY FIELD - Date of the injury.  Required for auto
+            insurance, legal, and worker's comp case policies. Dates
+            from over a year ago, and dates in the future are not valid.
+          type: string
+        departmentid:
+          description: >-
+            If set, we will use the department id in an attempt to add
+            to the local patient.
+          type: integer
+        descriptionofinjury:
+          description: >-
+            CASE POLICY FIELD - A description of the injury.  Only
+            available for auto insurance and worker's comp case
+            policies.
+          type: string
+        expirationdate:
+          description: >-
+            Set the date that the insurance will expire. This is usually
+            a date within the next year and not in the past.
+          type: string
+        icd10codes:
+          description: CASE POLICY FIELD - See documentation for ICD9CODES.
+          items:
+            type: string
+          type: array
+        icd9codes:
+          description: >-
+            CASE POLICY FIELD - A list of ICD9 accepted diagnosis codes.
+            Please note that setting anything in this field will
+            overwrite the current codes, so if you wish to append a
+            code, please specify all of the preexisting codes in
+            addition to the new one. Only available for worker's comp
+            case policies.
+          items:
+            type: integer
+          type: array
+        injuredbodypart:
+          description: >-
+            CASE POLICY FIELD - Text field for describing the injured
+            body part.  Required for auto insurance case policies.  Also
+            available for worker's comp case policies.
+          type: string
+        insuranceclaimnumber:
+          description: >-
+            CASE POLICY FIELD - The auto insurance claim number or the
+            worker's comp claim number.  This is required for those
+            types of case policies.
+          type: string
+        insuranceidnumber:
+          description: >-
+            ID number for this insurance or case policy.  This is not
+            useful for auto insurance or worker's comp case policies.
+            For those, please use the insuranceclaimnumber field
+            instead.
+          type: string
+        insurancephone:
+          description: >-
+            The phone number for the insurance company. Note: This
+            defaults to the insurance package phone number. If this is
+            set, it will override it. Likewise if blanked out, it will
+            go back to default.
+          type: string
+        insurancepolicyholder:
+          description: >-
+            Name of the entity who holds this insurance policy. Required
+            if entity type is set to non-person.
+          type: string
+        insurancepolicyholderaddress1:
+          description: The first address line of the insurance policy holder.
+          type: string
+        insurancepolicyholderaddress2:
+          description: The second address line of the insurance policy holder.
+          type: string
+        insurancepolicyholdercity:
+          description: The city of the insurance policy holder.
+          type: string
+        insurancepolicyholdercountrycode:
+          description: >-
+            The country code (3 letter) of the insurance policy holder.
+            Either this or insurancepolicyholdercountryiso3166 are
+            acceptable.  Defaults to USA.
+          type: string
+        insurancepolicyholdercountryiso3166:
+          description: >-
+            The <a
+            href="http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO
+            3166</a> country code of the insurance policy holder.
+            Either this or insurancepolicyholdercountrycode are
+            acceptable.  Defaults to US.
+          type: string
+        insurancepolicyholderdob:
+          description: The DOB of the insurance policy holder (mm/dd/yyyy).
+          type: string
+        insurancepolicyholderfirstname:
+          description: >-
+            The first name of the insurance policy holder.  Except for
+            self-pay, required for new policies.
+          type: string
+        insurancepolicyholderlastname:
+          description: >-
+            The last name of the insurance policy holder.  Except for
+            self-pay, required for new policies.
+          type: string
+        insurancepolicyholdermiddlename:
+          description: The middle name of the insurance policy holder.
+          type: string
+        insurancepolicyholdersex:
+          description: >-
+            The sex of the insurance policy holder.  Except for
+            self-pay, required for new policies.
+          enum:
+            - ''
+            - M
+            - F
+          type: string
+        insurancepolicyholderssn:
+          description: The SSN of the insurance policy holder.
+          type: string
+        insurancepolicyholderstate:
+          description: The state of the insurance policy holder.
+          type: string
+        insurancepolicyholdersuffix:
+          description: The suffix of the insurance policy holder.
+          type: string
+        insurancepolicyholderzip:
+          description: The zip of the insurance policy holder.
+          type: string
+        insuredentitytypeid:
+          enum:
+            - ''
+            - 1
+            - 2
+          type: string
+        issuedate:
+          description: >-
+            Set the date that the insurance was issued. This is usually
+            a date in the past year and not in the future.
+          type: string
+        newsequencenumber:
+          description: >-
+            Update the sequence number. You cannot assign a sequence
+            number to a patient's insurance if that patient already has
+            another insurance active with that sequence number.
+            Additionally, all lower numbered sequence numbers need to be
+            filled before assigning a higher sequence number.
+          type: integer
+        policynumber:
+          description: >-
+            The insurance group number.  This is sometimes present on an
+            insurance card.
+          type: string
+        realtedtoautoaccident:
+          description: >-
+            CASE POLICY FIELD - Boolean field indicating whether this
+            case policy is related to an auto accident. Required for
+            auto insurance case policies.
+          type: boolean
+        relatedtoemployment:
+          description: >-
+            CASE POLICY FIELD - Boolean field indicating whether this
+            case policy is related to the patient's employer.  Required
+            for worker's comp case policies.
+          type: boolean
+        relatedtootheraccident:
+          description: >-
+            CASE POLICY FIELD - Boolean field indicating whether this
+            case policy is related to another accident.  Only available
+            for worker's comp case policies.
+          type: boolean
+        relationshiptoinsuredid:
+          default: 1
+          description: >-
+            This patient's relationship to the policy holder (as an
+            ID).  See <a href="/workflows/patient-relationship-mapping">
+            the mapping</a>. Please note that if this is set to 12,
+            Entity Type must be set to 2.
+          type: integer
+        repricername:
+          description: >-
+            CASE POLICY FIELD - Name for the repricer.  Only available
+            for worker's comp case policies.
+          type: string
+        repricerphone:
+          description: >-
+            CASE POLICY FIELD - Phone number for the repricer.  Only
+            available for worker's comp case policies.
+          type: string
+        stateofreportedinjury:
+          description: >-
+            CASE POLICY FIELD - Two-letter state abbreviation for the
+            state this injury was reported in.  Only available for
+            worker's comp case policies.
+          type: string
+      type: object
+    TopInsurancePackages:
+      properties:
+        address:
+          description: >-
+            The first address line associated with this insurance
+            package, often on the insurance card itself as a place to
+            send claims.
+          type: string
+        address2:
+          description: >-
+            The second address line associated with this insurance
+            package.
+          type: string
+        city:
+          description: The city associated with this insurance package.
+          type: string
+        insurancepackageid:
+          description: >-
+            The athenaNet-wide insurance package (also know in the
+            industry as an "insurance product") id.
+          type: string
+        insuranceproducttypename:
+          description: The type of product (e.g. PPO, HMO, etc.)
+          type: string
+        name:
+          description: The name of the insurance package.
+          type: string
+        percentage:
+          description: >-
+            The percentage of insurance packages in this practice (or
+            department, if a departmentid is specified in the input)
+            that use this insurance package.
+          type: string
+        phone:
+          description: The phone number associated with this insurance package.
+          type: string
+        ranking:
+          description: >-
+            The ranking of how often this package is used by this
+            practice (or department, if a departmentid is specified in
+            the input).
+          type: string
+        state:
+          description: The state associated with this insurance package.
+          type: string
+        zip:
+          description: The zip code associated with this insurance package.
+          type: string
+      type: object
+    PutInsuranceResponse:
+      properties:
+        message:
+          description: >-
+            If success is false, this contains an error message with
+            more detail.
+          type: string
+        success:
+          description: True if operation was sucessful, false otherwise.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+      type: object
+    DeleteInsuranceResponse:
+      properties:
+        message:
+          description: >-
+            If success is false, this contains an error message with
+            more detail.
+          type: string
+        success:
+          description: True if operation was sucessful, false otherwise.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+      type: object

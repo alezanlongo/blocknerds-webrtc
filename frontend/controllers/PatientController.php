@@ -4,14 +4,14 @@ namespace frontend\controllers;
 
 use Yii;
 use common\components\AthenaComponent;
-use common\components\Athena\models\Insurance;
+use common\components\Athena\models\PatientInsurance;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\RequestChartAlert;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
-class PatientInsuranceController extends \yii\web\Controller
+class PatientController extends \yii\web\Controller
 {
     private $component;
 
@@ -47,7 +47,7 @@ class PatientInsuranceController extends \yii\web\Controller
      * Lists all Patient models.
      * @return mixed
      */
-    public function actionListPatients()
+    public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Patient::find(),
@@ -64,24 +64,31 @@ class PatientInsuranceController extends \yii\web\Controller
      * @return mixed
      */
 
-    public function actionCreatePatient()
+    public function actionCreate()
     {
         $model = new Patient;
 
         if ($model->load(Yii::$app->request->post())) {
-            $model = $this->component->createPatient(
+
+            $patient = $this->component->createPatient(
                 $model
             );
 
-            if($model->save()){
-                return $this->redirect(['view-patient', 'id' => $model->id]);
-            }
+            $insurance = $this->component->createInsurance(
+                $patient->externalId,
+                true
+            );
+            $patient->save();
+            $insurance->patient_id = $patient->id;
+            $insurance->save();
+
+            return $this->redirect(['view', 'id' => $patient->id]);
 
         }
 
         return $this->render('/patient/create', [
             'model' => $model,
-            'departments' => $this->component->getDepartments(true),
+            'departments' => $this->component->getDepartments(true)
         ]);
     }
 
@@ -91,13 +98,17 @@ class PatientInsuranceController extends \yii\web\Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionViewPatient($id)
+    public function actionView($id)
     {
         $patient = $this->findPatientModel($id);
+        $dataProvider = new ActiveDataProvider([
+            'query' => PatientInsurance::find()->where(['patient_id' => $id]),
+        ]);
 
         return $this->render('/patient/view', [
             'model' => $patient,
-            'chartAlert' => $this->component->retrieveChartAlert($patient)
+            'chartAlert' => $this->component->retrieveChartAlert($patient),
+            'dataProvider' => $dataProvider
         ]);
     }
 
@@ -110,7 +121,11 @@ class PatientInsuranceController extends \yii\web\Controller
      */
     protected function findPatientModel($id)
     {
-        if (($model = Patient::findOne($id)) !== null) {
+        /*if (($model = Patient::findOne($id))->with('patient_insurance') !== null) {
+            return $model;
+        }*/
+
+        if (($model = Patient::find()->where(['id' => $id])->with('insurances')->one()) !== null) {
             return $model;
         }
 
@@ -145,7 +160,7 @@ class PatientInsuranceController extends \yii\web\Controller
         ]);
     }
 
-     /**
+    /**
      * Creates a new Insurance model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
@@ -160,15 +175,15 @@ class PatientInsuranceController extends \yii\web\Controller
             ->where(['id' => $patientId])
             ->one();
 
-        $model = new Insurance();
+        $model = new PatientInsurance();
 
         if ($model->load(Yii::$app->request->post())) {
-
-            $patientId = Yii::$app->request->post('Insurance')['patientId'];
             $model = $this->component->createInsurance(
-                $model,
-                $patient->externalId
+                $patient->externalId,
+                false,
+                $model
             );
+            $model->patient_id = $patient->id;
             if($model->save()) {
                 return $this->redirect(['view-insurance', 'id' => $model->id]);
             }
@@ -177,7 +192,7 @@ class PatientInsuranceController extends \yii\web\Controller
         return $this->render('/insurance/create', [
             'model' => $model,
             'patientId' => $patient->externalId,
-            'insurancePackages' => $this->component->getInsurancepackages(true)
+            'insurancePackages' => $this->component->getInsuranceTopPackages(true)
         ]);
     }
 
@@ -199,13 +214,73 @@ class PatientInsuranceController extends \yii\web\Controller
                 $model
             );
 
-            return $this->redirect(['view-patient', 'id' => $patient->id]);
+            return $this->redirect(['view', 'id' => $patient->id]);
         }
 
         return $this->render('/patient/create-chart-alert', [
             'model' => $model,
             'patient' => $patient,
         ]);
+    }
+
+
+    public function actionUpdate($id)
+    {
+        $patient = $this->findPatientModel($id);
+        $model = new Patient;
+
+        if ($patient->load(Yii::$app->request->post())) {
+            $updatePatient = $this->component->updatePatient(
+                Yii::$app->request->post(),
+                $patient->externalId
+
+            );
+            if($updatePatient && $patient->save()){
+                return $this->redirect(['view', 'id' => $patient->id]);
+            }
+        }
+
+        return $this->render('/patient/update', [
+            'model' => $patient,
+        ]);
+    }
+
+    public function actionUpdateInsurance($id)
+    {
+        $insurance = PatientInsurance::findOne($id);
+        $patient = Patient::findOne($insurance->patient_id);
+        $model = new PatientInsurance;
+
+        if ($insurance->load(Yii::$app->request->post())) {
+            $updateInsurance = $this->component->updateInsurance(
+                Yii::$app->request->post(),
+                $insurance->externalId,
+                $patient->externalId
+            );
+
+            if(!empty($insurance) && $insurance->save()){
+                return $this->redirect(['view-patient', 'id' => $patient->id]);
+            }
+        }
+
+        return $this->render('/insurance/update', [
+            'model' => $insurance,
+            'insurancePackages' => $this->component->getInsuranceTopPackages()
+        ]);
+    }
+
+    public function actionDeleteInsurance($id)
+    {
+        $insurance = PatientInsurance::findOne($id);
+        $patient = Patient::findOne($insurance->patient_id);
+
+        $deleteInsurance = $this->component->deleteInsurance($insurance->externalId, $patient->externalId);
+
+        if($deleteInsurance){
+            $insurance->delete();
+        }
+
+        return $this->redirect(['view', 'id' => $patient->id]);
     }
 
     /**
@@ -217,7 +292,7 @@ class PatientInsuranceController extends \yii\web\Controller
      */
     protected function findInsuranceModel($id)
     {
-        if (($model = Insurance::findOne($id)) !== null) {
+        if (($model = PatientInsurance::findOne($id)) !== null) {
             return $model;
         }
 

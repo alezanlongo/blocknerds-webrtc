@@ -12,9 +12,8 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'insurancepackageid')->dropdownList($insurancePackages,
-        ['prompt'=>'Select Insurance Plan']
-    );?>
+
+    <?= $form->field($model, 'insurancepackageid')->dropDownList($insurancePackages, ['prompt' => ' Select Insurance Plan']); ?>
 
     <?= $form->field($model, 'insuranceidnumber')->textInput(['maxlength' => true])->label('Insurance ID Number'); ?>
 
@@ -24,7 +23,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'insurancepolicyholdersex')->radioList(array('M'=>'Male','F'=>'Female'))->label('Policy holder sex');; ?>
 
-    <?= $form->field($model, 'patientId')->hiddenInput(['value'=>$patientId])->label(false); ?>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>

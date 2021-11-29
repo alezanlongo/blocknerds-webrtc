@@ -42,8 +42,8 @@ use common\components\Athena\models\Readings;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
-use common\components\Athena\models\insurance;
-use common\components\Athena\models\insurancePackages;
+use common\components\Athena\models\PatientInsurance;
+use common\components\Athena\models\TopInsurancePackages;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -82,46 +82,70 @@ class AthenaComponent extends Component
         return $departmentsModels;
     }
 
-    public function getInsurancepackages($flatten = false)
+    public function getInsuranceTopPackages()
     {
-        $query = array(
-            'insuranceplanname' => 'HDEPO National HRA',
-            'memberid' => 'CD123456'
-        );
-        $insurancePackagesModelsApi = $this->client->getPracticeidInsurancepackages($this->practiceid, $query);
 
-        $insurancePackagesModels = [];
+        $topInsurancePackagesModelsApi = $this->client->getPracticeidMiscTopinsurancepackages($this->practiceid);
 
-        foreach ($insurancePackagesModelsApi as $insurancePackagesModelApi) {
-            $insurancePackagesModels[] =
-                insurancePackages::createFromApiObject(
-                    $insurancePackagesModelApi
+        $topInsurancePackagesModels = [];
+
+        foreach ($topInsurancePackagesModelsApi as $topInsurancePackagesModelApi) {
+            $topInsurancePackagesModels[] =
+                TopInsurancePackages::createFromApiObject(
+                    $topInsurancePackagesModelApi
                 );
         }
 
-        if ($flatten) {
-            return array_column($insurancePackagesModels, 'insuranceplanname', 'insurancepackageid');
-        }
-
-        return $insurancePackagesModels;
+        return array_column($topInsurancePackagesModels, 'name', 'insurancepackageid');
     }
 
     /**
      * @return Insurance
      */
-
-    public function createInsurance($insuranceData, $patientId)
+    public function createInsurance($patientId, $new = false, $insuranceData = [])
     {
+        if($new){
+            $insuranceData['insurancepackageid'] = 0;
+            $insuranceData['sequencenumber'] = 1;
+            $insuranceModelApi =
+                $this->client->postPracticeidPatientsPatientidInsurances(
+                    $this->practiceid,
+                    $patientId,
+                    $insuranceData
+                );
+            $insuranceData = new PatientInsurance;
+            $insuranceData->createFromApiObject($insuranceModelApi[0]);
 
-        $insuranceData->sequencenumber = 1;
-        $insuranceModelApi =
-            $this->client->postPracticeidPatientsPatientidInsurances(
-                $this->practiceid,
-                $patientId,
-                $insuranceData->toArray()
-            );
+        }else{
+            $insuranceData->sequencenumber = 1;
+            $insuranceModelApi =
+                $this->client->postPracticeidPatientsPatientidInsurances(
+                    $this->practiceid,
+                    $patientId,
+                    $insuranceData->toArray()
+                );
+        }
 
         return $insuranceData->createFromApiObject($insuranceModelApi[0]);
+    }
+
+    /**
+     * @return Insurance
+     */
+    public function updateInsurance($insurance, $insuranceId, $patientId)
+    {
+        $putInsuranceApi = $this->client->putPracticeidPatientsPatientidInsurancesInsuranceid($this->practiceid, $patientId, $insuranceId, $insurance);
+
+        if (!empty($putInsuranceApi['errormessage'])) {
+            return $insurance;
+        }
+
+    }
+
+    public function deleteInsurance($insuranceId, $patientId){
+        $deleteInsurance = $this->client->deletePracticeidPatientsPatientidInsurancesInsuranceid($this->practiceid, $patientId, $insuranceId);
+
+        return $deleteInsurance;
     }
 
     /**
@@ -137,6 +161,19 @@ class AthenaComponent extends Component
             );
 
         return $this->retrievePatient($patientModelApi[0]->patientid);
+    }
+
+    /**
+     * @return Update patient
+     */
+    public function updatePatient($patient, $patientId)
+    {
+        $putPatientApi = $this->client->putPracticeidPatientsPatientid($this->practiceid, $patientId, $patient);
+
+        if (!empty($putPatientApi['errormessage'])) {
+            return $patient;
+        }
+
     }
 
     /**
