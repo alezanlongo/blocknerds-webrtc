@@ -139,37 +139,59 @@ class JanusAmqpComponent extends Component
         }
     }
 
-    private function runHandler(JanusAmqpMessage $message, array $janusMessage = [])
+    public function videoRoomCreate(string $uuid, string $description = '')
     {
-        $handleStatus = false;
-        switch ($message->action_type) {
-            case JanusAmqpMessage::ACTION_TYPE_REQUEST_ADMIN_TOKEN:
-                $handleStatus = $this->handleRequestAdminToken($message, $janusMessage);
-                break;
-            case JanusAmqpMessage::ACTION_TYPE_CREATE_TOKEN:
-                $handleStatus = $this->handleStoreToken($message, $janusMessage);
-                break;
-            case JanusAmqpMessage::ACTION_TYPE_CREATE_ROOM:
-                $handleStatus = $this->handleVideoRoomCreate($message, $janusMessage);
-                break;
-            case JanusAmqpMessage::ACTION_TYPE_CREATE_ADMIN_SESSION:
-                $handleStatus = $this->handleCreateAdminSession($message, $janusMessage);
-                break;
-            case JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION:
-                $handleStatus = $this->handleRefreshAdminSession($message, $janusMessage);
-                break;
-            case JanusAmqpMessage::ACTION_TYPE_ATTACH_PLUGIN:
-                $handleStatus = $this->handleAttachPlugin($message, $janusMessage);
-                break;
+
+        $mRes = JanusAmqpMessage::findOne(['reference_id' => $uuid]);
+        if (null === $mRes) {
+            $tr = $this->createRandStr();
+            $m = $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_CREATE_ROOM, null, $uuid, [
+                'janus' => 'message',
+                'transaction' =>  $tr,
+                'session_id' => null,
+                'admin_secret' => $this->adminSecret,
+                'body' => [
+                    'request' => 'create',
+                    'room' => $uuid,
+                    'description' => $description,
+                    'is_private' => true,
+                    'publisher' => 10,
+                    'admin_key' => $this->adminKey,
+                    'record' => Yii::$app->params['janus.record'],
+                    'rec_dir' => Yii::$app->params['janus.rec_dir'],
+                    'audiocodec' => Yii::$app->params['janus.audiocodec'],
+                    'videocodec' => Yii::$app->params['janus.videocodec'],
+                ]
+            ]);
+            $this->handleVideoRoomCreate($m, [], false);
+            return;
         }
-        if (true === $handleStatus && null !== $message->parent_id) {
-            $parent = $message->getParent()->one();
-            echo "self call";
-            return $this->runHandler($parent, []);
-        }
+        $this->runHandler($mRes, []);
     }
 
-    public function handleVideoRoomCreate(JanusAmqpMessage $message, array $janusMessage)
+    public function refreshAdminSession()
+    {
+        $sess = $this->getAdminSession();
+        if (null === $sess) {
+            return false;
+        }
+        $tkn = $this->getAdminToken();
+        if (null === $tkn) {
+            $this->requestAdminToken();
+            return false;
+        }
+        $storedMessage = JanusAmqpMessage::findOne(['action_type' => JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION, 'status' => JanusAmqpMessage::STATUS_PENDING]);
+        if (null !== $storedMessage) {
+            return false;
+        }
+
+        $tr = $this->createRandStr();
+        $message = $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION, null, $sess);
+        $this->publish(['janus' => 'keepalive', 'transaction' => $tr, 'session_id' => $sess, 'admin_secret' => $this->adminSecret, 'token' => $tkn]);
+    }
+
+
+    private function handleVideoRoomCreate(JanusAmqpMessage $message, array $janusMessage)
     {
         if ($message->status == JanusAmqpMessage::STATUS_COMPLETED) {
             return true;
@@ -211,7 +233,7 @@ class JanusAmqpComponent extends Component
         }
         $sess = $this->getAdminSession();
         if (null === $sess) {
-            $sess = $this->createAdminSession($admToken, $message);
+            $this->createAdminSession($admToken, $message);
             return false;
         }
         if (null === $message->session) {
@@ -224,7 +246,7 @@ class JanusAmqpComponent extends Component
 
         $ap = $this->getAttachedPlugin($message);
         if (null === $ap) {
-            $this->attachPlugin('janus.plugin.videoroom', $message->attributes['token'], $message->session, $message);
+            $this->attachPlugin('janus.plugin.videoroom',$admToken, $message->session, $message);
             echo "asdas 5";
             return false;
         }
@@ -239,34 +261,36 @@ class JanusAmqpComponent extends Component
         return false;
     }
 
-    public function videoRoomCreate(string $uuid, string $description = '')
-    {
 
-        $mRes = JanusAmqpMessage::findOne(['reference_id' => $uuid]);
-        if (null === $mRes) {
-            $tr = $this->createRandStr();
-            $m = $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_CREATE_ROOM, null, $uuid, [
-                'janus' => 'message',
-                'transaction' =>  $tr,
-                'session_id' => null,
-                'admin_secret' => $this->adminSecret,
-                'body' => [
-                    'request' => 'create',
-                    'room' => $uuid,
-                    'description' => $description,
-                    'is_private' => true,
-                    'publisher' => 10,
-                    'admin_key' => $this->adminKey,
-                    'record' => Yii::$app->params['janus.record'],
-                    'rec_dir' => Yii::$app->params['janus.rec_dir'],
-                    'audiocodec' => Yii::$app->params['janus.audiocodec'],
-                    'videocodec' => Yii::$app->params['janus.videocodec'],
-                ]
-            ]);
-            $this->handleVideoRoomCreate($m, [], false);
-            return;
+
+    private function runHandler(JanusAmqpMessage $message, array $janusMessage = [])
+    {
+        $handleStatus = false;
+        switch ($message->action_type) {
+            case JanusAmqpMessage::ACTION_TYPE_REQUEST_ADMIN_TOKEN:
+                $handleStatus = $this->handleRequestAdminToken($message, $janusMessage);
+                break;
+            case JanusAmqpMessage::ACTION_TYPE_CREATE_TOKEN:
+                $handleStatus = $this->handleStoreToken($message, $janusMessage);
+                break;
+            case JanusAmqpMessage::ACTION_TYPE_CREATE_ROOM:
+                $handleStatus = $this->handleVideoRoomCreate($message, $janusMessage);
+                break;
+            case JanusAmqpMessage::ACTION_TYPE_CREATE_ADMIN_SESSION:
+                $handleStatus = $this->handleCreateAdminSession($message, $janusMessage);
+                break;
+            case JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION:
+                $handleStatus = $this->handleRefreshAdminSession($message, $janusMessage);
+                break;
+            case JanusAmqpMessage::ACTION_TYPE_ATTACH_PLUGIN:
+                $handleStatus = $this->handleAttachPlugin($message, $janusMessage);
+                break;
         }
-        $this->runHandler($mRes, []);
+        if (true === $handleStatus && null !== $message->parent_id) {
+            $parent = $message->getParent()->one();
+            echo "self call";
+            return $this->runHandler($parent, []);
+        }
     }
 
     private function getAdminToken(): string|null
@@ -280,7 +304,6 @@ class JanusAmqpComponent extends Component
 
     private function requestAdminToken(?JanusAmqpMessage $callback = null): bool
     {
-
 
         $admTknMessage = JanusAmqpMessage::findOne(['action_type' => JanusAmqpMessage::ACTION_TYPE_REQUEST_ADMIN_TOKEN, 'status' => [JanusAmqpMessage::STATUS_PENDING, JanusAmqpMessage::STATUS_PROCESSING]]);
         if (null !== $admTknMessage) {
@@ -363,17 +386,6 @@ class JanusAmqpComponent extends Component
         return false;
     }
 
-    private function createAdminToken($parentId = null)
-    {
-
-        // $this->getMessage();
-        //$this->addMessage($uuid, JanusAmqpMessage::ACTION_TYPE_CREATE_SESSION, false);
-        $newToken = $this->adminTokenPrefix . $this->createRandStr(32);
-        if ($this->storeToken($newToken) === true) {
-            return true;
-        }
-        return false;
-    }
 
     private function handleAttachPlugin(JanusAmqpMessage $message, array $janusMessage)
     {
@@ -461,28 +473,6 @@ class JanusAmqpComponent extends Component
     }
 
 
-
-    public function refreshAdminSession()
-    {
-        $sess = $this->getAdminSession();
-        if (null === $sess) {
-            return false;
-        }
-        $tkn = $this->getAdminToken();
-        if (null === $tkn) {
-            $this->requestAdminToken();
-            return false;
-        }
-        $storedMessage = JanusAmqpMessage::findOne(['action_type' => JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION, 'status' => JanusAmqpMessage::STATUS_PENDING]);
-        if (null !== $storedMessage) {
-            return false;
-        }
-
-        $tr = $this->createRandStr();
-        $message = $this->addMessage($tr, JanusAmqpMessage::ACTION_TYPE_REFRESH_ADMIN_SESSION, null, $sess);
-        $this->publish(['janus' => 'keepalive', 'transaction' => $tr, 'session_id' => $sess, 'admin_secret' => $this->adminSecret, 'token' => $tkn]);
-    }
-
     private function handleRefreshAdminSession(JanusAmqpMessage $message, array $janusMessage)
     {
         if (isset($janusMessage['janus']) && $janusMessage['janus'] == 'ack') {
@@ -497,7 +487,7 @@ class JanusAmqpComponent extends Component
     }
 
     /**
-     * when int is returned, it is createSession parent message  
+     * 
      * @param string $adminToken 
      * @return JanusAmqpAdmin|bool 
      */

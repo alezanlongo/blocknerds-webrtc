@@ -82,17 +82,15 @@ class RoomController extends Controller
             'log_level' => 0
         ]);
         $server->on('start', function (\Swoole\Server $server) {
-            echo "aca1";
             //$server->task([]);
 
         });
         $server->on('receive', function (\Swoole\Server $server, $fd, $from_id, $data) {
-            echo "asda";
 
             //$server->close($fd);
         });
         $server->on("WorkerStart", function ($server, $workerId) {
-            echo "work start";
+            // echo "work start";
             // \go(function () {
 
             //     $connection = new AMQPStreamConnection('rabbitmq', 5672, 'guest', 'guest');
@@ -111,12 +109,6 @@ class RoomController extends Controller
 
             //echo "$workerId\n";
         });
-
-        // Triggered when the HTTP Server starts, connections are accepted after this callback is executed
-        // $server->on("Start", function ($server, $workerId) {
-
-        //     // \printf("Swoole server running on: %s port: %d",$server->host,$server->port);
-        // });
 
         // The main HTTP server request callback event, entry point for all incoming HTTP requests
         $server->on('Request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
