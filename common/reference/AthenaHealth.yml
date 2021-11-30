@@ -4617,6 +4617,107 @@ paths:
         required: true
       tags:
         - Diagnoses
+  /v1/{practiceid}/chart/encounter/{encounterid}/orders/prescription:
+    post:
+      summary: Create new prescription order for given encounter
+      description: Create new prescription order record for a specific encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrderPrescription200Response'
+          description: Success
+      operationId: postPracticeidChartEncounterEncounteridOrdersPrescription
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateOrderPrescription'
+        required: true
+      tags:
+        - Order - Prescription
+  /v1/{practiceid}/chart/encounter/{encounterid}/orders/{orderid}:
+    get:
+      summary: >-
+        Retrieve some data regarding an order, including the list of documents
+        attached to the order. Useful for finding attached letters, prescription
+        renewal chains, and lab/imaging results.
+      description: >-
+        Some data regarding this order, including the list of documents attached
+        to the order. Useful for finding attached letters, prescription renewal
+        chains, and lab/imaging results. Note: This endpoint may rely on
+        specific settings to be enabled in athenaNet Production to function
+        properly that are not required in other environments. Please see <a
+        href="https://docs.athenahealth.com/api/resources/best-practices-and-troubleshooting#Handling_Beta_APIs">Permissioned
+        Rollout of APIs</a> for more information if you are experiencing issues.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: orderid
+          in: path
+          name: orderid
+          required: true
+          schema:
+            type: integer
+        - description: >-
+            BETA FIELD: Some order types like labs and imaging orders have
+            additional pertinant information in a question/answer format.
+            Setting this will return that data.
+          in: query
+          name: showquestions
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            If set, translate the order information to relevant external
+            vocabularies, where available. Examples are medictions to RxNorm and
+            NDC, vaccines to CVX and MVX, labs to LOINC, etc. Our mappings are
+            not exhaustive.
+          in: query
+          name: showexternalcodes
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: Success
+      operationId: getPracticeidChartEncounterEncounteridOrdersOrderid
+      tags:
+        - Order
 components:
   schemas:
     Patient:
@@ -10910,3 +11011,378 @@ components:
             - true
           type: string
       type: object
+    RequestCreateOrderPrescription:
+      type: object
+      properties:
+        additionalinstructions:
+          description: >-
+            Sig field. Additional modifiers for when to take the
+            medication.
+          enum:
+            - ''
+            - before meals
+            - with meals
+            - after meals
+            - in the morning
+            - at noon
+            - in the evening
+            - at dinner
+            - at bedtime
+            - around the clock
+            - as directed
+            - as needed
+          type: string
+        administernote:
+          description: >-
+            An additional note to the provider or staff for
+            administration.
+          type: string
+        diagnosissnomedcode:
+          description: The SNOMED code for diagnosis this order is for.
+          type: integer
+        dispenseaswritten:
+          description: >-
+            Whether the prescription should be marked as dispense as
+            written (i.e., no substitutions without consulting the
+            doctor).
+          type: boolean
+        dosagequantity:
+          description: Sig field. The numerical amount of medication to take.
+          type: number
+        dosagequantityunit:
+          description: >-
+            Sig field. The unit of the dosage quantity, and required if
+            that is passed in. Get the list of available values from
+            /reference/order/prescription/dosagequantityunits. Most
+            values are not valid for each individual medication.
+          type: string
+        duration:
+          description: >-
+            Sig field. The numerical amount of days to take this
+            medication for.
+          type: number
+        externalnote:
+          description: An additional note to the patient.
+          type: string
+        facilityid:
+          description: >-
+            The athena ID of the pharmacy you want to send the
+            prescription to. Defaults to the patient default pharmacy.
+            You can use this or the pharmacy NCPDP ID but not both. Get
+            a localized list using /chart/configuration/facilities.
+          type: integer
+        frequency:
+          description: >-
+            Sig field. How often to take doses of the medication. Get
+            the list of available values from
+            /reference/order/prescription/frequencies.
+          type: string
+        ndc:
+          description: >-
+            The NDC of the medication to order. You may use this instead
+            of ordertypeid
+          type: string
+        numrefillsallowed:
+          description: >-
+            The number of refills allowed for this prescription.
+            Defaults to 0.
+          type: integer
+        orderingmode:
+          default: PRESCRIBE
+          description: >-
+            Selects whether you wish to prescribe, administer, or
+            dispense this medication.
+          enum:
+            - ''
+            - PRESCRIBE
+            - ADMINISTER
+            - DISPENSE
+          type: string
+        ordertypeid:
+          description: >-
+            The athena ID of the medication to order. Must be an
+            orderable medication. We currently do not support adding of
+            compound or unlisted medicaitons. Get the IDs using
+            /reference/order/prescription. You may use this, an NDC, or
+            a RxNormID.
+          type: integer
+        pharmacyncpdpid:
+          description: >-
+            The NCPDP ID of the pharmacy you want to send the
+            prescription to. You can use this instead of the facilityid,
+            but not both.
+          type: string
+        pharmacynote:
+          description: A note to send to the pharmacy.
+          type: string
+        providernote:
+          description: An internal note for the provider or staff.
+          type: string
+        rxnormid:
+          description: >-
+            The RxNormID of the medication to order. You may use this
+            instead of ordertypeid. If the RxNormID maps to more than
+            one possible orderable medication, it will be rejected.
+          type: string
+        totalquantity:
+          description: >-
+            The total amount of medication to be prescribed. It should
+            match the total amount needed as described in the sig.
+          type: number
+        totalquantityunit:
+          description: >-
+            The unit of the total quantity, and required if that is
+            passed in. Get the list of available values from
+            /reference/order/prescription/totalquantityunits. Most
+            values are not valid for each individual medication.
+          type: string
+        unstructuredsig:
+          description: >-
+            The unstructured sig. If this field is set please leave all
+            other sig fields blank.
+          type: string
+      required:
+        - diagnosissnomedcode
+    PostOrderPrescription200Response:
+      type: object
+      properties:
+        documentid:
+          description: The ID of the document created.
+          type: integer
+        errormessage:
+          description: >-
+            If the operation failed, this will contain any error
+            messages.
+          type: string
+        success:
+          description: Whether the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    Order:
+      type: object
+      x-external-id: orderid
+      properties:
+        class:
+          description: >-
+            The primary class of this order -- PRESCRIPTION, VACCINE,
+            LAB, IMAGING, PATIENTINFO, etc.
+          type: string
+        classdescription:
+          description: >-
+            The human-readable description of this document class,
+            including sub class (prescription - new vs. prescription -
+            renewal).
+          type: string
+        clinicalprovider:
+          description: >-
+            The name of the facility, person, or group that the order
+            is being sent to.
+          type: string
+        clinicalproviderid:
+          description: >-
+            The ID of the facility (facilityid), person, or group that
+            the order is being sent to.
+          type: integer
+        clinicalproviderordertype:
+          description: >-
+            The Name for the type of order referred to by a clinical
+            provider (A clinical provider here refers to a facility).
+          type: string
+        clinicalproviderordertypeid:
+          description: >-
+            The Unique ID for the type of order referred to by a
+            clinical provider (A clinical provider here refers to a
+            facility).
+          type: integer
+        contraindicationreason:
+          description: >-
+            List of codes indicating why the order was contraindicated
+            (for vaccines only). If this field is not present, the
+            order does not contain a contraindication reason.
+          items:
+            $ref: '#/components/schemas/ContraindicationReason'
+          type: array
+        createduser:
+          description: The username of the person who created the order.
+          type: string
+        dateordered:
+          description: The timestamp when the order was created.
+          type: string
+        declinedreason:
+          description: >-
+            List of codes indicating why the order was not given. If
+            this field is not present, the order was not declined. If
+            the array is empty, no reason has been chosen.
+          items:
+            $ref: '#/components/schemas/DeclinedReason'
+          type: array
+        declinedreasontext:
+          description: >-
+            The user-facing description of the reason the order was
+            not given.
+          type: string
+        departmentid:
+          description: Department ID of the Provider
+          type: integer
+        description:
+          description: A human readable description for this order
+          type: string
+        diagnosislist:
+          description: List of Diagnosis related to this order.
+          items:
+            $ref: '#/components/schemas/DiagnosisList'
+          type: array
+        documentationonly:
+          description: >-
+            If true, this order is here just as a record, and does not
+            need to actually go out.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        documents:
+          description: >-
+            The list of documents attached to this order. This can be
+            letters, lab or imaging results, prescription renewals,
+            etc.
+          items:
+            $ref: '#/components/schemas/Document'
+          type: array
+        externalcodes:
+          description: >-
+            When available, contains how this order maps to external
+            vocabularies like LOINC, CVX, SNOMED, RXNORM, etc.
+          items:
+            $ref: '#/components/schemas/ExternalCode'
+          type: array
+        orderid:
+          description: The order (aka document) ID for this order.
+          type: integer
+        orderingprovider:
+          description: >-
+            The username of the ordering provider, which is different
+            than the ordering user -- who may be an intake nurse for
+            example.
+          type: string
+        ordertype:
+          description: The type of this order (Lab, Vaccine, etc.)
+          type: string
+        ordertypeid:
+          description: >-
+            The athena ID for this type of order. Can be used to
+            create another order of this type.
+          type: integer
+        priority:
+          description: Priority of an order. 1 is high; 2 is normal.
+          type: integer
+        providerid:
+          description: ID of the Provider
+          type: integer
+        questions:
+          description: >-
+            BETA FIELD: The custom list of questions and answers
+            associated with this order. This list will vary by
+            practice.
+          items:
+            $ref: '#/components/schemas/Question'
+          type: array
+        specimencollectionsite:
+          description: >-
+            The location where a clinical specimen if any was
+            collected.
+          type: string
+        status:
+          description: >-
+            The status the document is in (PEND, CLOSED, SUBMIT,
+            SUBMITTED, etc).
+          type: string
+    DiagnosisList:
+      type: object
+      properties:
+        diagnosiscode:
+          properties:
+            code:
+              description: SNOMED Diagnosis Code
+              type: string
+            codeset:
+              description: CodeSet the SNOMED code belongs to.
+              type: string
+            description:
+              description: Description of the SNOMED Code
+              type: string
+          type: object
+        snomedicdcodes:
+          description: ICD equivalent Codes for the SNOMED Code
+          items:
+            properties:
+              code:
+                description: ICD 10 Code
+                type: string
+              codeset:
+                description: 'Code set the ICD10 code belongs to '
+                type: string
+              description:
+                description: Brief description of the code
+                type: string
+              unstrippeddiagnosiscode:
+                description: Unstripped Diagnosis Code
+                type: string
+            type: object
+          type: array
+    Document:
+      type: object
+      properties:
+        class:
+          description: >-
+            The class of the child document. E.g., LETTER,
+            PRESCRIPTION.
+          type: string
+        clinicalproviderid:
+          description: >-
+            The ID of the facility (facilityid), person, or
+            group that the child document was received from
+            (results, prescription changes/authorizations) or is
+            being sent to (new prescriptions, etc).
+          type: integer
+        documentid:
+          description: The ID of the child document.
+          type: integer
+        status:
+          description: The status of the child document.
+          type: string
+        subclass:
+          description: >-
+            The subclass of the child document.. E.g.,
+            LETTER_SUMMARYCARERECORD, PRESCRIPTION_RENEWAL.
+          type: string
+    ExternalCode:
+      type: object
+      properties:
+        code:
+          description: The code in the external vocabulary.
+          type: string
+        codeset:
+          description: >-
+            Name of the external vocabulary. Currently LOINC
+            (for labs and some imaging orders), CVX (for
+            vaccines), RXNORM and NDC (for prescriptions and
+            some DMEs).
+          type: string
+        description:
+          description: >-
+            When available, a description of the code from the
+            external vocabulary.
+          type: string
+    Question:
+      type: object
+      properties:
+        answer:
+          description: The answer
+          type: string
+        question:
+          description: The question
+          type: string
