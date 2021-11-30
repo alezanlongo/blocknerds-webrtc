@@ -31,19 +31,20 @@ use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\FamilyHistory;
 use common\components\Athena\models\LabResult;
 use common\components\Athena\models\Medication;
+use common\components\Athena\models\Order;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
+use common\components\Athena\models\PatientInsurance;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
 use common\components\Athena\models\Problem;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\Readings;
+use common\components\Athena\models\TopInsurancePackages;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
-use common\components\Athena\models\PatientInsurance;
-use common\components\Athena\models\TopInsurancePackages;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -1495,5 +1496,44 @@ class AthenaComponent extends Component
             $diagnosis->encounter->externalId,
             $diagnosis->externalId
         );
+    }
+
+    /**
+     * @return Order
+     */
+
+    public function createOrderPrescription($encounter, $prescriptionOrder)
+    {
+        $orderModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridOrdersPrescription(
+                $this->practiceid,
+                $encounter->externalId,
+                $prescriptionOrder->toArray()
+            );
+
+        return $this->retrieveOrder(
+            $encounter->externalId,
+            $orderModelApi->documentid
+        );
+
+    }
+
+    public function retrieveOrder($encounterId, $orderId)
+    {
+        $orderModelApi = $this->client->getPracticeidChartEncounterEncounteridOrdersOrderid(
+            $this->practiceid,
+            $encounterId,
+            $orderId
+        );
+
+        $order = Order::find()
+            ->where(['externalId' => $orderId])
+            ->one();
+
+        if (!$order) {
+            return Order::createFromApiObject($orderModelApi);
+        }
+
+        return $order->loadApiObject($orderModelApi);
     }
 }

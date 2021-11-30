@@ -6,8 +6,10 @@ use Yii;
 use common\components\AthenaComponent;
 use common\components\Athena\models\Diagnoses;
 use common\components\Athena\models\Encounter;
+use common\components\Athena\models\Order;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\RequestCreateDiagnosis;
+use common\components\Athena\models\RequestCreateOrderPrescription;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -286,6 +288,60 @@ class EncounterController extends Controller
         ]);
     }
 
+    /**
+     * Create Order (Prescription) model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionCreateOrderPrescription($id)
+    {
+        $model = new RequestCreateOrderPrescription;
+        $encounter = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->createOrderPrescription(
+                $encounter,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view-order-prescription', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('create-order-prescription', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Displays a single Order model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionViewOrderPrescription($id)
+    {
+        return $this->render('order', [
+            'model' => $this->findOrderModel($id),
+        ]);
+    }
+
+    /**
+     * Lists all Order models.
+     * @return mixed
+     */
+    public function actionOrders()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => Order::find(),
+        ]);
+
+        return $this->render('orders', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
 
     /**
      * Finds the Encounter model based on its primary key value.
@@ -323,6 +379,22 @@ class EncounterController extends Controller
     protected function findDiagnosisModel($id)
     {
         if (($model = Diagnoses::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Finds the Order model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Order the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findOrderModel($id)
+    {
+        if (($model = Order::findOne($id)) !== null) {
             return $model;
         }
 
