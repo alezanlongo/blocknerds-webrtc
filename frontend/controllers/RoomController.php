@@ -210,8 +210,13 @@ class RoomController extends \yii\web\Controller
 
     public static function getRooms(int $profileId)
     {
-        $roomMembers = RoomMember::find()->where(['user_profile_id' => $profileId])->orderBy(['created_at' => SORT_DESC])->limit(1)->all();
-        $room = $roomMembers[0]->room;
+        $roomMembers = RoomMember::find()->where(['user_profile_id' => $profileId])->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
+
+        if (null === $roomMembers) {
+            return [];
+        }
+
+        $room = $roomMembers->room;
         $rooms = [
             [
                 'title' => $room->meeting->title,
@@ -229,18 +234,6 @@ class RoomController extends \yii\web\Controller
         }
 
         return $rooms;
-           
-            
-        // return [
-        //     [
-        //       'title' => 'quick meeting',
-        //       'name' => 'a359f0c0-af89-4b84-8792-61b958f53f46',
-        //     ],
-        //     [
-        //       'title' => 'doctor_room',
-        //       'name' => 'f98dd6ce-f3ce-485b-b545-38f4a606277c',
-        //     ]
-        //   ];
     }
 
     private function createMeeting(string $title, int $profileId): Meeting|null
