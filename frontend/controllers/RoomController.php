@@ -84,7 +84,6 @@ class RoomController extends \yii\web\Controller
         $status = null;
         $request = null;
 
-
         if ($profile->id == $meeting->owner_id) {
             $is_owner = true;
         } else {
@@ -173,21 +172,17 @@ class RoomController extends \yii\web\Controller
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
         $chats = Chat::find()->where(['room_id' => $room->id, 'to_profile_id' => null])->all();
-
-
-        $dataRooms = [
-            [
-                'title' => $meeting->title,
-                'name' => $uuid,
-                'token' => $token,
-            ],
+        $dataRoom = [
+            'title' => $meeting->title,
+            'uuid' => $uuid,
+            'token' => $token,
+            'isDoctor' => $profile->id === 1,
         ];
 
         // VarDumper::dump($dataRooms, $depth = 10, $highlight = true);
         // die;
         return $this->render('index', [
-            // 'token' => $token,
-            'dataRooms' => $dataRooms,
+            'dataRoom' => $dataRoom,
             'user_profile_id' => $profile->id,
             'limit_members' => $limit_members,
             'in_room_members' => $inRoomMembersIds,
@@ -197,7 +192,6 @@ class RoomController extends \yii\web\Controller
             'is_owner' => $is_owner,
             'is_allowed' => $is_allowed,
             'status' => $status,
-            // 'uuid' => $uuid,
             'request' => $request,
             'requests' => $requests,
             'endTime' => $endTime,
@@ -210,28 +204,15 @@ class RoomController extends \yii\web\Controller
 
     public static function getRooms(int $profileId)
     {
-        $roomMembers = RoomMember::find()->where(['user_profile_id' => $profileId])->orderBy(['created_at' => SORT_DESC])->limit(1)->one();
-
-        if (null === $roomMembers) {
-            return [];
-        }
-
-        $room = $roomMembers->room;
-        $rooms = [
-            [
+        $roomMembers = RoomMember::find()->where(['user_profile_id' => $profileId])->orderBy(['created_at' => SORT_DESC])->all();
+        $rooms = array_map(function ($roomMember) {
+            $room = $roomMember->room;
+            return [
                 'title' => $room->meeting->title,
                 'name' => $room->uuid,
-            ],
-        ];
-
-        $isDoctor = $profileId === 1;
-        if ($isDoctor) {
-            $meetingDoc = Meeting::findOne(['title' => 'doctor_room']);
-            $rooms[] = [
-                'title' => $meetingDoc->title,
-                'name' => $meetingDoc->room->uuid,
+                'created_at' => Carbon::createFromTimestamp($room->meeting->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s'),
             ];
-        }
+        }, $roomMembers);
 
         return $rooms;
     }
@@ -252,24 +233,6 @@ class RoomController extends \yii\web\Controller
         } catch (Exception $e) {
             return null;
         }
-    }
-
-    public function actionTest()
-    {
-        $roomDoctors = Yii::$app->params['videoroom.doctor_room'];
-
-        $token = '1001690f-14ca-4997-b854-5028eaf3e738';
-        $room_uuid = "40d9a619-4b37-4857-ab2c-b01e7a8d2404";
-
-        //         Yii::$app->janusApi->videoRoomCreate($roomDoctors);
-        //     $this->addMemberToRoom($roomDoctors,$profile->hashId);
-        VarDumper::dump(Yii::$app->janusApi->getDataMembers($room_uuid), $depth = 10, $highlight = true);
-        VarDumper::dump(Yii::$app->janusApi->getDataMembers($roomDoctors), $depth = 10, $highlight = true);
-        VarDumper::dump('token add room: ' . $token, $depth = 10, $highlight = true);
-        VarDumper::dump(Yii::$app->janusApi->getMembersTokenByRoom($room_uuid, false), $depth = 10, $highlight = true);
-        VarDumper::dump('hash in doctor: ' . Yii::$app->user->identity->userProfile->hashId, $depth = 10, $highlight = true);
-        VarDumper::dump(Yii::$app->janusApi->getMembersTokenByRoom($roomDoctors), $depth = 10, $highlight = true);
-        die;
     }
 
     /**
@@ -382,10 +345,10 @@ class RoomController extends \yii\web\Controller
 
             $isDoctor = $profile->id === 1;
             if ($isDoctor) {
-                $roomDoctors = Yii::$app->params['videoroom.doctor_room'];
-                $meetingDoc  = Meeting::findOne(['title' => $roomDoctors]);
+                $meetingDoc  = Meeting::findOne(['title' => Meeting::DEFAULT_DOCTOR_TITLE]);
+
                 if (!$meetingDoc) {
-                    $meetingDoc = $this->createMeeting($roomDoctors, $profile->id);
+                    $meetingDoc = $this->createMeeting(Meeting::DEFAULT_DOCTOR_TITLE, $profile->id);
                 }
 
                 if (!$meetingDoc) {

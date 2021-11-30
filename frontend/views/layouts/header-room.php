@@ -26,7 +26,7 @@ $rooms = RoomController::getRooms(Yii::$app->user->identity->userProfile->id);
         <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle video">
           <select name="" class="form-control" id="" onchange="location = this.value;">
             <?php foreach ($rooms as $room) { ?>
-              <option value="<?= $room['name'] ?>" <?= $room['name'] === $selected ? ' selected="selected"' : ''; ?>><?= $room['title'] ?></option>
+              <option value="<?= $room['name'] ?>" <?= $room['name'] === $selected ? ' selected="selected"' : ''; ?>><?= $room['title'] . ' - ' . $room['created_at'] ?></option>
             <?php } ?>
           </select>
         </li>
