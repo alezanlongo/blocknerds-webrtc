@@ -44,11 +44,15 @@ let myStream = null;
 let feeds = [];
 let bitrateTimer = [];
 
+let roomSelected = 0
+
 ////////////////////////////////////////////////////////////
 ///////////   ON READY
 ////////////////////////////////////////////////////////////
 $(document).ready(function () {
-  handleCountdown(endTime);
+  if(!dataRoom.isDoctor){
+    handleCountdown(endTime);
+  }
 
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
@@ -80,7 +84,7 @@ const initJanus = () => {
     debug: "all",
     callback: () => {
       janus = new Janus({
-        token: mytoken,
+        token: dataRoom.token,
         server,
         success: () => {
           janus.attach({
@@ -212,6 +216,7 @@ const initJanus = () => {
               $(".header-nav").hide();
               $(".boxes").hide();
               $(".join-again").removeClass("d-none").show();
+
             },
           });
         },
@@ -368,11 +373,11 @@ const handlingEvent = (objMessage) => {
       // This is a "no such room" error: give a more meaningful description
       bootbox.alert(
         "<p>Apparently room <code>" +
-        myRoom +
+        dataRoom.uuid +
         "</code> (the one this demo uses as a test room) " +
         "does not exist...</p><p>Do you have an updated <code>janus.plugin.videoroom.jcfg</code> " +
         "configuration file? If not, make sure you copy the details of room <code>" +
-        myRoom +
+        dataRoom.uuid +
         "</code> " +
         "from that sample in your current configuration file, then restart Janus and try again."
       );
@@ -397,12 +402,13 @@ const handlingEvent = (objMessage) => {
 const joinMe = () => {
   const register = {
     request: REQUEST_JOIN,
-    room: myRoom,
-    id: mytoken,
+    room: dataRoom.uuid,
+    id: dataRoom.token,
     ptype: PUBLISH_TYPE_PUBLISHER,
     display: `${username}_${userProfileId}`,
     data: true,
   };
+  console.log('register', register)
   pluginHandler.send({ message: register });
 };
 
@@ -472,7 +478,7 @@ function newRemoteFeed(id, display, audio, video) {
       Janus.log("  -- This is a subscriber");
       let subscribe = {
         request: REQUEST_JOIN,
-        room: myRoom,
+        room: dataRoom.uuid,
         ptype: PUBLISH_TYPE_SUBSCRIBER,
         feed: id,
         private_id: my_private_id,
@@ -569,7 +575,7 @@ function newRemoteFeed(id, display, audio, video) {
           jsep: jsep,
           media: { audioSend: false, videoSend: false },
           success: function (jsep) {
-            const body = { request: REQUEST_START, room: myRoom };
+            const body = { request: REQUEST_START, room: dataRoom.uuid };
             remoteFeed.send({ message: body, jsep: jsep });
           },
           error: function (error) {
@@ -629,7 +635,7 @@ function newRemoteFeed(id, display, audio, video) {
           $(`#attendee_${remoteFeed.rfindex}`).removeClass("d-none").addClass(`profile_id_${remoteFeed.rfuser.idFeed}`).attr('style', 'color: #28a745 !important').show();
           $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").removeClass('d-none');
           $(`span.usernameFeed${remoteFeed.rfindex}`).text(remoteFeed.rfuser.usernameFeed);
-        }else{
+        } else {
           compList.attr('style', 'color: #28a745 !important');
           $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").removeClass('d-none');
         }
@@ -756,7 +762,7 @@ function toggleVideo(forceMute = null) {
   muted = pluginHandler.isVideoMuted();
   $.post({
     url: "/room/toggle-media",
-    data: { uuid: myRoom, user_profile_id: userProfileId, video: muted },
+    data: { uuid: dataRoom.uuid, user_profile_id: userProfileId, video: muted },
     cache: false,
     error: (err) => {
       return;
@@ -782,7 +788,7 @@ function toggleMute(forceMute = null) {
 
   $.post({
     url: "/room/toggle-media",
-    data: { uuid: myRoom, user_profile_id: userProfileId, audio: muted },
+    data: { uuid: dataRoom.uuid, user_profile_id: userProfileId, audio: muted },
     cache: false,
     error: (err) => {
       return;
@@ -814,7 +820,7 @@ $(document).on("click", "#btnDeny", function (e) {
 function joinHandler(action, userProfileId) {
   $.post({
     url: "/room/join/" + action,
-    data: { uuid: myRoom, user_profile_id: userProfileId },
+    data: { uuid: dataRoom.uuid, user_profile_id: userProfileId },
     cache: false,
     error: (err) => {
       console.log(err);
@@ -1002,7 +1008,7 @@ function moderateMember(idx, source, mute = true, onSuccess) {
   }
   moderateRequest.push(idx + source);
   $.post({
-    url: `/room-moderate/${myRoom}/` + remoteHandler.rfuser.idFeed,
+    url: `/room-moderate/${dataRoom.uuid}/` + remoteHandler.rfuser.idFeed,
     data: { source: source, mute: mute },
     success: (res) => {
       onSuccess(res);
@@ -1027,7 +1033,7 @@ const kickMember = (index) => {
       return;
     }
     $.post({
-      url: `${myRoom}/kick`,
+      url: `${dataRoom.uuid}/kick`,
       data: {
         profileId: remoteHandler.rfuser.idFeed,
         memberId: remoteHandler.rfid,

@@ -78,6 +78,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'POST room/create' => 'room/create',
+                'GET room/test' => 'room/test',
                 'POST room/create-schedule' => 'room/create-schedule',
                 'GET room/user-list' => 'room/user-list',
                 'GET room/admin-test' => 'room/testing-admin',
