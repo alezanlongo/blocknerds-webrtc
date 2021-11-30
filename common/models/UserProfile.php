@@ -93,4 +93,9 @@ class UserProfile extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Set::class, ['profile_id' => 'id']);
     }
+
+    public function getHashId()
+    {
+        return md5($this->id);
+    }
 }

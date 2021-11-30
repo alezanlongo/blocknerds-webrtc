@@ -3,7 +3,13 @@
 /** @var \yii\web\View $this */
 /** @var string $directoryAsset */
 
+use frontend\controllers\RoomController;
 use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\helpers\VarDumper;
+
+$rooms = RoomController::getRooms(Yii::$app->user->identity->userProfile->id);
+
 
 ?>
 
@@ -14,6 +20,17 @@ use yii\helpers\Html;
     </div>
     <!-- Right side -->
     <ul class="navbar-nav ms-auto">
+      <?php if (count($rooms) > 1) {
+        $selected = explode('room/', Yii::$app->request->url)[1];
+      ?>
+        <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle video">
+          <select name="" class="form-control" id="" onchange="location = this.value;">
+            <?php foreach ($rooms as $room) { ?>
+              <option value="<?= $room['name'] ?>" <?= $room['name'] === $selected ? ' selected="selected"' : ''; ?>><?= $room['title'] ?></option>
+            <?php } ?>
+          </select>
+        </li>
+      <?php } ?>
       <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle audio">
         <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
           'id' => "mute",

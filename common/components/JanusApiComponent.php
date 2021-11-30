@@ -44,6 +44,7 @@ class JanusApiComponent extends Component
     public const PLUGIN_ECHOTEST = 'janus.plugin.echotest';
 
 
+
     //    public function __construct($config = [])
     //    {
     //        $this->apiParams = $config;
@@ -56,6 +57,11 @@ class JanusApiComponent extends Component
         parent::init();
         $this->baseUrl = "$this->url:$this->port/$this->uri";
         $this->adminBaseUrl = "$this->url:$this->adminPort/$this->adminUri";
+        // $doctorRoom = Yii::$app->params['videoroom.doctor_room'];
+
+        // if (!$this->videoRoomExists($doctorRoom)) {
+        //     $this->videoRoomCreate($doctorRoom);
+        // }
     }
 
     public function destroy(): void
@@ -218,7 +224,7 @@ class JanusApiComponent extends Component
         return false;
     }
 
-    public function getMembersTokenByRoom(string $roomUuid): false|array
+    public function getMembersTokenByRoom(string $roomUuid, bool $withPlugins = true): false|array
     {
         $this->attach('janus.plugin.videoroom');
 
@@ -227,6 +233,15 @@ class JanusApiComponent extends Component
             return \false;
         }
         $data = $res->getData();
+        if (!$withPlugins) {
+            if (isset($data['janus']) && $data['janus'] == 'success') {
+                return  $data['plugindata']['data'];
+            }
+            if (isset($data['error'])) {
+                $this->lastError = $data['error'];
+            }
+            return false;
+        }
         $res = $this->apiCall('POST', ['janus' => 'list_tokens',  'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], null, true);
         if (!$res->isOk) {
             return \false;
@@ -432,7 +447,7 @@ class JanusApiComponent extends Component
         }
         return false;
     }
-    private function delToken(string $token, array $plugins )
+    private function delToken(string $token, array $plugins)
     {
 
         $res = $this->apiCall('POST', ['janus' => 'remove_token', 'token' => $token, 'plugins' => $plugins, 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], null, true);
@@ -440,7 +455,7 @@ class JanusApiComponent extends Component
             return false;
         }
         $data = $res->getData();
-       
+
         if (isset($data['janus']) && $data['janus'] == 'success') {
             return true;
         }
@@ -572,10 +587,10 @@ class JanusApiComponent extends Component
 
     public function isTokenStoraged(string $token): bool
     {
-        $tokens = $this->getStoredTokens() ?? [];    
-        $res = array_search($token, array_column($tokens, 'token') );
+        $tokens = $this->getStoredTokens() ?? [];
+        $res = array_search($token, array_column($tokens, 'token'));
 
         // = false, no token storaged
-        return $res !== false; 
+        return $res !== false;
     }
 }
