@@ -75,7 +75,8 @@ class AppointmentController extends \yii\web\Controller
         if ($model->load(Yii::$app->request->post())) {
             $model = $this->component->createAppointment(
                 $model,
-                $patient->externalId
+                $patient->externalId,
+                $patient->departmentid
             );
             if($model->save()){
                 return $this->redirect(['view', 'id' => $model->id]);

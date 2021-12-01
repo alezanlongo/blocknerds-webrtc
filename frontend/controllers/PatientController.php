@@ -139,7 +139,7 @@ class PatientController extends \yii\web\Controller
     public function actionListInsurances()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Insurance::find(),
+            'query' => PatientInsurance::find(),
         ]);
 
         return $this->render('/insurance/index', [

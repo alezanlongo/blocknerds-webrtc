@@ -45,6 +45,7 @@ use common\components\Athena\models\TopInsurancePackages;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
+use common\components\Athena\models\AppointmentSlotResponse;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -371,8 +372,9 @@ class AthenaComponent extends Component
      * @return Patient
      */
 
-    public function createAppointment($appointment, $patientid)
+    public function createAppointment($appointment, $patientid, $departmentId)
     {
+        $getSlot = $this->getAppointmentSlot($appointment->appointmentdate, $appointment->appointmenttypeid, $departmentId);
         $appointmentModelApi =
             $this->client->postPracticeidAppointmentsOpen(
                 $this->practiceid,
@@ -383,12 +385,22 @@ class AthenaComponent extends Component
 
         $appointmentid = array_shift($appointmentids);
 
-        // $this->bookAppointment(1195848, 34067);
         $this->bookAppointment($appointmentid, $patientid);
 
         return $this->retrieveAppointment($appointmentid);
     }
 
+
+    public function getAppointmentSlot($appointmentDate, $appointmentTypeId, $departmentId)
+    {
+        $appointmentSlot = ['startdate' => $appointmentDate, 'enddate' => $appointmentDate, 'appointmenttypeid' => $appointmentTypeId, 'departmentid' => $departmentId];
+
+        return $appointmentSlotModelApi =
+            $this->client->getPracticeidAppointmentsOpen(
+                $this->practiceid,
+                $appointmentSlot
+            );
+    }
     /**
      * @return Appointment
      */
