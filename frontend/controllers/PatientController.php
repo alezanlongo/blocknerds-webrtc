@@ -6,6 +6,7 @@ use Yii;
 use common\components\AthenaComponent;
 use common\components\Athena\models\PatientInsurance;
 use common\components\Athena\models\Patient;
+use common\components\Athena\searchModels\PatientSearch;
 use common\components\Athena\models\RequestChartAlert;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -49,11 +50,19 @@ class PatientController extends \yii\web\Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
+        /*$dataProvider = new ActiveDataProvider([
             'query' => Patient::find(),
         ]);
 
         return $this->render('/patient/index', [
+            'dataProvider' => $dataProvider,
+        ]);*/
+        $searchModel = new PatientSearch();
+      
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+    
+        return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }

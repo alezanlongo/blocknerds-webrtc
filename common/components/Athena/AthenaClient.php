@@ -1896,4 +1896,25 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @return Patient
+     */
+    public function getPracticeidPatientsEnhancedbestmatch($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/enhancedbestmatch';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['enhancedbestmatch'])) ? $dataResponse['data']['enhancedbestmatch'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\PatientApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }

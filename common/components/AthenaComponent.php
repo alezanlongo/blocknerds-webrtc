@@ -1378,7 +1378,6 @@ class AthenaComponent extends Component
         $problem->link('patient', $patient);
         $problem->save();
         foreach($result[$problemPostApi->problemid]->events as $eventApi) {
-//var_dump(__METHOD__.__LINE__,$eventApi);die;
             $event = Event::createFromApiObject($eventApi);
             $event->link('problem', $problem);
             $event->save();
@@ -1535,5 +1534,20 @@ class AthenaComponent extends Component
         }
 
         return $order->loadApiObject($orderModelApi);
+    }
+
+    public function findPatientBestMatch($firstname, $lastname, $dob)
+    {
+        $patientApi = $this->client->getPracticeidPatientsEnhancedbestmatch($this->practiceid, 
+            [
+                'firstname'=>$firstname,
+                'lastname'=>$lastname,
+                'dob'=>$dob,
+            ]
+        );
+        if(!empty($patientApi))
+            return $this->obtainPatient($patientApi[0]->patientid, $patientApi[0]);
+
+        return false;
     }
 }
