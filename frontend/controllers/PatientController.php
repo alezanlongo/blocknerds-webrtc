@@ -132,21 +132,7 @@ class PatientController extends \yii\web\Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    /**
-     * Lists all Insurance models.
-     * @return mixed
-     */
-    public function actionListInsurances()
-    {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Insurance::find(),
-        ]);
-
-        return $this->render('/insurance/index', [
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
+    
     /**
      * Displays a single Insurance model.
      * @param integer $id
