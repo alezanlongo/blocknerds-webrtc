@@ -4718,6 +4718,106 @@ paths:
       operationId: getPracticeidChartEncounterEncounteridOrdersOrderid
       tags:
         - Order
+  /v1/{practiceid}/reference/order/prescription/dosagequantityunits:
+    get:
+      summary: Get list of units for dosage quantities
+      description: Retrieves a list of dosage units configured in the system
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DosageQuantityUnit'
+          description: Success
+      operationId: getPracticeidReferenceOrderPrescriptionDosagequantityunits
+      tags:
+        - Order - Prescription
+  /v1/{practiceid}/reference/order/prescription/frequencies:
+    get:
+      summary: Get list of dosage frequencies
+      description: Retrieves a list of dosage frequencies configured in the system
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Frequency'
+          description: Success
+      operationId: getPracticeidReferenceOrderPrescriptionFrequencies
+      tags:
+        - Order - Prescription
+  /v1/{practiceid}/reference/order/prescription:
+    get:
+      summary: Get list of orderable medication
+      description: Retrieves a list of medications configured in the system
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderableMedication'
+          description: Success
+      operationId: getPracticeidReferenceOrderPrescription
+      tags:
+        - Order - Prescription
+  /v1/{practiceid}/reference/order/prescription/totalquantityunits:
+    get:
+      summary: Get list of orderable total quantities for medications
+      description: >-
+        Retrieves a list of type of medications quantities configured in the
+        system
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TotalQuantityUnit'
+          description: Success
+      operationId: getPracticeidReferenceOrderPrescriptionTotalquantityunits
+      tags:
+        - Order - Prescription
 components:
   schemas:
     Patient:
@@ -11385,4 +11485,31 @@ components:
           type: string
         question:
           description: The question
+          type: string
+    DosageQuantityUnit:
+      type: object
+      properties:
+        quantityunit:
+          description: The unit for individual dosage and total quantities.
+          type: string
+    Frequency:
+      type: object
+      properties:
+        frequency:
+          description: dosage frequency
+          type: string
+    OrderableMedication:
+      type: object
+      properties:
+        name:
+          description: The name of the order
+          type: string
+        ordertypeid:
+          description: The athena ID of the type of order
+          type: integer
+    TotalQuantityUnit:
+      type: object
+      properties:
+        quantityunit:
+          description: The unit for individual dosage and total quantities.
           type: string

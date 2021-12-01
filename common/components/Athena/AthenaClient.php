@@ -1896,4 +1896,88 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @return DosageQuantityUnit
+     */
+    public function getPracticeidReferenceOrderPrescriptionDosagequantityunits($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/reference/order/prescription/dosagequantityunits';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['dosagequantityunits'])) ? $dataResponse['data']['dosagequantityunits'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\DosageQuantityUnitApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return Frequency
+     */
+    public function getPracticeidReferenceOrderPrescriptionFrequencies($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/reference/order/prescription/frequencies';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['frequencies'])) ? $dataResponse['data']['frequencies'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\FrequencyApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return OrderableMedication
+     */
+    public function getPracticeidReferenceOrderPrescription($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/reference/order/prescription';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['prescription'])) ? $dataResponse['data']['prescription'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\OrderableMedicationApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return TotalQuantityUnit
+     */
+    public function getPracticeidReferenceOrderPrescriptionTotalquantityunits($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/reference/order/prescription/totalquantityunits';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['totalquantityunits'])) ? $dataResponse['data']['totalquantityunits'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\TotalQuantityUnitApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }
