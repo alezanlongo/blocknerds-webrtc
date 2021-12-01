@@ -25,6 +25,7 @@ class Meeting extends \yii\db\ActiveRecord
 {
     const DEFAULT_DURATION = 3600; // one hour
     const DEFAULT_TITLE = "quick meeting";
+    const DEFAULT_DOCTOR_TITLE = "shared room for doctors";
 
     /**
      * {@inheritdoc}
