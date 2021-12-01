@@ -53,4 +53,43 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+    <?php if(count($documents) > 0): ?>
+    <div class="row">
+        <table class="table table-striped table-bordered bg-light">
+            <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">documentID</th>
+                <th scope="col">documentsubclass</th>
+                <th scope="col">documentclass</th>
+                <th scope="col">type</th>
+                <th scope="col">view</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach($documents as $key => $value): ?>
+                <tr>
+                    <th><?= $value['id'] ?></th>
+                    <th><?= $value['documentID'] ?></th>
+                    <td><?= $value['documentsubclass'] ?></td>
+                    <td><?= $value['documentclass'] ?></td>
+                    <td><?= $value['type'] ?></td>
+                    <td>
+                        <?= Html::a(
+                            'Documnent',
+                            [
+                                'document/view',
+                                'id'        => $value['id'],
+                                'patientid' => $model->patientid,
+                                'type'      => $value['type']
+                            ],
+                            ['title' => 'Documnent',],
+                        ) ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php endif; ?>
 </div>

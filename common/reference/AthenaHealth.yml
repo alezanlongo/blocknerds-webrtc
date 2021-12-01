@@ -10067,6 +10067,7 @@ components:
     AdminDocument:
       type: object
       x-external-id: adminid
+      x-flatten: null
       properties:
         actionnote:
           description: The most recent action note for a document

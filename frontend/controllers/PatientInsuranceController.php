@@ -3,13 +3,17 @@
 namespace frontend\controllers;
 
 use Yii;
+use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\web\NotFoundHttpException;
+
 use common\components\AthenaComponent;
 use common\components\Athena\models\Insurance;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\RequestChartAlert;
-use yii\data\ActiveDataProvider;
-use yii\filters\AccessControl;
-use yii\web\NotFoundHttpException;
+
+use common\components\Athena\models\ClinicalDocument;
+use common\components\Athena\models\AdminDocument;
 
 class PatientInsuranceController extends \yii\web\Controller
 {
@@ -94,10 +98,12 @@ class PatientInsuranceController extends \yii\web\Controller
     public function actionViewPatient($id)
     {
         $patient = $this->findPatientModel($id);
+        $documents = $this->findDocuments($patient->patientid);
 
         return $this->render('/patient/view', [
-            'model' => $patient,
-            'chartAlert' => $this->component->retrieveChartAlert($patient)
+            'model'         => $patient,
+            'chartAlert'    => $this->component->retrieveChartAlert($patient),
+            'documents'     => $documents
         ]);
     }
 
@@ -222,5 +228,41 @@ class PatientInsuranceController extends \yii\web\Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    protected function findDocuments($patiendid)
+    {
+        $documents = [];
+        $clinicalDocuments = ClinicalDocument::find()
+            ->where(['patientid' => $patiendid])->all();
+        $adminDocuments = AdminDocument::find()
+            ->where(['patientid' => $patiendid])->all();
+
+        foreach ($clinicalDocuments as $key => $value){
+            $row = [
+                'documentsubclass'  => $value->documentsubclass,
+                'type'              => "clinical-document",
+                'documentID'        => $value->clinicaldocumentid,
+                'documentclass'     => $value->documentclass,
+                'departmentid'      => $value->departmentid,
+                'id'                => $value->id,
+            ];
+            array_push($documents, $row);
+        }
+
+        foreach ($adminDocuments as $key => $value){
+            $row = [
+                'documentsubclass'  => $value->documentsubclass,
+                'type'              => "admin-document",
+                'documentID'         => $value->adminid,
+                'documentclass'     => $value->documentclass,
+                'departmentid'      => $value->departmentid,
+                'id'                => $value->id,
+            ];
+            array_push($documents, $row);
+        }
+
+        return $documents;
     }
 }
