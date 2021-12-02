@@ -34,12 +34,13 @@ AdminLteAsset::register($this);
                 <?= $content ?>
             </section>
         </div>
+
+        <div class="chat-zone d-flex justify-content-end"></div>
+
     </div>
     <?php $this->endBody() ?>
 
 </body>
-
-
 
 </html>
 <?php $this->endPage() ?>

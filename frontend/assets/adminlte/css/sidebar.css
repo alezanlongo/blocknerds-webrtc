@@ -81,8 +81,8 @@
   .control-sidebar, .control-sidebar::before {
     bottom: calc(3.5rem + 1px);
     display: none;
-    right: -250px;
-    width: 250px;
+    right: -350px;
+    width: 350px;
     transition: right 0.3s ease-in-out, display 0.3s ease-in-out;
   }
 
@@ -137,7 +137,7 @@
   .control-sidebar-open.control-sidebar-push .content-wrapper,
   .control-sidebar-open.control-sidebar-push .main-footer, .control-sidebar-open.control-sidebar-push-slide .content-wrapper,
   .control-sidebar-open.control-sidebar-push-slide .main-footer {
-    margin-right: 250px;
+    margin-right: 350px;
   }
   
   .control-sidebar-slide-open .control-sidebar {
@@ -158,7 +158,7 @@
   .control-sidebar-slide-open.control-sidebar-push .content-wrapper,
   .control-sidebar-slide-open.control-sidebar-push .main-footer, .control-sidebar-slide-open.control-sidebar-push-slide .content-wrapper,
   .control-sidebar-slide-open.control-sidebar-push-slide .main-footer {
-    margin-right: 250px;
+    margin-right: 350px;
   }
   
   .control-sidebar-dark {

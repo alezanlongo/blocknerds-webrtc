@@ -9,8 +9,8 @@ class ChatListWidgetAsset extends AssetBundle
     public $sourcePath = '@common/widgets/chat/assets';
 
     public $js = [
-        'js/list.js',
         'js/mqttChatHandler.js',
+        'js/chatHome.js',
     ];
 
     public $css = [
@@ -18,6 +18,8 @@ class ChatListWidgetAsset extends AssetBundle
     ];
 
     public $depends = [
+        'yii\web\JqueryAsset',
+        'frontend\assets\MomentJs\MomentJsAsset'
     ];
 
     public $publishOptions = [

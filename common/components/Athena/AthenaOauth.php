@@ -55,8 +55,17 @@ class AthenaOauth
         }
 
         $link = Yii::$app->params['athena_url'].$path;
-        $client = new Client();
+        $client = new Client([
+            'transport' => 'yii\httpclient\CurlTransport'
+        ]);
         $request = $client->createRequest();
+        $requestOptions = [];
+        if(Yii::$app->params['http_client_timeout']){
+            $requestOptions[CURLOPT_TIMEOUT] = Yii::$app->params['http_client_timeout']; // set timeout to 5 seconds for the case server is not responding
+        }
+        if(!empty($requestOptions)){
+            $request->setOptions($requestOptions);
+        }
         $request->setMethod($action)
             ->setUrl($link)
             ->setHeaders([
@@ -69,7 +78,7 @@ class AthenaOauth
         try {
             $response = $request->send();
         }catch(\Exception $e){
-            throw new \yii\web\ServerErrorHttpException($e->getMessage());
+            throw new \yii\web\ServerErrorHttpException($this->handleError($e->getMessage()));
         }
 
         $dataResponse = json_decode($response->getContent(), TRUE);
@@ -135,4 +144,17 @@ class AthenaOauth
         return $dataResponse;
     }
 
+    private function handleError($errorMessage)
+    {
+        $transportError = 'Curl error: #';//yiisoft\yii2-httpclient\src\CurlTransport.php
+        switch (true){
+            case stristr($errorMessage,$transportError.CURLE_OPERATION_TIMEDOUT):
+                $humanized = 'Communication Error';
+               break;
+            default:
+                $humanized = 'Internal Error';
+         }
+
+         return $humanized;
+    }
 }

@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     bootstrapFontAwesome:true,
     headerToolbar: {center: 'timeGridDay,timeGridWeek,dayGridMonth,listWeek', end: 'prev,today,next' },
-    events: "room/calendar/events/" + user_profile_id,
+    events: "room/calendar/events/" + userProfileId,
     views: {
       month: {
         dayMaxEvents: 2

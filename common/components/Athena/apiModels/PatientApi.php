@@ -91,7 +91,7 @@ use common\models\ApiModel as BaseApiModel;
  * @property string $homelesstype For patients that are homeless, provides more detail regarding the patient's homeless situation. Only settable if client has Social Determinant fields turned on.
  * @property string $homephone The patient's home phone number.  Invalid numbers in a GET/PUT will be ignored.  Patient phone numbers and other data may change, and one phone number may be associated with multiple patients. You are responsible for taking additional steps to verify patient identity and for using this data in accordance with applicable law, including HIPAA.  Invalid numbers in a POST will be ignored, possibly resulting in an error.
  * @property string $industrycode Industry of the patient, using the US Census industry code (code system 2.16.840.1.113883.6.310).  "other" can be used as well.
- * @property InsurancePatient[] $insurances List of active patient insurance packages. Only shown for a single patient and if SHOWINSURANCE is set.
+ * @property PatientInsurance[] $insurances List of active patient insurance packages. Only shown for a single patient and if SHOWINSURANCE is set.
  * @property string $language6392code Language of the patient, using the ISO 639.2 code. (http://www.loc.gov/standards/iso639-2/php/code_list.php; "T" or terminology code) Special case: use "declined" to indicate that the patient declined to answer.
  * @property string $lastappointment The last appointment for this patient (before today), excluding cancelled or no-show appointments. (mm/dd/yyyy h24:mi)
  * @property string $lastemail Tthe last email for this patient on file.
@@ -310,7 +310,7 @@ class PatientApi extends BaseApiModel
         }
         if (!empty($this->insurances) && is_array($this->insurances)) {
             foreach($this->insurances as $insurances) {
-                $this->_insurancesAr[] = new InsurancePatientApi($insurances);
+                $this->_insurancesAr[] = new PatientInsuranceApi($insurances);
             }
             $this->insurances = $this->_insurancesAr;
             $this->_insurancesAr = [];//CHECKME

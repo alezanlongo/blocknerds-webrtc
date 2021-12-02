@@ -5,12 +5,12 @@ use common\components\Athena\models\AdminDocument;
 use common\components\Athena\models\AdminDocumentPageDetail;
 use Yii;
 use Yii\helpers\ArrayHelper;
-use yii\base\Component;
 use common\components\Athena\AthenaClient;
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\AppointmentNoteApi;
 use common\components\Athena\apiModels\EncounterApi;
 use common\components\Athena\apiModels\FamilyHistoryApi;
+use common\components\Athena\apiModels\LabResultApi;
 use common\components\Athena\apiModels\MedicationApi;
 use common\components\Athena\apiModels\PatientApi;
 use common\components\Athena\apiModels\PatientCaseApi;
@@ -25,27 +25,29 @@ use common\components\Athena\models\ClinicalDocument;
 use common\components\Athena\models\ClinicalDocumentPageDetail;
 use common\components\Athena\models\CloseReason;
 use common\components\Athena\models\Department;
+use common\components\Athena\models\Diagnoses;
 use common\components\Athena\models\Encounter;
 use common\components\Athena\models\EncounterVitals;
+use common\components\Athena\models\Event;
+use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\FamilyHistory;
+use common\components\Athena\models\LabResult;
 use common\components\Athena\models\Medication;
+use common\components\Athena\models\Order;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
+use common\components\Athena\models\PatientInsurance;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
 use common\components\Athena\models\Problem;
-use common\components\Athena\models\Event;
-use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\Readings;
+use common\components\Athena\models\TopInsurancePackages;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
-use common\components\Athena\models\insurance;
-use common\components\Athena\models\insurancePackages;
-use common\components\Athena\apiModels\LabResultApi;
-use common\components\Athena\models\LabResult;
+use yii\base\Component;
 
 class AthenaComponent extends Component
 {
@@ -83,46 +85,70 @@ class AthenaComponent extends Component
         return $departmentsModels;
     }
 
-    public function getInsurancepackages($flatten = false)
+    public function getInsuranceTopPackages()
     {
-        $query = array(
-            'insuranceplanname' => 'HDEPO National HRA',
-            'memberid' => 'CD123456'
-        );
-        $insurancePackagesModelsApi = $this->client->getPracticeidInsurancepackages($this->practiceid, $query);
 
-        $insurancePackagesModels = [];
+        $topInsurancePackagesModelsApi = $this->client->getPracticeidMiscTopinsurancepackages($this->practiceid);
 
-        foreach ($insurancePackagesModelsApi as $insurancePackagesModelApi) {
-            $insurancePackagesModels[] =
-                insurancePackages::createFromApiObject(
-                    $insurancePackagesModelApi
+        $topInsurancePackagesModels = [];
+
+        foreach ($topInsurancePackagesModelsApi as $topInsurancePackagesModelApi) {
+            $topInsurancePackagesModels[] =
+                TopInsurancePackages::createFromApiObject(
+                    $topInsurancePackagesModelApi
                 );
         }
 
-        if ($flatten) {
-            return array_column($insurancePackagesModels, 'insuranceplanname', 'insurancepackageid');
-        }
-
-        return $insurancePackagesModels;
+        return array_column($topInsurancePackagesModels, 'name', 'insurancepackageid');
     }
 
     /**
      * @return Insurance
      */
-
-    public function createInsurance($insuranceData, $patientId)
+    public function createInsurance($patientId, $new = false, $insuranceData = [])
     {
+        if($new){
+            $insuranceData['insurancepackageid'] = 0;
+            $insuranceData['sequencenumber'] = 1;
+            $insuranceModelApi =
+                $this->client->postPracticeidPatientsPatientidInsurances(
+                    $this->practiceid,
+                    $patientId,
+                    $insuranceData
+                );
+            $insuranceData = new PatientInsurance;
+            $insuranceData->createFromApiObject($insuranceModelApi[0]);
 
-        $insuranceData->sequencenumber = 1;
-        $insuranceModelApi =
-            $this->client->postPracticeidPatientsPatientidInsurances(
-                $this->practiceid,
-                $patientId,
-                $insuranceData->toArray()
-            );
+        }else{
+            $insuranceData->sequencenumber = 1;
+            $insuranceModelApi =
+                $this->client->postPracticeidPatientsPatientidInsurances(
+                    $this->practiceid,
+                    $patientId,
+                    $insuranceData->toArray()
+                );
+        }
 
         return $insuranceData->createFromApiObject($insuranceModelApi[0]);
+    }
+
+    /**
+     * @return Insurance
+     */
+    public function updateInsurance($insurance, $insuranceId, $patientId)
+    {
+        $putInsuranceApi = $this->client->putPracticeidPatientsPatientidInsurancesInsuranceid($this->practiceid, $patientId, $insuranceId, $insurance);
+
+        if (!empty($putInsuranceApi['errormessage'])) {
+            return $insurance;
+        }
+
+    }
+
+    public function deleteInsurance($insuranceId, $patientId){
+        $deleteInsurance = $this->client->deletePracticeidPatientsPatientidInsurancesInsuranceid($this->practiceid, $patientId, $insuranceId);
+
+        return $deleteInsurance;
     }
 
     /**
@@ -138,6 +164,19 @@ class AthenaComponent extends Component
             );
 
         return $this->retrievePatient($patientModelApi[0]->patientid);
+    }
+
+    /**
+     * @return Update patient
+     */
+    public function updatePatient($patient, $patientId)
+    {
+        $putPatientApi = $this->client->putPracticeidPatientsPatientid($this->practiceid, $patientId, $patient);
+
+        if (!empty($putPatientApi['errormessage'])) {
+            return $patient;
+        }
+
     }
 
     /**
@@ -1471,5 +1510,104 @@ class AthenaComponent extends Component
             $problem->patientid,
             $problemModelApi->patientcaseid
         );
+    }
+
+    /**
+     * @return Diagnosis
+     */
+
+    public function createDiagnosis($encounter, $diagnosis)
+    {
+        $diagnosisModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridDiagnoses(
+                $this->practiceid,
+                $encounter->externalId,
+                $diagnosis->toArray()
+            );
+
+        return $this->retrieveDiagnosis(
+            $encounter->externalId,
+            $diagnosisModelApi->diagnosisid
+        );
+
+    }
+
+    public function retrieveDiagnosis($encounterId, $diagnosisId)
+    {
+        $diagnosisModelsApi = $this->client->getPracticeidChartEncounterEncounteridDiagnoses(
+            $this->practiceid,
+            $encounterId
+        );
+
+        $diagnosisById = ArrayHelper::index($diagnosisModelsApi, 'diagnosisid');
+
+        $diagnosis = Diagnoses::find()
+            ->where(['externalId' => $diagnosisId])
+            ->one();
+
+        if (!$diagnosis) {
+            return Diagnoses::createFromApiObject($diagnosisById[$diagnosisId]);
+        }
+
+        return $diagnosis->loadApiObject($diagnosisById[$diagnosisId]);
+    }
+
+    /**
+     * @return Diagnoses
+     */
+
+    public function updateDiagnosis($diagnosis, $updateDiagnosis)
+    {
+
+        $this->client->putPracticeidChartEncounterEncounteridDiagnosesDiagnosisid(
+            $this->practiceid,
+            $diagnosis->encounter->externalId,
+            $diagnosis->externalId,
+            $updateDiagnosis->toArray()
+        );
+
+        return $this->retrieveDiagnosis(
+            $diagnosis->encounter->externalId,
+            $diagnosis->externalId
+        );
+    }
+
+    /**
+     * @return Order
+     */
+
+    public function createOrderPrescription($encounter, $prescriptionOrder)
+    {
+        $orderModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridOrdersPrescription(
+                $this->practiceid,
+                $encounter->externalId,
+                $prescriptionOrder->toArray()
+            );
+
+        return $this->retrieveOrder(
+            $encounter->externalId,
+            $orderModelApi->documentid
+        );
+
+    }
+
+    public function retrieveOrder($encounterId, $orderId)
+    {
+        $orderModelApi = $this->client->getPracticeidChartEncounterEncounteridOrdersOrderid(
+            $this->practiceid,
+            $encounterId,
+            $orderId
+        );
+
+        $order = Order::find()
+            ->where(['externalId' => $orderId])
+            ->one();
+
+        if (!$order) {
+            return Order::createFromApiObject($orderModelApi);
+        }
+
+        return $order->loadApiObject($orderModelApi);
     }
 }

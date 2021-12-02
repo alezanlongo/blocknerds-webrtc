@@ -64,21 +64,21 @@
     <?php } ?>
     <!-- /.card-body -->
     <div class="card-footer">
-            <?php if ($isNew) { ?>
-                <select class="form-select" aria-label="select users" name="user_target">
-                    <option selected>Select user to init the chat</option>
-                    <!-- TODO: change User to USerProfile -->
-                    <?php foreach ($users as $userProf) { ?>
-                        <option value="<?= $userProf->id ?>"><?= $userProf->user->username ?></option>
-                    <?php } ?>
-                </select>
-            <?php } ?>
-            <div class="input-group">
-                <input type="text" name="message" placeholder="Type Message ..." class="form-control" autocomplete="off">
-                <span class="input-group-append">
-                    <button type="button" class="btn btn-primary btn-send">Send</button>
-                </span>
-            </div>
+        <?php if ($isNew) { ?>
+            <select class="form-select" aria-label="select users" name="user_target">
+                <option selected>Select user to init the chat</option>
+                <!-- TODO: change User to USerProfile -->
+                <?php foreach ($users as $userProf) { ?>
+                    <option value="<?= $userProf->id ?>"><?= $userProf->user->username ?></option>
+                <?php } ?>
+            </select>
+        <?php } ?>
+        <div class="input-group">
+            <input type="text" name="message" placeholder="Type Message ..." class="form-control" autocomplete="off">
+            <span class="input-group-append">
+                <button type="button" class="btn btn-primary btn-send" onclick="initChatWithUser();">Send</button>
+            </span>
+        </div>
     </div>
     <!-- /.card-footer-->
 </div>

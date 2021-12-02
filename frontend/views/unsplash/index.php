@@ -28,9 +28,9 @@ $this->registerJsFile(
 <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
 <?php ActiveForm::end() ?>
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<div class=" unsplash-gallery">
     <?php foreach ($photos as $key => $photo) { ?>
-        <div class="col">
+        <div class=" unsplash-gallery-item">
             <div class="card">
                 <?= Html::img($photo['urls'][$size], ['class' => 'card-img-top', 'alt' => "image"]) ?>
                 <div class="card-body">

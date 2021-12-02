@@ -333,4 +333,18 @@ class SiteController extends Controller
             'model' => $model
         ]);
     }
+
+    public function actionTest($page = null)
+{
+    $this->layout = 'main3';
+    $page = match($page) {
+        'short' => 'test-short',
+        'medium' => 'test-medium',
+        'long' => 'test-long',
+        'about' => 'about',
+        default => 'test-site',
+    };
+
+    return $this->render($page);
+}
 }

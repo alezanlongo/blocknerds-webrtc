@@ -115,10 +115,10 @@ $this->registerJsVar('myToken', md5($profileId), View::POS_END);
     </div>
   </div>
   <div class="offcanvas-body">
-    <? Pjax::begin(['id' => 'left-chat-list']);     ?>
+    <?php
+    Pjax::begin(['id' => 'left-chat-list']);
 
-    <?=
-    ChatListWidget::widget([
+    echo ChatListWidget::widget([
       'recentChat' => array_reverse(ChatRepository::getRecentChats($profileId)),
     ]);
 

@@ -23,6 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ], ['class' => 'btn btn-primary']) ?>
 
         <?= Html::a('Vitals', ['vitals/index', 'encounterId' => $model->id], ['class' => 'btn btn-primary']) ?>
+
+        <?= Html::a('Add Diagnosis', ['create-diagnosis', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?= DetailView::widget([

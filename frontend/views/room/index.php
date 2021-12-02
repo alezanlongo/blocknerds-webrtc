@@ -10,6 +10,7 @@ use frontend\assets\Janus\JanusAsset;
 use frontend\assets\mqtt\MqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
 
+
 /** @var boolean $limit_members Whether to limit members for this room...? */
 
 /** @var \yii\web\View $this */
@@ -22,16 +23,19 @@ $this->registerJsVar('limitMembers', $limit_members, View::POS_END);
 $this->registerJsVar('own_mute_audio', $own_mute_audio, View::POS_END);
 $this->registerJsVar('own_mute_video', $own_mute_video, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
-$this->registerJsVar('myRoom', $uuid, View::POS_END);
+// $this->registerJsVar('myRoom', $uuid, View::POS_END);
+$this->registerJsVar('dataRoom', $dataRoom, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
 $this->registerJsVar('isOwner', $is_owner, View::POS_BEGIN);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
-$this->registerJsVar('mytoken', $token, View::POS_END);
+// $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
 $this->registerJsVar('members', $members, View::POS_END);
 $this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
 $this->registerJsVar('myChannel', $myChannel, View::POS_END);
+$this->registerJsVar('wsbroker', \Yii::$app->params['mqtt.host'], View::POS_BEGIN);
+$this->registerJsVar('wsport', \Yii::$app->params['mqtt.port'], View::POS_BEGIN);
 
 $config = [
     'janus' => [
@@ -59,8 +63,7 @@ $this->registerJs(
     View::POS_HEAD,
     'roomConfig'
 );
-
-$countdown = <<<'COUNTDOWN'
+    $countdown = <<<'COUNTDOWN'
 const handleCountdown = (endTime) => {
   const MILLISECONDS_STRING = "milliseconds";
   const eventTimeFinish = moment(endTime);
@@ -94,7 +97,7 @@ const switchSignal = (seconds) => {
 };
 COUNTDOWN;
 
-$this->registerJs($countdown, View::POS_END, 'countdown_script');
+    $this->registerJs($countdown, View::POS_END, 'countdown_script');
 
 
 $this->title = 'The Room';
@@ -106,11 +109,13 @@ $this->title = 'The Room';
     <?= $this->render(
         '//layouts/right-room.php',
         [
+            'user_profile_id' => $user_profile_id,
             'room_id' => $room_id,
             'limit_members' => $limit_members,
             'members' => $members,
             'is_owner' => $is_owner,
-            'chats' => $chats
+            'chats' => $chats,
+
         ]
     ) ?>
 

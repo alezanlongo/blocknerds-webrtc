@@ -26,7 +26,7 @@ return [
                         YII_ENV_DEV ? 'jquery.js' : 'jquery.min.js',
                     ]
                 ],
-               
+
                 AdminLteAsset::class => [
                     "css" => [
                         'css/adminlte.css',
@@ -78,6 +78,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'POST room/create' => 'room/create',
+                'GET room/test' => 'room/test',
                 'POST room/create-schedule' => 'room/create-schedule',
                 'GET room/user-list' => 'room/user-list',
                 'GET room/admin-test' => 'room/testing-admin',
@@ -94,6 +95,7 @@ return [
                 'GET user/get-profile/<profile_id>' => 'user/get-profile',
                 'POST room/toggle-media' => 'room/toggle-media',
                 'GET chat/<channel>' => 'chat/get-chat',
+                'POST chat/request-subscribe' => 'chat/request-to-subscribe-channel',
                 'POST chat-test/message-listener' => 'chat-test/message-listener',
                 'POST photo/add' => 'photo/add',
             ],

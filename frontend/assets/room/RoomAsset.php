@@ -10,14 +10,14 @@ class RoomAsset extends \yii\web\AssetBundle
     ];
 
     public $js = [
-        'js/moment.min.js',
         'js/boxesHandler.js',
         // 'js/countdown.js',
         'js/mqttHandler.js',
         'js/room.js',
     ];
     public $depends = [
-        'yii\web\JqueryAsset'
+        'yii\web\JqueryAsset',
+        'frontend\assets\MomentJs\MomentJsAsset'
     ];
     public $publishOptions = [
         'forceCopy' => true,
