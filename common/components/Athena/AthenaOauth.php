@@ -60,7 +60,7 @@ class AthenaOauth
         ]);
         $request = $client->createRequest();
         $requestOptions = [];
-        if(Yii::$app->params['http_client_timeout']){
+        if(!empty(Yii::$app->params['http_client_timeout'])){
             $requestOptions[CURLOPT_TIMEOUT] = Yii::$app->params['http_client_timeout']; // set timeout to 5 seconds for the case server is not responding
         }
         if(!empty($requestOptions)){
