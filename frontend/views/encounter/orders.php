@@ -25,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'externalId',
             'class',
+            'ordertype',
             'dateordered',
             'ordertypeid',
             'description',

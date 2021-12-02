@@ -1536,4 +1536,24 @@ class AthenaComponent extends Component
 
         return $order->loadApiObject($orderModelApi);
     }
+
+    /**
+     * @return Order
+     */
+
+    public function createOrderImaging($encounter, $orderImaging)
+    {
+        $orderModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridOrdersImaging(
+                $this->practiceid,
+                $encounter->externalId,
+                $orderImaging->toArray()
+            );
+
+        return $this->retrieveOrder(
+            $encounter->externalId,
+            $orderModelApi->documentid
+        );
+
+    }
 }
