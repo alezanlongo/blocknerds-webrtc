@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
  * @property string $administernote An additional note to the provider or staff for administration.
  * @property int $diagnosissnomedcode The SNOMED code for diagnosis this order is for.
  * @property bool $dispenseaswritten Whether the prescription should be marked as dispense as written (i.e., no substitutions without consulting the doctor).
- * @property float $dosagequantity Sig field. The numerical amount of medication to take.
+ * @property int $dosagequantity Sig field. The numerical amount of medication to take.
  * @property string $dosagequantityunit Sig field. The unit of the dosage quantity, and required if that is passed in. Get the list of available values from /reference/order/prescription/dosagequantityunits. Most values are not valid for each individual medication.
  * @property float $duration Sig field. The numerical amount of days to take this medication for.
  * @property string $externalnote An additional note to the patient.
@@ -23,7 +23,7 @@ use yii\helpers\ArrayHelper;
  * @property string $pharmacynote A note to send to the pharmacy.
  * @property string $providernote An internal note for the provider or staff.
  * @property string $rxnormid The RxNormID of the medication to order. You may use this instead of ordertypeid. If the RxNormID maps to more than one possible orderable medication, it will be rejected.
- * @property float $totalquantity The total amount of medication to be prescribed. It should match the total amount needed as described in the sig.
+ * @property int $totalquantity The total amount of medication to be prescribed. It should match the total amount needed as described in the sig.
  * @property string $totalquantityunit The unit of the total quantity, and required if that is passed in. Get the list of available values from /reference/order/prescription/totalquantityunits. Most values are not valid for each individual medication.
  * @property string $unstructuredsig The unstructured sig. If this field is set please leave all other sig fields blank.
  * @property integer $externalId API Primary Key
@@ -43,7 +43,7 @@ class RequestCreateOrderPrescription extends \yii\db\ActiveRecord
             [['additionalinstructions', 'administernote', 'dosagequantityunit', 'externalnote', 'frequency', 'ndc', 'orderingmode', 'pharmacyncpdpid', 'pharmacynote', 'providernote', 'rxnormid', 'totalquantityunit', 'unstructuredsig'], 'trim'],
             [['diagnosissnomedcode'], 'required'],
             [['additionalinstructions', 'administernote', 'dosagequantityunit', 'externalnote', 'frequency', 'ndc', 'orderingmode', 'pharmacyncpdpid', 'pharmacynote', 'providernote', 'rxnormid', 'totalquantityunit', 'unstructuredsig'], 'string'],
-            [['diagnosissnomedcode', 'facilityid', 'numrefillsallowed', 'ordertypeid', 'externalId', 'id'], 'integer'],
+            [['diagnosissnomedcode', 'dosagequantity', 'facilityid', 'numrefillsallowed', 'ordertypeid', 'totalquantity', 'externalId', 'id'], 'integer'],
             [['dispenseaswritten'], 'boolean'],
             // TODO define more concreate validation rules!
         ];

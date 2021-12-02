@@ -5,11 +5,15 @@ namespace frontend\controllers;
 use Yii;
 use common\components\AthenaComponent;
 use common\components\Athena\models\Diagnoses;
+use common\components\Athena\models\DosageQuantityUnit;
 use common\components\Athena\models\Encounter;
+use common\components\Athena\models\Frequency;
 use common\components\Athena\models\Order;
+use common\components\Athena\models\OrderableMedication;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\RequestCreateDiagnosis;
 use common\components\Athena\models\RequestCreateOrderPrescription;
+use common\components\Athena\models\TotalQuantityUnit;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -399,5 +403,98 @@ class EncounterController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionOrderableMedications($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+
+        if (!is_null($q)) {
+
+            $orderableMedications = OrderableMedication::find()
+                ->select(['ordertypeid as id', 'name'])
+                ->andWhere(['LIKE', 'name', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($orderableMedications->all());
+        }
+
+        return $out;
+    }
+
+    public function actionFrequencies($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['id' => '', 'frequency' => '']];
+
+        if (!is_null($q)) {
+
+            $frequencies = Frequency::find()
+                ->select(['frequency'])
+                ->andWhere(['LIKE', 'frequency', $q])
+                ->limit(10);
+
+            $out['results'] = array_map(function($frequency){
+                return [
+                    'id' => $frequency->frequency,
+                    'frequency' => $frequency->frequency
+                ];
+            },$frequencies->all());
+
+        }
+
+        return $out;
+    }
+
+    public function actionDosageUnits($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['id' => '', 'quantityunit' => '']];
+
+        if (!is_null($q)) {
+
+            $dosageUnits = DosageQuantityUnit::find()
+                ->select(['quantityunit'])
+                ->andWhere(['LIKE', 'quantityunit', $q])
+                ->limit(10);
+
+            $out['results'] = array_map(function($dosageUnit){
+                return [
+                    'id' => $dosageUnit->quantityunit,
+                    'quantityunit' => $dosageUnit->quantityunit
+                ];
+            },$dosageUnits->all());
+        }
+
+        return $out;
+    }
+
+    public function actionTotalQuantity($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['id' => '', 'quantityunit' => '']];
+
+        if (!is_null($q)) {
+
+            $totalQuantities = TotalQuantityUnit::find()
+                ->select(['quantityunit'])
+                ->andWhere(['LIKE', 'quantityunit', $q])
+                ->limit(10);
+
+            $out['results'] = array_map(function($totalQuantity){
+                return [
+                    'id' => $totalQuantity->quantityunit,
+                    'quantityunit' => $totalQuantity->quantityunit
+                ];
+            },$totalQuantities->all());
+
+        }
+
+        return $out;
     }
 }

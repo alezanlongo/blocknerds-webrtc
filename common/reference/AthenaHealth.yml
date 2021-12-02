@@ -11148,7 +11148,7 @@ components:
           type: boolean
         dosagequantity:
           description: Sig field. The numerical amount of medication to take.
-          type: number
+          type: integer
         dosagequantityunit:
           description: >-
             Sig field. The unit of the dosage quantity, and required if
@@ -11228,7 +11228,7 @@ components:
           description: >-
             The total amount of medication to be prescribed. It should
             match the total amount needed as described in the sig.
-          type: number
+          type: integer
         totalquantityunit:
           description: >-
             The unit of the total quantity, and required if that is
