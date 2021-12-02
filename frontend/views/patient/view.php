@@ -19,11 +19,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Insurance', ['patient-insurance/create-insurance', 'patientId' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Create Appointment', ['appointment/create', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Create Patient Case', ['patient-case/create', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('See Documents', [
-                'document/index',
-            'patientid'     => $model->externalId,
-            'departmentid'  => $model->departmentid,
-            'type'          => 'clinical-document'], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Create Chart Alert', ['patient-insurance/create-chart-alert', 'patientId' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Patient Problems', ['problem/index', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
@@ -52,6 +47,28 @@ $this->params['breadcrumbs'][] = $this->title;
             'status',
         ],
     ]) ?>
+
+    <div class="row">
+        <div class="col-6 margin-bottom p-3">
+            <label for="document">Choose the document to create</label>
+            <select class="form-select" name="document" id="document">
+                <option value="">Select a Document</option>
+                <?php foreach($documentsTypes as $key => $value): ?>
+                    <option value="<?= $key ?>"><?= $value ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="col-6 margin-bottom p-3">
+            <?= Html::a('Create Documents', [
+                'document/create',
+                'patientid'     => $model->externalId,
+                'departmentid'  => $model->departmentid
+            ], [
+                'class' => 'btn btn-success disabled',
+                'id'    => 'create-document'
+            ]) ?>
+        </div>
+    </div>
 
     <?php if(count($documents) > 0): ?>
     <div class="row">
@@ -93,3 +110,8 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <?php endif; ?>
 </div>
+
+<?php $this->registerJsFile(
+    '@web/js/Athena/patient-document.js',
+    ['depends' => [\yii\web\JqueryAsset::class]]
+); ?>

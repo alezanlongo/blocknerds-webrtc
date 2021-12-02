@@ -99,11 +99,16 @@ class PatientInsuranceController extends \yii\web\Controller
     {
         $patient = $this->findPatientModel($id);
         $documents = $this->findDocuments($patient->patientid);
+        $documentsTypes = [
+            'clinical-document' => 'Clinical Document',
+            'admin-document'    => 'Admin Document',
+        ];
 
         return $this->render('/patient/view', [
-            'model'         => $patient,
-            'chartAlert'    => $this->component->retrieveChartAlert($patient),
-            'documents'     => $documents
+            'model'             => $patient,
+            'chartAlert'        => $this->component->retrieveChartAlert($patient),
+            'documents'         => $documents,
+            'documentsTypes'    => $documentsTypes,
         ]);
     }
 
