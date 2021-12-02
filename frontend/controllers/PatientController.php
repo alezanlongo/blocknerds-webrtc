@@ -77,14 +77,14 @@ class PatientController extends \yii\web\Controller
             $patient = $this->component->createPatient(
                 $model
             );
-
-            $insurance = $this->component->createInsurance(
+            $patient->save();
+            /*$insurance = $this->component->createInsurance(
                 $patient->externalId,
                 true
             );
-            $patient->save();
+
             $insurance->patient_id = $patient->id;
-            $insurance->save();
+            $insurance->save();*/
 
             return $this->redirect(['view', 'id' => $patient->id]);
 
