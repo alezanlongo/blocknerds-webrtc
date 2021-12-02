@@ -5245,6 +5245,74 @@ paths:
       operationId: getPracticeidReferenceOrderImaging
       tags:
         - Order - Imaging
+  /v1/{practiceid}/chart/encounter/{encounterid}/orders/lab:
+    post:
+      summary: Get list of lab orders for given encounter
+      description: Creates a new imaging order record for a specific encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrderPrescription200Response'
+          description: Success
+      operationId: postPracticeidChartEncounterEncounteridOrdersLab
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateOrderLab'
+        required: true
+      tags:
+        - Order - Lab
+  /v1/{practiceid}/reference/order/lab:
+    get:
+      summary: Get list of orderable Labs
+      description: Retrieves a list of lab orders configured in the system
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderableLab'
+          description: Success
+      operationId: getPracticeidReferenceOrderLab
+      tags:
+        - Order - Lab
 components:
   schemas:
     Patient:
@@ -12262,6 +12330,51 @@ components:
         - diagnosissnomedcode
         - ordertypeid
     OrderableImaging:
+      type: object
+      properties:
+        name:
+          description: The name of the order
+          type: string
+        ordertypeid:
+          description: The athena ID of the type of order
+          type: integer
+    RequestCreateOrderLab:
+      type: object
+      properties:
+        diagnosissnomedcode:
+          description: The SNOMED code for diagnosis this order is for.
+          type: integer
+        facilityid:
+          description: >-
+            The athena ID of the lab you want to send the order to. Get
+            a localized list using /chart/configuration/facilities.
+          type: integer
+        facilitynote:
+          description: A note to send to the lab.
+          type: string
+        futuresubmitdate:
+          description: The date the order should be sent. Defaults to today.
+          type: string
+        highpriority:
+          description: If true, then the order should be sent STAT.
+          type: boolean
+        loinc:
+          description: >-
+            The LOINC of the lab you wish to order. Either this or
+            ordertypeid can be used, but not both.
+          type: string
+        ordertypeid:
+          description: >-
+            The athena ID of the lab to order. Get the IDs using
+            /reference/order/lab. Either this or LOINC can be used, but
+            not both.
+          type: integer
+        providernote:
+          description: An internal note for the provider or staff.
+          type: string
+      required:
+        - diagnosissnomedcode
+    OrderableLab:
       type: object
       properties:
         name:

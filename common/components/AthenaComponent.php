@@ -1630,4 +1630,24 @@ class AthenaComponent extends Component
         );
 
     }
+
+    /**
+     * @return Order
+     */
+
+    public function createOrderLab($encounter, $orderLab)
+    {
+        $orderModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridOrdersLab(
+                $this->practiceid,
+                $encounter->externalId,
+                $orderLab->toArray()
+            );
+
+        return $this->retrieveOrder(
+            $encounter->externalId,
+            $orderModelApi->documentid
+        );
+
+    }
 }
