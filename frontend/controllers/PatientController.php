@@ -3,13 +3,17 @@
 namespace frontend\controllers;
 
 use Yii;
+use yii\data\ActiveDataProvider;
+use yii\filters\AccessControl;
+use yii\web\NotFoundHttpException;
+
 use common\components\AthenaComponent;
 use common\components\Athena\models\PatientInsurance;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\RequestChartAlert;
-use yii\data\ActiveDataProvider;
-use yii\filters\AccessControl;
-use yii\web\NotFoundHttpException;
+
+use common\components\Athena\models\ClinicalDocument;
+use common\components\Athena\models\AdminDocument;
 
 class PatientController extends \yii\web\Controller
 {
@@ -73,14 +77,14 @@ class PatientController extends \yii\web\Controller
             $patient = $this->component->createPatient(
                 $model
             );
-
-            $insurance = $this->component->createInsurance(
+            $patient->save();
+            /*$insurance = $this->component->createInsurance(
                 $patient->externalId,
                 true
             );
-            $patient->save();
+
             $insurance->patient_id = $patient->id;
-            $insurance->save();
+            $insurance->save();*/
 
             return $this->redirect(['view', 'id' => $patient->id]);
 
@@ -101,14 +105,22 @@ class PatientController extends \yii\web\Controller
     public function actionView($id)
     {
         $patient = $this->findPatientModel($id);
+        $documents = $this->findDocuments($patient->patientid);
+        $documentsTypes = [
+            'clinical-document' => 'Clinical Document',
+            'admin-document'    => 'Admin Document',
+        ];
+
         $dataProvider = new ActiveDataProvider([
             'query' => PatientInsurance::find()->where(['patient_id' => $id]),
         ]);
 
         return $this->render('/patient/view', [
-            'model' => $patient,
-            'chartAlert' => $this->component->retrieveChartAlert($patient),
-            'dataProvider' => $dataProvider
+            'model'             => $patient,
+            'chartAlert'        => $this->component->retrieveChartAlert($patient),
+            'dataProvider'      => $dataProvider,
+            'documents'         => $documents,
+            'documentsTypes'    => $documentsTypes,
         ]);
     }
 
@@ -283,5 +295,41 @@ class PatientController extends \yii\web\Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    protected function findDocuments($patiendid)
+    {
+        $documents = [];
+        $clinicalDocuments = ClinicalDocument::find()
+            ->where(['patientid' => $patiendid])->all();
+        $adminDocuments = AdminDocument::find()
+            ->where(['patientid' => $patiendid])->all();
+
+        foreach ($clinicalDocuments as $key => $value){
+            $row = [
+                'documentsubclass'  => $value->documentsubclass,
+                'type'              => "clinical-document",
+                'documentID'        => $value->clinicaldocumentid,
+                'documentclass'     => $value->documentclass,
+                'departmentid'      => $value->departmentid,
+                'id'                => $value->id,
+            ];
+            array_push($documents, $row);
+        }
+
+        foreach ($adminDocuments as $key => $value){
+            $row = [
+                'documentsubclass'  => $value->documentsubclass,
+                'type'              => "admin-document",
+                'documentID'         => $value->adminid,
+                'documentclass'     => $value->documentclass,
+                'departmentid'      => $value->departmentid,
+                'id'                => $value->id,
+            ];
+            array_push($documents, $row);
+        }
+
+        return $documents;
     }
 }

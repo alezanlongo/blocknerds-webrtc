@@ -15,7 +15,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model'                 => $model,
-        'documentSubClasses'    => $documentSubClasses
+        'documentSubClasses'    => $documentSubClasses,
+        'action'                => 'document/create?patientid='.$patientid.'&departmentid='.$departmentid.'&type='.$type
     ]) ?>
 
 </div>
