@@ -10,7 +10,10 @@ use yii\widgets\ActiveForm;
 
 <div class="clinical-document-form">
 
-    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+    <?php $form = ActiveForm::begin([
+            'options'   => ['enctype' => 'multipart/form-data'],
+            'action'    => [$action]
+    ]); ?>
 
     <div class="form-group">
         <?= $form->field($model, 'documentsubclass')->dropdownList(

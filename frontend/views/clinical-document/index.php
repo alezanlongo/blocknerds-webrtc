@@ -18,7 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Clinical Document', [
             'create',
             'patientid'     => $patientid,
-            'departmentid'  => $departmentid
+            'departmentid'  => $departmentid,
+            'type'          => $type
         ], ['class' => 'btn btn-success']) ?>
     </p>
 

@@ -1,6 +1,8 @@
 <?php
 namespace common\components;
 
+use common\components\Athena\models\AdminDocument;
+use common\components\Athena\models\AdminDocumentPageDetail;
 use Yii;
 use Yii\helpers\ArrayHelper;
 use common\components\Athena\AthenaClient;
@@ -1199,6 +1201,78 @@ class AthenaComponent extends Component
         return $changedLabResultResult;
     }
 
+
+    public function getAdminDocuments($patientId, $flatten = false)
+    {
+        $adminDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsAdmin($this->practiceid, $patientId);
+
+        $adminDocumentsModels = [];
+
+        foreach ($adminDocumentsModelsApi as $adminDocumentModelApi) {
+            $adminDocumentsModels[] = AdminDocument::createFromApiObject($adminDocumentModelApi);
+        }
+
+        return $adminDocumentsModels;
+    }
+
+
+    public function createAdminDocument($patientId, $postAdminDocument)
+    {
+        $postAdminDocumentsModelsApi = $this->client->postPracticeidPatientsPatientidDocumentsAdmin(
+            $this->practiceid,
+            $patientId,
+            $postAdminDocument->toArray()
+        );
+
+        if($postAdminDocumentsModelsApi->success){
+            $adminDocumentsModelsApi = $this->client->getPracticeidPatientsPatientidDocumentsAdminAdminid(
+                $this->practiceid,
+                $postAdminDocumentsModelsApi->adminid,
+                $patientId
+            );
+            $adminDocument = AdminDocument::createFromApiObject($adminDocumentsModelsApi[0]);
+            $adminDocument->patientid = $patientId;
+            $adminDocument->originaldocument = json_encode($adminDocumentsModelsApi[0]['originaldocument']);
+            $adminDocument->save();
+            foreach ($adminDocumentsModelsApi[0]['pages'] as $key => $value){
+                $pageDetail = AdminDocumentPageDetail::createFromApiObject($value);
+                $pageDetail->link("adminDocument", $adminDocument);
+                $pageDetail->save();
+            }
+
+            return $adminDocument;
+        }
+
+        return $postAdminDocument;
+    }
+
+
+    public function getAdminDocumentPage($link, $flatten = false)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $link,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Authorization: Bearer '.$this->getAuthentication(),
+                'Cookie: dtCookie=5CF2D18D631F6D578123C785EF66ECEA|RUM+Default+Application|1'
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return $response;
+    }
+
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
     {
@@ -1534,6 +1608,41 @@ class AthenaComponent extends Component
         }
 
         return $order->loadApiObject($orderModelApi);
+    }
+
+    public function createOrderImaging($encounter, $orderImaging)
+    {
+        $orderModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridOrdersImaging(
+                $this->practiceid,
+                $encounter->externalId,
+                $orderImaging->toArray()
+            );
+
+        return $this->retrieveOrder(
+            $encounter->externalId,
+            $orderModelApi->documentid
+        );
+
+    }
+
+    /**
+     * @return Order
+     */
+    public function createOrderLab($encounter, $orderLab)
+    {
+        $orderModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridOrdersLab(
+                $this->practiceid,
+                $encounter->externalId,
+                $orderLab->toArray()
+            );
+
+        return $this->retrieveOrder(
+            $encounter->externalId,
+            $orderModelApi->documentid
+        );
+
     }
 
     public function findPatientBestMatch(\common\components\Athena\searchModels\PatientSearch $patientSearch)

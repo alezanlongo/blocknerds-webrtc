@@ -5,11 +5,19 @@ namespace frontend\controllers;
 use Yii;
 use common\components\AthenaComponent;
 use common\components\Athena\models\Diagnoses;
+use common\components\Athena\models\DosageQuantityUnit;
 use common\components\Athena\models\Encounter;
+use common\components\Athena\models\Frequency;
 use common\components\Athena\models\Order;
+use common\components\Athena\models\OrderableImaging;
+use common\components\Athena\models\OrderableLab;
+use common\components\Athena\models\OrderableMedication;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\RequestCreateDiagnosis;
+use common\components\Athena\models\RequestCreateOrderImaging;
+use common\components\Athena\models\RequestCreateOrderLab;
 use common\components\Athena\models\RequestCreateOrderPrescription;
+use common\components\Athena\models\TotalQuantityUnit;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -342,6 +350,58 @@ class EncounterController extends Controller
         ]);
     }
 
+    /**
+     * Create Order (Imaging) model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionCreateOrderImaging($id)
+    {
+        $model = new RequestCreateOrderImaging;
+        $encounter = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->createOrderImaging(
+                $encounter,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view-order-prescription', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('create-order-imaging', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Create Order (Imaging) model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionCreateOrderLab($id)
+    {
+        $model = new RequestCreateOrderLab;
+        $encounter = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->createOrderLab(
+                $encounter,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view-order-prescription', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('create-order-lab', [
+            'model' => $model,
+        ]);
+    }
+
 
     /**
      * Finds the Encounter model based on its primary key value.
@@ -399,5 +459,136 @@ class EncounterController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionOrderableMedications($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+
+        if (!is_null($q)) {
+
+            $orderableMedications = OrderableMedication::find()
+                ->select(['ordertypeid as id', 'name'])
+                ->andWhere(['LIKE', 'name', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($orderableMedications->all());
+        }
+
+        return $out;
+    }
+
+    public function actionFrequencies($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['id' => '', 'frequency' => '']];
+
+        if (!is_null($q)) {
+
+            $frequencies = Frequency::find()
+                ->select(['frequency'])
+                ->andWhere(['LIKE', 'frequency', $q])
+                ->limit(10);
+
+            $out['results'] = array_map(function($frequency){
+                return [
+                    'id' => $frequency->frequency,
+                    'frequency' => $frequency->frequency
+                ];
+            },$frequencies->all());
+
+        }
+
+        return $out;
+    }
+
+    public function actionDosageUnits($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['id' => '', 'quantityunit' => '']];
+
+        if (!is_null($q)) {
+
+            $dosageUnits = DosageQuantityUnit::find()
+                ->select(['quantityunit'])
+                ->andWhere(['LIKE', 'quantityunit', $q])
+                ->limit(10);
+
+            $out['results'] = array_map(function($dosageUnit){
+                return [
+                    'id' => $dosageUnit->quantityunit,
+                    'quantityunit' => $dosageUnit->quantityunit
+                ];
+            },$dosageUnits->all());
+        }
+
+        return $out;
+    }
+
+    public function actionTotalQuantity($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['id' => '', 'quantityunit' => '']];
+
+        if (!is_null($q)) {
+
+            $totalQuantities = TotalQuantityUnit::find()
+                ->select(['quantityunit'])
+                ->andWhere(['LIKE', 'quantityunit', $q])
+                ->limit(10);
+
+            $out['results'] = array_map(function($totalQuantity){
+                return [
+                    'id' => $totalQuantity->quantityunit,
+                    'quantityunit' => $totalQuantity->quantityunit
+                ];
+            },$totalQuantities->all());
+
+        }
+
+        return $out;
+    }
+
+    public function actionOrderableImagings($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+
+        if (!is_null($q)) {
+
+            $orderableImagings = OrderableImaging::find()
+                ->select(['ordertypeid as id', 'name'])
+                ->andWhere(['LIKE', 'name', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($orderableImagings->all());
+        }
+
+        return $out;
+    }
+
+    public function actionOrderableLabs($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+
+        if (!is_null($q)) {
+
+            $orderableLabs = OrderableLab::find()
+                ->select(['ordertypeid as id', 'name'])
+                ->andWhere(['LIKE', 'name', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($orderableLabs->all());
+        }
+
+        return $out;
     }
 }
