@@ -1536,15 +1536,9 @@ class AthenaComponent extends Component
         return $order->loadApiObject($orderModelApi);
     }
 
-    public function findPatientBestMatch($firstname, $lastname, $dob)
+    public function findPatientBestMatch(\common\components\Athena\searchModels\PatientSearch $patientSearch)
     {
-        $patientApi = $this->client->getPracticeidPatientsEnhancedbestmatch($this->practiceid, 
-            [
-                'firstname'=>$firstname,
-                'lastname'=>$lastname,
-                'dob'=>$dob,
-            ]
-        );
+        $patientApi = $this->client->getPracticeidPatientsEnhancedbestmatch($this->practiceid, $patientSearch->toArray());
         if(!empty($patientApi))
             return $this->obtainPatient($patientApi[0]->patientid, $patientApi[0]);
 
