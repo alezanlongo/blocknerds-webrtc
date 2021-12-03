@@ -17,5 +17,6 @@ use yii\widgets\ActiveForm;
     <?= $form->field($searchModel, 'lastname')->textInput(['maxlength' => true]) ?>
     <?= $form->field($searchModel, 'dob')->textInput(['maxlength' => true]) ?>
     <?=  Html::submitButton('Search', ['class' => 'btn btn-primary']); ?>
+    <?=  Html::button('Search External', ['class' => 'btn btn-primary', 'id' => 'patients-external-search-button']); ?>
     <?php $form->end(); ?>
 </div>

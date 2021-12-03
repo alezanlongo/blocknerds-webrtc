@@ -41,8 +41,8 @@ class PatientSearch extends Patient
             'dob' => $this->dob,
         ]);
 
-        $query->andFilterWhere(['like', 'firstname', $this->firstname])
-                ->andFilterWhere(['like', 'lastname', $this->lastname])
+        $query->andFilterWhere(['like', 'lower(firstname)', $this->firstname])
+                ->andFilterWhere(['like', 'lower(lastname)', $this->lastname])
                 ->andFilterWhere(['like', 'email', $this->email]);
 
         return $dataProvider;

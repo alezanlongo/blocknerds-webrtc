@@ -66,3 +66,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </div>
+
+<?php $this->registerJsFile(
+    '@web/js/Athena/patient-list.js',
+    ['depends' => [\yii\web\JqueryAsset::class]]
+); ?>

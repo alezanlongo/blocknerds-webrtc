@@ -70,7 +70,7 @@ class PatientController extends \yii\web\Controller
     public function actionImport()
     {
         $searchModel = new PatientSearch();
-        if ($searchModel->load(Yii::$app->request->post())) {
+        if ($searchModel->load(Yii::$app->request->queryParams)) {
             if($patient = $this->component->findPatientBestMatch($searchModel))
                 $patient->save();
         }
