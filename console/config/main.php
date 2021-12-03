@@ -32,9 +32,6 @@ return [
                 ],
             ],
         ],
-        'janusEvents' => [
-            'class' => console\components\JanusEventLoggerComponent::class,
-        ],
     ],
     'params' => $params,
 ];
