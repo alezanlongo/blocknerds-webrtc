@@ -5313,6 +5313,171 @@ paths:
       operationId: getPracticeidReferenceOrderLab
       tags:
         - Order - Lab
+  /v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image:
+    post:
+      summary: Upload patient's insurance-card image
+      description: Uploads the patient's insurance card image
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: insuranceid
+          in: path
+          name: insuranceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceCardImage200Response'
+          description: Success
+      operationId: postPracticeidPatientsPatientidInsurancesInsuranceidImage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostInsuranceCardImage'
+        required: true
+      tags:
+        - Insurance Card Image
+    get:
+      summary: Get patient's insurance-card image
+      description: Retrieve the patient's insurance card image
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: insuranceid
+          in: path
+          name: insuranceid
+          required: true
+          schema:
+            type: integer
+        - description: If set to true, or if Accept header is image/jpeg, returns the image directly.  (The image may be scaled.)
+          in: query
+          name: jpegoutput
+          required: false
+          schema:
+            enum:
+              - false
+              - true
+            type: string
+            x-enumDescriptions:
+              - false
+              - true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceCardImage'
+          description: Success
+      operationId: getPracticeidPatientsPatientidInsurancesInsuranceidImage
+      tags:
+        - Insurance Card Image
+    put:
+      summary: Update existing patient's insurance-card image
+      description: Modifies existing patient's insurance-card image
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: insuranceid
+          in: path
+          name: insuranceid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceCardImage200Response'
+          description: Success
+      operationId: putPracticeidPatientsPatientidInsurancesInsuranceidImage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostInsuranceCardImage'
+        required: true
+      tags:
+        - Insurance Card Image
+    delete:
+      summary: Delete patient's insurance-card image
+      description: Delete the record of the patient's insurance card image
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: insuranceid
+          in: path
+          name: insuranceid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InsuranceCardImage200Response'
+          description: Success
+      operationId: deletePracticeidPatientsPatientidInsurancesInsuranceidImage
+      tags:
+        - Insurance Card Image
   /v1/{practiceid}/patients/enhancedbestmatch:
     get:
       summary: Get list of patients - enhanced best matching search criteria
@@ -12587,3 +12752,36 @@ components:
         ordertypeid:
           description: The athena ID of the type of order
           type: integer
+    InsuranceCardImage200Response:
+      type: object
+      properties:
+        success:
+          description: Indicates whether the submission was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PostInsuranceCardImage:
+      type: object
+      properties:
+        departmentid:
+          description: The department ID associated with this upload.
+          type: string
+        image:
+          description: Base64 encoded image, or, if multipart/form-data, unencoded image. This image may be scaled down after submission. PUT is not recommended when using multipart/form-data. Since POST and PUT have identical functionality, POST is recommended.
+          type: string
+      required:
+        - image
+    InsuranceCardImage:
+      type: object
+      properties:
+        image:
+          description: Base64 encoded image.
+          type: string
+        insuranceid:
+          description: The athena ID of the insurance
+          type: integer
+        patientInsurance:
+          $ref: '#/components/schemas/PatientInsurance'
+

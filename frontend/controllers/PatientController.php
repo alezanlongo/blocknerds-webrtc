@@ -8,6 +8,7 @@ use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 
 use common\components\AthenaComponent;
+use common\components\Athena\models\InsuranceCardImage;
 use common\components\Athena\models\PatientInsurance;
 use common\components\Athena\models\Patient;
 use common\components\Athena\searchModels\PatientSearch;
@@ -102,13 +103,13 @@ class PatientController extends \yii\web\Controller
                 $model
             );
             $patient->save();
-            /*$insurance = $this->component->createInsurance(
+            $insurance = $this->component->createInsurance(
                 $patient->externalId,
                 true
             );
 
             $insurance->patient_id = $patient->id;
-            $insurance->save();*/
+            $insurance->save();
 
             return $this->redirect(['view', 'id' => $patient->id]);
 
@@ -175,10 +176,16 @@ class PatientController extends \yii\web\Controller
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionViewInsurance($id)
+    public function actionViewInsurance($id, $patientid)
     {
+        $patient = $this->findPatientModel($patientid);
+        $insuraceCardImage = $this->findInsuranceCardImage($id);
+
         return $this->render('/insurance/view', [
-            'model' => $this->findInsuranceModel($id),
+            'model'                 => $this->findInsuranceModel($id),
+            'patientid'             => $patient->patientid,
+            'departmentid'          => $patient->departmentid,
+            'insuraceCardImage'     => $insuraceCardImage->toArray()
         ]);
     }
 
@@ -355,5 +362,15 @@ class PatientController extends \yii\web\Controller
         }
 
         return $documents;
+    }
+
+
+    protected function findInsuranceCardImage($patiendInsurance_id)
+    {
+        $documents = [];
+        $insuranceCardImage = InsuranceCardImage::find()
+            ->where(['patientInsurance_id' => $patiendInsurance_id])->one();
+
+        return $insuranceCardImage;
     }
 }

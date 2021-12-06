@@ -16,7 +16,28 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-
+        <?php if(count($insuraceCardImage) > 0): ?>
+            <?= Html::a('Upload Card', [
+                'insurance-card-image/create',
+                'patientid'             => $patientid,
+                'departmentid'          => $departmentid,
+                'insuranceid'           => $model->insuranceid,
+                'patientInsurance_id'   => $model->id,
+            ], ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('View Card', [
+                'insurance-card-image/view',
+                'id'            => $model->insuranceid,
+                'patientid'     => $patientid,
+            ], ['class' => 'btn btn-warning']) ?>
+        <?php else: ?>
+            <?= Html::a('Create Card', [
+                'insurance-card-image/create',
+                'patientid'             => $patientid,
+                'departmentid'          => $departmentid,
+                'insuranceid'           => $model->insuranceid,
+                'patientInsurance_id'   => $model->id,
+            ], ['class' => 'btn btn-primary']) ?>
+        <?php endif; ?>
     </p>
 
     <?= DetailView::widget([
