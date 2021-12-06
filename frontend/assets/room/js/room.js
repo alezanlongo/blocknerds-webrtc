@@ -84,16 +84,18 @@ $(`#select-other-room`).on('change', (e) => {
   dataRoom = dataRooms.find(r => r.uuid === roomSelected)
   if (!dataRoom) return;
   console.log('changed to', dataRoom)
-
+  const spinnerComponent = $(`#spinner`)
   cleanUI()
+  spinnerComponent.removeClass('d-none')
   setTimeout(() => {
+    spinnerComponent.addClass('d-none')
     initJanus()
-  }, 3000);
+  }, 2000);
 })
 const cleanUI = () => {
   resetTabOnSidebar();
-  Array.from($('#containerBoxes').children()).forEach(boxComp =>{
-    if(!$(boxComp).hasClass('d-none')){
+  Array.from($('#containerBoxes').children()).forEach(boxComp => {
+    if (!$(boxComp).hasClass('d-none')) {
       $(boxComp).addClass('d-none')
     }
   })

@@ -63,7 +63,7 @@ $this->registerJs(
     View::POS_HEAD,
     'roomConfig'
 );
-    $countdown = <<<'COUNTDOWN'
+$countdown = <<<'COUNTDOWN'
 const handleCountdown = (endTime) => {
   const MILLISECONDS_STRING = "milliseconds";
   const eventTimeFinish = moment(endTime);
@@ -97,7 +97,7 @@ const switchSignal = (seconds) => {
 };
 COUNTDOWN;
 
-    $this->registerJs($countdown, View::POS_END, 'countdown_script');
+$this->registerJs($countdown, View::POS_END, 'countdown_script');
 
 
 $this->title = 'The Room';
@@ -118,6 +118,11 @@ $this->title = 'The Room';
 
         ]
     ) ?>
+    <!-- <div class="spinner-border position-absolute top-50 start-50 d-none" id="spinner"></div> -->
+    <div class="d-flex align-items-center position-absolute top-50 start-50 d-none" id="spinner">
+        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+        <strong>Switching room...</strong>
+    </div>
 
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
