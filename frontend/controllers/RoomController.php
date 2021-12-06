@@ -172,17 +172,19 @@ class RoomController extends \yii\web\Controller
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
         $chats = Chat::find()->where(['room_id' => $room->id, 'to_profile_id' => null])->all();
-        $dataRoom = [
-            'title' => $meeting->title,
-            'uuid' => $uuid,
-            'token' => $token,
-            'isDoctor' => $profile->id === 1,
-        ];
+        $roomMembers = RoomMember::find()->where(['user_profile_id' => $profile->id])->orderBy(['created_at' => SORT_DESC])->all();
+        $rooms = array_map(function ($roomMember) {
+            $room = $roomMember->room;
+            return [
+                'title' => $room->meeting->title,
+                'uuid' => $room->uuid,
+                'token' => $roomMember->token,
+                'created_at' => Carbon::createFromTimestamp($room->meeting->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s'),
+            ];
+        }, $roomMembers);
 
-        // VarDumper::dump($dataRooms, $depth = 10, $highlight = true);
-        // die;
         return $this->render('index', [
-            'dataRoom' => $dataRoom,
+            'dataRooms' => $rooms,
             'user_profile_id' => $profile->id,
             'limit_members' => $limit_members,
             'in_room_members' => $inRoomMembersIds,
@@ -215,6 +217,38 @@ class RoomController extends \yii\web\Controller
         }, $roomMembers);
 
         return $rooms;
+    }
+
+    private function getToken(string $roomUuid, string $profileId): string|null
+    {
+        $room = Room::findOne(['uuid' => $roomUuid]);
+        if (!$room) {
+            return null;
+        }
+        $roomMember = RoomMember::findOne(['room_id' => $room->id, 'user_profile_id' => $profileId]);
+        if (!$roomMember) {
+            return null;
+        }
+        return $roomMember->token;
+    }
+
+    public function actionSwitchingRoom()
+    {
+        $janusApi = Yii::$app->janusApi;
+        $roomUuidFrom = $this->request->post('from');
+        $roomUuidTo = $this->request->post('to');
+        $profileId = 1;
+        $tokenFrom = $this->getToken($roomUuidFrom, $profileId);
+        $tokenTo = $this->getToken($roomUuidTo, $profileId);
+        
+        if(!$tokenFrom || !$tokenTo){
+            throw new UnprocessableEntityHttpException("You can not switching between rooms");
+        }
+
+        // $janusApi->removeUserToken($roomUuidFrom,$tokenFrom);
+        // $janusApi->addUserToken($roomUuidTo,$tokenTo);
+
+        return "switching room $tokenTo uuid $roomUuidTo";
     }
 
     private function createMeeting(string $title, int $profileId): Meeting|null
@@ -343,38 +377,38 @@ class RoomController extends \yii\web\Controller
             $memberOwner->user_profile_id = $profile->id;
             $memberOwner->save();
 
-            $isDoctor = $profile->id === 1;
-            if ($isDoctor) {
-                $meetingDoc  = Meeting::findOne(['title' => Meeting::DEFAULT_DOCTOR_TITLE]);
+            // $isDoctor = $profile->id === 1;
+            // if ($isDoctor) {
+            //     $meetingDoc  = Meeting::findOne(['title' => Meeting::DEFAULT_DOCTOR_TITLE]);
 
-                if (!$meetingDoc) {
-                    $meetingDoc = $this->createMeeting(Meeting::DEFAULT_DOCTOR_TITLE, $profile->id);
-                }
+            //     if (!$meetingDoc) {
+            //         $meetingDoc = $this->createMeeting(Meeting::DEFAULT_DOCTOR_TITLE, $profile->id);
+            //     }
 
-                if (!$meetingDoc) {
-                    throw new UnprocessableEntityHttpException("Meeting not available");
-                }
-                $roomDoc = $meetingDoc->room;
-                if (!$roomDoc) {
-                    $roomDoc = new Room();
-                    $roomDoc->meeting_id = $meetingDoc->id;
-                    $roomDoc->is_quick = true;
-                    $roomDoc->status = Room::STATUS_CREATED;
-                    $roomDoc->save();
-                }
-                $memberOwner = RoomMember::findOne(['room_id' => $roomDoc->id, 'user_profile_id' => $profile->id]);
-                if (!$memberOwner) {
-                    $memberOwner = new RoomMember();
-                    $memberOwner->room_id = $roomDoc->id;
-                    $memberOwner->user_profile_id = $profile->id;
-                    $memberOwner->save();
-                }
+            //     if (!$meetingDoc) {
+            //         throw new UnprocessableEntityHttpException("Meeting not available");
+            //     }
+            //     $roomDoc = $meetingDoc->room;
+            //     if (!$roomDoc) {
+            //         $roomDoc = new Room();
+            //         $roomDoc->meeting_id = $meetingDoc->id;
+            //         $roomDoc->is_quick = true;
+            //         $roomDoc->status = Room::STATUS_CREATED;
+            //         $roomDoc->save();
+            //     }
+            //     $memberOwner = RoomMember::findOne(['room_id' => $roomDoc->id, 'user_profile_id' => $profile->id]);
+            //     if (!$memberOwner) {
+            //         $memberOwner = new RoomMember();
+            //         $memberOwner->room_id = $roomDoc->id;
+            //         $memberOwner->user_profile_id = $profile->id;
+            //         $memberOwner->save();
+            //     }
 
-                if (!Yii::$app->janusApi->videoRoomExists($roomDoc->uuid)) {
-                    Yii::$app->janusApi->videoRoomCreate($roomDoc->uuid);
-                }
-                $this->addMemberToRoom($roomDoc->uuid, $profile->hashId);
-            }
+            //     if (!Yii::$app->janusApi->videoRoomExists($roomDoc->uuid)) {
+            //         Yii::$app->janusApi->videoRoomCreate($roomDoc->uuid);
+            //     }
+            //     $this->addMemberToRoom($roomDoc->uuid, $profile->hashId);
+            // }
 
             return $this->redirect([$room->uuid]);
         }

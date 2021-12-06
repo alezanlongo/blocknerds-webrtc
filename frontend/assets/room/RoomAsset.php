@@ -14,6 +14,7 @@ class RoomAsset extends \yii\web\AssetBundle
         // 'js/countdown.js',
         'js/mqttHandler.js',
         'js/room.js',
+        'js/switching.js',
     ];
     public $depends = [
         'yii\web\JqueryAsset',

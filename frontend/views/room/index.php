@@ -24,7 +24,7 @@ $this->registerJsVar('own_mute_audio', $own_mute_audio, View::POS_END);
 $this->registerJsVar('own_mute_video', $own_mute_video, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
 // $this->registerJsVar('myRoom', $uuid, View::POS_END);
-$this->registerJsVar('dataRoom', $dataRoom, View::POS_END);
+$this->registerJsVar('dataRooms', $dataRooms, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
 $this->registerJsVar('isOwner', $is_owner, View::POS_BEGIN);

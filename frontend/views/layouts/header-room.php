@@ -10,7 +10,6 @@ use yii\helpers\VarDumper;
 
 $rooms = RoomController::getRooms(Yii::$app->user->identity->userProfile->id);
 
-
 ?>
 
 <nav class="main-header navbar navbar-expand navbar-light m-0 header-nav d-none">
@@ -24,7 +23,7 @@ $rooms = RoomController::getRooms(Yii::$app->user->identity->userProfile->id);
         $selected = explode('room/', Yii::$app->request->url)[1];
       ?>
         <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle video">
-          <select name="" class="form-control" id="" onchange="location = this.value;">
+          <select name="" class="form-control" id="select-other-room">
             <?php foreach ($rooms as $room) { ?>
               <option value="<?= $room['name'] ?>" <?= $room['name'] === $selected ? ' selected="selected"' : ''; ?>><?= $room['title'] . ' - ' . $room['created_at'] ?></option>
             <?php } ?>

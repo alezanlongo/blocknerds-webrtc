@@ -42,6 +42,7 @@ class JanusApiComponent extends Component
     public const SOURCE_AUDIO = 'audio';
     public const SOURCE_VIDEO = 'video';
     public const PLUGIN_ECHOTEST = 'janus.plugin.echotest';
+    public const PLUGIN_VIDEOROOM = 'janus.plugin.videoroom';
 
 
 
@@ -213,6 +214,46 @@ class JanusApiComponent extends Component
             return \false;
         }
         $data = $res->getData();
+        if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
+            return true;
+        } elseif (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] != 'success') {
+            return false;
+        }
+        if (isset($data['error'])) {
+            $this->lastError = $data['error'];
+        }
+        return false;
+    }
+
+    public function removeUserToken(string $roomUuid, string $token)
+    {
+        $action = 'remove';
+        return $this->allowedCall($action,$roomUuid,$token);
+    }
+    public function enableUserToken(string $roomUuid, string $token)
+    {
+        $action = 'enable';
+        return $this->allowedCall($action,$roomUuid,$token);
+    }
+    public function disableUserToken(string $roomUuid, string $token)
+    {
+        $action = 'disable';
+        return $this->allowedCall($action,$roomUuid,$token);
+    }
+
+    private function allowedCall(string $action, string $roomUuid, string $token, string $plugin = self::PLUGIN_VIDEOROOM)
+    {
+        $this->attach($plugin);
+
+        //this line aren't right. It's added because something it's wrong in the room access 
+        $this->storeToken($token);
+
+        $res = $this->apiCall('POST', ['janus' => 'message', 'body' => ['action' => $action, 'request' => 'allowed', 'plugins' => $plugin, 'room' => $roomUuid, 'allowed' => [$token]], 'transaction' => $this->createRandStr(), 'token' => $this->storedAuth ? $this->createAdminToken() : $this->createHmacToken()], $this->createSession() . '/' . $this->handleID);
+        if (!$res->isOk) {
+            return \false;
+        }
+        $data = $res->getData();
+        
         if (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] == 'success') {
             return true;
         } elseif (isset($data['plugindata']['data']['videoroom']) && $data['plugindata']['data']['videoroom'] != 'success') {
@@ -455,6 +496,8 @@ class JanusApiComponent extends Component
             return false;
         }
         $data = $res->getData();
+        // VarDumper::dump( $data, $depth = 10, $highlight = true);
+        // die;
 
         if (isset($data['janus']) && $data['janus'] == 'success') {
             return true;
@@ -580,9 +623,9 @@ class JanusApiComponent extends Component
         return $this->storeToken($token, [self::PLUGIN_ECHOTEST]);
     }
 
-    public function removeToken(string $token)
+    public function removeToken(string $token, array $plugins = [self::PLUGIN_VIDEOROOM])
     {
-        return $this->delToken($token, [self::PLUGIN_ECHOTEST]);
+        return $this->delToken($token, $plugins);
     }
 
     public function isTokenStoraged(string $token): bool
