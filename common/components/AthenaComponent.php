@@ -1,11 +1,11 @@
 <?php
 namespace common\components;
 
-use common\components\Athena\models\AdminDocument;
-use common\components\Athena\models\AdminDocumentPageDetail;
 use Yii;
 use Yii\helpers\ArrayHelper;
+
 use common\components\Athena\AthenaClient;
+
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\AppointmentNoteApi;
 use common\components\Athena\apiModels\EncounterApi;
@@ -47,6 +47,10 @@ use common\components\Athena\models\TopInsurancePackages;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
+use common\components\Athena\models\AdminDocument;
+use common\components\Athena\models\AdminDocumentPageDetail;
+use common\components\Athena\models\InsuranceCardImage;
+
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -62,6 +66,11 @@ class AthenaComponent extends Component
     public function setPracticeid(int $practiceid)
     {
         $this->practiceid = $practiceid;
+    }
+
+    public function getPracticeid()
+    {
+        return $this->practiceid;
     }
 
     public function getDepartments($flatten = false)
@@ -1273,162 +1282,6 @@ class AthenaComponent extends Component
         return $response;
     }
 
-    /* ================================= Begin  Protected methods ============================================== */
-    protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
-    {
-        $patient = Patient::find()
-            ->where(['externalId' => $patientId])
-            ->one();
-
-        if (!$patient) {
-            return Patient::createFromApiObject($patientModelApi);
-        }
-
-        return $patient->loadApiObject($patientModelApi);
-    }
-
-    protected function obtainAppointment($appointmentId, AppointmentApi $appointmentModelApi): Appointment
-    {
-        $appointment = PutAppointment200Response::find()
-            ->where(['externalId' => $appointmentId])
-            ->one();
-
-        if (!$appointment) {
-            return PutAppointment200Response::createFromApiObject($appointmentModelApi);
-        }
-
-        return $appointment->loadApiObject($appointmentModelApi);
-    }
-
-    protected function obtainEncounter($encounterId, EncounterApi $encounterModelApi): Encounter
-    {
-        $encounter = Encounter::find()
-            ->where(['externalId' => $encounterId])
-            ->one();
-
-        if (!$encounter) {
-            return Encounter::createFromApiObject($encounterModelApi);
-        }
-
-        return $encounter->loadApiObject($encounterModelApi);
-    }
-
-    protected function obtainPatientCase($patientCaseId, PatientCaseApi $patientCaseModelApi): PatientCase
-    {
-        $patientCase = PatientCase::find()
-            ->where(['externalId' => $patientCaseId])
-            ->one();
-
-        if (!$patientCase) {
-            return PatientCase::createFromApiObject($patientCaseModelApi);
-        }
-
-        return $patientCase->loadApiObject($patientCaseModelApi);
-    }
-
-    protected function obtainMedication($medicationId, MedicationApi $medicationModelApi): Medication
-    {
-        $medication = Medication::find()
-            ->where(['externalId' => $medicationId])
-            ->one();
-
-        if (!$medication) {
-            return Medication::createFromApiObject($medicationModelApi);
-        }
-
-        return $medication->loadApiObject($medicationModelApi);
-    }
-
-    protected function obtainProblem($problemId, ProblemApi $problemModelApi): Problem
-    {
-        $problem = Problem::find()
-            ->where(['externalId' => $problemId])
-            ->one();
-
-        if (!$problem) {
-            return Patient::createFromApiObject($problemModelApi);
-        }
-
-        return $problem->loadApiObject($problemModelApi);
-    }
-
-    protected function obtainAllergy($allergyId, AllergyApi $allergyModelApi): Allergy
-    {
-        $allergy = Allergy::find()
-            ->where(['externalId' => $allergyId])
-            ->one();
-
-        if (!$allergy) {
-            return Allergy::createFromApiObject($allergyModelApi);
-        }
-
-        return $allergy->loadApiObject($allergyModelApi);
-    }
-
-    protected function obtainVaccine($vaccineId, VaccineApi $vaccineModelApi): Vaccine
-    {
-        $vaccine = Vaccine::find()
-            ->where(['externalId' => $vaccineId])
-            ->one();
-
-        if (!$vaccine) {
-            return Vaccine::createFromApiObject($vaccineModelApi);
-        }
-
-        return $vaccine->loadApiObject($vaccineModelApi);
-    }
-
-    protected function obtainFamilyHistory($problemId, FamilyHistoryApi $familyHistoryModelApi): FamilyHistory
-    {
-        $familyHistory = FamilyHistory::find()
-            ->where(['externalId' => $problemId])
-            ->one();
-
-        if (!$familyHistory) {
-            return FamilyHistory::createFromApiObject($familyHistoryModelApi);
-        }
-
-        return $familyHistory->loadApiObject($familyHistoryModelApi);
-    }
-
-    protected function obtainAppointmentNote($appointmentNoteId, AppointmentNoteApi $appointmentNoteModelApi): AppointmentNote
-    {
-        $appointmentNote = AppointmentNote::find()
-            ->where(['externalId' => $appointmentNoteId])
-            ->one();
-
-        if (!$appointmentNote) {
-            return AppointmentNote::createFromApiObject($appointmentNoteModelApi);
-        }
-
-        return $appointmentNote->loadApiObject($appointmentNoteModelApi);
-    }
-
-
-    protected function obtainLabResult($labResultId, LabResultApi $vaccineModelApi): Vaccine
-    {
-        $labResult = LabResult::find()
-            ->where(['externalId' => $labResultId])
-            ->one();
-
-        if (!$labResult) {
-            return LabResult::createFromApiObject($vaccineModelApi);
-        }
-
-        return $labResult->loadApiObject($vaccineModelApi);
-    }
-
-
-    protected function getAuthentication()
-    {
-        $dataSession = json_decode($this->client->Authenticate(), TRUE);
-        if((int)$dataSession['expirationTime'] < (int)time()){
-            $dataSession = json_decode($this->client->Authenticate(TRUE), TRUE);
-        }
-        return $dataSession['access_token'];
-    }
-    /* =================================== End  Protected methods ============================================== */
-
     /**
      * @return Problem
      */
@@ -1650,4 +1503,174 @@ class AthenaComponent extends Component
         );
 
     }
+
+
+    public function createInsuranceImageCard($patientid, $insuranceid, $postInsuranceCard)
+    {
+        $postInsuranceCardModelsApi = $this->client->postPracticeidPatientsPatientidInsurancesInsuranceidImage(
+            $this->practiceid,
+            $patientid,
+            $insuranceid,
+            $postInsuranceCard->toArray()
+        );
+
+        return $postInsuranceCardModelsApi;
+    }
+
+
+    /* ================================= Begin  Protected methods ============================================== */
+    protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
+    {
+        $patient = Patient::find()
+            ->where(['externalId' => $patientId])
+            ->one();
+
+        if (!$patient) {
+            return Patient::createFromApiObject($patientModelApi);
+        }
+
+        return $patient->loadApiObject($patientModelApi);
+    }
+
+    protected function obtainAppointment($appointmentId, AppointmentApi $appointmentModelApi): Appointment
+    {
+        $appointment = PutAppointment200Response::find()
+            ->where(['externalId' => $appointmentId])
+            ->one();
+
+        if (!$appointment) {
+            return PutAppointment200Response::createFromApiObject($appointmentModelApi);
+        }
+
+        return $appointment->loadApiObject($appointmentModelApi);
+    }
+
+    protected function obtainEncounter($encounterId, EncounterApi $encounterModelApi): Encounter
+    {
+        $encounter = Encounter::find()
+            ->where(['externalId' => $encounterId])
+            ->one();
+
+        if (!$encounter) {
+            return Encounter::createFromApiObject($encounterModelApi);
+        }
+
+        return $encounter->loadApiObject($encounterModelApi);
+    }
+
+    protected function obtainPatientCase($patientCaseId, PatientCaseApi $patientCaseModelApi): PatientCase
+    {
+        $patientCase = PatientCase::find()
+            ->where(['externalId' => $patientCaseId])
+            ->one();
+
+        if (!$patientCase) {
+            return PatientCase::createFromApiObject($patientCaseModelApi);
+        }
+
+        return $patientCase->loadApiObject($patientCaseModelApi);
+    }
+
+    protected function obtainMedication($medicationId, MedicationApi $medicationModelApi): Medication
+    {
+        $medication = Medication::find()
+            ->where(['externalId' => $medicationId])
+            ->one();
+
+        if (!$medication) {
+            return Medication::createFromApiObject($medicationModelApi);
+        }
+
+        return $medication->loadApiObject($medicationModelApi);
+    }
+
+    protected function obtainProblem($problemId, ProblemApi $problemModelApi): Problem
+    {
+        $problem = Problem::find()
+            ->where(['externalId' => $problemId])
+            ->one();
+
+        if (!$problem) {
+            return Patient::createFromApiObject($problemModelApi);
+        }
+
+        return $problem->loadApiObject($problemModelApi);
+    }
+
+    protected function obtainAllergy($allergyId, AllergyApi $allergyModelApi): Allergy
+    {
+        $allergy = Allergy::find()
+            ->where(['externalId' => $allergyId])
+            ->one();
+
+        if (!$allergy) {
+            return Allergy::createFromApiObject($allergyModelApi);
+        }
+
+        return $allergy->loadApiObject($allergyModelApi);
+    }
+
+    protected function obtainVaccine($vaccineId, VaccineApi $vaccineModelApi): Vaccine
+    {
+        $vaccine = Vaccine::find()
+            ->where(['externalId' => $vaccineId])
+            ->one();
+
+        if (!$vaccine) {
+            return Vaccine::createFromApiObject($vaccineModelApi);
+        }
+
+        return $vaccine->loadApiObject($vaccineModelApi);
+    }
+
+    protected function obtainFamilyHistory($problemId, FamilyHistoryApi $familyHistoryModelApi): FamilyHistory
+    {
+        $familyHistory = FamilyHistory::find()
+            ->where(['externalId' => $problemId])
+            ->one();
+
+        if (!$familyHistory) {
+            return FamilyHistory::createFromApiObject($familyHistoryModelApi);
+        }
+
+        return $familyHistory->loadApiObject($familyHistoryModelApi);
+    }
+
+    protected function obtainAppointmentNote($appointmentNoteId, AppointmentNoteApi $appointmentNoteModelApi): AppointmentNote
+    {
+        $appointmentNote = AppointmentNote::find()
+            ->where(['externalId' => $appointmentNoteId])
+            ->one();
+
+        if (!$appointmentNote) {
+            return AppointmentNote::createFromApiObject($appointmentNoteModelApi);
+        }
+
+        return $appointmentNote->loadApiObject($appointmentNoteModelApi);
+    }
+
+
+    protected function obtainLabResult($labResultId, LabResultApi $vaccineModelApi): Vaccine
+    {
+        $labResult = LabResult::find()
+            ->where(['externalId' => $labResultId])
+            ->one();
+
+        if (!$labResult) {
+            return LabResult::createFromApiObject($vaccineModelApi);
+        }
+
+        return $labResult->loadApiObject($vaccineModelApi);
+    }
+
+
+    protected function getAuthentication()
+    {
+        $dataSession = json_decode($this->client->Authenticate(), TRUE);
+        if((int)$dataSession['expirationTime'] < (int)time()){
+            $dataSession = json_decode($this->client->Authenticate(TRUE), TRUE);
+        }
+        return $dataSession['access_token'];
+    }
+    /* =================================== End  Protected methods ============================================== */
 }

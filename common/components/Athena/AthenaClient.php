@@ -2206,4 +2206,84 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param insuranceid
+     * @return InsuranceCardImage
+     */
+    public function getPracticeidPatientsPatientidInsurancesInsuranceidImage($practiceid, $patientid, $insuranceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{insuranceid}', $insuranceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\InsuranceCardImageApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param insuranceid
+     * @return InsuranceCardImage200Response
+     */
+    public function putPracticeidPatientsPatientidInsurancesInsuranceidImage($practiceid, $patientid, $insuranceid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{insuranceid}', $insuranceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\InsuranceCardImage200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param insuranceid
+     * @return InsuranceCardImage200Response
+     */
+    public function postPracticeidPatientsPatientidInsurancesInsuranceidImage($practiceid, $patientid, $insuranceid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{insuranceid}', $insuranceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\InsuranceCardImage200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @param insuranceid
+     * @return InsuranceCardImage200Response
+     */
+    public function deletePracticeidPatientsPatientidInsurancesInsuranceidImage($practiceid, $patientid, $insuranceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+        $path = str_replace('{insuranceid}', $insuranceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'delete' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\InsuranceCardImage200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }
