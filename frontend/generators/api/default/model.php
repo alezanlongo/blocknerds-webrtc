@@ -53,6 +53,10 @@ class <?= $className ?> extends \yii\db\ActiveRecord
             case 'string':
                 $stringAttributes[$attribute['name']] = $attribute['name'];
                 break;
+            case 'bool':
+            case 'boolean':
+                $booleanAttributes[$attribute['name']] = $attribute['name'];
+                break;
             default:
             case 'array':
                 if( empty($attribute['flattened']) ) {
@@ -72,6 +76,9 @@ class <?= $className ?> extends \yii\db\ActiveRecord
     }
     if (!empty($integerAttributes)) {
         echo "            [['" . implode("', '", $integerAttributes) . "'], 'integer'],\n";
+    }
+    if (!empty($booleanAttributes)) {
+        echo "            [['" . implode("', '", $booleanAttributes) . "'], 'boolean'],\n";
     }
     if (!empty($safeAttributes)) {
         echo "            // TODO define more concreate validation rules!\n";

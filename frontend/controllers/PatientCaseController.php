@@ -3,10 +3,14 @@
 namespace frontend\controllers;
 
 use Yii;
+use common\components\AthenaComponent;
+use common\components\Athena\models\ActionNote;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
+use common\components\Athena\models\RequestActionNote;
+use common\components\Athena\models\RequestClosePatientCase;
 use common\components\Athena\models\RequestCreatePatientCase;
-use common\components\AthenaComponent;
+use common\components\Athena\models\RequestReassignPatientCase;
 use yii\data\ActiveDataProvider;
 
 class PatientCaseController extends \yii\web\Controller
@@ -75,6 +79,99 @@ class PatientCaseController extends \yii\web\Controller
     }
 
     /**
+     * Reassigns an existing Patient Case model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionReassign($id)
+    {
+        $model = new RequestReassignPatientCase;
+
+        if ($model->load(Yii::$app->request->post())) {
+            $patientCase = $this->findModel($id);
+            $model = $this->component->reassignPatientCase(
+                $patientCase,
+                $model,
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+            else{
+                var_dump($model->getErrors());die;
+            }
+        }
+
+        return $this->render('reassign', [
+            'usernames' => $this->component->getProvidersUsernames(true),
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Closes an existing Patient Case model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionClose($id)
+    {
+        $model = new RequestClosePatientCase;
+        $patientCase = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->closePatientCase(
+                $patientCase,
+                $model,
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+            else{
+                var_dump($model->getErrors());die;
+            }
+        }
+
+        return $this->render('close', [
+            'closeReasons' => $this->component->getCloseReasons($patientCase->externalId,true),
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Patient Case model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
+    {
+        $model = new RequestCreatePatientCase;
+        $patientCase = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->updatePatientCase(
+                $patientCase,
+                $model,
+            );
+            if($model->save()){
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+            'patientCase' => $patientCase,
+            'providers' => $this->component->getProviders(true),
+            'documentsources' => $this->getDocumentSources(),
+            'documentsubclasses' => $this->getDocumentSubclasses(),
+        ]);
+    }
+
+    /**
      * Displays a single Appointment model.
      * @param integer $id
      * @return mixed
@@ -88,6 +185,60 @@ class PatientCaseController extends \yii\web\Controller
     }
 
     /**
+     * Add note to Patient Case model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionAddActionNote($id)
+    {
+        $model = new RequestActionNote;
+        $patientCase = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->addActionNote(
+                $patientCase,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['action-note', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('action-note', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Lists all Action Notes models.
+     * @return mixed
+     */
+    public function actionActionNotes()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => ActionNote::find(),
+        ]);
+
+        return $this->render('index-action-notes', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single Appointment model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionActionNote($id)
+    {
+        return $this->render('view-action-note', [
+            'model' => $this->findActionNote($id),
+        ]);
+    }
+
+    /**
      * Finds the Appointment model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
@@ -97,6 +248,22 @@ class PatientCaseController extends \yii\web\Controller
     protected function findModel($id)
     {
         if (($model = PatientCase::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Finds the Action Note model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return ActionNote the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findActionNote($id)
+    {
+        if (($model = ActionNote::findOne($id)) !== null) {
             return $model;
         }
 

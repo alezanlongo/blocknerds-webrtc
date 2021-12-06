@@ -31,10 +31,8 @@
     "yiisoft/yii2-httpclient": "2.0.x-dev",
     "kartik-v/yii2-widget-select2": "2.2.x-dev",
     "nesbot/carbon": "3.x-dev",
-    "cebe/php-openapi": "dev-master",
-    "cebe/yii2-openapi": "dev-master",
-    "dmstr/yii2-adminlte-asset": "3.x-dev",
-    "symfony/yaml": "5.4.x-dev"
+    "cebe/php-openapi": "^1.5.2",
+    "cebe/yii2-openapi": "1.0.2"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.1.0",

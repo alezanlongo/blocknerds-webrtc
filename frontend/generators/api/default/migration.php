@@ -34,7 +34,7 @@ class <?= $className ?> extends \yii\db\Migration
             'fk-<?= $relationName ?>-<?= $relation['link']['id'] ?>',
             '<?= $tableName ?>',
             '<?= $relation['link']['id'] ?>',
-            '<?= Inflector::pluralize($relationName) ?>',
+            '<?= Inflector::tableize($relationName) ?>',
             'id',
             'CASCADE'
         );

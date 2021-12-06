@@ -1,12 +1,14 @@
 <?php
 
+use frontend\assets\adminlte\AdminLteAsset;
+use frontend\assets\AppAsset;
 use yii\helpers\Html;
 
 /** @var \yii\web\View $this */
 /** @var string $content */
 
-dmstr\adminlte\web\AdminLteAsset::register($this);
-dmstr\adminlte\web\FontAwesomeAsset::register($this);
+AppAsset::register($this);
+AdminLteAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -20,12 +22,24 @@ dmstr\adminlte\web\FontAwesomeAsset::register($this);
     <?php $this->head() ?>
 </head>
 
-<body class="login-page dark-mode" >
+<body class="layout-fixed  ">
     <?php $this->beginBody() ?>
+    <div class="wrapper m-0">
+        <?= $this->render(
+            'header-room.php',
+            []
+        ) ?>
+        <div class="content-wrapper m-0">
+            <section class="content">
+                <?= $content ?>
+            </section>
+        </div>
 
-        <?= $content ?>
+        <div class="chat-zone d-flex justify-content-end"></div>
 
+    </div>
     <?php $this->endBody() ?>
+
 </body>
 
 </html>

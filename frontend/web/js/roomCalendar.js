@@ -31,10 +31,24 @@ document.addEventListener('DOMContentLoaded', function () {
   calendar = new FullCalendar.Calendar(calendarEl, {
     timeZone: 'UTC',
     contentHeight: 'auto',
+    themeSystem: 'bootstrap',
     handleWindowResize: true,
     initialView: initialView,
-    headerToolbar: { center: 'timeGridDay,timeGridWeek,dayGridMonth,listWeek' },
-    events: "room/calendar/events/" + user_profile_id,
+    // buttonIcons: {
+    //   myCustomButton: ' left-single-arrow',
+    // },
+    customButtons: {
+      myCustomButton: {
+        // icon: 'left-single-arrow',
+        text:"sarasa",
+        click: function() {
+          alert('clicked the custom button!');
+        }
+      }
+    },
+    bootstrapFontAwesome:true,
+    headerToolbar: {center: 'timeGridDay,timeGridWeek,dayGridMonth,listWeek', end: 'prev,today,next' },
+    events: "room/calendar/events/" + userProfileId,
     views: {
       month: {
         dayMaxEvents: 2
@@ -71,8 +85,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   calendar.render();
-  $.pjax.reload({ container: "#calendar-next-meeting" })
-  setInterval(() => { $.pjax.reload({ container: "#calendar-next-meeting" }) }, 10000);
+  $.pjax.reload({ container: "#calendar-next-meeting", async: false })
+  setInterval(() => { $.pjax.reload({ container: "#calendar-next-meeting",async: false }) }, 10000);
 
   $('.fc-timeGridDay-button, .fc-timeGridWeek-button, .fc-dayGridMonth-button, .fc-listWeek-button').click(function (e) {
 

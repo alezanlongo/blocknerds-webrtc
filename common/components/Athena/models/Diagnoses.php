@@ -7,14 +7,23 @@ use yii\helpers\ArrayHelper;
  *  *
  * @property string $description Brief description for this SNOMED Code
  * @property int $diagnosisid Athena ID for this diagnosis
- * @property array $icdcodes List of relevant ICD codes for this diagnosis
+ * @property string $errormessage If not successful, will contain error message.
+ * @property ICDCodes[] $icdcodes List of relevant ICD codes for this diagnosis
+ * @property string $laterality The laterality of the SNOMED Code, if any.
  * @property string $note The note entered for this diagnosis.
+ * @property int $ranking Used to specify the position of this diagnosis in the diagnoses section.
  * @property int $snomedcode SNOMED Code for this diagnosis
+ * @property string $success True if successful.
+ * @property string $supportslaterality If true, then laterality may chosen for the diagnosis.
+ * @property integer $encounter_id
+ * @property Encounter $encounter
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class Diagnoses extends \yii\db\ActiveRecord
 {
+ 
+    protected $_icdcodesAr;
 
     public static function tableName()
     {
@@ -24,11 +33,21 @@ class Diagnoses extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['description', 'note'], 'trim'],
-            [['description', 'note'], 'string'],
-            [['diagnosisid', 'snomedcode', 'externalId', 'id'], 'integer'],
+            [['description', 'errormessage', 'laterality', 'note', 'success', 'supportslaterality'], 'trim'],
+            [['description', 'errormessage', 'laterality', 'note', 'success', 'supportslaterality'], 'string'],
+            [['diagnosisid', 'ranking', 'snomedcode', 'encounter_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getIcdcodes()
+    {
+        return $this->hasMany(ICDCodes::class, ['diagnoses_id' => 'id']);
+    }
+
+    public function getEncounter()
+    {
+        return $this->hasOne(Encounter::class, ['id' => 'encounter_id']);
     }
 
 
@@ -45,14 +64,35 @@ class Diagnoses extends \yii\db\ActiveRecord
         if($diagnosisid = ArrayHelper::getValue($apiObject, 'diagnosisid')) {
             $this->externalId = $diagnosisid;
         }
+        if($errormessage = ArrayHelper::getValue($apiObject, 'errormessage')) {
+            $this->errormessage = $errormessage;
+        }
         if($icdcodes = ArrayHelper::getValue($apiObject, 'icdcodes')) {
-            $this->icdcodes = $icdcodes;
+            $this->_icdcodesAr = $icdcodes;
+        }
+        if($laterality = ArrayHelper::getValue($apiObject, 'laterality')) {
+            $this->laterality = $laterality;
         }
         if($note = ArrayHelper::getValue($apiObject, 'note')) {
             $this->note = $note;
         }
+        if($ranking = ArrayHelper::getValue($apiObject, 'ranking')) {
+            $this->ranking = $ranking;
+        }
         if($snomedcode = ArrayHelper::getValue($apiObject, 'snomedcode')) {
             $this->snomedcode = $snomedcode;
+        }
+        if($success = ArrayHelper::getValue($apiObject, 'success')) {
+            $this->success = $success;
+        }
+        if($supportslaterality = ArrayHelper::getValue($apiObject, 'supportslaterality')) {
+            $this->supportslaterality = $supportslaterality;
+        }
+        if($encounter_id = ArrayHelper::getValue($apiObject, 'encounter_id')) {
+            $this->encounter_id = $encounter_id;
+        }
+        if($encounter = ArrayHelper::getValue($apiObject, 'encounter')) {
+            $this->encounter = $encounter;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;
@@ -72,6 +112,14 @@ class Diagnoses extends \yii\db\ActiveRecord
     /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
+        if( !empty($this->_icdcodesAr) and is_array($this->_icdcodesAr) ) {
+            foreach($this->_icdcodesAr as $icdcodesApi) {
+                $icdcodes = new ICDCodes();
+                $icdcodes->loadApiObject($icdcodesApi);
+                $icdcodes->link('diagnoses', $this);
+                $icdcodes->save();
+            }
+        }
 
         return $saved;
     }

@@ -19,9 +19,9 @@ class AthenaOauth
      */
     public function Authenticate($expired = FALSE)
     {
+        //REFACTORIZAR ESTE VALOR DEL PRACTICE ID
         $data = [];
         $success =  FALSE;
-        $session = Yii::$app->session;
 
         $configurationModel = Configuration::find()->where([
             'type'          => 'AthenaToken',
@@ -48,7 +48,6 @@ class AthenaOauth
     {
         $data = [];
         $success =  FALSE;
-        $session = Yii::$app->session;
 
         $dataSession = json_decode($this->Authenticate(), TRUE);
         if((int)$dataSession['expirationTime'] < (int)time()){
@@ -56,8 +55,17 @@ class AthenaOauth
         }
 
         $link = Yii::$app->params['athena_url'].$path;
-        $client = new Client();
+        $client = new Client([
+            'transport' => 'yii\httpclient\CurlTransport'
+        ]);
         $request = $client->createRequest();
+        $requestOptions = [];
+        if(!empty(Yii::$app->params['http_client_timeout'])){
+            $requestOptions[CURLOPT_TIMEOUT] = Yii::$app->params['http_client_timeout']; // set timeout to 5 seconds for the case server is not responding
+        }
+        if(!empty($requestOptions)){
+            $request->setOptions($requestOptions);
+        }
         $request->setMethod($action)
             ->setUrl($link)
             ->setHeaders([
@@ -70,7 +78,7 @@ class AthenaOauth
         try {
             $response = $request->send();
         }catch(\Exception $e){
-            throw new \yii\web\ServerErrorHttpException($e->getMessage());
+            throw new \yii\web\ServerErrorHttpException($this->handleError($e->getMessage()));
         }
 
         $dataResponse = json_decode($response->getContent(), TRUE);
@@ -124,13 +132,6 @@ class AthenaOauth
         if ($response->isOk) {
             $success = TRUE;
             $dataResponse['expirationTime'] = (time() + $dataResponse['expires_in']) - 60;
-            /*$data = [
-                'message'       => "",
-                'data'          => $dataResponse,
-                'success'       => $success,
-                'statusCode'    => $dataStatusCodeRespose
-            ];
-            $session->set('athenaAuth', $data);*/
         }else{
             $error = '';
             if(isset($dataResponse['error'])){
@@ -143,4 +144,17 @@ class AthenaOauth
         return $dataResponse;
     }
 
+    private function handleError($errorMessage)
+    {
+        $transportError = 'Curl error: #';//yiisoft\yii2-httpclient\src\CurlTransport.php
+        switch (true){
+            case stristr($errorMessage,$transportError.CURLE_OPERATION_TIMEDOUT):
+                $humanized = 'Communication Error';
+               break;
+            default:
+                $humanized = 'Internal Error';
+         }
+
+         return $humanized;
+    }
 }

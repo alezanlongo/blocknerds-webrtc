@@ -11,6 +11,7 @@ use yii\httpclient\Exception;
 use yii\base\InvalidConfigException;
 use phpDocumentor\Reflection\Types\Boolean;
 use common\components\janusApi\JanusCommonException;
+use yii\helpers\VarDumper;
 use yii\httpclient\Exception as HttpClientException;
 
 class JanusApiComponent extends Component
@@ -40,6 +41,8 @@ class JanusApiComponent extends Component
 
     public const SOURCE_AUDIO = 'audio';
     public const SOURCE_VIDEO = 'video';
+    public const PLUGIN_ECHOTEST = 'janus.plugin.echotest';
+
 
 
     //    public function __construct($config = [])
@@ -54,6 +57,11 @@ class JanusApiComponent extends Component
         parent::init();
         $this->baseUrl = "$this->url:$this->port/$this->uri";
         $this->adminBaseUrl = "$this->url:$this->adminPort/$this->adminUri";
+        // $doctorRoom = Yii::$app->params['videoroom.doctor_room'];
+
+        // if (!$this->videoRoomExists($doctorRoom)) {
+        //     $this->videoRoomCreate($doctorRoom);
+        // }
     }
 
     public function destroy(): void
@@ -216,7 +224,7 @@ class JanusApiComponent extends Component
         return false;
     }
 
-    public function getMembersTokenByRoom(string $roomUuid): false|array
+    public function getMembersTokenByRoom(string $roomUuid, bool $withPlugins = true): false|array
     {
         $this->attach('janus.plugin.videoroom');
 
@@ -225,6 +233,15 @@ class JanusApiComponent extends Component
             return \false;
         }
         $data = $res->getData();
+        if (!$withPlugins) {
+            if (isset($data['janus']) && $data['janus'] == 'success') {
+                return  $data['plugindata']['data'];
+            }
+            if (isset($data['error'])) {
+                $this->lastError = $data['error'];
+            }
+            return false;
+        }
         $res = $this->apiCall('POST', ['janus' => 'list_tokens',  'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], null, true);
         if (!$res->isOk) {
             return \false;
@@ -289,13 +306,10 @@ class JanusApiComponent extends Component
         return $members[\array_search($token, \array_column($members, 'token'))]['id'] ?? null;
     }
 
-    public function kickMember(string $roomUuid, string $token, string $memberId)
+    public function kickMember(string $roomUuid, string $token)
     {
         $this->attach('janus.plugin.videoroom');
         $memberTokenId = $this->getMemberRoomToken($roomUuid, $token);
-        if (!$memberTokenId || $memberTokenId !== $memberId) {
-            return false;
-        }
 
         $res = $this->apiCall(
             'POST',
@@ -303,7 +317,7 @@ class JanusApiComponent extends Component
                 'janus' => 'message',
                 'body' => [
                     'request' => 'kick',
-                    'id' => $memberId,
+                    'id' => $memberTokenId,
                     'room' => $roomUuid
                 ],
                 'transaction' => $this->createRandStr(),
@@ -420,14 +434,28 @@ class JanusApiComponent extends Component
         return !empty($data['data']['tokens']) ? $data['data']['tokens'] : null;
     }
 
-    private function storeToken($token)
+    private function storeToken($token, array $plugins = ['janus.plugin.videoroom'])
     {
 
-        $res = $this->apiCall('POST', ['janus' => 'add_token', 'token' => $token, 'plugins' => ['janus.plugin.videoroom'], 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], null, true);
+        $res = $this->apiCall('POST', ['janus' => 'add_token', 'token' => $token, 'plugins' => $plugins, 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], null, true);
         if (!$res->isOk) {
             return false;
         }
         $data = $res->getData();
+        if (isset($data['janus']) && $data['janus'] == 'success') {
+            return true;
+        }
+        return false;
+    }
+    private function delToken(string $token, array $plugins)
+    {
+
+        $res = $this->apiCall('POST', ['janus' => 'remove_token', 'token' => $token, 'plugins' => $plugins, 'transaction' => $this->createRandStr(), 'admin_secret' => $this->adminSecret], null, true);
+        if (!$res->isOk) {
+            return false;
+        }
+        $data = $res->getData();
+
         if (isset($data['janus']) && $data['janus'] == 'success') {
             return true;
         }
@@ -543,5 +571,26 @@ class JanusApiComponent extends Component
     private function exceptionFormatter($message, Exception $e)
     {
         return $message . ' - ' . $e->getFile() . ':' . $e->getLine();
+    }
+
+    public function addToken(string $token)
+    {
+        $this->attach(self::PLUGIN_ECHOTEST);
+
+        return $this->storeToken($token, [self::PLUGIN_ECHOTEST]);
+    }
+
+    public function removeToken(string $token)
+    {
+        return $this->delToken($token, [self::PLUGIN_ECHOTEST]);
+    }
+
+    public function isTokenStoraged(string $token): bool
+    {
+        $tokens = $this->getStoredTokens() ?? [];
+        $res = array_search($token, array_column($tokens, 'token'));
+
+        // = false, no token storaged
+        return $res !== false;
     }
 }

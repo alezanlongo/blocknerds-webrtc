@@ -679,10 +679,10 @@ const handleJsep = (objMessage, jsep) => {
 
 
 const handleMQTTPaho = () => {
-    const wsbroker = "localhost"; // mqtt websocket enabled broker
+    const wsbroker1 = "localhost"; // mqtt websocket enabled broker
     const wsport = 15675; // port for above
     const client = new Paho.MQTT.Client(
-      wsbroker,
+      wsbroker1,
       wsport,
       "/ws",
       "myclientid_" + parseInt(Math.random() * 100, 10)

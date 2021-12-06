@@ -7,30 +7,35 @@ use yii\bootstrap5\Modal;
 use common\models\RoomRequest;
 use frontend\assets\room\RoomAsset;
 use frontend\assets\Janus\JanusAsset;
-use frontend\assets\pahoMqtt\PahoMqttAsset;
+use frontend\assets\mqtt\MqttAsset;
 use frontend\widgets\imageSlider\ImageSlider;
-use yii\helpers\Url;
-use yii\helpers\VarDumper;
+
+
 /** @var boolean $limit_members Whether to limit members for this room...? */
 
 /** @var \yii\web\View $this */
 JanusAsset::register($this);
-$this->registerAssetBundle(PahoMqttAsset::class);
+//$this->registerAssetBundle(PahoMqttAsset::class);
+$this->registerAssetBundle(MqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
 
 $this->registerJsVar('limitMembers', $limit_members, View::POS_END);
 $this->registerJsVar('own_mute_audio', $own_mute_audio, View::POS_END);
 $this->registerJsVar('own_mute_video', $own_mute_video, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
-$this->registerJsVar('myRoom', $uuid, View::POS_END);
+// $this->registerJsVar('myRoom', $uuid, View::POS_END);
+$this->registerJsVar('dataRoom', $dataRoom, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
 $this->registerJsVar('isOwner', $is_owner, View::POS_BEGIN);
 $this->registerJsVar('isAllowed', $is_allowed, View::POS_END);
-$this->registerJsVar('mytoken', $token, View::POS_END);
+// $this->registerJsVar('mytoken', $token, View::POS_END);
 $this->registerJsVar('endTime', $endTime, View::POS_END);
 $this->registerJsVar('members', $members, View::POS_END);
 $this->registerJsVar('irmStatus', $in_room_members_source_status, View::POS_END);
+$this->registerJsVar('myChannel', $myChannel, View::POS_END);
+$this->registerJsVar('wsbroker', \Yii::$app->params['mqtt.host'], View::POS_BEGIN);
+$this->registerJsVar('wsport', \Yii::$app->params['mqtt.port'], View::POS_BEGIN);
 
 $config = [
     'janus' => [
@@ -54,42 +59,11 @@ $config = [
     ]
 ];
 $this->registerJs(
-    "var roomConfig = ".\yii\helpers\Json::htmlEncode($config).";",
+    "var roomConfig = " . \yii\helpers\Json::htmlEncode($config) . ";",
     View::POS_HEAD,
     'roomConfig'
 );
-
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/mqttHandler.js',
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-//$this->registerJsFile(
-//    Yii::$app->request->BaseUrl . '/js/countdown.js',
-//    [
-//        'depends' => "yii\web\JqueryAsset",
-//        'position' => View::POS_END
-//    ]
-//);
-
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/room.js',
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-$this->registerJsFile(
-    Yii::$app->request->BaseUrl . '/js/boxesHandler.js',
-    [
-        'depends' => "yii\web\JqueryAsset",
-        'position' => View::POS_END
-    ]
-);
-
-$countdown = <<<'COUNTDOWN'
+    $countdown = <<<'COUNTDOWN'
 const handleCountdown = (endTime) => {
   const MILLISECONDS_STRING = "milliseconds";
   const eventTimeFinish = moment(endTime);
@@ -123,7 +97,7 @@ const switchSignal = (seconds) => {
 };
 COUNTDOWN;
 
-$this->registerJs($countdown, View::POS_END,'countdown_script');
+    $this->registerJs($countdown, View::POS_END, 'countdown_script');
 
 
 $this->title = 'The Room';
@@ -131,41 +105,20 @@ $this->title = 'The Room';
 ?>
 
 <?php if ($is_owner || ($request && $request->status === RoomRequest::STATUS_ALLOW)) : ?>
-    <div class="header-nav fix-top pb-0 ">
-        <div class=" flex-grow-1 text-center">
-            <span class="spanCountdown h4"></span>
-        </div>
-        <div class="options-tab">
-            <ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
-                <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings">
-                    <button class="nav-link" id="pills-settings-tab" data-bs-toggle="pill" data-bs-target="#pills-settings" role="tab" aria-controls="pills-settings" aria-selected="true" ><i class="fas fa-cog icon-menu"></i></button>
-                </li>
-                <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Participant">
-                    <button class="nav-link" id="pills-attendees-tab" data-bs-toggle="pill" data-bs-target="#pills-attendees" role="tab" aria-controls="pills-attendees" aria-selected="false" ><i class="fas fa-users icon-menu"></i></button>
-                </li>
-                <li class="nav-item option-side" role="presentation" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
-                    <button class="nav-link" id="pills-chat-tab" data-bs-toggle="pill" data-bs-target="#pills-chat" role="tab" aria-controls="pills-chat" aria-selected="false" ><i class="fas fa-comments icon-menu"></i></button>
-                </li>
-                <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle audio">
-                    <?= Html::tag('button', '<i class="fas fa-microphone icon-menu"></i>', [
-                        'id' => "mute",
-                        "class" => "btn btn-link text-white",
-                        'onclick' => "toggleMute()"
-                    ]) ?>
-                </li>
-                <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Toggle video">
-                    <?= Html::tag('button', '<i class="fas fa-video icon-menu"></i>', [
-                        'id' => "no-video",
-                        "class" => "btn btn-link text-white",
-                        'onclick' => "toggleVideo()"
-                    ]) ?>
-                </li>
-                <li class="nav-item ml-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Leave">
-                    <?= Html::tag('button', 'Leave', ["class" => "btn btn-danger btn-leave"]) ?>
-                </li>
-            </ul>
-        </div>
-    </div>
+
+    <?= $this->render(
+        '//layouts/right-room.php',
+        [
+            'user_profile_id' => $user_profile_id,
+            'room_id' => $room_id,
+            'limit_members' => $limit_members,
+            'members' => $members,
+            'is_owner' => $is_owner,
+            'chats' => $chats,
+
+        ]
+    ) ?>
+
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
             <div class="join-again d-none position-absolute top-50 start-50 translate-middle">
@@ -214,40 +167,6 @@ $this->title = 'The Room';
                 </div>
             </div>
         <?php } ?>
-        <div class="tab-content sidebar" id="pills-tabContent">
-            <div class="tab-pane fade" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
-                <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
-            </div>
-            <div class="tab-pane fade" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
-                <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
-
-                <ul class="list-group bg-dark list-attendees">
-                    <li class="list-group-item list-group-item-light bg-dark position-relative" data-user-id="<?= Yii::$app->getUser()->getId() ?>" data-index="0">
-                        <span class="p-1 username-member text-success" ><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
-                    </li>
-                    <?php for ($i = 1; $i < $limit_members; $i++) { 
-                        $member = (count($members) > $i) ? $members[$i] : null;
-                        ?>
-                        <li class="list-group-item list-group-item-light bg-dark position-relative <?= ($member) ? 'profile_id_'.$member['id'] : 'd-none' ?>" id="attendee_<?= $i ?>" data-index="<?= $i ?>">
-                            <span class="p-1 username-member usernameFeed<?= $i ?>"><?= ($member) ? $member['username'] : '' ?></span>
-                            <?php if ($is_owner) { ?>
-                                <div class="position-absolute pt-1 top-0 end-0 member-controls d-none">
-                                    <button class="btn btn-link text-light btn-remote-mute" onclick="moderateAudioToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member audio">
-                                        <i class="fas fa-microphone icon-option-member"></i></button> |
-                                    <button class="btn btn-link text-light btn-remote-video" onclick="moderateVideoToggle(this,<?= $i ?>)" data-bs-toggle="tooltip" data-bs-placement="top" title="Mute/Unmute member video">
-                                        <i class="fas fa-video icon-option-member"></i></button> |
-                                    <button class="btn btn-link text-light btn-remote-kick" data-bs-toggle="tooltip" data-bs-placement="top" title="Kick member">
-                                        <i class="fas fa-user-times icon-option-member"></i></button>
-                                </div>
-                            <?php } ?>
-                        </li>
-                    <?php  } ?>
-                </ul>
-            </div>
-            <div class="tab-pane fade" id="pills-chat" role="tabpanel" aria-labelledby="pills-chat-tab">
-                <?= Html::tag('h3', 'Chat section', ['class' => 'text-center']) ?>
-            </div>
-        </div>
 
     </div>
 <?php endif ?>
@@ -256,7 +175,7 @@ $this->title = 'The Room';
 if (!$is_owner) : ?>
     <?php if (!$request || $request->status !== RoomRequest::STATUS_ALLOW) : ?>
         <div class="row ">
-            <div class="d-flex w-100 border-bottom">
+            <div class="d-flex justify-content-between w-100 border-bottom">
                 <div class="d-flex mr-auto justify-content-start">
                     <h1 class="display-5">Waiting room</h1>
                 </div>
@@ -312,7 +231,7 @@ Pjax::end();
     'options' => [
         'data-bs-backdrop' => "static",
         'data-bs-keyboard' => "false",
-        'class'=> 'mt-5 pt-3',
+        'class' => 'mt-5 pt-3',
     ],
 ]);
 
@@ -331,7 +250,7 @@ if ($is_owner) {
                     ?>
                 </div>
             </div>
-            <?php
+<?php
         }
     } else {
         echo "<script>if (window.jQuery) $('#pendingRequests').modal('hide');</script>";

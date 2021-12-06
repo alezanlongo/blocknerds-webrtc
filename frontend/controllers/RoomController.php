@@ -6,6 +6,7 @@ use Yii;
 use DateTime;
 use Carbon\Carbon;
 use common\components\JanusApiComponent;
+use common\models\Chat;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use common\models\Room;
@@ -21,6 +22,7 @@ use common\models\RoomMemberRepository;
 use yii\web\TooManyRequestsHttpException;
 use yii\web\UnprocessableEntityHttpException;
 use common\widgets\cardNextOrInProgressMeeting\cardNextOrInProgressMeetingWidget;
+use Exception;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
 use yii\web\Response;
@@ -48,6 +50,14 @@ class RoomController extends \yii\web\Controller
                 ],
             ],
         ];
+    }
+
+    private function addMemberToRoom(string $room, string $token)
+    {
+        $uTokens = Yii::$app->janusApi->getMembersTokenByRoom($room);
+        if (false !== $uTokens && (empty($uTokens) || !\in_array($token, \array_column($uTokens, 'token')))) {
+            $res = Yii::$app->janusApi->addUserToken($room, $token);
+        }
     }
 
     public function actionIndex($uuid)
@@ -90,21 +100,22 @@ class RoomController extends \yii\web\Controller
                 ->all();
         }
 
-        $profileIds = RoomMember::find()
-            ->where(['room_id' => $room->id])
-            ->select('user_profile_id');
+        // $profileIds = RoomMember::find()
+        //     ->where(['room_id' => $room->id])
+        //     ->select('user_profile_id');
 
-        $members = [];
-        foreach ($profileIds->all() as $member) {
-            if ($member->user_profile_id !== $profile->id) {
-                $members[] =  [
-                    'id' => $member->user_profile_id,
-                    'user_id' => $member->getUser()->id,
-                    'username' => $member->getUser()->username,
-                ];
-            }
-        }
+        // $members = [];
+        // foreach ($profileIds->all() as $member) {
+        //     if ($member->user_profile_id !== $profile->id) {
+        //         $members[] =  [
+        //             'id' => $member->user_profile_id,
+        //             'user_id' => $member->getUser()->id,
+        //             'username' => $member->getUser()->username,
+        //         ];
+        //     }
+        // }
 
+        $members = RoomMemberRepository::getMembersByRoom($room->uuid);
 
         if (count($members) > $limit_members) {
             var_dump("No possible add more members can't be in this room. The limit is " . $limit_members);
@@ -160,10 +171,18 @@ class RoomController extends \yii\web\Controller
         $meeting = $room->getMeeting()->one();
         $endTime = $meeting->scheduled_at + $meeting->duration;
 
-        // VarDumper::dump($token, $depth = 10, $highlight = true);
-        //     die;
-        return $this->render('index', [
+        $chats = Chat::find()->where(['room_id' => $room->id, 'to_profile_id' => null])->all();
+        $dataRoom = [
+            'title' => $meeting->title,
+            'uuid' => $uuid,
             'token' => $token,
+            'isDoctor' => $profile->id === 1,
+        ];
+
+        // VarDumper::dump($dataRooms, $depth = 10, $highlight = true);
+        // die;
+        return $this->render('index', [
+            'dataRoom' => $dataRoom,
             'user_profile_id' => $profile->id,
             'limit_members' => $limit_members,
             'in_room_members' => $inRoomMembersIds,
@@ -173,16 +192,48 @@ class RoomController extends \yii\web\Controller
             'is_owner' => $is_owner,
             'is_allowed' => $is_allowed,
             'status' => $status,
-            'uuid' => $uuid,
             'request' => $request,
             'requests' => $requests,
             'endTime' => $endTime,
             'own_mute_audio' => $ownSourceStatus['mute_audio'] ?? false,
             'own_mute_video' => $ownSourceStatus['mute_video'] ?? false,
-
+            'myChannel' => md5($profile->id),
+            'chats' => $chats
         ]);
     }
 
+    public static function getRooms(int $profileId)
+    {
+        $roomMembers = RoomMember::find()->where(['user_profile_id' => $profileId])->orderBy(['created_at' => SORT_DESC])->all();
+        $rooms = array_map(function ($roomMember) {
+            $room = $roomMember->room;
+            return [
+                'title' => $room->meeting->title,
+                'name' => $room->uuid,
+                'created_at' => Carbon::createFromTimestamp($room->meeting->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s'),
+            ];
+        }, $roomMembers);
+
+        return $rooms;
+    }
+
+    private function createMeeting(string $title, int $profileId): Meeting|null
+    {
+        $meeting = new Meeting();
+        $fields['Meeting']['title'] = $title;
+        $fields['Meeting']['owner_id'] = $profileId;
+        $fields['Meeting']['duration'] = Meeting::DEFAULT_DURATION;
+        $fields['Meeting']['scheduled_at'] = time();
+        $fields['Meeting']['reminder_time'] = 0;
+        $fields['Meeting']['allow_waiting'] = 1;
+
+        try {
+            $meeting->load($fields) && $meeting->save();
+            return $meeting;
+        } catch (Exception $e) {
+            return null;
+        }
+    }
 
     /**
      * 
@@ -292,6 +343,38 @@ class RoomController extends \yii\web\Controller
             $memberOwner->user_profile_id = $profile->id;
             $memberOwner->save();
 
+            $isDoctor = $profile->id === 1;
+            if ($isDoctor) {
+                $meetingDoc  = Meeting::findOne(['title' => Meeting::DEFAULT_DOCTOR_TITLE]);
+
+                if (!$meetingDoc) {
+                    $meetingDoc = $this->createMeeting(Meeting::DEFAULT_DOCTOR_TITLE, $profile->id);
+                }
+
+                if (!$meetingDoc) {
+                    throw new UnprocessableEntityHttpException("Meeting not available");
+                }
+                $roomDoc = $meetingDoc->room;
+                if (!$roomDoc) {
+                    $roomDoc = new Room();
+                    $roomDoc->meeting_id = $meetingDoc->id;
+                    $roomDoc->is_quick = true;
+                    $roomDoc->status = Room::STATUS_CREATED;
+                    $roomDoc->save();
+                }
+                $memberOwner = RoomMember::findOne(['room_id' => $roomDoc->id, 'user_profile_id' => $profile->id]);
+                if (!$memberOwner) {
+                    $memberOwner = new RoomMember();
+                    $memberOwner->room_id = $roomDoc->id;
+                    $memberOwner->user_profile_id = $profile->id;
+                    $memberOwner->save();
+                }
+
+                if (!Yii::$app->janusApi->videoRoomExists($roomDoc->uuid)) {
+                    Yii::$app->janusApi->videoRoomCreate($roomDoc->uuid);
+                }
+                $this->addMemberToRoom($roomDoc->uuid, $profile->hashId);
+            }
 
             return $this->redirect([$room->uuid]);
         }
@@ -612,7 +695,8 @@ class RoomController extends \yii\web\Controller
             'roomSelected' => $roomSelected,
             'roomMembers' => $roomMembers,
             'initialView' => $initialView ? $initialView->value : 'timeGridWeek',
-            'cardNextOrInProgressMeetingWidget' => $cardNextOrInProgressMeetingWidget
+            'cardNextOrInProgressMeetingWidget' => $cardNextOrInProgressMeetingWidget,
+            'myChannel' => md5($profile->id),
         ]);
     }
 
@@ -637,7 +721,6 @@ class RoomController extends \yii\web\Controller
     public function actionKickMember()
     {
         $profileId = $this->request->post('profileId');
-        $memberId = $this->request->post('memberId');
         $roomUuid = $this->request->get('uuid');
 
         $roomMember = $this->checkMember($roomUuid, $profileId);
@@ -647,7 +730,7 @@ class RoomController extends \yii\web\Controller
             return throw new ServerErrorHttpException("Only owner of the room is allowed.");
         }
 
-        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token, $memberId)) {
+        if (!Yii::$app->janusApi->kickMember($roomUuid, $roomMember->token)) {
             return throw new ServerErrorHttpException("Error kicking member of the room");
         }
 

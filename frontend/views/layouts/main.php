@@ -1,77 +1,110 @@
 <?php
 
+use frontend\assets\adminlte\AdminLteAsset;
+use frontend\assets\AppAsset;
+use frontend\assets\masonry\MasonryAsset;
+use frontend\assets\mqtt\MqttAsset;
 use yii\helpers\Html;
+use yii\web\View;
 
 /** @var \yii\web\View $this */
 /** @var string $content */
 
 $this->registerCssFile('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
-if (Yii::$app->controller->action->id === 'login') {
-    /**
-     * Do not use this code in your template. Remove it. 
-     * Instead, use the code  $this->layout = '//main-login'; in your controller.
-     */
-    echo $this->render(
-        'main-login',
-        ['content' => $content]
-    );
-} else {
 
-    if (class_exists('backend\assets\AppAsset')) {
-        backend\assets\AppAsset::register($this);
-    } else {
-        frontend\assets\AppAsset::register($this);
+AppAsset::register($this);
+$this->registerAssetBundle(MqttAsset::class);
+AdminLteAsset::register($this);
+MasonryAsset::register($this);
+
+$this->registerJs("const myOffcanvas = document.getElementById('offcanvasMainMenu')
+  toggleTooltips(false)
+  myOffcanvas.addEventListener('show.bs.offcanvas', function () {
+    myOffcanvas.classList.remove('d-none')
+  })
+  myOffcanvas.addEventListener('hide.bs.offcanvas', function () {
+    myOffcanvas.classList.add('d-none')
+  })
+  ", View::POS_READY);
+$this->registerJsFile(
+  Yii::$app->request->BaseUrl . '/js/sidebarIcon.js',
+  [
+    'depends' => [
+      "yii\web\JqueryAsset",
+    ],
+    'position' => View::POS_END
+  ]
+);
+?>
+
+<?php $this->beginPage() ?>
+<!DOCTYPE html>
+<html lang="<?= Yii::$app->language ?>" class="h-100">
+
+<head>
+  <meta charset="<?= Yii::$app->charset ?>" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?= Html::csrfMetaTags() ?>
+  <title><?= Html::encode($this->title) ?></title>
+  <?php $this->head() ?>
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <style>
+    .alert-style {
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      right: 0;
     }
 
-    dmstr\adminlte\web\AdminLteAsset::register($this);
-    dmstr\adminlte\web\FontAwesomeAsset::register($this);
+    .rotate {
+      -moz-transition: all .3s linear;
+      -webkit-transition: all .3s linear;
+      transition: all .3s linear;
+    }
 
-    $directoryAsset = Yii::$app->assetManager->getPublishedUrl('@vendor/almasaeed2010/adminlte/dist');
-?>
-    <?php $this->beginPage() ?>
-    <!DOCTYPE html>
-    <html lang="<?= Yii::$app->language ?>">
+    .rotate.down {
+      -moz-transform: rotate(180deg);
+      -webkit-transform: rotate(180deg);
+      transform: rotate(180deg);
+    }
+    #offcanvasMainMenu a {
+      color: white;
+    }
+  </style>
+</head>
 
-    <head>
-        <meta charset="<?= Yii::$app->charset ?>" />
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <?= Html::csrfMetaTags() ?>
-        <title><?= Html::encode($this->title) ?></title>
-        <?php $this->head() ?>
-        <style>
-        .alert-style {
-            width: fit-content;
-            float: right;
-        }
-    </style>
-    </head>
+<body class="d-flex min-h-100">
+  <?php $this->beginBody() ?>
+  <?= $this->render(
+    'sidebarOffcanvas.php',
+    []
+  ) ?>
 
-    <!-- NOTE: remove sidebar-collapse class in order to when you refresh the screen, the sidebar is be collapsed -->
-    <body class="hold-transition skin-blue sidebar-mini dark-mode sidebar-collapse">
-        <?php $this->beginBody() ?>
-        <div class="wrapper">
+  <div class="min-h-100 d-flex flex-column w-100" id="main-wrapper">
 
-            <?= $this->render(
-                'header.php',
-                ['directoryAsset' => $directoryAsset]
-            ) ?>
+    <?= $this->render(
+      'header.php',
+      []
+    ) ?>
 
-            <?= $this->render(
-                'left.php',
-                ['directoryAsset' => $directoryAsset]
-            )
-            ?>
+    <?= $this->render(
+      'content.php',
+      ['content' => $content]
+    ) ?>
 
-            <?= $this->render(
-                'content.php',
-                ['content' => $content, 'directoryAsset' => $directoryAsset]
-            ) ?>
+    <?= Html::tag('div', '', ['class' => 'chat-zone d-flex justify-content-end']) ?>
+  </div>
 
-        </div>
+  <?php $this->endBody() ?>
+  <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
 
-        <?php $this->endBody() ?>
-    </body>
+</body>
 
-    </html>
-    <?php $this->endPage() ?>
-<?php } ?>
+<?php $this->endPage() ?>
+
+</html>

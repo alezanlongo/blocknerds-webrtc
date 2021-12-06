@@ -36,7 +36,7 @@ class RequestCreatePatientCase extends \yii\db\ActiveRecord
             [['departmentid', 'documentsource', 'documentsubclass', 'providerid'], 'required'],
             [['callbackname', 'callbacknumber', 'callbacknumbertype', 'documentsource', 'documentsubclass', 'internalnote', 'priority', 'subject'], 'string'],
             [['clinicalproviderid', 'departmentid', 'providerid', 'externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['autoclose', 'outboundonly'], 'boolean'],
         ];
     }
 

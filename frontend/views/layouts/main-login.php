@@ -1,11 +1,14 @@
 <?php
 
+use frontend\assets\adminlte\AdminLteAsset;
+use frontend\assets\AppAsset;
+use frontend\widgets\adminlte\Alert;
 use yii\helpers\Html;
 
 /** @var \yii\web\View $this */
 /** @var string $content */
-
-dmstr\adminlte\web\AdminLteAsset::register($this);
+AppAsset::register($this);
+AdminLteAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -19,14 +22,14 @@ dmstr\adminlte\web\AdminLteAsset::register($this);
     <?php $this->head() ?>
 </head>
 
-<body class="login-page dark-mode">
+<body class="login-page dark-mode w-100 h-100">
     <?php $this->beginBody() ?>
 
-    <div class="login-box w-50">
-        <?= \dmstr\adminlte\widgets\Alert::widget(); ?>
+    <!-- <div class="login-box w-50"> -->
+        <!-- <?= Alert::widget(); ?> -->
 
         <?= $content ?>
-    </div>
+    <!-- </div> -->
 
     <?php $this->endBody() ?>
 </body>

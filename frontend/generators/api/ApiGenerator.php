@@ -35,7 +35,8 @@ class ApiGenerator extends ParentApiGenerator
     /**
      * @inheritDoc
      */
-    public function generate() {
+    public function generate()
+    {
         $this->modelNamespace = $this->folderPath.'\\'.'models';
         $modelApiNamespace = $this->folderPath.'\\'.'apiModels';
         $this->migrationPath = $this->getPathFromNamespace($this->folderPath).'/'.'migrations';
@@ -218,8 +219,12 @@ class ApiGenerator extends ParentApiGenerator
                 $schema = $schema->resolve();
             }
             $extIdField = false;
+            $extIdType = 'integer';
             if( array_key_exists('x-external-id', $schema->getExtensions()) ) {
                 $extIdField = $schema->getExtensions()['x-external-id'];
+            }
+            if( array_key_exists('x-external-id-type', $schema->getExtensions()) ) {
+                $extIdType = $schema->getExtensions()['x-external-id-type'];
             }
             $attributes = [];
             $relations = [];
@@ -317,7 +322,7 @@ class ApiGenerator extends ParentApiGenerator
             } else {
                 $attributes[$externalId] = [
                     'name' => $externalId,
-                    'type' => 'integer',
+                    'type' => $extIdType,
                     'dbType' => '$this->string()',
                     'dbName' => $externalId,
                     'required' => false,
@@ -378,6 +383,7 @@ class ApiGenerator extends ParentApiGenerator
                 }
 
                 $listKey = ( array_key_exists('x-list-key', $operation->getExtensions()) ) ? $operation->getExtensions()['x-list-key'] : null;
+                $apiModel = ( array_key_exists('x-api-model', $operation->getExtensions()) ) ? $operation->getExtensions()['x-api-model'] : null;
 
                 foreach ($operation->responses->getResponses() as $responseCode => $response){
                     foreach ($response->content as $responseType => $responseItem){
@@ -387,10 +393,10 @@ class ApiGenerator extends ParentApiGenerator
                             $arrSchema = explode("/", $responseItem->schema->getReference());
                         }else if(get_class($responseItem->schema) == Schema::class){
                             $flagList = TRUE;
-                            $arrSchema = explode("/", $responseItem->schema->items->getReference());
+                            if(!empty($responseItem->schema->items)) {
+                                $arrSchema = explode("/", $responseItem->schema->items->getReference());
+                            }
                         }
-
-                        
 
                         array_push($arrayClient, [
                             'pathname'      => $pathName,
@@ -400,7 +406,8 @@ class ApiGenerator extends ParentApiGenerator
                             'operationId'   => $operation->operationId,
                             'schema'        => $arrSchema[(count($arrSchema) - 1)],
                             'flagList'      => $flagList,
-                            'listKey'      => $listKey,
+                            'listKey'       => $listKey,
+                            'apiModel'      => $apiModel,
                         ]);
                     }
                 }

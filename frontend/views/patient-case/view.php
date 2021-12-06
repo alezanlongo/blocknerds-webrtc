@@ -15,6 +15,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <p>
+        <?= Html::a('Update Patient Case', ['patient-case/update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Reassign Patient Case', ['patient-case/reassign', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Close Patient Case', ['patient-case/close', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Add Action Note', ['patient-case/add-action-note', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+    </p>
+
     <?= DetailView::widget([
         'model' => $model,
         'options' => [
@@ -28,7 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'documentclass',
             'documentsource',
             'patientid',
-            'priority',
+            'providerid',
+            'assignedto',
+            'actionnote',
             'createddate',
             'status',
         ],

@@ -82,8 +82,6 @@ class m130524_201442_init extends Migration
             true
         );
 
-
-
         // meeting
         $this->createTable('{{%meeting}}', [
             'id' => $this->primaryKey(),
@@ -196,20 +194,21 @@ class m130524_201442_init extends Migration
             'CASCADE'
         );
 
-        // room_chat
-        $this->createTable('{{%room_chat}}', [
+        // chat
+        $this->createTable('{{%chat}}', [
             'id' => $this->primaryKey(),
-            'room_id' => $this->integer()->notNull(),
-            'user_profile_id' => $this->integer()->notNull(),
-            'message' => $this->string()->notNull(),
-            'file_url' => $this->string(),
+            'from_profile_id' => $this->integer()->notNull(),
+            'to_profile_id' => $this->integer(),
+            'room_id' => $this->integer(),
+            'channel' => $this->string(32)->notNull(),
+            'text' => $this->string()->notNull(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
 
         $this->addForeignKey(
-            '{{%fk-room_chat-room_id}}',
-            '{{%room_chat}}',
+            '{{%fk-chat-room_id}}',
+            '{{%chat}}',
             'room_id',
             '{{%room}}',
             'id',
@@ -217,10 +216,67 @@ class m130524_201442_init extends Migration
         );
 
         $this->addForeignKey(
-            '{{%fk-room_chat-user_profile_id}}',
-            '{{%room_chat}}',
-            'user_profile_id',
+            '{{%fk-chat-to_profile_id}}',
+            '{{%chat}}',
+            'to_profile_id',
             '{{%user_profile}}',
+            'id',
+            'CASCADE'
+        );
+
+        $this->addForeignKey(
+            '{{%fk-chat-from_profile_id}}',
+            '{{%chat}}',
+            'from_profile_id',
+            '{{%user_profile}}',
+            'id',
+            'CASCADE'
+        );
+
+        $this->createIndex(
+            '{{%idx-chat-channel}}',
+            '{{%chat}}',
+            'channel',
+        );
+
+        // unsplush set
+        $this->createTable('{{%set}}', [
+            'id' => $this->primaryKey(),
+            'profile_id' => $this->integer()->notNull(),
+            'title' => $this->string()->notNull(),
+            'created_at' => $this->integer()->notNull(),
+            'updated_at' => $this->integer()->notNull(),
+        ]);
+
+        $this->createIndex('{{%idx-set-profile_id}}','{{%set}}','profile_id');
+        $this->addForeignKey(
+            '{{%fk-set-profile_id}}',
+            '{{%set}}',
+            'profile_id',
+            '{{%user_profile}}',
+            'id',
+            'CASCADE'
+        );
+
+        // unsplush photo
+        $this->createTable('{{%photo}}', [
+            'id' => $this->primaryKey(),
+            'set_id' => $this->integer()->notNull(),
+            'photo_id' => $this->string(20)->notNull(),
+            'url' => $this->string()->notNull(),
+            // 'title' => $this->string()->notNull(),
+            'description' => $this->text(),
+            'alt_description' => $this->text(),
+            'created_at' => $this->integer()->notNull(),
+            'updated_at' => $this->integer()->notNull(),
+        ]);
+
+        $this->createIndex('{{%idx-photo-set_id}}','{{%photo}}','set_id');
+        $this->addForeignKey(
+            '{{%fk-photo-set_id}}',
+            '{{%photo}}',
+            'set_id',
+            '{{%set}}',
             'id',
             'CASCADE'
         );
@@ -228,6 +284,28 @@ class m130524_201442_init extends Migration
 
     public function down()
     {
+        // chat_message
+        $this->dropForeignKey(
+            '{{%fk-chat_message-chat_id}}',
+            '{{%chat_message}}'
+        );
+        $this->dropTable('{{%chat_message}}');
+
+        // chat
+        $this->dropForeignKey(
+            '{{%fk-chat-room_id}}',
+            '{{%chat}}'
+        );
+        $this->dropForeignKey(
+            '{{%fk-chat-from_profile_id}}',
+            '{{%chat}}'
+        );
+        $this->dropForeignKey(
+            '{{%fk-chat-to_profile_id}}',
+            '{{%chat}}'
+        );
+        $this->dropTable('{{%chat}}');
+
         // meeting
         $this->dropTable('{{%meeting}}');
 
