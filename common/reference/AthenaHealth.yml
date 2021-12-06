@@ -5478,6 +5478,210 @@ paths:
       operationId: deletePracticeidPatientsPatientidInsurancesInsuranceidImage
       tags:
         - Insurance Card Image
+  /v1/{practiceid}/patients/enhancedbestmatch:
+    get:
+      summary: Get list of patients - enhanced best matching search criteria
+      description: Retrieves a list of patients based on the search criteria defined by the specific demographics that were passed. It can return multiple patients and will rank each one based off of how sure it is that this patient is the one you are looking for.
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Patient's first name.
+          in: query
+          name: firstname
+          required: true
+          schema:
+            type: string
+        - description: If set, will show full SSN instead of a masked number.
+          in: query
+          name: showfullssn
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will show local patient id.
+          in: query
+          name: showlocalpatientid
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will return local patient id tied to the passed in DepartmentID.
+          in: query
+          name: limitlocalpatientid
+          required: false
+          schema:
+            type: boolean
+        - description: If set, validate that the session user has access to the patient record. May only be used in conjunction with INTERNALUSE and SESSIONUSER, and DEPARTMENTID. DEPARTMENTID is required because user access is department-specific. If the user does not have access to the patient record, returns a 403 error.
+          in: query
+          name: checkuseraccess
+          required: false
+          schema:
+            type: boolean
+        - description: Patient's last name.
+          in: query
+          name: lastname
+          required: true
+          schema:
+            type: string
+        - description: Include patient insurance information.
+          in: query
+          name: showinsurance
+          required: false
+          schema:
+            type: boolean
+        - description: Patient's preferred name (or nickname).
+          in: query
+          name: preferredname
+          required: false
+          schema:
+            type: string
+        - description: If set, will include portal enrollment status in response.
+          in: query
+          name: showportalstatus
+          required: false
+          schema:
+            type: boolean
+        - description: Guarantor's phone number.
+          in: query
+          name: guarantorphone
+          required: false
+          schema:
+            type: string
+        - description: Show detailed information on patient balances.
+          in: query
+          name: showbalancedetails
+          required: false
+          schema:
+            type: boolean
+        - description: Set to true to allow ability to find patients with record restrictions and blocked patients. This should only be used when there is no reflection to the patient at all that a match was found or not found.
+          in: query
+          name: ignorerestrictions
+          required: false
+          schema:
+            type: boolean
+        - description: Patient's email address.
+          in: query
+          name: email
+          required: false
+          schema:
+            type: string
+        - description: If you are only interested in matching a patient if they are above a specific confidence level, you can use this to require any patient matched to have a score greater than or equal to this value.
+          in: query
+          name: minscore
+          required: false
+          schema:
+            type: number
+        - description: Patient's social security number.
+          in: query
+          name: ssn
+          required: false
+          schema:
+            type: string
+        - description: Patient's name suffix.
+          in: query
+          name: suffix
+          required: false
+          schema:
+            type: string
+        - description: If this field is set to true, the top five patients with a score of 16 or above will be returned.
+          in: query
+          name: returnbestmatches
+          required: false
+          schema:
+            type: boolean
+        - description: This is the ID for the department of the patient you are retrieving.  If you are calling this on an enterprise practice with multiple financial groups (also called "provider groups"), this will ensure you are retrieving the correct patient and not a copy that is in a different department.
+          in: query
+          name: departmentid
+          required: false
+          schema:
+            type: integer
+        - description: The patient's home phone number.
+          in: query
+          name: homephone
+          required: false
+          schema:
+            type: string
+        - description: Include custom fields for the patient.
+          in: query
+          name: showcustomfields
+          required: false
+          schema:
+            type: boolean
+        - description: Guarantor's email address.
+          in: query
+          name: guarantoremail
+          required: false
+          schema:
+            type: string
+        - description: Include an array of all departments the patient is a part of along with all statuses for those departments.
+          in: query
+          name: showallpatientdepartmentstatus
+          required: false
+          schema:
+            type: boolean
+        - description: The patient's mobile phone number.
+          in: query
+          name: mobilephone
+          required: false
+          schema:
+            type: string
+        - description: If set, will show the previous patient ID this patient was merged from.
+          in: query
+          name: showpreviouspatientids
+          required: false
+          schema:
+            type: boolean
+        - description: Include information on claims where there is no outstanding patient balance. (Only to be used when showbalancedetails is selected.)
+          in: query
+          name: showallclaims
+          required: false
+          schema:
+            type: boolean
+        - description: Patient's DOB (mm/dd/yyyy).
+          in: query
+          name: dob
+          required: true
+          schema:
+            type: string
+        - description: Patient's zip.
+          in: query
+          name: zip
+          required: false
+          schema:
+            type: string
+        - description: If this field is set to true, search patients based on a soundex search. Soundex searching is disabled by default.
+          in: query
+          name: usesoundexsearch
+          required: false
+          schema:
+            type: boolean
+        - description: Use 2015 Ed. CEHRT compliant strings for describing gender identity and sexual orientation.
+          in: query
+          name: show2015edcehrtvalues
+          required: false
+          schema:
+            type: boolean
+        - description: The patient's work phone number. Generally not used to contact a patient.
+          in: query
+          name: workphone
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+          description: Success
+      operationId: getPracticeidPatientsEnhancedbestmatch
+      tags:
+        - Patient
+
 components:
   schemas:
     Patient:
@@ -12580,3 +12784,4 @@ components:
           type: integer
         patientInsurance:
           $ref: '#/components/schemas/PatientInsurance'
+

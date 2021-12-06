@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -17,20 +19,26 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Patient', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
+    <?= $this->render('_search', [
+        'searchModel' => $searchModel,
+    ]) ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        //'filterModel' => $searchModel,
         'options' => [
             'class' => 'table table-striped table-bordered bg-light'
         ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'id',
-            'externalId',
+            [
+                'label' => 'First Name',
+                'attribute' => 'firstname',
+            ],
             'departmentid',
             'dob',
             'email:email',
-            'firstname',
+            
             'lastname',
             'primarydepartmentid',
             'registrationdate',
@@ -58,3 +66,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 </div>
+
+<?php $this->registerJsFile(
+    '@web/js/Athena/patient-list.js',
+    ['depends' => [\yii\web\JqueryAsset::class]]
+); ?>
