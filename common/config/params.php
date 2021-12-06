@@ -11,5 +11,6 @@ return [
     'janus.rec_dir' => '/opt/janus/share/janus/recordings',
     'janus.audiocodec' => 'opus',
     'janus.videocodec' => 'h264',
+    'janus.eventHandler' => false,
     'bsVersion' => '5.x',
 ];
