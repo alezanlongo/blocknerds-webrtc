@@ -48,6 +48,9 @@ return [
             'port' => 8088,
             'adminPort' => 7088,
         ],
+        'janusEvents' => [
+            'class' => common\components\JanusEventLoggerComponent::class,
+        ],
         'athenaComponent' => [
             'class' => common\components\AthenaComponent::class,
         ],
