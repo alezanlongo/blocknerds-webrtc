@@ -5751,6 +5751,83 @@ paths:
       operationId: getPracticeidReferenceOrderDme
       tags:
         - Order - Durable Medical Equipment (DME)
+  /v1/{practiceid}/chart/encounter/{encounterid}/orders/vaccine:
+    post:
+      summary: Create new vaccine order
+      description: Create a new vaccine order record for a specific encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrderPrescription200Response'
+          description: Success
+      operationId: postPracticeidChartEncounterEncounteridOrdersVaccine
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateOrderVaccine'
+        required: true
+      tags:
+        - Order - Vaccine
+  /v1/{practiceid}/reference/order/vaccine:
+    get:
+      summary: Get list of orderable vaccines
+      description: Retrieves a list of orderable vaccines
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: false
+          schema:
+            type: string
+        - description: >-
+            The CVX code of the vaccine. Matching vaccines will be returned. A
+            list of CVX codes can be retrieved at
+            https://www2a.cdc.gov/vaccines/iis/iisstandards/vaccines.asp?rpt=vg
+          in: query
+          name: cvx
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderableVaccine'
+          description: Success
+      operationId: getPracticeidReferenceOrderVaccine
+      tags:
+        - Order - Vaccine
 components:
   schemas:
     Patient:
@@ -12902,6 +12979,97 @@ components:
         - diagnosissnomedcode
         - ordertypeid
     OrderableDme:
+      type: object
+      properties:
+        name:
+          description: The name of the order
+          type: string
+        ordertypeid:
+          description: The athena ID of the type of order
+          type: integer
+    RequestCreateOrderVaccine:
+      type: object
+      properties:
+        administernote:
+          description: >-
+            An additional note to the provider or staff for
+            administration.
+          type: string
+        declineddate:
+          description: >-
+            The date on which the patient declined the vaccine. Required
+            if the declined reason is passed in.
+          type: string
+        declinedreason:
+          description: >-
+            To get a list of decline reasons for this input, call "GET
+            /reference/order/vaccine/declinedreasons"
+          type: integer
+        diagnosissnomedcode:
+          description: The SNOMED code for diagnosis this order is for.
+          type: integer
+        dispenseaswritten:
+          description: >-
+            Whether the vaccine prescription should be marked as
+            dispense as written (i.e., no substitutions without
+            consulting the doctor).
+          type: boolean
+        facilityid:
+          description: >-
+            The athena id of the pharmacy you want to send the vaccine
+            prescription to. Defaults to the patient default pharmacy.
+            Get a localized list using /chart/configuration/facilities.
+          type: string
+        ndc:
+          description: The National Drug Code for the vaccine.
+          type: string
+        numrefillsallowed:
+          description: >-
+            The number of refills allowed for this vaccine prescription.
+            Defaults to 0.
+          type: integer
+        orderingmode:
+          default: ADMINISTER
+          description: >-
+            Selects whether you wish to prescribe, administer, or
+            decline this vaccine.
+          enum:
+            - ''
+            - PRESCRIBE
+            - ADMINISTER
+            - DECLINE
+          type: string
+        ordertypeid:
+          description: >-
+            The athena ID of the vaccine to order. Must be an orderable
+            vaccine. Get the IDs using /reference/order/vaccine
+          type: integer
+        performondate:
+          description: The date on which the Vaccine was administered.
+          type: string
+        pharmacynote:
+          description: A note to send to the pharmacy.
+          type: string
+        providernote:
+          description: An internal note for the provider or staff.
+          type: string
+        totalquantity:
+          description: The total amount of vaccine to be prescribed.
+          type: number
+        totalquantityunit:
+          description: >-
+            The unit of the total quantity, and required if that is
+            passed in. Get the list of available values from
+            /reference/order/vaccine/totalquantityunits. Most values are
+            not valid for each individual vaccine.
+          type: string
+        unstructuredsig:
+          description: The unstructured sig.
+          type: string
+      required:
+        - ordertypeid
+        - diagnosissnomedcode
+    OrderableVaccine:
       type: object
       properties:
         name:

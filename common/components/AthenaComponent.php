@@ -1524,6 +1524,26 @@ class AthenaComponent extends Component
 
     }
 
+    /**
+     * @return Order
+     */
+
+    public function createOrderVaccine($encounter, $orderVaccine)
+    {
+        $orderModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridOrdersVaccine(
+                $this->practiceid,
+                $encounter->externalId,
+                $orderVaccine->toArray()
+            );
+
+        return $this->retrieveOrder(
+            $encounter->externalId,
+            $orderModelApi->documentid
+        );
+
+    }
+
 
     public function createInsuranceImageCard($patientid, $insuranceid, $postInsuranceCard)
     {

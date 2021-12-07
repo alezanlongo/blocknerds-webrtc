@@ -13,12 +13,14 @@ use common\components\Athena\models\OrderableDme;
 use common\components\Athena\models\OrderableImaging;
 use common\components\Athena\models\OrderableLab;
 use common\components\Athena\models\OrderableMedication;
+use common\components\Athena\models\OrderableVaccine;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\RequestCreateDiagnosis;
 use common\components\Athena\models\RequestCreateOrderDme;
 use common\components\Athena\models\RequestCreateOrderImaging;
 use common\components\Athena\models\RequestCreateOrderLab;
 use common\components\Athena\models\RequestCreateOrderPrescription;
+use common\components\Athena\models\RequestCreateOrderVaccine;
 use common\components\Athena\models\TotalQuantityUnit;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -430,6 +432,32 @@ class EncounterController extends Controller
         ]);
     }
 
+    /**
+     * Create Order (Vaccine) model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionCreateOrderVaccine($id)
+    {
+        $model = new RequestCreateOrderVaccine;
+        $encounter = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post())) {
+            $model = $this->component->createOrderVaccine(
+                $encounter,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view-order-prescription', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('create-order-vaccine', [
+            'model' => $model,
+        ]);
+    }
+
 
     /**
      * Finds the Encounter model based on its primary key value.
@@ -629,6 +657,25 @@ class EncounterController extends Controller
         if (!is_null($q)) {
 
             $orderableDmes = OrderableDme::find()
+                ->select(['ordertypeid as id', 'name'])
+                ->andWhere(['LIKE', 'name', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($orderableDmes->all());
+        }
+
+        return $out;
+    }
+
+    public function actionOrderableVaccines($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+
+        if (!is_null($q)) {
+
+            $orderableDmes = OrderableVaccine::find()
                 ->select(['ordertypeid as id', 'name'])
                 ->andWhere(['LIKE', 'name', $q])
                 ->limit(10);
