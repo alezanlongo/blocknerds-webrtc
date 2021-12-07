@@ -5681,7 +5681,76 @@ paths:
       operationId: getPracticeidPatientsEnhancedbestmatch
       tags:
         - Patient
-
+  /v1/{practiceid}/chart/encounter/{encounterid}/orders/dme:
+    post:
+      summary: Create new DME order for given encounter
+      description: >-
+        Creates a record of a DME order for a given ordertype to be rendered by
+        a specific facility
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrderPrescription200Response'
+          description: Success
+      operationId: postPracticeidChartEncounterEncounteridOrdersDme
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateOrderDme'
+        required: true
+      tags:
+        - Order - Durable Medical Equipment (DME)
+  /v1/{practiceid}/reference/order/dme:
+    get:
+      summary: Get list of orderable DMEs
+      description: Retrieves a list of orderable DME
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderableDme'
+          description: Success
+      operationId: getPracticeidReferenceOrderDme
+      tags:
+        - Order - Durable Medical Equipment (DME)
 components:
   schemas:
     Patient:
@@ -12784,4 +12853,61 @@ components:
           type: integer
         patientInsurance:
           $ref: '#/components/schemas/PatientInsurance'
+    RequestCreateOrderDme:
+      type: object
+      properties:
+        diagnosissnomedcode:
+          description: The SNOMED code for diagnosis this order is for.
+          type: integer
+        dispenseaswritten:
+          description: >-
+            Whether the DME should be marked as dispense as written
+            (i.e., no substitutions without consulting the doctor).
+          type: boolean
+        facilityid:
+          description: >-
+            The athena id of the supplier you want to send the
+            prescription to. Defaults to the patient default supplier.
+            Get a localized list using /chart/configuration/facilities.
+          type: string
+        facilitynote:
+          description: A note to send to the supplying facility.
+          type: string
+        numrefillsallowed:
+          description: The number of refills allowed for this DME. Defaults to 0.
+          type: integer
+        orderingmode:
+          default: PRESCRIBE
+          description: Selects whether you wish to prescribe, or dispense this DME.
+          enum:
+            - ''
+            - PRESCRIBE
+            - DISPENSE
+          type: string
+        ordertypeid:
+          description: >-
+            The athena ID of the DME to order. Get the IDs using
+            /reference/order/dme
+          type: integer
+        providernote:
+          description: An internal note for the provider or staff.
+          type: string
+        totalquantity:
+          description: The total amount of units of the DME being prescribed.
+          type: number
+        unstructuredsig:
+          description: The unstructured sig.
+          type: string
+      required:
+        - diagnosissnomedcode
+        - ordertypeid
+    OrderableDme:
+      type: object
+      properties:
+        name:
+          description: The name of the order
+          type: string
+        ordertypeid:
+          description: The athena ID of the type of order
+          type: integer
 
