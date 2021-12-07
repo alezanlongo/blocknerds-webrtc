@@ -59,6 +59,17 @@ vendor/                  contains dependent 3rd-party packages
 environments/            contains environment-based overrides
 ```
 
+# Janus WebRTC Server: Admin/Monitor
+Meetecho functional example of how you can build an UI on top of the existing Admin/Monitor interface. 
+
+https://janus.conf.meetecho.com/admin.html
+
+This page will only work as it is if you enabled the API (which is disabled by default) and you're using the default values.
+```
+Admin API backend: http://localhost:7088/admin
+Admin API secret: janusoverlord
+```
+
 # Janus event handlers
 Follows this guide to enable event handlers and save them into the DB.
 
