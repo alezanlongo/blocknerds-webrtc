@@ -149,7 +149,7 @@ class SiteController extends Controller
         // $res = UserSetting::setValue(Yii::$app->getUser()->getId(), 'view_mode2', 'calendar', 'month');
         // $res = UserSetting::getSetting(Yii::$app->getUser()->getId(), 'test', 'calendar');
         $res = \strtotime('2021-08-27 11:00:00');
-        \var_dump($res,date('Y-m-d H:i:s','1630072316'));
+        \var_dump($res, date('Y-m-d H:i:s', '1630072316'));
         die;
         return $this->render('index');
     }
@@ -334,17 +334,8 @@ class SiteController extends Controller
         ]);
     }
 
-    public function actionTest($page = null)
-{
-    $this->layout = 'main3';
-    $page = match($page) {
-        'short' => 'test-short',
-        'medium' => 'test-medium',
-        'long' => 'test-long',
-        'about' => 'about',
-        default => 'test-site',
-    };
-
-    return $this->render($page);
-}
+    public function actionTest()
+    {
+        return $this->render('testing_p2pconnection', []);
+    }
 }
