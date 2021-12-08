@@ -14,11 +14,13 @@ use common\components\Athena\models\OrderableImaging;
 use common\components\Athena\models\OrderableLab;
 use common\components\Athena\models\OrderableMedication;
 use common\components\Athena\models\OrderableVaccine;
+use common\components\Athena\models\PatientInfoHandout;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\RequestCreateDiagnosis;
 use common\components\Athena\models\RequestCreateOrderDme;
 use common\components\Athena\models\RequestCreateOrderImaging;
 use common\components\Athena\models\RequestCreateOrderLab;
+use common\components\Athena\models\RequestCreateOrderPatientInfo;
 use common\components\Athena\models\RequestCreateOrderPrescription;
 use common\components\Athena\models\RequestCreateOrderVaccine;
 use common\components\Athena\models\TotalQuantityUnit;
@@ -459,6 +461,32 @@ class EncounterController extends Controller
         ]);
     }
 
+    /**
+     * Create Order (Patient Info) model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionCreateOrderPatientInfo($id)
+    {
+        $model = new RequestCreateOrderPatientInfo;
+        $encounter = $this->findModel($id);
+        if ($model->load(Yii::$app->request->post())) {
+
+            $model = $this->component->createOrderPatientInfo(
+                $encounter,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view-order-prescription', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('create-order-patient-info', [
+            'model' => $model,
+        ]);
+    }
+
 
     /**
      * Finds the Encounter model based on its primary key value.
@@ -701,6 +729,25 @@ class EncounterController extends Controller
                 ->limit(10);
 
             $out['results'] = array_values($orderableDmes->all());
+        }
+
+        return $out;
+    }
+
+    public function actionPatientInfoHandouts($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+
+        if (!is_null($q)) {
+
+            $handouts = PatientInfoHandout::find()
+                ->select(['ordertypeid as id', 'name'])
+                ->andWhere(['LIKE', 'name', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($handouts->all());
         }
 
         return $out;

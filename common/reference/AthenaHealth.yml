@@ -5871,6 +5871,76 @@ paths:
       operationId: getPracticeidReferenceOrderVaccineDeclinedreasons
       tags:
         - Order - Vaccine
+  /v1/{practiceid}/chart/encounter/{encounterid}/orders/patientinfo:
+    post:
+      summary: Create new patient-info order for given encounter
+      description: Adds a new patient info order for a given encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrderPrescription200Response'
+          description: Success
+      operationId: postPracticeidChartEncounterEncounteridOrdersPatientinfo
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateOrderPatientInfo'
+        required: true
+      tags:
+        - Order - Patient Info Order
+  /v1/{practiceid}/reference/order/patientinfo:
+    get:
+      summary: Get list of patient information handouts
+      description: >-
+        Retrieves a list of patient info or care information configured in the
+        system
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientInfoHandout'
+          description: Success
+      operationId: getPracticeidReferenceOrderPatientinfo
+      tags:
+        - Order - Patient Info Order
 components:
   schemas:
     Patient:
@@ -13142,4 +13212,33 @@ components:
         declinedreasonid:
           description: The declined reason ID.
           type: string
+    RequestCreateOrderPatientInfo:
+      type: object
+      properties:
+        diagnosissnomedcode:
+          description: The SNOMED code for diagnosis this order is for.
+          type: integer
+        externalnote:
+          description: An external note for the patient.
+          type: string
+        ordertypeid:
+          description: >-
+            The athena ID of the patient information to order. Get the
+            IDs using /reference/order/patientinfo.
+          type: integer
+        providernote:
+          description: An internal note for the provider or staff.
+          type: string
+      required:
+        - diagnosissnomedcode
+        - ordertypeid
+    PatientInfoHandout:
+      type: object
+      properties:
+        name:
+          description: The name of the order
+          type: string
+        ordertypeid:
+          description: The athena ID of the type of order
+          type: integer
 
