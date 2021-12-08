@@ -16,6 +16,8 @@ use frontend\widgets\imageSlider\ImageSlider;
 /** @var \yii\web\View $this */
 JanusAsset::register($this);
 //$this->registerAssetBundle(PahoMqttAsset::class);
+
+$this->registerJsFile("/js/mediaSelector.js");
 $this->registerAssetBundle(MqttAsset::class);
 $this->registerAssetBundle(RoomAsset::class);
 
