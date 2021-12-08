@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////
 let janus = null;
 let pluginHandler = null;
+var audioID = null, videoID = null;
 const opaqueId = "videoroomtest-" + Janus.randomString(12);
 const server = "wss://" + window.location.hostname + ":8989/ws";
 
@@ -1174,3 +1175,66 @@ const getIndexByMemberId = (id) => {
   });
   return index;
 };
+// Media source changer
+const subm = (f) => {
+  let a = f.querySelector("[name='audioSelect']")
+  let v = f.querySelector("[name='videoSelect']")
+  a.options[a.selectedIndex]
+  v.options[v.selectedIndex]
+  var body = {
+    audio: true,
+    video: true
+  };
+  if (AUDIO_CODEC)
+    body["audiocodec"] = AUDIO_CODEC;
+  if (VIDEO_CODEC)
+    body["videocodec"] = VIDEO_CODEC;
+  let replaceAudio = audioID != a.options[a.selectedIndex].value;
+  let replaceVideo = videoID != v.options[v.selectedIndex].value;
+  audioID = a.options[a.selectedIndex].value;
+  videoID = v.options[v.selectedIndex].value;
+  pluginHandler.createOffer({
+    media: {
+      audio: {
+        deviceId: {
+          exact: audioID
+        }
+      },
+      replaceAudio: replaceAudio,
+      video: {
+        deviceId: {
+          exact: videoID
+        }
+      },
+      replaceVideo: replaceVideo,
+      data: true
+    },
+    simulcast: DO_SIMULCAST,
+    simulcast2: DO_SIMULCAST2,
+    success: function (jsep) {
+      Janus.debug("Got SDP!", jsep);
+      pluginHandler.send({
+        message: body,
+        jsep: jsep
+      });
+    },
+    error: function (error) {
+      Janus.error("WebRTC error:", error);
+      bootbox.alert("WebRTC error... " + error.message);
+    }
+  });
+}
+//Set audio/video choices
+let fnAudioVideo = function () {
+  let cb = function (m) {
+    if (typeof m["audio"] == "object") {
+      audioID = m['audio'][0].deviceId
+    }
+    if (typeof m["video"] == "object") {
+      videoID = m['video'][0].deviceId
+    }
+  }
+  mediaSelector.getAllDevices(document.getElementsByName("audioSelect"), document.getElementsByName("videoSelect"), cb)
+}
+document.addEventListener('DOMContentLoaded', fnAudioVideo, false);
+

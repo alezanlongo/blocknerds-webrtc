@@ -98,6 +98,7 @@ return [
                 'POST chat/request-subscribe' => 'chat/request-to-subscribe-channel',
                 'POST chat-test/message-listener' => 'chat-test/message-listener',
                 'POST photo/add' => 'photo/add',
+                'POST janus/event' => 'janus-event/create',
             ],
         ],
     ],

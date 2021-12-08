@@ -58,3 +58,55 @@ frontend
 vendor/                  contains dependent 3rd-party packages
 environments/            contains environment-based overrides
 ```
+
+# Janus WebRTC Server: Admin/Monitor
+Meetecho functional example of how you can build an UI on top of the existing Admin/Monitor interface. 
+
+https://janus.conf.meetecho.com/admin.html
+
+This page will only work as it is if you enabled the API (which is disabled by default) and you're using the default values.
+```
+Admin API backend: http://localhost:7088/admin
+Admin API secret: janusoverlord
+```
+
+# Janus event handlers
+Follows this guide to enable event handlers and save them into the DB.
+
+1. Inside *janus.eventhandler.sampleevh.jcfg* set the bellow params as follows:
+```
+enabled = true 
+backend = "https://instance-url/janus/event"
+```
+
+2. Copy *janus.eventhandler.sampleevh.jcfg* in Janus instance inside the next folder:
+```
+/opt/janus/etc/janus/
+```
+
+3. If your backend is secure, copy the crt file in Janus instance inside the next folder:
+```
+/usr/share/ca-certificates
+```
+
+4. Log into the Janus instance and run the following command:
+```
+dpkg-reconfigure ca-certificates
+```
+
+This will ask you a couple of questions
+```
+Trust new certificates from certificate authorities? 
+```
+Select 1 (yes) to the above question.
+
+Next question...
+```
+This package installs common CA (Certificate Authority) certificates in /usr/share/ca-certificates. . Please select the certificate authorities you trust so
+that their certificates are installed into /etc/ssl/certs. They will be compiled into a single /etc/ssl/certs/ca-certificates.crt file.
+```
+In my case the right answer was 1, but depending the name of your certificate it can differ.
+
+5. The final step is enable the backend to start saving into the DB the http post request sent by the Janus instance. Inside the file *common/config/params.php* (or *common/config/params-local.php*) set the param *janus.eventHandler to true*.
+
+That's it, for more information about event handlers please visit https://www.meetecho.com/blog/event-handlers-a-practical-example/
