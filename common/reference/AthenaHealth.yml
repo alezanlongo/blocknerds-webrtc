@@ -5828,6 +5828,49 @@ paths:
       operationId: getPracticeidReferenceOrderVaccine
       tags:
         - Order - Vaccine
+  /v1/{practiceid}/reference/order/vaccine/declinedreasons:
+    get:
+      summary: Get list of vaccine decline reasons
+      description: Retrieves a list of configured vaccine declined reasons
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Include deactivated declined reasons
+          in: query
+          name: showinactive
+          required: false
+          schema:
+            type: boolean
+        - description: >-
+            Number of entries to return (default 1000, max 1000)Please note that
+            this endpoint has a different default and max than normal.
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VaccineDeclinedReason'
+          description: Success
+      operationId: getPracticeidReferenceOrderVaccineDeclinedreasons
+      tags:
+        - Order - Vaccine
 components:
   schemas:
     Patient:
@@ -13078,4 +13121,25 @@ components:
         ordertypeid:
           description: The athena ID of the type of order
           type: integer
+    VaccineDeclinedReason:
+      type: object
+      properties:
+        active:
+          description: >-
+            Indicates whether the declined reason is currently active
+            and may be used for creating new orders
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        declinedreason:
+          description: >-
+            The reason that the patient declined the vaccine. Required
+            if the declined date is passed in. Defaults to "Patient
+            decision".
+          type: string
+        declinedreasonid:
+          description: The declined reason ID.
+          type: string
 

@@ -22,6 +22,7 @@ use common\components\Athena\models\RequestCreateOrderLab;
 use common\components\Athena\models\RequestCreateOrderPrescription;
 use common\components\Athena\models\RequestCreateOrderVaccine;
 use common\components\Athena\models\TotalQuantityUnit;
+use common\components\Athena\models\VaccineDeclinedReason;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -442,8 +443,8 @@ class EncounterController extends Controller
     {
         $model = new RequestCreateOrderVaccine;
         $encounter = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post())) {
+
             $model = $this->component->createOrderVaccine(
                 $encounter,
                 $model
@@ -678,6 +679,25 @@ class EncounterController extends Controller
             $orderableDmes = OrderableVaccine::find()
                 ->select(['ordertypeid as id', 'name'])
                 ->andWhere(['LIKE', 'name', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($orderableDmes->all());
+        }
+
+        return $out;
+    }
+
+    public function actionVaccineDeclinedReasons($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['id' => 0, 'declinedreason' => '']];
+
+        if (!is_null($q)) {
+
+            $orderableDmes = VaccineDeclinedReason::find()
+                ->select(['declinedreasonid as id', 'declinedreason'])
+                ->andWhere(['LIKE', 'declinedreason', $q])
                 ->limit(10);
 
             $out['results'] = array_values($orderableDmes->all());
