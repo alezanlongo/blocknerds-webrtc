@@ -20,6 +20,15 @@ use common\widgets\chat\ChatBoxRoomWidget;
     <div class="tab-content position-relative" id="pills-tabContent">
         <div class="tab-pane fade option-content" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
             <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
+            <div>
+                <form onsubmit="return false">
+                    <select name="audioSelect">
+                    </select>
+                    <select name="videoSelect">
+                    </select>
+                    <button type="submit" class="btn btn-primary" onclick="subm(this.form)">Submit</button>
+                </form>
+            </div>
         </div>
         <div class="tab-pane fade option-content show active" id="pills-attendees" role="tabpanel" aria-labelledby="pills-attendees-tab">
             <?= Html::tag('h3', 'Participants', ['class' => 'text-center']) ?>
