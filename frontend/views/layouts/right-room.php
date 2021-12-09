@@ -21,12 +21,18 @@ use common\widgets\chat\ChatBoxRoomWidget;
         <div class="tab-pane fade option-content" id="pills-settings" role="tabpanel" aria-labelledby="pills-settings-tab">
             <?= Html::tag('h3', 'Settings section', ['class' => 'text-center']) ?>
             <div>
-                <form onsubmit="return false">
-                    <select name="audioSelect">
-                    </select>
-                    <select name="videoSelect">
-                    </select>
-                    <button type="submit" class="btn btn-primary" onclick="subm(this.form)">Submit</button>
+                <form onsubmit="return false" class="p-3">
+                    <div class="form-group">
+                        <select name="audioSelect" class="form-select">
+                        </select>
+                    </div>
+                    <div class="form-group mt-3">
+                        <select name="videoSelect" class="form-select">
+                        </select>
+                    </div>
+                    <div class="form-group text-center mt-3">
+                        <button type="submit" class="btn btn-primary w-100" onclick="subm(this.form)">Save</button>
+                    </div>
                 </form>
             </div>
         </div>
