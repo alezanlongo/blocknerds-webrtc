@@ -125,7 +125,7 @@ async function start() {
 
   gatherButton.disabled = true;
   if (getUserMediaInput.checked) {
-    stream = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
   }
   getUserMediaInput.disabled = true;
 
@@ -150,7 +150,7 @@ async function start() {
     iceCandidatePoolSize: iceCandidatePoolInput.value
   };
 
-  const offerOptions = {offerToReceiveAudio: 1};
+  const offerOptions = { offerToReceiveAudio: 1 };
   // Whether we gather IPv6 candidates.
   // Whether we only gather a single set of candidates for RTP and RTCP.
 
@@ -164,10 +164,10 @@ async function start() {
     stream.getTracks().forEach(track => pc.addTrack(track, stream));
   }
   pc.createOffer(
-      offerOptions
+    offerOptions
   ).then(
-      gotDescription,
-      noDescription
+    gotDescription,
+    noDescription
   );
 }
 
@@ -212,7 +212,7 @@ function getFinalResult() {
     const server = JSON.parse(servers[0].value);
 
     // get the candidates types (host, srflx, relay)
-    const types = candidates.map(function(cand) {
+    const types = candidates.map(function (cand) {
       return cand.type;
     });
 
@@ -240,9 +240,39 @@ function getFinalResult() {
   }
   return result;
 }
+const buildObject = (evt) =>{
+  return {
+    ...evt,
+    candidate: evt.candidate?.toJSON(),
+    bubbles: evt.bubbles,
+    cancelBubble: evt.cancelBubble,
+    cancelable: evt.cancelable,
+    composed: evt.composed,
+    defaultPrevented: evt.defaultPrevented,
+    eventPhase: evt.eventPhase,
+    path: evt.path,
+    returnValue: evt.returnValue,
+    timeStamp: evt.timeStamp,
+    type: evt.type,
+  }
+}
+
+const sendRequest = (data) => {
+  $.post({
+    url: '/ice/event',
+    data,
+    success: (data)=>{
+      console.log(data)
+    },
+    error: (err) => {
+      return;
+    },
+  });
+}
 
 function iceCallback(event) {
-  console.log('event', event)
+  console.log('event', event, buildObject(event))
+  sendRequest(buildObject(event))
   const elapsed = ((window.performance.now() - begin) / 1000).toFixed(3);
   const row = document.createElement('tr');
   appendCell(row, elapsed);
@@ -250,7 +280,7 @@ function iceCallback(event) {
     if (event.candidate.candidate === '') {
       return;
     }
-    const {candidate} = event;
+    const { candidate } = event;
     appendCell(row, candidate.component);
     appendCell(row, candidate.type);
     appendCell(row, candidate.foundation);
@@ -312,11 +342,11 @@ readServersFromLocalStorage();
 
 // check if we have getUserMedia permissions.
 navigator.mediaDevices
-    .enumerateDevices()
-    .then(function(devices) {
-      devices.forEach(function(device) {
-        if (device.label !== '') {
-          document.getElementById('getUserMediaPermissions').style.display = 'block';
-        }
-      });
+  .enumerateDevices()
+  .then(function (devices) {
+    devices.forEach(function (device) {
+      if (device.label !== '') {
+        document.getElementById('getUserMediaPermissions').style.display = 'block';
+      }
     });
+  });

@@ -6,7 +6,7 @@ use Yii;
 use yii\web\Response;
 use yii\helpers\VarDumper;
 
-class iceEventController extends \yii\web\Controller
+class IceEventController extends \yii\web\Controller
 {
     /**
      * @inheritdoc
