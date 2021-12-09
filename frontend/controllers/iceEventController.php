@@ -2,12 +2,18 @@
 
 namespace frontend\controllers;
 
+use common\models\IceEventLog;
+use Exception;
 use Yii;
 use yii\web\Response;
 use yii\helpers\VarDumper;
+use yii\web\UnprocessableEntityHttpException;
 
 class IceEventController extends \yii\web\Controller
 {
+
+    private const RESPONSE_OK = "OK";
+    private const RESPONSE_KO = "KO";
     /**
      * @inheritdoc
      */
@@ -28,10 +34,15 @@ class IceEventController extends \yii\web\Controller
     {
         $this->response->format = Response::FORMAT_JSON;
 
-        $c = $this->request->post();
+        try {
+            $dataLog = $this->request->post();
+            $iceEvent = new IceEventLog();
+            $iceEvent->log = $dataLog;
+            $iceEvent->save();
 
-        VarDumper::dump($c);
-
-        return $c;
+            return ['status' => 200] + $dataLog;
+        } catch (Exception $e) {
+            throw new UnprocessableEntityHttpException($e->getMessage());
+        }
     }
 }

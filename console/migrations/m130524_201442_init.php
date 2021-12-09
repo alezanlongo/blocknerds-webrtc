@@ -280,6 +280,24 @@ class m130524_201442_init extends Migration
             'id',
             'CASCADE'
         );
+
+         // ice_event_log
+         $this->createTable('{{%ice_event_log}}', [
+            'id' => $this->primaryKey(),
+            'log' => $this->json()->notNull(),
+            'profile_id' => $this->integer()->notNull(),
+            'created_at' => $this->integer()->notNull(),
+            'updated_at' => $this->integer()->notNull(),
+        ]);
+        $this->createIndex('{{%idx-ice_event_log-profile_id}}','{{%ice_event_log}}','profile_id');
+        $this->addForeignKey(
+            '{{%fk-ice_event_log-profile_id}}',
+            '{{%ice_event_log}}',
+            'profile_id',
+            '{{%user_profile}}',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()
