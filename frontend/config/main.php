@@ -99,6 +99,7 @@ return [
                 'POST chat-test/message-listener' => 'chat-test/message-listener',
                 'POST photo/add' => 'photo/add',
                 'POST janus/event' => 'janus-event/create',
+                'POST ice/event' => 'ice-event/create',
             ],
         ],
     ],
