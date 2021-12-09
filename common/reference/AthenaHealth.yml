@@ -6009,6 +6009,74 @@ paths:
       operationId: getPracticeidReferenceOrderReferral
       tags:
         - Order - Referral
+  /v1/{practiceid}/chart/encounter/{encounterid}/orders/other:
+    post:
+      summary: Create new (other) order (non-standard order)
+      description: Creates a new nonstandard order record for a specific encounter
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrderPrescription200Response'
+          description: Success
+      operationId: postPracticeidChartEncounterEncounteridOrdersOther
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateOrderOther'
+        required: true
+      tags:
+        - Order - Other Order
+  /v1/{practiceid}/reference/order/other:
+    get:
+      summary: Get list of other order types
+      description: Retrieves a list of nonstandard  orders  configured in the system
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OtherOrderType'
+          description: Success
+      operationId: getPracticeidReferenceOrderOther
+      tags:
+        - Order - Other Order
 components:
   schemas:
     Patient:
@@ -13371,4 +13439,40 @@ components:
         ordertypeid:
           description: The athena ID of the type of order
           type: integer
-
+    RequestCreateOrderOther:
+      type: object
+      properties:
+        diagnosissnomedcode:
+          description: The SNOMED code for diagnosis this order is for.
+          type: integer
+        facilityid:
+          description: >-
+            The athena ID of the facility you want to send the order to.
+            Get a localized list using /chart/configuration/facilities.
+          type: integer
+        facilitynote:
+          description: A note to send to the facility.
+          type: string
+        highpriority:
+          description: If true, then the order should be sent STAT.
+          type: boolean
+        ordertypeid:
+          description: >-
+            The athena ID of the type of order. Get the IDs using
+            /reference/order/other.
+          type: integer
+        providernote:
+          description: An internal note for the provider or staff.
+          type: string
+      required:
+        - diagnosissnomedcode
+        - ordertypeid
+    OtherOrderType:
+      type: object
+      properties:
+        name:
+          description: The name of the order
+          type: string
+        ordertypeid:
+          description: The athena ID of the type of order
+          type: integer

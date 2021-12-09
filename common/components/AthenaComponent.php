@@ -1606,6 +1606,26 @@ class AthenaComponent extends Component
 
     }
 
+    /**
+     * @return Order
+     */
+
+    public function createOrderOther($encounter, $orderOther)
+    {
+        $orderModelApi =
+            $this->client->postPracticeidChartEncounterEncounteridOrdersOther(
+                $this->practiceid,
+                $encounter->externalId,
+                $orderOther->toArray()
+            );
+
+        return $this->retrieveOrder(
+            $encounter->externalId,
+            $orderModelApi->documentid
+        );
+
+    }
+
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
     {

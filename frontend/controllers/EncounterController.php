@@ -14,6 +14,7 @@ use common\components\Athena\models\OrderableImaging;
 use common\components\Athena\models\OrderableLab;
 use common\components\Athena\models\OrderableMedication;
 use common\components\Athena\models\OrderableVaccine;
+use common\components\Athena\models\OtherOrderType;
 use common\components\Athena\models\PatientInfoHandout;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\ReferralOrderType;
@@ -21,6 +22,7 @@ use common\components\Athena\models\RequestCreateDiagnosis;
 use common\components\Athena\models\RequestCreateOrderDme;
 use common\components\Athena\models\RequestCreateOrderImaging;
 use common\components\Athena\models\RequestCreateOrderLab;
+use common\components\Athena\models\RequestCreateOrderOther;
 use common\components\Athena\models\RequestCreateOrderPatientInfo;
 use common\components\Athena\models\RequestCreateOrderPrescription;
 use common\components\Athena\models\RequestCreateOrderReferral;
@@ -515,6 +517,32 @@ class EncounterController extends Controller
         ]);
     }
 
+    /**
+     * Create Order (Other) model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionCreateOrderOther($id)
+    {
+        $model = new RequestCreateOrderOther;
+        $encounter = $this->findModel($id);
+        if ($model->load(Yii::$app->request->post())) {
+
+            $model = $this->component->createOrderOther(
+                $encounter,
+                $model
+            );
+            if($model->save()){
+                return $this->redirect(['view-order-prescription', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('create-order-other', [
+            'model' => $model,
+        ]);
+    }
+
 
     /**
      * Finds the Encounter model based on its primary key value.
@@ -790,6 +818,25 @@ class EncounterController extends Controller
         if (!is_null($q)) {
 
             $handouts = ReferralOrderType::find()
+                ->select(['ordertypeid as id', 'name'])
+                ->andWhere(['LIKE', 'name', $q])
+                ->limit(10);
+
+            $out['results'] = array_values($handouts->all());
+        }
+
+        return $out;
+    }
+
+    public function actionOtherOrderTypes($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+
+        if (!is_null($q)) {
+
+            $handouts = OtherOrderType::find()
                 ->select(['ordertypeid as id', 'name'])
                 ->andWhere(['LIKE', 'name', $q])
                 ->limit(10);
