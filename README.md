@@ -110,3 +110,73 @@ In my case the right answer was 1, but depending the name of your certificate it
 5. The final step is enable the backend to start saving into the DB the http post request sent by the Janus instance. Inside the file *common/config/params.php* (or *common/config/params-local.php*) set the param *janus.eventHandler to true*.
 
 That's it, for more information about event handlers please visit https://www.meetecho.com/blog/event-handlers-a-practical-example/
+
+# Janus room recorder
+Follows this guide to enable video room recording.
+
+To enable the video room recording open the file *common/config/params.php* (or *common/config/params-local.php*) and set the following params as follows:
+```
+'janus.record' => true,
+'janus.rec_dir' => '/opt/janus/share/janus/recordings',
+'janus.audiocodec' => 'opus',
+'janus.videocodec' => 'h264',
+```
+
+Please notice that you can change the folder where the files are store and the codec for video & audio.
+
+For more information about video room recording please visit https://janus.conf.meetecho.com/docs/videoroom.html
+
+The following script is an example of how to join audio and video files (.mjr) from a recorded session.
+```
+#!/bin/bash
+
+# converter.sh
+
+# Contains the prefix of the recording session of janus e.g
+session_prefix="$1"
+s=${session_prefix##*/}
+output_file="${s%.*}"
+
+# Create directory inside user home 
+mkdir -p $HOME/recordings
+
+echo "Converting mjr files to individual tracks ..."
+janus-pp-rec $session_prefix-video.mjr $HOME/recordings/$output_file.mp4
+janus-pp-rec $session_prefix-audio.mjr $HOME/recordings/$output_file.opus
+
+echo "Done !"
+```
+
+Create the script inside the janus instance and please remember give the file the right permissions
+```
+RUN chmod +x converter.sh
+```
+
+Then run the script as follow
+```
+./converter.sh /opt/janus/share/janus/recordings/videoroom-2c52686a-35a3-45d0-b5f0-e32b384c6f5a-user-2c21a838-b13d-4a6d-8286-534bc68d3490-1633634862638573
+```
+
+Filename prefix explanation
+```
+/[path-to-janus-recording-files]/videoroom-[room-uuid]-user-[user-uuid]-[timestamp]
+```
+
+The joined files are now in the following path
+```
+$HOME/recordings
+```
+
+If you are using docker, you can use the following command in your localhost in order to move files from container to your local machine
+
+Copying raw files to localhost
+```
+docker cp [CONTAINER-ID]:/opt/janus/share/janus/recordings/ ~/Downloads/
+```
+
+Copying joined files to localhost
+```
+docker cp [CONTAINER-ID]:/root/recordings ~/Downloads/
+```
+
+More information about how to join audio & video file can be found in the following link https://ourcodeworld.com/articles/read/1198/how-to-join-the-audio-and-video-mjr-from-a-recorded-session-of-janus-gateway-in-ubuntu-18-04
