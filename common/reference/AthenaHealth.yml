@@ -5941,6 +5941,74 @@ paths:
       operationId: getPracticeidReferenceOrderPatientinfo
       tags:
         - Order - Patient Info Order
+  /v1/{practiceid}/chart/encounter/{encounterid}/orders/referral:
+    post:
+      summary: Create new referral request
+      description: Creates a new referral request record
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: encounterid
+          in: path
+          name: encounterid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostOrderPrescription200Response'
+          description: Success
+      operationId: postPracticeidChartEncounterEncounteridOrdersReferral
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestCreateOrderReferral'
+        required: true
+      tags:
+        - Order - Referral
+  /v1/{practiceid}/reference/order/referral:
+    get:
+      summary: Get list of referral order-types
+      description: Retrieves a list of referrals types configured in the system
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: A term to search for. Must be at least 2 characters
+          in: query
+          name: searchvalue
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReferralOrderType'
+          description: Success
+      operationId: getPracticeidReferenceOrderReferral
+      tags:
+        - Order - Referral
 components:
   schemas:
     Patient:
@@ -13233,6 +13301,68 @@ components:
         - diagnosissnomedcode
         - ordertypeid
     PatientInfoHandout:
+      type: object
+      properties:
+        name:
+          description: The name of the order
+          type: string
+        ordertypeid:
+          description: The athena ID of the type of order
+          type: integer
+    RequestCreateOrderReferral:
+      type: object
+      properties:
+        diagnosissnomedcode:
+          description: The SNOMED code for diagnosis this order is for.
+          type: integer
+        facilityid:
+          description: >-
+            The athena ID of the facility you want to send the order to.
+            Get a localized list using /chart/configuration/facilities.
+          type: integer
+        facilitynote:
+          description: A note to send to the facility.
+          type: string
+        futuresubmitdate:
+          description: The date the order should be sent. Defaults to today.
+          type: string
+        highpriority:
+          description: If true, then the order should be sent STAT.
+          type: boolean
+        notetopatient:
+          description: >-
+            If this referral has a field for 'Notes to Patient' you may
+            fill it in with this parameter.  If the referral does not
+            have this field available, this will error.
+          type: string
+        ordertypeid:
+          description: The athena ID of the referral type.
+          type: integer
+        procedurecode:
+          description: >-
+            If this referral has a field for 'Procedure Code' you may
+            fill it in with this parameter.  If the referral does not
+            have this field available, this will error.
+          type: string
+        providernote:
+          description: An internal note for the provider or staff.
+          type: string
+        reasonforreferral:
+          description: >-
+            If this referral has a field for 'Reason for Referral' you
+            may fill it in with this parameter.  If the referral does
+            not have this field available, this will error.
+          type: string
+        startdate:
+          description: >-
+            If this referral has a field for 'Start Date' you may fill
+            it in with this parameter.  If the referral does not have
+            this field available, this will error.
+          type: string
+      required:
+        - diagnosissnomedcode
+        - ordertypeid
+    ReferralOrderType:
       type: object
       properties:
         name:

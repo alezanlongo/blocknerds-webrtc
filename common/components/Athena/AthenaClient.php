@@ -2445,4 +2445,43 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param encounterid
+     * @return PostOrderPrescription200Response
+     */
+    public function postPracticeidChartEncounterEncounteridOrdersReferral($practiceid, $encounterid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/referral';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{encounterid}', $encounterid, $path);
+
+        $dataResponse = $this->callMethod($path, 'post' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PostOrderPrescription200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return ReferralOrderType
+     */
+    public function getPracticeidReferenceOrderReferral($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/reference/order/referral';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['referral'])) ? $dataResponse['data']['referral'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\ReferralOrderTypeApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }
