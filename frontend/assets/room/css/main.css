@@ -152,3 +152,9 @@
     position: absolute;
     width: 100%;
 }
+
+#spinner {
+  color: green;
+  /* width: 3rem;
+  height: 3rem; */
+}

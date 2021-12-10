@@ -14,6 +14,7 @@ const REQUEST_JOIN = "join";
 const REQUEST_START = "start";
 const REQUEST_MODERATE = "moderate";
 const REQUEST_UNPUBLISH = "unpublish";
+const REQUEST_LEAVE = "leave"
 
 const PUBLISH_TYPE_PUBLISHER = "publisher";
 const PUBLISH_TYPE_SUBSCRIBER = "subscriber";
@@ -45,15 +46,22 @@ let myStream = null;
 let feeds = [];
 let bitrateTimer = [];
 
-let roomSelected = 0
+const defaultUuid = window.location.pathname.split('room/')[1]
+let roomSelected = ""
+let dataRoom = null;
+let isToSwitch = false;
 
 ////////////////////////////////////////////////////////////
 ///////////   ON READY
 ////////////////////////////////////////////////////////////
+let roomsIn = []
+
 $(document).ready(function () {
-  if(!dataRoom.isDoctor){
-    handleCountdown(endTime);
-  }
+  roomSelected = $(`#select-other-room`).find(":selected").val();
+  if (!roomSelected) roomSelected = defaultUuid
+  dataRoom = dataRooms.find(r => r.uuid === roomSelected)
+  roomsIn = [roomSelected];
+  handleCountdown(endTime);
 
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
@@ -68,6 +76,32 @@ $(document).ready(function () {
     initJanus();
   }
 });
+
+$(`#select-other-room`).on('change', (e) => {
+  console.log('changed from', dataRoom)
+  isToSwitch = true;
+  roomSelected = $(e.currentTarget).find(":selected").val();
+  leavingRoom()
+  dataRoom = dataRooms.find(r => r.uuid === roomSelected)
+  if (!dataRoom) return;
+  console.log('changed to', dataRoom)
+  const spinnerComponent = $(`#spinner`)
+  cleanUI()
+  spinnerComponent.removeClass('d-none')
+  setTimeout(() => {
+    spinnerComponent.addClass('d-none')
+    initJanus()
+  }, 2000);
+})
+const cleanUI = () => {
+  resetTabOnSidebar();
+  Array.from($('#containerBoxes').children()).forEach(boxComp => {
+    if (!$(boxComp).hasClass('d-none')) {
+      $(boxComp).addClass('d-none')
+    }
+  })
+
+}
 
 $(".btn-leave").on("click", () => {
   unpublishOwnFeed();
@@ -93,7 +127,11 @@ const initJanus = () => {
             opaqueId,
             success: (pluginHandle) => {
               pluginHandler = pluginHandle;
-              joinMe();
+              try {
+                joinMe();
+              } catch (error) {
+                joinMe(true);
+              }
             },
             error: (error) => {
               Janus.error("  -- Error attaching plugin...", error);
@@ -209,15 +247,17 @@ const initJanus = () => {
               console.log(stream, "stream");
             },
             oncleanup: () => {
-              Janus.log(
-                " ::: Got a cleanup notification: we are unpublished now :::"
-              );
+              if (!isToSwitch) {
+                Janus.log(
+                  " ::: Got a cleanup notification: we are unpublished now :::"
+                );
+                resetTabOnSidebar();
+                $(".header-nav").hide();
+                $(".boxes").hide();
+                $(".join-again").removeClass("d-none").show();
+              }
               myStream = null;
-              resetTabOnSidebar();
-              $(".header-nav").hide();
-              $(".boxes").hide();
-              $(".join-again").removeClass("d-none").show();
-
+              isToSwitch = false
             },
           });
         },
@@ -361,10 +401,12 @@ const handlingEvent = (objMessage) => {
     }
     if (remoteFeed !== null) {
       $("#remote" + remoteFeed.rfindex).hide();
+
       $(".profile_id_" + remoteFeed.rfuser.idFeed).attr('style', 'color: transparent');;
       $(".profile_id_" + remoteFeed.rfuser.idFeed + " div.member-controls").addClass('d-none');
       $("#videoremote" + remoteFeed.rfindex).empty();
       $(".box" + remoteFeed.rfindex).hide();
+
       feeds[remoteFeed.rfindex] = null;
 
       remoteFeed.detach();
@@ -400,9 +442,9 @@ const handlingEvent = (objMessage) => {
 
   }
 };
-const joinMe = () => {
+const joinMe = (isConfigure = false) => {
   const register = {
-    request: REQUEST_JOIN,
+    request: isConfigure ? 'configure' : REQUEST_JOIN,
     room: dataRoom.uuid,
     id: dataRoom.token,
     ptype: PUBLISH_TYPE_PUBLISHER,
@@ -746,6 +788,11 @@ function newRemoteFeed(id, display, audio, video) {
   });
 }
 
+function leavingRoom() {
+  const leave = { request: REQUEST_LEAVE };
+  pluginHandler.send({ message: leave });
+}
+
 function unpublishOwnFeed() {
   const unpublish = { request: REQUEST_UNPUBLISH };
   pluginHandler.send({ message: unpublish });
@@ -821,7 +868,7 @@ $(document).on("click", "#btnDeny", function (e) {
 function joinHandler(action, userProfileId) {
   $.post({
     url: "/room/join/" + action,
-    data: { uuid: dataRoom.uuid, user_profile_id: userProfileId },
+    data: { uuid: defaultUuid, user_profile_id: userProfileId },
     cache: false,
     error: (err) => {
       console.log(err);

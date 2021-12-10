@@ -26,7 +26,7 @@ $this->registerJsVar('own_mute_audio', $own_mute_audio, View::POS_END);
 $this->registerJsVar('own_mute_video', $own_mute_video, View::POS_END);
 $this->registerJsVar('countRequest', count($requests), View::POS_END);
 // $this->registerJsVar('myRoom', $uuid, View::POS_END);
-$this->registerJsVar('dataRoom', $dataRoom, View::POS_END);
+$this->registerJsVar('dataRooms', $dataRooms, View::POS_END);
 $this->registerJsVar('username',  Yii::$app->getUser()->getIdentity()->username, View::POS_END);
 $this->registerJsVar('userProfileId', $user_profile_id, View::POS_END);
 $this->registerJsVar('isOwner', $is_owner, View::POS_BEGIN);
@@ -65,7 +65,7 @@ $this->registerJs(
     View::POS_HEAD,
     'roomConfig'
 );
-    $countdown = <<<'COUNTDOWN'
+$countdown = <<<'COUNTDOWN'
 const handleCountdown = (endTime) => {
   const MILLISECONDS_STRING = "milliseconds";
   const eventTimeFinish = moment(endTime);
@@ -99,7 +99,7 @@ const switchSignal = (seconds) => {
 };
 COUNTDOWN;
 
-    $this->registerJs($countdown, View::POS_END, 'countdown_script');
+$this->registerJs($countdown, View::POS_END, 'countdown_script');
 
 
 $this->title = 'The Room';
@@ -120,6 +120,11 @@ $this->title = 'The Room';
 
         ]
     ) ?>
+    <!-- <div class="spinner-border position-absolute top-50 start-50 d-none" id="spinner"></div> -->
+    <div class="d-flex align-items-center position-absolute top-50 start-50 d-none" id="spinner">
+        <div class="spinner-border ms-auto" role="status" aria-hidden="true"></div>
+        <strong>Switching room...</strong>
+    </div>
 
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
