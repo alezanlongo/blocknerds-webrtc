@@ -206,16 +206,24 @@ class RoomController extends \yii\web\Controller
 
     public static function getRooms(int $profileId)
     {
+        $now = Carbon::createFromTimestamp(time())->format('Y-m-d');
         $roomMembers = RoomMember::find()->where(['user_profile_id' => $profileId])->orderBy(['created_at' => SORT_DESC])->all();
-        $rooms = array_map(function ($roomMember) {
+        $rooms = array_map(function ($roomMember) use ($now) {
             $room = $roomMember->room;
-            return [
-                'title' => $room->meeting->title,
-                'name' => $room->uuid,
-                'created_at' => Carbon::createFromTimestamp($room->meeting->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s'),
-            ];
-        }, $roomMembers);
+            $createdAt = Carbon::createFromTimestamp($room->meeting->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s');
 
+            if (str_contains($createdAt, $now)) {
+                return [
+                    'title' => $room->meeting->title,
+                    'name' => $room->uuid,
+                    'created_at' => $createdAt,
+                ];
+            }
+        }, $roomMembers);
+        $rooms = array_filter($rooms, function ($room) {
+            return $room !== null;
+        });
+        
         return $rooms;
     }
 
@@ -240,8 +248,8 @@ class RoomController extends \yii\web\Controller
         $profileId = 1;
         $tokenFrom = $this->getToken($roomUuidFrom, $profileId);
         $tokenTo = $this->getToken($roomUuidTo, $profileId);
-        
-        if(!$tokenFrom || !$tokenTo){
+
+        if (!$tokenFrom || !$tokenTo) {
             throw new UnprocessableEntityHttpException("You can not switching between rooms");
         }
 
