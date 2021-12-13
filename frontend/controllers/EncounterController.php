@@ -606,16 +606,18 @@ class EncounterController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+        $out = ['results' => ['id' => '', 'name' => '']];
 
         if (!is_null($q)) {
 
-            $orderableMedications = OrderableMedication::find()
-                ->select(['ordertypeid as id', 'name'])
-                ->andWhere(['LIKE', 'name', $q])
-                ->limit(10);
+            $medications = $this->component->searchOrderableMedications($q);
 
-            $out['results'] = array_values($orderableMedications->all());
+            $out['results'] =  array_map(function($medication){
+                return [
+                    'id' => $medication->ordertypeid,
+                    'name' => $medication->name
+                ];
+            }, $medications);
         }
 
         return $out;

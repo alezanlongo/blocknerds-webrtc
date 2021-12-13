@@ -36,6 +36,7 @@ use common\components\Athena\models\LabResult;
 use common\components\Athena\models\Medication;
 use common\components\Athena\models\MedicationReference;
 use common\components\Athena\models\Order;
+use common\components\Athena\models\OrderableMedication;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
 use common\components\Athena\models\PatientInsurance;
@@ -1649,6 +1650,34 @@ class AthenaComponent extends Component
 
 
         return $medicationModels;
+
+    }
+
+    /**
+     * @return array
+     */
+
+    public function searchOrderableMedications($searchvalue)
+    {
+        $orderableMedicationModelsApi =
+            $this->client->getPracticeidReferenceOrderPrescription(
+                $this->practiceid,
+                [
+                    'searchvalue' => $searchvalue
+                ]
+            );
+
+        $orderableMedicationModels = [];
+
+        foreach ($orderableMedicationModelsApi as $orderableMedicationModelApi) {
+            $orderableMedicationModels[] =
+                OrderableMedication::createFromApiObject(
+                    $orderableMedicationModelApi
+                );
+        }
+
+
+        return $orderableMedicationModels;
 
     }
 
