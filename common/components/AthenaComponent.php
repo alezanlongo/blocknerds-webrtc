@@ -3,9 +3,7 @@ namespace common\components;
 
 use Yii;
 use Yii\helpers\ArrayHelper;
-
 use common\components\Athena\AthenaClient;
-
 use common\components\Athena\apiModels\AppointmentApi;
 use common\components\Athena\apiModels\AppointmentNoteApi;
 use common\components\Athena\apiModels\EncounterApi;
@@ -17,6 +15,8 @@ use common\components\Athena\apiModels\PatientCaseApi;
 use common\components\Athena\apiModels\ProblemApi;
 use common\components\Athena\apiModels\VaccineApi;
 use common\components\Athena\models\ActionNote;
+use common\components\Athena\models\AdminDocument;
+use common\components\Athena\models\AdminDocumentPageDetail;
 use common\components\Athena\models\Appointment;
 use common\components\Athena\models\AppointmentNote;
 use common\components\Athena\models\ChartAlert;
@@ -31,8 +31,10 @@ use common\components\Athena\models\EncounterVitals;
 use common\components\Athena\models\Event;
 use common\components\Athena\models\EventDiagnose;
 use common\components\Athena\models\FamilyHistory;
+use common\components\Athena\models\InsuranceCardImage;
 use common\components\Athena\models\LabResult;
 use common\components\Athena\models\Medication;
+use common\components\Athena\models\MedicationReference;
 use common\components\Athena\models\Order;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
@@ -47,10 +49,6 @@ use common\components\Athena\models\TopInsurancePackages;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
-use common\components\Athena\models\AdminDocument;
-use common\components\Athena\models\AdminDocumentPageDetail;
-use common\components\Athena\models\InsuranceCardImage;
-
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -1623,6 +1621,34 @@ class AthenaComponent extends Component
             $encounter->externalId,
             $orderModelApi->documentid
         );
+
+    }
+
+    /**
+     * @return array
+     */
+
+    public function searchMedications($searchvalue)
+    {
+        $medicationModelsApi =
+            $this->client->getPracticeidReferenceMedications(
+                $this->practiceid,
+                [
+                    'searchvalue' => $searchvalue
+                ]
+            );
+
+        $medicationModels = [];
+
+        foreach ($medicationModelsApi as $medicationModelApi) {
+            $medicationModels[] =
+                MedicationReference::createFromApiObject(
+                    $medicationModelApi
+                );
+        }
+
+
+        return $medicationModels;
 
     }
 

@@ -138,16 +138,18 @@ class MedicationController extends \yii\web\Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $out = ['results' => ['medicationid' => '', 'medication' => '']];
+        $out = ['results' => ['id' => '', 'medication' => '']];
 
         if (!is_null($q)) {
 
-            $medications = MedicationReference::find()
-                ->select(['medicationid as id', 'medication'])
-                ->andWhere(['LIKE', 'medication', $q])
-                ->limit(10);
+            $medications = $this->component->searchMedications($q);
 
-            $out['results'] = array_values($medications->all());
+            $out['results'] =  array_map(function($medication){
+                return [
+                    'id' => $medication->medicationid,
+                    'medication' => $medication->medication
+                ];
+            }, $medications);
         }
 
         return $out;
