@@ -701,16 +701,18 @@ class EncounterController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+        $out = ['results' => ['id' => '', 'name' => '']];
 
         if (!is_null($q)) {
 
-            $orderableImagings = OrderableImaging::find()
-                ->select(['ordertypeid as id', 'name'])
-                ->andWhere(['LIKE', 'name', $q])
-                ->limit(10);
+            $imagings = $this->component->searchOrderableImagings($q);
 
-            $out['results'] = array_values($orderableImagings->all());
+            $out['results'] =  array_map(function($imaging){
+                return [
+                    'id' => $imaging->ordertypeid,
+                    'name' => $imaging->name
+                ];
+            }, $imagings);
         }
 
         return $out;
