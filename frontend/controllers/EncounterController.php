@@ -743,16 +743,18 @@ class EncounterController extends Controller
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        $out = ['results' => ['ordertypeid' => '', 'name' => '']];
+        $out = ['results' => ['id' => '', 'name' => '']];
 
         if (!is_null($q)) {
 
-            $orderableDmes = OrderableDme::find()
-                ->select(['ordertypeid as id', 'name'])
-                ->andWhere(['LIKE', 'name', $q])
-                ->limit(10);
+            $labs = $this->component->searchOrderableDmes($q);
 
-            $out['results'] = array_values($orderableDmes->all());
+            $out['results'] =  array_map(function($lab){
+                return [
+                    'id' => $lab->ordertypeid,
+                    'name' => $lab->name
+                ];
+            }, $labs);
         }
 
         return $out;
