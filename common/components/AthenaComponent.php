@@ -1768,6 +1768,32 @@ class AthenaComponent extends Component
 
     }
 
+
+    public function privacyInformationVerified($patientid, $departmentid)
+    {
+        $privacyInformationVerfied = $this->client->getPracticeidPatientsPatientidPrivacyinformationverified(
+            $this->practiceid,
+            $patientid,
+            [
+                'departmentid'  => $departmentid,
+            ]
+        );
+
+        return $privacyInformationVerfied;
+    }
+
+
+    public function postPrivacyInformationVerified($patientid, $privacyInformation)
+    {
+        $privacyInformationVerfied = $this->client->postPracticeidPatientsPatientidPrivacyinformationverified(
+            $this->practiceid,
+            $patientid,
+            $privacyInformation,
+        );
+
+        return $privacyInformationVerfied;
+    }
+
     /* ================================= Begin  Protected methods ============================================== */
     protected function obtainPatient($patientId, PatientApi $patientModelApi): Patient
     {

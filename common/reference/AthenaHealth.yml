@@ -6077,6 +6077,79 @@ paths:
       operationId: getPracticeidReferenceOrderOther
       tags:
         - Order - Other Order
+  /v1/{practiceid}/patients/{patientid}/privacyinformationverified:
+    get:
+      summary: Get patient's privacy information verification details
+      description: Retrieves a patient's verified privacy information
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: The ID of the department where the privacy information was verified.
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivacyInformationVerified'
+          description: Success
+      operationId: getPracticeidPatientsPatientidPrivacyinformationverified
+      tags:
+        - Privacy Information Verification
+    post:
+      summary: Update patient's privacy information verification details
+      description: Modifies a patient's verified privacy information
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrivacyInformationVerified200Response'
+          description: Success
+      operationId: postPracticeidPatientsPatientidPrivacyinformationverified
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostPrivacyInformationVerified'
+        required: true
+      tags:
+        - Privacy Information Verification
 components:
   schemas:
     Patient:
@@ -12775,7 +12848,7 @@ components:
     AdminDocument:
       type: object
       x-external-id: adminid
-      x-flatten: null
+      x-flatten: true
       properties:
         actionnote:
           description: The most recent action note for a document
@@ -13476,3 +13549,108 @@ components:
         ordertypeid:
           description: The athena ID of the type of order
           type: integer
+    PrivacyInformationVerified:
+      type: object
+      x-flatten: true
+      properties:
+        checkboxesconfigured:
+          description: The number of checkboxes the practice has configured.
+          type: integer
+        insuredsignature:
+          properties:
+            insuredsignatureeffectivedate:
+              description: Date the assignment of benefits check takes effect
+              type: string
+            insuredsignatureexpirationdate:
+              description: Date the assignment of benefits check expires
+              type: string
+            isinsuredsignatureonfile:
+              description: Flag that indicates whether or not the assignment of benefits check is set. This is set to false if it is expired.
+              enum:
+                - ''
+                - false
+                - true
+              type: string
+          type: object
+        patientsignature:
+          properties:
+            ispatientsignatureonfile:
+              description: Flag that indicates whether or not the release of billing information check is set. This is set to false if it is expired.
+              enum:
+                - ''
+                - false
+                - true
+              type: string
+            patientsignatureeffectivedate:
+              description: Date the release of billing information check takes effect
+              type: string
+            patientsignatureexpirationdate:
+              description: Date the release of billing information check expires
+              type: string
+          type: object
+        privacynotice:
+          properties:
+            isprivacynoticeonfile:
+              description: Flag that indicates whether or not the privacy notice check is set. This is set to false if it is expired.
+              enum:
+                - ''
+                - false
+                - true
+              type: string
+            privacynoticegivendate:
+              description: Date the privacy notice was given
+              type: string
+            privacynoticenotgivennote:
+              description: Note for not giving privacy notice
+              type: string
+            privacynoticenotgivenreason:
+              description: Reason for not giving privacy notice
+              type: string
+          type: object
+    PrivacyInformationVerified200Response:
+      type: object
+      properties:
+        patientid:
+          description: The athena ID of the patient whose privacy information was verified.
+          type: integer
+        success:
+          description: Returns true/false if the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PostPrivacyInformationVerified:
+      required:
+        - signaturename
+        - signaturedatetime
+        - departmentid
+      type: object
+      properties:
+        departmentid:
+          description: The ID of the department where the privacy information was verified.
+          type: integer
+        expirationdate:
+          description: The date this approval expires (for release of billing information and assignment of benefits).
+          type: string
+        insuredsignature:
+          description: If set, this flag sets the Assignment of Benefits privacy checkbox.
+          type: boolean
+        patientsignature:
+          description: If set, this flag sets the Release of Billing Information privacy checkbox.
+          type: boolean
+        privacynotice:
+          description: If set, this flag sets the Privacy Notice privacy checkbox.
+          type: boolean
+        reasonpatientunabletosign:
+          description: If the patient is unable to sign a reason why.
+          type: string
+        signaturedatetime:
+          description: If presenting an e-signature, the mm/dd/yyyy hh24:mi:ss formatted time that the signer signed. This is required if a signature name is provided.
+          type: string
+        signaturename:
+          description: If presenting an e-siganture, the name the signer typed, up to 100 characters.
+          type: string
+        signerrelationshiptopatientid:
+          description: If presenting an e-signature, and the signer is signing on behalf of someone else, the relationship of the patient to the signer. There is a documentation page with details.
+          type: string
