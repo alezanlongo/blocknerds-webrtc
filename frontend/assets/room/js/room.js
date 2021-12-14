@@ -64,7 +64,7 @@ $(document).ready(function () {
 
   if (isOwner || isAllowed) {
     $('.main-header').removeClass('d-none').show()
-    initJanus();
+    // initJanus();
   }
 });
 
