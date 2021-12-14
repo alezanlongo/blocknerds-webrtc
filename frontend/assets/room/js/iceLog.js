@@ -55,10 +55,8 @@ const noDescription = (error) => {
 }
 
 const buildObject = (evt) => {
-    console.log('event data', evt)
     const { currentTarget } = evt
     const { localDescription } = currentTarget
-    // console.log('current', currentTarget)
     return {
         ice: {
             ...evt,
@@ -100,7 +98,6 @@ const sendRequest = (allData) => {
 }
 
 const iceCallback = (event) => {
-    sendRequest(event)
     const { candidate } = event
     if (candidate) {
         candidates.push(candidate);
@@ -126,8 +123,9 @@ const gatheringStateChange = () => {
     resetTest()
 }
 
-const iceCandidateError = (e) => {
-    console.log('iceCandidateError', e)
+const iceCandidateError = (event) => {
+    sendRequest(event)
+    console.log('iceCandidateError', event)
 }
 
 // check if we have getUserMedia permissions.
