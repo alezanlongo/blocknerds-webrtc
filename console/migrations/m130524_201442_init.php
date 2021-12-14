@@ -284,7 +284,8 @@ class m130524_201442_init extends Migration
          // ice_event_log
          $this->createTable('{{%ice_event_log}}', [
             'id' => $this->primaryKey(),
-            'log' => $this->json()->notNull(),
+            'log' => $this->json(),
+            'sdp_log' => $this->json(),
             'profile_id' => $this->integer()->notNull(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),

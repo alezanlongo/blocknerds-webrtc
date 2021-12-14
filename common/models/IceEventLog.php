@@ -36,7 +36,7 @@ class IceEventLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['log'], 'required'],
+            // [['log'], 'required'],
             [['log'], 'safe'],
             [['created_at', 'updated_at'], 'default', 'value' => null],
             [['profile_id','created_at', 'updated_at'], 'integer'],

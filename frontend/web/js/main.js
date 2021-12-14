@@ -174,6 +174,7 @@ async function start() {
 function gotDescription(desc) {
   begin = window.performance.now();
   candidates = [];
+  console.log('descriprtion', desc)
   pc.setLocalDescription(desc);
 }
 
@@ -240,28 +241,51 @@ function getFinalResult() {
   }
   return result;
 }
-const buildObject = (evt) =>{
+const buildObject = (evt) => {
+  console.log('event data', evt)
+  const { currentTarget } = evt
+  const {localDescription} = currentTarget
+  // console.log('current', currentTarget)
   return {
+    ice: {
+      candidate: evt.candidate?.toJSON(),
+      type: evt.type,
+
+      timeStamp: evt.timeStamp,
+    },
+    sdp:{
+      localDescription: {
+        type: localDescription.type,
+        sdp: localDescription.sdp,
+      },
+    },
     ...evt,
-    candidate: evt.candidate?.toJSON(),
-    bubbles: evt.bubbles,
-    cancelBubble: evt.cancelBubble,
-    cancelable: evt.cancelable,
-    composed: evt.composed,
-    defaultPrevented: evt.defaultPrevented,
-    eventPhase: evt.eventPhase,
-    path: evt.path,
-    returnValue: evt.returnValue,
-    timeStamp: evt.timeStamp,
-    type: evt.type,
+    // bubbles: evt.bubbles,
+    // cancelBubble: evt.cancelBubble,
+    // cancelable: evt.cancelable,
+    // composed: evt.composed,
+    // defaultPrevented: evt.defaultPrevented,
+    // eventPhase: evt.eventPhase,
+    // path: evt.path,
+    // returnValue: evt.returnValue,
+    // currentTarget:{
+    //   localDescription: {
+    //     type: localDescription.type,
+    //     sdp: localDescription.sdp,
+    //   },
+    // },
+    // currentTarget: {
+    //   localdescription: evt.currentTarget.localdescription
+    // },
   }
 }
 
 const sendRequest = (data) => {
+  console.log('data to send', data)
   $.post({
     url: '/ice/event',
-    data,
-    success: (data)=>{
+    data,//:{ ice: data },
+    success: (data) => {
       console.log(data)
     },
     error: (err) => {
@@ -271,7 +295,7 @@ const sendRequest = (data) => {
 }
 
 function iceCallback(event) {
-  console.log('event', event, buildObject(event))
+  // console.log('to-send', event, buildObject(event))
   sendRequest(buildObject(event))
   const elapsed = ((window.performance.now() - begin) / 1000).toFixed(3);
   const row = document.createElement('tr');

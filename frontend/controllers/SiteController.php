@@ -41,7 +41,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 "class" => AccessControl::class,
-                "only" => ['logout', 'text-room', 'video-room-create'],
+                "only" => ['logout', 'text-room', 'video-room-create', 'test'],
                 "rules" => [
                     [
                         'allow' => true,

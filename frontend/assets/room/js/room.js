@@ -147,6 +147,10 @@ const initJanus = () => {
                 handleEvent(event, message);
               }
               if (jsep) {
+                
+                // if(jsep.type === 'answer'){
+                //   sendSDPLog(jsep.sdp)
+                // }
                 handleJsep(message, jsep);
               }
             },
