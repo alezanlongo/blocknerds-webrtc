@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\models\IceEventLog;
 use Exception;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Response;
 use yii\helpers\VarDumper;
@@ -17,6 +18,25 @@ class IceEventController extends \yii\web\Controller
     private const RESPONSE_KO = "KO";
 
     /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                "class" => AccessControl::class,
+                "only" => ['index', 'create'],
+                "rules" => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ]
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @inheritdoc
      */
     public function beforeAction($action)
@@ -26,6 +46,26 @@ class IceEventController extends \yii\web\Controller
         }
 
         return parent::beforeAction($action);
+    }
+
+    public function actionIndex()
+    {
+        $dataProvider = IceEventLog::find()
+            ->where(['profile_id' =>  Yii::$app->user->identity->userProfile->id])
+            ->orderBy(['id' => SORT_DESC])
+            ->limit(20)->all();
+        $logs = array_map(function ($log) {
+            return [
+                'id' => $log->id,
+                'ice' => $log->log,
+                'sdp' => $log->sdp_log,
+                'created_at' => $log->created_at,
+            ];
+        }, $dataProvider);
+
+        return $this->render('index', [
+            'logs' => $logs,
+        ]);
     }
 
     /**

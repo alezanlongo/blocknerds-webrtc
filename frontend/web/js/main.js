@@ -244,7 +244,7 @@ function getFinalResult() {
 const buildObject = (evt) => {
   console.log('event data', evt)
   const { currentTarget } = evt
-  const {localDescription} = currentTarget
+  const { localDescription } = currentTarget
   // console.log('current', currentTarget)
   return {
     ice: {
@@ -253,11 +253,9 @@ const buildObject = (evt) => {
 
       timeStamp: evt.timeStamp,
     },
-    sdp:{
-      localDescription: {
-        type: localDescription.type,
-        sdp: localDescription.sdp,
-      },
+    sdp: {
+      type: localDescription.type,
+      description: localDescription.sdp,
     },
     ...evt,
     // bubbles: evt.bubbles,

@@ -55,12 +55,24 @@ const noDescription = (error) => {
 }
 
 const buildObject = (evt) => {
-    const { currentTarget } = evt
+    const { currentTarget, candidate } = evt
     const { localDescription } = currentTarget
     return {
         ice: {
             ...evt,
-            candidate: evt.candidate?.toJSON(),
+            // candidate2: evt.candidate?.toJSON(),
+            candidate: {
+                component: candidate.component,
+                type: candidate.type,
+                foundation: candidate.foundation,
+                protocol: candidate.protocol,
+                address: candidate.address,
+                port: candidate.port,
+                priority: candidate.priority,
+                sdpMid: candidate.sdpMid,
+                sdpMLineIndex: candidate.sdpMLineIndex,
+                usernameFragment: candidate.usernameFragment,
+            },
             type: evt.type,
             bubbles: evt.bubbles,
             cancelBubble: evt.cancelBubble,
@@ -73,11 +85,9 @@ const buildObject = (evt) => {
             timeStamp: evt.timeStamp,
         },
         sdp: {
-            localDescription: {
-                type: localDescription.type,
-                sdp: localDescription.sdp,
-            },
-        },
+            type: localDescription.type,
+            description: localDescription.sdp,
+          },
 
     }
 }
@@ -100,6 +110,8 @@ const sendRequest = (allData) => {
 const iceCallback = (event) => {
     const { candidate } = event
     if (candidate) {
+        // console.log('event',event, buildObject(event))
+        sendRequest(event)
         candidates.push(candidate);
     } else if (!('onicegatheringstatechange' in RTCPeerConnection.prototype)) {
         resetTest()
@@ -124,7 +136,6 @@ const gatheringStateChange = () => {
 }
 
 const iceCandidateError = (event) => {
-    sendRequest(event)
     console.log('iceCandidateError', event)
 }
 
