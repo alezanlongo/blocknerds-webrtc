@@ -40,8 +40,11 @@ use common\components\Athena\models\OrderableDme;
 use common\components\Athena\models\OrderableImaging;
 use common\components\Athena\models\OrderableLab;
 use common\components\Athena\models\OrderableMedication;
+use common\components\Athena\models\OrderableVaccine;
+use common\components\Athena\models\OtherOrderType;
 use common\components\Athena\models\Patient;
 use common\components\Athena\models\PatientCase;
+use common\components\Athena\models\PatientInfoHandout;
 use common\components\Athena\models\PatientInsurance;
 use common\components\Athena\models\PatientLocation;
 use common\components\Athena\models\PatientStatus;
@@ -49,6 +52,7 @@ use common\components\Athena\models\Problem;
 use common\components\Athena\models\Provider;
 use common\components\Athena\models\PutAppointment200Response;
 use common\components\Athena\models\Readings;
+use common\components\Athena\models\ReferralOrderType;
 use common\components\Athena\models\TopInsurancePackages;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
@@ -1792,6 +1796,114 @@ class AthenaComponent extends Component
         );
 
         return $privacyInformationVerfied;
+    }
+
+    /**
+     * @return array
+     */
+
+    public function searchOrderableVaccines($searchvalue)
+    {
+        $orderableVaccineModelsApi =
+            $this->client->getPracticeidReferenceOrderVaccine(
+                $this->practiceid,
+                [
+                    'searchvalue' => $searchvalue
+                ]
+            );
+
+        $orderableVaccineModels = [];
+
+        foreach ($orderableVaccineModelsApi as $orderableVaccineModelApi) {
+            $orderableVaccineModels[] =
+                OrderableVaccine::createFromApiObject(
+                    $orderableVaccineModelApi
+                );
+        }
+
+        return $orderableVaccineModels;
+
+    }
+
+    /**
+     * @return array
+     */
+
+    public function searchPatientInfoHandouts($searchvalue)
+    {
+        $patientInfoHandoutModelsApi =
+            $this->client->getPracticeidReferenceOrderPatientinfo(
+                $this->practiceid,
+                [
+                    'searchvalue' => $searchvalue
+                ]
+            );
+
+        $patientInfoHandoutModels = [];
+
+        foreach ($patientInfoHandoutModelsApi as $patientInfoHandoutModelApi) {
+            $patientInfoHandoutModels[] =
+                PatientInfoHandout::createFromApiObject(
+                    $patientInfoHandoutModelApi
+                );
+        }
+
+        return $patientInfoHandoutModels;
+
+    }
+
+    /**
+     * @return array
+     */
+
+    public function searchReferralOrderTypes($searchvalue)
+    {
+        $referralOrderTypeModelsApi =
+            $this->client->getPracticeidReferenceOrderReferral(
+                $this->practiceid,
+                [
+                    'searchvalue' => $searchvalue
+                ]
+            );
+
+        $referralOrderTypeModels = [];
+
+        foreach ($referralOrderTypeModelsApi as $referralOrderTypeModelApi) {
+            $referralOrderTypeModels[] =
+                ReferralOrderType::createFromApiObject(
+                    $referralOrderTypeModelApi
+                );
+        }
+
+        return $referralOrderTypeModels;
+
+    }
+
+    /**
+     * @return array
+     */
+
+    public function searchOtherOrderTypes($searchvalue)
+    {
+        $otherOrderTypeModelsApi =
+            $this->client->getPracticeidReferenceOrderOther(
+                $this->practiceid,
+                [
+                    'searchvalue' => $searchvalue
+                ]
+            );
+
+        $otherOrderTypeModels = [];
+
+        foreach ($otherOrderTypeModelsApi as $otherOrderTypeModelApi) {
+            $otherOrderTypeModels[] =
+                OtherOrderType::createFromApiObject(
+                    $otherOrderTypeModelApi
+                );
+        }
+
+        return $otherOrderTypeModels;
+
     }
 
     /* ================================= Begin  Protected methods ============================================== */
