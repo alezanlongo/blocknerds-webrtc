@@ -7,9 +7,11 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 use yii\web\View;
-$this->registerJsVar('logs', ArrayHelper::getColumn($logs, function ($element) {
-    return ['id' =>$element['id'],'sdp' =>$element['sdp']];
-}), View::POS_END);
+use yii\widgets\Pjax;
+
+// $this->registerJsVar('logs', ArrayHelper::getColumn($logs, function ($element) {
+//     return ['id' => $element['id'], 'sdp' => $element['sdp']];
+// }), View::POS_END);
 $this->registerJsFile('/js/iceLogMain.js', ['depends' => ["yii\web\JqueryAsset"], 'position' => View::POS_END]);
 
 $this->title = 'Ice Event logs';
@@ -17,15 +19,17 @@ $profile = Yii::$app->user->identity->userProfile;
 // VarDumper::dump($logs, $depth = 10, $highlight = true);
 // die;
 ?>
-
+<div class="spinner-border text-danger position-absolute top-50 start-50 d-none" id="spinnerLog" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
 <div class="ice-event-log-index">
+    <div class="d-flex justify-content-between">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+        <h1><?= Html::encode($this->title) ?></h1>
+        <?= Html::tag('button', "Refresh", ['class' => 'btn btn-success btn-refresh']) ?>
 
-    <!-- <p>
-        <?= Html::a('Create Ice Event Log', ['create'], ['class' => 'btn btn-success']) ?>
-    </p> -->
-
+    </div>
+    <?php Pjax::begin(['id' => 'ice-log-table']) ?>
     <table class="table">
         <thead>
             <tr>
@@ -45,7 +49,7 @@ $profile = Yii::$app->user->identity->userProfile;
         </thead>
         <tbody>
             <?php foreach ($logs as $log) {
-                $candidate = $log['ice']['candidate'];
+                $candidate = $log['candidate'];
             ?>
                 <tr>
                     <th scope="row"><?= $log['id'] ?></th>
@@ -60,7 +64,7 @@ $profile = Yii::$app->user->identity->userProfile;
                     <td><?= $candidate['usernameFragment'] ?></td>
                     <td><?= Carbon::createFromTimestamp($log['created_at'], $profile->timezone)->format('Y-m-d H:i:s') ?></td>
                     <td>
-                        <button type="button" class="btn btn-primary btn-open-detail" data-id="<?= $log['id'] ?>" >
+                        <button type="button" class="btn btn-primary btn-open-detail" onclick="openModal(<?= $log['id'] ?>)" >
                             sdp Details
                         </button>
                     </td>
@@ -68,7 +72,7 @@ $profile = Yii::$app->user->identity->userProfile;
             <?php  } ?>
         </tbody>
     </table>
-
+    <?php Pjax::end(); ?>
 
 </div>
 

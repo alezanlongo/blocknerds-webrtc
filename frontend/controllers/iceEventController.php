@@ -57,8 +57,8 @@ class IceEventController extends \yii\web\Controller
         $logs = array_map(function ($log) {
             return [
                 'id' => $log->id,
-                'ice' => $log->log,
-                'sdp' => $log->sdp_log,
+                'candidate' => $log->log['candidate'],
+                // 'sdp' => $log->sdp_log,
                 'created_at' => $log->created_at,
             ];
         }, $dataProvider);
@@ -66,6 +66,19 @@ class IceEventController extends \yii\web\Controller
         return $this->render('index', [
             'logs' => $logs,
         ]);
+    }
+
+    public function actionGetLog(string $id)
+    {
+        $this->response->format = Response::FORMAT_JSON;
+        $log = IceEventLog::findOne($id);
+
+        return [
+            'id' => $log->id,
+            'ice' => $log->log,
+            'sdp' => $log->sdp_log,
+            'created_at' => $log->created_at,
+        ];
     }
 
     /**
