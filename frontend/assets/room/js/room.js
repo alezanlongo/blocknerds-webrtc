@@ -1074,6 +1074,44 @@ function moderateMember(idx, source, mute = true, onSuccess) {
   });
 }
 
+function roomImageCapture(idx) {
+  if (!isOwner) {
+    return false;
+  }
+  let remoteHandler = feeds[idx];
+  console.log(remoteHandler)
+  if (!remoteHandler) {
+    return false;
+  }
+  $.post({
+    url: `/room/capture-member-image/${dataRoom.uuid}/` + remoteHandler.rfuser.idFeed,
+    data: {},
+    success: (res) => {
+      console.log("ale", res)
+    },
+    error: (err) => {
+      console.log("ale", err)
+    },
+  });
+}
+
+const processRoomImageCapture = () => {
+  $.get({
+    url: `/room/capture-member-image-params/${dataRoom.uuid}`,
+    success: (res) => {
+      console.log("ale", 'mqttcap ok')
+      var img = cap()
+      $.post({
+        url: `/room/capture-member-image-upload/${dataRoom.uuid}/` + res.capture_id,
+        data: { image: img },
+        success: (r) => {
+          console.log(r)
+        }
+      })
+    }
+  })
+}
+
 const kickMember = (index) => {
   if (isOwner) {
     let remoteHandler = feeds[index];

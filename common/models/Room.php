@@ -2,8 +2,15 @@
 
 namespace common\models;
 
+use Exception as GlobalException;
+use Swoole\Http\Status;
 use Yii;
+use yii\base\InvalidConfigException;
+use yii\base\NotSupportedException;
+use yii\base\InvalidArgumentException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "room".
@@ -71,6 +78,21 @@ class Room extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+    /**
+     * 
+     * @param string $roomUuid 
+     * @param array $columns Columns to returns. Passing an empty array will be returns all columns
+     * @return ActiveRecord|array|null 
+     */
+    public static function getRoomByUuid(string $roomUuid, array $columns = ['id', 'uuid'])
+    {
+        $f = self::find();
+        if (!empty($columns)) {
+            $f->select(\join(",", $columns));
+        }
+        return $f->where(['uuid' => $roomUuid])->one();
     }
 
     /**

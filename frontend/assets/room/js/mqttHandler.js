@@ -2,10 +2,11 @@ const EVENT_TYPE_REQUEST_JOIN = "request_join";
 const EVENT_TYPE_RESPONSE_JOIN = "response_join";
 const EVENT_TYPE_TOGGLE_MUTE = "toggle_mute_remote";
 const EVENT_TYPE_TOGGLE_MEDIA = "request_toggle_media";
+const EVENT_TYPE_CAPTURE_IMAGE = "request_capture_image";
 // const wsbroker = "localhost"; // mqtt websocket enabled broker
 // const wsport = 15675; // port for above
 var mqtt = mqtt;
-var client = mqtt.connect({ host: wsbroker, port: wsport,  protocol: "ws", path:"/ws", clientId: "myclientid_" + parseInt(Math.random() * 100, 10) });
+var client = mqtt.connect({ host: wsbroker, port: wsport, protocol: "ws", path: "/ws", clientId: "myclientid_" + parseInt(Math.random() * 100, 10) });
 client.on('connect', function () {
   client.subscribe(window.location.pathname, function (err) {
     if (!err) {
@@ -20,9 +21,14 @@ client.on('message', function (topic, message) {
   try {
     objData = JSON.parse(objData)
   } catch (error) {
-    return; 
+    return;
   }
- 
+
+  if (objData.type === EVENT_TYPE_CAPTURE_IMAGE && Number(userProfileId) === Number(objData.profile_id)) {
+    processRoomImageCapture();
+  }
+
+
   if (objData.type === 'moderate_user_source' && Number(userProfileId) === Number(objData.profile_id)) {
 
     if (objData.moderate_audio === true && objData.moderate_audio_change === true) {
@@ -146,4 +152,4 @@ const handleToggleVideoLocal = (objData) => {
     compImage.addClass("d-none").hide();
     compVideo.removeClass("d-none").show();
   }
- }
+}
