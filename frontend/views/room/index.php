@@ -128,6 +128,22 @@ $this->title = 'The Room';
 
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
+            <div class="box-switching-source d-none">
+                <h1>Box somethign</h1>
+                <form onsubmit="return false" class="p-3">
+                    <div class="form-group">
+                        <select name="audioSelect2" class="form-select">
+                        </select>
+                    </div>
+                    <div class="form-group mt-3">
+                        <select name="videoSelect2" class="form-select">
+                        </select>
+                    </div>
+                    <div class="form-group text-center mt-3">
+                        <button type="submit" class="btn btn-primary w-100" onclick="submWait(this.form)">Enter</button>
+                    </div>
+                </form>
+            </div>
             <div class="join-again d-none position-absolute top-50 start-50 translate-middle">
                 <div class="card bg-transparent border-0 shadow-none">
                     <div class="card-title">

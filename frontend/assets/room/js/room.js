@@ -72,8 +72,20 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
+    const areSourcesSelected = Number(localStorage.getItem(LOCALSTORE_IS_READY)) === 1;
     $('.main-header').removeClass('d-none').show()
-    initJanus();
+    if (areSourcesSelected) {
+      initJanus();
+    } else {
+      cleanUI()
+      $(".header-nav").hide();
+      $(".boxes").hide();
+      const boxSwitchinSource = $('.box-switching-source')
+      boxSwitchinSource.removeClass('d-none')
+      mediaSelector.getAllDevices(document.getElementsByName("audioSelect2"), document.getElementsByName("videoSelect2"), () => {
+      })
+      // $(".join-again").removeClass("d-none").show();
+    }
   }
 });
 
@@ -186,7 +198,7 @@ const initJanus = () => {
                 handleEvent(event, message);
               }
               if (jsep) {
-                
+
                 // if(jsep.type === 'answer'){
                 //   sendSDPLog(jsep.sdp)
                 // }
@@ -1226,6 +1238,23 @@ const getIndexByMemberId = (id) => {
   });
   return index;
 };
+const LOCALSTORE_AUDIO_KEY = 'audioSelected'
+const LOCALSTORE_VIDEO_KEY = 'videoSelected'
+const LOCALSTORE_IS_READY = 'isReady'
+const submWait = (f) => {
+  let a = f.querySelector("[name='audioSelect2']")
+  let v = f.querySelector("[name='videoSelect2']")
+  if (AUDIO_CODEC)
+    body["audiocodec"] = AUDIO_CODEC;
+  if (VIDEO_CODEC)
+    body["videocodec"] = VIDEO_CODEC;
+  audioID = a.options[a.selectedIndex].value;
+  videoID = v.options[v.selectedIndex].value;
+  localStorage.setItem(LOCALSTORE_AUDIO_KEY, audioID);
+  localStorage.setItem(LOCALSTORE_VIDEO_KEY, videoID);
+  localStorage.setItem(LOCALSTORE_IS_READY, 1);
+  location.reload();
+}
 // Media source changer
 const subm = (f) => {
   let a = f.querySelector("[name='audioSelect']")
