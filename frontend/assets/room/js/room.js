@@ -6,6 +6,9 @@ let pluginHandler = null;
 var audioID = null, videoID = null;
 const opaqueId = "videoroomtest-" + Janus.randomString(12);
 const server = "wss://" + window.location.hostname + ":8989/ws";
+const LOCALSTORE_AUDIO_KEY = 'audioSelected'
+const LOCALSTORE_VIDEO_KEY = 'videoSelected'
+const LOCALSTORE_IS_READY = 'isReady'
 
 let my_private_id = null;
 const PLUGIN_VIDEO_ROOM = "janus.plugin.videoroom";
@@ -198,10 +201,6 @@ const initJanus = () => {
                 handleEvent(event, message);
               }
               if (jsep) {
-
-                // if(jsep.type === 'answer'){
-                //   sendSDPLog(jsep.sdp)
-                // }
                 handleJsep(message, jsep);
               }
             },
@@ -472,6 +471,8 @@ const joinMe = (isConfigure = false) => {
 };
 
 const publishOwnFeed = (useAudio = true, useVideo = true) => {
+  const audioID = localStorage.getItem(LOCALSTORE_AUDIO_KEY)
+  const videoID = localStorage.getItem(LOCALSTORE_VIDEO_KEY)
   pluginHandler.createOffer({
     media: {
       audioRecv: false,
@@ -479,6 +480,16 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       audioSend: useAudio,
       videoSend: useVideo,
       data: true,
+      audio: {
+        deviceId: {
+          exact: audioID
+        }
+      },
+      video: {
+        deviceId: {
+          exact: videoID
+        }
+      },
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
@@ -1238,9 +1249,7 @@ const getIndexByMemberId = (id) => {
   });
   return index;
 };
-const LOCALSTORE_AUDIO_KEY = 'audioSelected'
-const LOCALSTORE_VIDEO_KEY = 'videoSelected'
-const LOCALSTORE_IS_READY = 'isReady'
+
 const submWait = (f) => {
   let a = f.querySelector("[name='audioSelect2']")
   let v = f.querySelector("[name='videoSelect2']")
