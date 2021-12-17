@@ -100,6 +100,7 @@ $(`#select-other-room`).on('change', (e) => {
   dataRoom = dataRooms.find(r => r.uuid === roomSelected)
   if (!dataRoom) return;
   console.log('changed to', dataRoom)
+  savingSources(audioID,videoID)
   const spinnerComponent = $(`#spinner`)
   cleanUI()
   spinnerComponent.removeClass('d-none')

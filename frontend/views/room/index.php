@@ -128,8 +128,7 @@ $this->title = 'The Room';
 
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
-            <div class="box-switching-source d-none">
-                <h1>Box somethign</h1>
+            <div class="box-switching-source d-none w-25 w-xs-50  mx-auto">
                 <form onsubmit="return false" class="p-3">
                     <div class="form-group">
                         <select name="audioSelect2" class="form-select">
