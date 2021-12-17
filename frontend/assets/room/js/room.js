@@ -6,9 +6,7 @@ let pluginHandler = null;
 var audioID = null, videoID = null;
 const opaqueId = "videoroomtest-" + Janus.randomString(12);
 const server = "wss://" + window.location.hostname + ":8989/ws";
-const LOCALSTORE_AUDIO_KEY = 'audioSelected'
-const LOCALSTORE_VIDEO_KEY = 'videoSelected'
-const LOCALSTORE_IS_READY = 'isReady'
+const LOCALSTORE_SOURCE_STATE = 'source_state'
 
 let my_private_id = null;
 const PLUGIN_VIDEO_ROOM = "janus.plugin.videoroom";
@@ -75,9 +73,12 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
-    const areSourcesSelected = Number(localStorage.getItem(LOCALSTORE_IS_READY)) === 1;
+    const dataSource = gettingSources()
+
     $('.main-header').removeClass('d-none').show()
-    if (areSourcesSelected) {
+    if (dataSource && dataSource.isReady) {
+      audioID = dataSource.audioID
+      videoID = dataSource.videoID
       initJanus();
     } else {
       cleanUI()
@@ -87,7 +88,6 @@ $(document).ready(function () {
       boxSwitchinSource.removeClass('d-none')
       mediaSelector.getAllDevices(document.getElementsByName("audioSelect2"), document.getElementsByName("videoSelect2"), () => {
       })
-      // $(".join-again").removeClass("d-none").show();
     }
   }
 });
@@ -471,8 +471,11 @@ const joinMe = (isConfigure = false) => {
 };
 
 const publishOwnFeed = (useAudio = true, useVideo = true) => {
-  const audioID = localStorage.getItem(LOCALSTORE_AUDIO_KEY)
-  const videoID = localStorage.getItem(LOCALSTORE_VIDEO_KEY)
+  const dataSource = gettingSources()
+  if (!dataSource) return;
+  const { audioID, videoID } = dataSource
+  $("[name='audioSelect']").val(audioID)
+  $("[name='videoSelect']").val(videoID)
   pluginHandler.createOffer({
     media: {
       audioRecv: false,
@@ -1250,18 +1253,26 @@ const getIndexByMemberId = (id) => {
   return index;
 };
 
+const gettingSources = () => {
+  return JSON.parse(localStorage.getItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}`))
+}
+
+const savingSources = (audioID, videoID, isReady = true) => {
+  localStorage.setItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}`, JSON.stringify({
+    audioID, videoID, isReady, profileId: userProfileId, roomUuid: dataRoom.uuid
+  }))
+}
+
 const submWait = (f) => {
-  let a = f.querySelector("[name='audioSelect2']")
-  let v = f.querySelector("[name='videoSelect2']")
+  const a = f.querySelector("[name='audioSelect2']")
+  const v = f.querySelector("[name='videoSelect2']")
   if (AUDIO_CODEC)
     body["audiocodec"] = AUDIO_CODEC;
   if (VIDEO_CODEC)
     body["videocodec"] = VIDEO_CODEC;
   audioID = a.options[a.selectedIndex].value;
   videoID = v.options[v.selectedIndex].value;
-  localStorage.setItem(LOCALSTORE_AUDIO_KEY, audioID);
-  localStorage.setItem(LOCALSTORE_VIDEO_KEY, videoID);
-  localStorage.setItem(LOCALSTORE_IS_READY, 1);
+  savingSources(audioID, videoID)
   location.reload();
 }
 // Media source changer
@@ -1282,6 +1293,7 @@ const subm = (f) => {
   let replaceVideo = videoID != v.options[v.selectedIndex].value;
   audioID = a.options[a.selectedIndex].value;
   videoID = v.options[v.selectedIndex].value;
+  savingSources(audioID, videoID)
   pluginHandler.createOffer({
     media: {
       audio: {
@@ -1326,4 +1338,3 @@ let fnAudioVideo = function () {
   mediaSelector.getAllDevices(document.getElementsByName("audioSelect"), document.getElementsByName("videoSelect"), cb)
 }
 document.addEventListener('DOMContentLoaded', fnAudioVideo, false);
-
