@@ -98,26 +98,33 @@ class PatientController extends \yii\web\Controller
         $model = new Patient;
 
         if ($model->load(Yii::$app->request->post())) {
-
-            $patient = $this->component->createPatient(
-                $model
-            );
+            $patient = $this->component->createPatient($model);
             $patient->save();
-            $insurance = $this->component->createInsurance(
-                $patient->externalId,
-                true
-            );
 
+            $insurance = NULL;
+            $patientInsurances = $this->component->getpatientInsurances(
+                $patient->externalId,
+                $patient->departmentid
+            );
+            foreach ($patientInsurances as $key => $patientInsurance){
+                $insurance = $patientInsurance;
+            }
+
+            if(is_null($insurance)){
+                $insurance = $this->component->createInsurance(
+                    $patient->externalId,
+                    true
+                );
+            }
             $insurance->patient_id = $patient->id;
             $insurance->save();
 
             return $this->redirect(['view', 'id' => $patient->id]);
-
         }
 
         return $this->render('/patient/create', [
-            'model' => $model,
-            'departments' => $this->component->getDepartments(true)
+            'model'         => $model,
+            'departments'   => $this->component->getDepartments(true)
         ]);
     }
 
