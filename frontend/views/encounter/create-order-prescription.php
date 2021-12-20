@@ -4,6 +4,7 @@
 /* @var $form yii\bootstrap4\ActiveForm */
 /* @var $model \common\models\LoginForm */
 
+use frontend\widgets\snomedAutocomplete\SnomedAutocomplete;
 use kartik\select2\Select2;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
@@ -21,7 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'create-order-prescription-form']); ?>
 
-                <?= $form->field($model, 'diagnosissnomedcode')->textInput() ?>
+                <?= SnomedAutocomplete::widget([
+                        'name' => 'diagnosissnomedcode',
+                        'form' => $form,
+                        'model' => $model,
+                    ]
+                ); ?>
 
                 <?= $form->field($model, 'ordertypeid')->widget(Select2::classname(), [
                     'options' => ['placeholder' => 'Search for a orderable medication ...', 'multiple' => false],
