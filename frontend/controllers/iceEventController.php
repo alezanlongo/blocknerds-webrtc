@@ -58,8 +58,11 @@ class IceEventController extends \yii\web\Controller
             return [
                 'id' => $log->id,
                 'candidate' => $log->log['candidate'],
-                // 'sdp' => $log->sdp_log,
                 'created_at' => $log->created_at,
+                'profile' => [
+                    'id' => $log->profile_id,
+                    // 'username' => $log->,
+                ],
             ];
         }, $dataProvider);
 
