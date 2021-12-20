@@ -18,6 +18,7 @@ Yii::setAlias('@console', dirname(dirname(__DIR__)) . '/console');
 Yii::$container->setDefinitions(
 	[
 
-		common\components\Athena\AthenaClient::class => common\components\Athena\AthenaClient::class
+		common\components\Athena\AthenaClient::class => common\components\Athena\AthenaClient::class,
+		common\components\Snomed\Snomed::class => common\components\Snomed\Snomed::class
     ]
 );

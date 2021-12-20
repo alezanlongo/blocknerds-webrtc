@@ -21,7 +21,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'create-order-other-form']); ?>
 
-                <?= $form->field($model, 'diagnosissnomedcode')->textInput() ?>
+                <?= SnomedAutocomplete::widget([
+                        'name' => 'diagnosissnomedcode',
+                        'form' => $form,
+                        'model' => $model,
+                    ]
+                ); ?>
 
                 <?= $form->field($model, 'ordertypeid')->widget(Select2::classname(), [
                     'options' => ['placeholder' => 'Search for a other order types ...', 'multiple' => false],
