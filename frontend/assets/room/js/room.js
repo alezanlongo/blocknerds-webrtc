@@ -58,6 +58,12 @@ let isToSwitch = false;
 ////////////////////////////////////////////////////////////
 let roomsIn = []
 
+const checkIfIsEnable = (dataSource) => {
+  if(!dataSource) return false
+  
+  return dataSource.isReady
+}
+
 $(document).ready(function () {
   roomSelected = $(`#select-other-room`).find(":selected").val();
   if (!roomSelected) roomSelected = defaultUuid
@@ -77,7 +83,7 @@ $(document).ready(function () {
     const dataSource = gettingSources()
 
     $('.main-header').removeClass('d-none').show()
-    if (dataSource && dataSource.isReady) {
+    if (checkIfIsEnable(dataSource)) {
       audioID = dataSource.audioID
       videoID = dataSource.videoID
       isAudioEnabled = dataSource.isAudioEnabled
@@ -1261,7 +1267,7 @@ const getIndexByMemberId = (id) => {
 };
 
 const gettingSources = () => {
-  return JSON.parse(localStorage.getItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}`))
+  return JSON.parse(localStorage.getItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}_${userProfileId}`))
 }
 
 const savingSources = (audioID, videoID, isAudioEnabled =null, isVideoEnabled=null, isReady = true) => {
@@ -1270,7 +1276,6 @@ const savingSources = (audioID, videoID, isAudioEnabled =null, isVideoEnabled=nu
   }
   if(isVideoEnabled === null || isAudioEnabled === null){
     const dataSource = gettingSources()
-    console.log(isVideoEnabled, isAudioEnabled)
     if(dataSource){
       config.isAudioEnabled = dataSource.isAudioEnabled
       config.isVideoEnabled = dataSource.isVideoEnabled
@@ -1282,7 +1287,7 @@ const savingSources = (audioID, videoID, isAudioEnabled =null, isVideoEnabled=nu
     config.isAudioEnabled = isAudioEnabled
     config.isVideoEnabled = isVideoEnabled
   }
-  localStorage.setItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}`, JSON.stringify(config))
+  localStorage.setItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}_${userProfileId}`, JSON.stringify(config))
 }
 
 const submWait = (f) => {
