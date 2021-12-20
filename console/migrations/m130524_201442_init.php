@@ -287,18 +287,29 @@ class m130524_201442_init extends Migration
             'log' => $this->json(),
             'sdp_log' => $this->json(),
             'profile_id' => $this->integer()->notNull(),
+            'room_id' => $this->integer()->notNull(),
+            'FOREIGN KEY(room_id, profile_id) REFERENCES room_member(room_id, user_profile_id)',
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
         $this->createIndex('{{%idx-ice_event_log-profile_id}}','{{%ice_event_log}}','profile_id');
-        $this->addForeignKey(
-            '{{%fk-ice_event_log-profile_id}}',
-            '{{%ice_event_log}}',
-            'profile_id',
-            '{{%user_profile}}',
-            'id',
-            'CASCADE'
-        );
+        $this->createIndex('{{%idx-ice_event_log-room_id}}','{{%ice_event_log}}','room_id');
+        // $this->addForeignKey(
+        //     '{{%fk-ice_event_log-profile_id}}',
+        //     '{{%ice_event_log}}',
+        //     'profile_id',
+        //     '{{%room_member}}',
+        //     'user_profile_id',
+        //     'CASCADE'
+        // );
+        // $this->addForeignKey(
+        //     '{{%fk-ice_event_log-room_id}}',
+        //     '{{%ice_event_log}}',
+        //     'room_id',
+        //     '{{%room_member}}',
+        //     'room_id',
+        //     'CASCADE'
+        // );
     }
 
     public function down()

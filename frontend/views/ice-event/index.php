@@ -34,6 +34,8 @@ $profile = Yii::$app->user->identity->userProfile;
         <thead>
             <tr>
                 <th scope="col">id</th>
+                <th scope="col">username</th>
+                <th scope="col">room</th>
                 <th scope="col">Component</th>
                 <th scope="col">Type</th>
                 <th scope="col">Foundation</th>
@@ -55,6 +57,8 @@ $profile = Yii::$app->user->identity->userProfile;
                 <tr>
                     <th scope="row"><?= $log['id'] ?></th>
                     <td><?= $candidate['component'] ?></td>
+                    <td><?= $log['profile']['username'] ?></td>
+                    <td><?= $log['profile']['room_uuid'] ?></td>
                     <td><?= $candidate['type'] ?></td>
                     <td><?= $candidate['foundation'] ?></td>
                     <td><?= $candidate['protocol'] ?></td>

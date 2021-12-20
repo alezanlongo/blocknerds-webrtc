@@ -9,10 +9,16 @@ use yii\behaviors\TimestampBehavior;
  * This is the model class for table "ice_event_log".
  *
  * @property int $id
- * @property string $log
+ * @property string|null $log
+ * @property string|null $sdp_log
+ * @property int $profile_id
+ * @property int $room_id
  * @property int $created_at
  * @property int $updated_at
+ *
+ * @property RoomMember $profile
  */
+
 class IceEventLog extends \yii\db\ActiveRecord
 {
     /**
@@ -36,10 +42,11 @@ class IceEventLog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            // [['log'], 'required'],
-            [['log'], 'safe'],
+            [['log','sdp_log'], 'safe'],
+            [['profile_id', 'room_id'], 'required'],
             [['created_at', 'updated_at'], 'default', 'value' => null],
-            [['profile_id','created_at', 'updated_at'], 'integer'],
+            [['profile_id','room_id','created_at', 'updated_at'], 'integer'],
+            [['profile_id', 'room_id'], 'exist', 'skipOnError' => true, 'targetClass' => RoomMember::class, 'targetAttribute' => ['profile_id' => 'user_profile_id', 'room_id' => 'room_id']]
         ];
     }
 
@@ -51,19 +58,27 @@ class IceEventLog extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'log' => 'Log',
+            'sdp_log' => 'Sdp Log',
+            'profile_id' => 'Profile ID',
+            'room_id' => 'Room ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
     }
 
-    public function beforeSave($insert)
-    {
-        if (!parent::beforeSave($insert)) {
-            return false;
-        }
+    // public function beforeSave($insert)
+    // {
+    //     if (!parent::beforeSave($insert)) {
+    //         return false;
+    //     }
 
-        $this->profile_id = Yii::$app->user->identity->userProfile->id;
+    //     $this->profile_id = Yii::$app->user->identity->userProfile->id;
         
-        return true;
+    //     return true;
+    // }
+
+    public function getRoomMember()
+    {
+        return $this->hasOne(RoomMember::class, ['user_profile_id' => 'profile_id', 'room_id' => 'room_id']);
     }
 }

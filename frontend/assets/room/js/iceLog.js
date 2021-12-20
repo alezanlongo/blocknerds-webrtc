@@ -63,6 +63,8 @@ const buildObject = (evt) => {
     const { currentTarget, candidate } = evt
     const { localDescription } = currentTarget
     return {
+        userProfileId,
+        uuid: dataRoom.uuid,
         ice: {
             ...evt,
             // candidate2: evt.candidate?.toJSON(),
@@ -99,7 +101,7 @@ const buildObject = (evt) => {
 
 const sendRequest = (allData) => {
     const data = buildObject(allData)
-    console.log('data to send', allData, data)
+    // console.log('data to send', allData, data)
     $.post({
         url: '/ice/event',
         data,
@@ -123,6 +125,15 @@ const iceCallback = (event) => {
     }
 
 }
+
+const formatPriority = (priority) =>{
+    return [
+      priority >> 24,
+      (priority >> 8) & 0xFFFF,
+      priority & 0xFF
+    ].join(' | ');
+  }
+  
 const resetTest = () => {
     pc.close();
     pc = null;
