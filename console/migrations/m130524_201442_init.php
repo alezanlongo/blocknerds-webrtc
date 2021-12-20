@@ -248,7 +248,7 @@ class m130524_201442_init extends Migration
             'updated_at' => $this->integer()->notNull(),
         ]);
 
-        $this->createIndex('{{%idx-set-profile_id}}','{{%set}}','profile_id');
+        $this->createIndex('{{%idx-set-profile_id}}', '{{%set}}', 'profile_id');
         $this->addForeignKey(
             '{{%fk-set-profile_id}}',
             '{{%set}}',
@@ -271,7 +271,7 @@ class m130524_201442_init extends Migration
             'updated_at' => $this->integer()->notNull(),
         ]);
 
-        $this->createIndex('{{%idx-photo-set_id}}','{{%photo}}','set_id');
+        $this->createIndex('{{%idx-photo-set_id}}', '{{%photo}}', 'set_id');
         $this->addForeignKey(
             '{{%fk-photo-set_id}}',
             '{{%photo}}',
@@ -281,8 +281,8 @@ class m130524_201442_init extends Migration
             'CASCADE'
         );
 
-         // ice_event_log
-         $this->createTable('{{%ice_event_log}}', [
+        // ice_event_log
+        $this->createTable('{{%ice_event_log}}', [
             'id' => $this->primaryKey(),
             'log' => $this->json(),
             'sdp_log' => $this->json(),
@@ -292,28 +292,29 @@ class m130524_201442_init extends Migration
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ]);
-        $this->createIndex('{{%idx-ice_event_log-profile_id}}','{{%ice_event_log}}','profile_id');
-        $this->createIndex('{{%idx-ice_event_log-room_id}}','{{%ice_event_log}}','room_id');
-        // $this->addForeignKey(
-        //     '{{%fk-ice_event_log-profile_id}}',
-        //     '{{%ice_event_log}}',
-        //     'profile_id',
-        //     '{{%room_member}}',
-        //     'user_profile_id',
-        //     'CASCADE'
-        // );
-        // $this->addForeignKey(
-        //     '{{%fk-ice_event_log-room_id}}',
-        //     '{{%ice_event_log}}',
-        //     'room_id',
-        //     '{{%room_member}}',
-        //     'room_id',
-        //     'CASCADE'
-        // );
+        $this->createIndex('{{%idx-ice_event_log-profile_id}}', '{{%ice_event_log}}', 'profile_id');
+        $this->createIndex('{{%idx-ice_event_log-room_id}}', '{{%ice_event_log}}', 'room_id');
     }
 
     public function down()
     {
+        // ice_event_log
+        $this->dropTable('{{%ice_event_log}}');
+
+        // unsplush photo
+        $this->dropForeignKey(
+            '{{%fk-photo-set_id}}',
+            '{{%photo}}'
+        );
+        $this->dropTable('{{%photo}}');
+
+        // unsplush set
+        $this->dropForeignKey(
+            '{{%fk-set-profile_id}}',
+            '{{%set}}'
+        );
+        $this->dropTable('{{%set}}');
+
         // chat_message
         $this->dropForeignKey(
             '{{%fk-chat_message-chat_id}}',

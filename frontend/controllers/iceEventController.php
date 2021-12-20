@@ -98,8 +98,8 @@ class IceEventController extends \yii\web\Controller
     {
         $this->response->format = Response::FORMAT_JSON;
         $dataLog = $this->request->post();
-        $roomMember = $this->getRoomMember($dataLog['uuid'], intval($dataLog['userProfileId']));
         try {
+            $roomMember = $this->getRoomMember($dataLog['uuid'], intval($dataLog['userProfileId']));
             $iceEvent = new IceEventLog();
             $iceEvent->log = $dataLog['ice'] ?? null;
             $iceEvent->sdp_log = $dataLog['sdp'] ?? null;
