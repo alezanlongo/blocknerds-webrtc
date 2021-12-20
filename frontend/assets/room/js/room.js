@@ -4,6 +4,7 @@
 let janus = null;
 let pluginHandler = null;
 var audioID = null, videoID = null;
+let isAudioEnabled = null, isVideoEnabled = null
 const opaqueId = "videoroomtest-" + Janus.randomString(12);
 const server = "wss://" + window.location.hostname + ":8989/ws";
 const LOCALSTORE_SOURCE_STATE = 'source_state'
@@ -79,6 +80,8 @@ $(document).ready(function () {
     if (dataSource && dataSource.isReady) {
       audioID = dataSource.audioID
       videoID = dataSource.videoID
+      isAudioEnabled = dataSource.isAudioEnabled
+      isVideoEnabled = dataSource.isVideoEnabled
       initJanus();
     } else {
       cleanUI()
@@ -86,7 +89,7 @@ $(document).ready(function () {
       $(".boxes").hide();
       const boxSwitchinSource = $('.box-switching-source')
       boxSwitchinSource.removeClass('d-none')
-      mediaSelector.getAllDevices(document.getElementsByName("audioSelect2"), document.getElementsByName("videoSelect2"), () => {
+      mediaSelector.getAllDevices(document.getElementsByName("initAudioSelect"), document.getElementsByName("initVideoSelect"), () => {
       })
     }
   }
@@ -100,7 +103,7 @@ $(`#select-other-room`).on('change', (e) => {
   dataRoom = dataRooms.find(r => r.uuid === roomSelected)
   if (!dataRoom) return;
   console.log('changed to', dataRoom)
-  savingSources(audioID,videoID)
+  savingSources(audioID, videoID)
   const spinnerComponent = $(`#spinner`)
   cleanUI()
   spinnerComponent.removeClass('d-none')
@@ -127,7 +130,7 @@ $(".btn-join-again").on("click", () => {
   $(".boxes").show();
 
   $(".join-again").hide();
-  publishOwnFeed(true);
+  publishOwnFeed();
 });
 
 const initJanus = () => {
@@ -252,10 +255,13 @@ const initJanus = () => {
                 $("#video-source .no-video-container").remove();
                 $("#myvideo").removeClass("hide").show();
               }
-              if (own_mute_audio) {
+              const dataSource = gettingSources()
+              if(!dataSource) return;
+
+              if (own_mute_audio || !dataSource.isAudioEnabled) {
                 toggleMute(true);
               }
-              if (own_mute_video) {
+              if (own_mute_video || !dataSource.isVideoEnabled) {
                 toggleVideo(true);
               }
             },
@@ -338,7 +344,7 @@ const handlingJoined = (objMessage) => {
   if (SUBSCRIBER_MODE) {
     console.log("Do something on subscriber mode");
   } else {
-    publishOwnFeed(true);
+    publishOwnFeed();
   }
 
   // Any new feed to attach to?
@@ -1258,22 +1264,37 @@ const gettingSources = () => {
   return JSON.parse(localStorage.getItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}`))
 }
 
-const savingSources = (audioID, videoID, isReady = true) => {
-  localStorage.setItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}`, JSON.stringify({
+const savingSources = (audioID, videoID, isAudioEnabled =null, isVideoEnabled=null, isReady = true) => {
+  const config = {
     audioID, videoID, isReady, profileId: userProfileId, roomUuid: dataRoom.uuid
-  }))
+  }
+  if(isVideoEnabled === null || isAudioEnabled === null){
+    const dataSource = gettingSources()
+    console.log(isVideoEnabled, isAudioEnabled)
+    if(dataSource){
+      config.isAudioEnabled = dataSource.isAudioEnabled
+      config.isVideoEnabled = dataSource.isVideoEnabled
+    }else{
+      config.isAudioEnabled = true
+      config.isVideoEnabled = true
+    }
+  }else{
+    config.isAudioEnabled = isAudioEnabled
+    config.isVideoEnabled = isVideoEnabled
+  }
+  localStorage.setItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}`, JSON.stringify(config))
 }
 
 const submWait = (f) => {
-  const a = f.querySelector("[name='audioSelect2']")
-  const v = f.querySelector("[name='videoSelect2']")
-  if (AUDIO_CODEC)
-    body["audiocodec"] = AUDIO_CODEC;
-  if (VIDEO_CODEC)
-    body["videocodec"] = VIDEO_CODEC;
-  audioID = a.options[a.selectedIndex].value;
-  videoID = v.options[v.selectedIndex].value;
-  savingSources(audioID, videoID)
+  const audioSource = f.querySelector("[name='initAudioSelect']")
+  const videoSource = f.querySelector("[name='initVideoSelect']")
+  const isAudioSource = f.querySelector("[name='initAudioEnable']")
+  const isVideoSource = f.querySelector("[name='initVideoEnable']")
+  audioID = audioSource.options[audioSource.selectedIndex].value;
+  videoID = videoSource.options[videoSource.selectedIndex].value;
+  isAudioEnabled = isAudioSource.checked
+  isVideoEnabled = isVideoSource.checked
+  savingSources(audioID, videoID, isAudioEnabled, isVideoEnabled)
   location.reload();
 }
 // Media source changer

@@ -10,12 +10,12 @@ const allServersKey = 'servers';
 const stunGoogle = "stun:stun.l.google.com:19302"
 
 $(document).ready(() => {
-    const isTestedLS = localStorage.getItem(LOCALSTORE_IS_TESTED)
-    const isTested = isTestedLS === null
-    if(isTested){
-        localStorage.setItem(LOCALSTORE_IS_TESTED, 1)
-        doTest()
-    }
+    // const isTestedLS = localStorage.getItem(LOCALSTORE_IS_TESTED)
+    // const isTested = isTestedLS === null
+    // if(isTested){
+    //     localStorage.setItem(LOCALSTORE_IS_TESTED, 1)
+    //     doTest()
+    // }
 })
 const isStream = true
 const doTest = async () => {
