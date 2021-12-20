@@ -342,7 +342,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PatientInsurance'
-
           description: Success
       operationId: postPracticeidPatientsPatientidInsurances
       tags:
@@ -353,6 +352,70 @@ paths:
             schema:
               $ref: '#/components/schemas/RequestInsurance'
         required: true
+    get:
+      summary: Get patient's insurance packages
+      description: Retrieves all patient insurances for a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: If set, include cancelled and expired insurances.
+          in: query
+          name: showcancelled
+          required: false
+          schema:
+            type: boolean
+        - description: If set, will show full SSN instead of a masked number.
+          in: query
+          name: showfullssn
+          required: false
+          schema:
+            type: boolean
+        - description: If set, we will use the department id in an attempt to find the local patient.
+          in: query
+          name: departmentid
+          required: false
+          schema:
+            type: integer
+        - description: Set to true to allow ability to find patients with record restrictions and blocked patients.
+          in: query
+          name: ignorerestrictions
+          required: false
+          schema:
+            type: boolean
+        - description: Number of entries to return (default 100, max 5000)Please note that this endpoint has a different default than normal.
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientInsurance'
+          description: Success
+      operationId: getPracticeidPatientsPatientidInsurances
+      tags:
+        - Patient Insurance
   /v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}:
     put:
       summary: Update patient's specific insurance-package

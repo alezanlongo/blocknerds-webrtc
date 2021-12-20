@@ -4,8 +4,10 @@
 let janus = null;
 let pluginHandler = null;
 var audioID = null, videoID = null;
+let isAudioEnabled = null, isVideoEnabled = null
 const opaqueId = "videoroomtest-" + Janus.randomString(12);
 const server = "wss://" + window.location.hostname + ":8989/ws";
+const LOCALSTORE_SOURCE_STATE = 'source_state'
 
 let my_private_id = null;
 const PLUGIN_VIDEO_ROOM = "janus.plugin.videoroom";
@@ -56,7 +58,13 @@ let isToSwitch = false;
 ////////////////////////////////////////////////////////////
 let roomsIn = []
 
-$(document).ready(function () {
+const checkIfIsEnable = (dataSource) => {
+  if (!dataSource) return false
+
+  return dataSource.isReady
+}
+
+$(document).ready(async function () {
   roomSelected = $(`#select-other-room`).find(":selected").val();
   if (!roomSelected) roomSelected = defaultUuid
   dataRoom = dataRooms.find(r => r.uuid === roomSelected)
@@ -72,8 +80,24 @@ $(document).ready(function () {
   }
 
   if (isOwner || isAllowed) {
+    const dataSource = gettingSources()
     $('.main-header').removeClass('d-none').show()
-    initJanus();
+
+    if (checkIfIsEnable(dataSource)) {
+      audioID = dataSource.audioID
+      videoID = dataSource.videoID
+      isAudioEnabled = dataSource.isAudioEnabled
+      isVideoEnabled = dataSource.isVideoEnabled
+      initJanus();
+    } else {
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      mediaSelector.getAllDevices(document.getElementsByName("initAudioSelect"), document.getElementsByName("initVideoSelect"), () => { })
+      cleanUI()
+      $(".header-nav").hide();
+      $(".boxes").hide();
+      const boxSwitchinSource = $('.box-switching-source')
+      boxSwitchinSource.removeClass('d-none')
+    }
   }
 });
 
@@ -85,6 +109,7 @@ $(`#select-other-room`).on('change', (e) => {
   dataRoom = dataRooms.find(r => r.uuid === roomSelected)
   if (!dataRoom) return;
   console.log('changed to', dataRoom)
+  savingSources(audioID, videoID)
   const spinnerComponent = $(`#spinner`)
   cleanUI()
   spinnerComponent.removeClass('d-none')
@@ -111,7 +136,7 @@ $(".btn-join-again").on("click", () => {
   $(".boxes").show();
 
   $(".join-again").hide();
-  publishOwnFeed(true);
+  publishOwnFeed();
 });
 
 const initJanus = () => {
@@ -186,10 +211,6 @@ const initJanus = () => {
                 handleEvent(event, message);
               }
               if (jsep) {
-                
-                // if(jsep.type === 'answer'){
-                //   sendSDPLog(jsep.sdp)
-                // }
                 handleJsep(message, jsep);
               }
             },
@@ -240,10 +261,13 @@ const initJanus = () => {
                 $("#video-source .no-video-container").remove();
                 $("#myvideo").removeClass("hide").show();
               }
-              if (own_mute_audio) {
+              const dataSource = gettingSources()
+              if (!dataSource) return;
+
+              if (own_mute_audio || !dataSource.isAudioEnabled) {
                 toggleMute(true);
               }
-              if (own_mute_video) {
+              if (own_mute_video || !dataSource.isVideoEnabled) {
                 toggleVideo(true);
               }
             },
@@ -326,7 +350,7 @@ const handlingJoined = (objMessage) => {
   if (SUBSCRIBER_MODE) {
     console.log("Do something on subscriber mode");
   } else {
-    publishOwnFeed(true);
+    publishOwnFeed();
   }
 
   // Any new feed to attach to?
@@ -460,6 +484,11 @@ const joinMe = (isConfigure = false) => {
 };
 
 const publishOwnFeed = (useAudio = true, useVideo = true) => {
+  const dataSource = gettingSources()
+  if (!dataSource) return;
+  const { audioID, videoID } = dataSource
+  $("[name='audioSelect']").val(audioID)
+  $("[name='videoSelect']").val(videoID)
   pluginHandler.createOffer({
     media: {
       audioRecv: false,
@@ -467,6 +496,16 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       audioSend: useAudio,
       videoSend: useVideo,
       data: true,
+      audio: {
+        deviceId: {
+          exact: audioID
+        }
+      },
+      video: {
+        deviceId: {
+          exact: videoID
+        }
+      },
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
@@ -1226,6 +1265,43 @@ const getIndexByMemberId = (id) => {
   });
   return index;
 };
+
+const gettingSources = () => {
+  return JSON.parse(localStorage.getItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}_${userProfileId}`))
+}
+
+const savingSources = (audioID, videoID, isAudioEnabled = null, isVideoEnabled = null, isReady = true) => {
+  const config = {
+    audioID, videoID, isReady, profileId: userProfileId, roomUuid: dataRoom.uuid
+  }
+  if (isVideoEnabled === null || isAudioEnabled === null) {
+    const dataSource = gettingSources()
+    if (dataSource) {
+      config.isAudioEnabled = dataSource.isAudioEnabled
+      config.isVideoEnabled = dataSource.isVideoEnabled
+    } else {
+      config.isAudioEnabled = true
+      config.isVideoEnabled = true
+    }
+  } else {
+    config.isAudioEnabled = isAudioEnabled
+    config.isVideoEnabled = isVideoEnabled
+  }
+  localStorage.setItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}_${userProfileId}`, JSON.stringify(config))
+}
+
+const submWait = (f) => {
+  const audioSource = f.querySelector("[name='initAudioSelect']")
+  const videoSource = f.querySelector("[name='initVideoSelect']")
+  const isAudioSource = f.querySelector("[name='initAudioEnable']")
+  const isVideoSource = f.querySelector("[name='initVideoEnable']")
+  audioID = audioSource.options[audioSource.selectedIndex].value;
+  videoID = videoSource.options[videoSource.selectedIndex].value;
+  isAudioEnabled = isAudioSource.checked
+  isVideoEnabled = isVideoSource.checked
+  savingSources(audioID, videoID, isAudioEnabled, isVideoEnabled)
+  location.reload();
+}
 // Media source changer
 const subm = (f) => {
   let a = f.querySelector("[name='audioSelect']")
@@ -1244,6 +1320,7 @@ const subm = (f) => {
   let replaceVideo = videoID != v.options[v.selectedIndex].value;
   audioID = a.options[a.selectedIndex].value;
   videoID = v.options[v.selectedIndex].value;
+  savingSources(audioID, videoID)
   pluginHandler.createOffer({
     media: {
       audio: {
@@ -1288,4 +1365,3 @@ let fnAudioVideo = function () {
   mediaSelector.getAllDevices(document.getElementsByName("audioSelect"), document.getElementsByName("videoSelect"), cb)
 }
 document.addEventListener('DOMContentLoaded', fnAudioVideo, false);
-

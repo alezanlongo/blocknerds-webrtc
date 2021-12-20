@@ -128,6 +128,31 @@ $this->title = 'The Room';
 
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
+            <div class="box-switching-source d-none w-25 w-xs-50  mx-auto">
+                <form onsubmit="return false" class="p-3">
+                    <div class="form-group">
+                        <select name="initAudioSelect" id="audioSelect" class="form-select">
+                        </select>
+                    </div>
+                    <div class="form-group mt-3" >
+                        <select name="initVideoSelect" id="videoSelect" class="form-select">
+                        </select>
+                    </div>
+                    <div class="d-flex">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="initAudioEnable" role="switch" id="flexSwitchCheckDefault" checked>
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Audio</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" name="initVideoEnable" id="flexSwitchCheckChecked" checked>
+                            <label class="form-check-label" for="flexSwitchCheckChecked">Video</label>
+                        </div>
+                    </div>
+                    <div class="form-group text-center mt-3">
+                        <button type="submit" class="btn btn-primary w-100" onclick="submWait(this.form)">Enter</button>
+                    </div>
+                </form>
+            </div>
             <div class="join-again d-none position-absolute top-50 start-50 translate-middle">
                 <div class="card bg-transparent border-0 shadow-none">
                     <div class="card-title">

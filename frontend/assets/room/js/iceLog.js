@@ -2,7 +2,6 @@
 'use strict';
 
 const TYPE_CANDIDATE_ICE = "icecandidate";
-const TYPE_CANDIDATE_ERROR = "icecandidate";
 let pc;
 let stream;
 let candidates;
@@ -10,7 +9,13 @@ const allServersKey = 'servers';
 const stunGoogle = "stun:stun.l.google.com:19302"
 
 $(document).ready(() => {
-    doTest()
+    const LOCALSTORE_IS_TESTED = `isTested_${dataRoom.uuid}_${userProfileId}`;
+    const isTestedLS = localStorage.getItem(LOCALSTORE_IS_TESTED)
+    const isTested = isTestedLS === null
+    if(isTested){
+        localStorage.setItem(LOCALSTORE_IS_TESTED, 1)
+        doTest()
+    }
 })
 const isStream = true
 const doTest = async () => {

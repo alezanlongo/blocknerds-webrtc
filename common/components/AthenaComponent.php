@@ -117,6 +117,30 @@ class AthenaComponent extends Component
         return array_column($topInsurancePackagesModels, 'name', 'insurancepackageid');
     }
 
+
+    public function getpatientInsurances($patientId, $departmentid)
+    {
+
+        $patientInsuranceModelsApi = $this->client->getPracticeidPatientsPatientidInsurances(
+            $this->practiceid,
+            $patientId,
+            [
+                'departmentid'  => $departmentid
+            ]
+        );
+
+        $patientInsuranceModels = [];
+
+        foreach ($patientInsuranceModelsApi as $patientInsuranceModelApi) {
+            $patientInsuranceModels[] =
+                PatientInsurance::createFromApiObject(
+                    $patientInsuranceModelApi
+                );
+        }
+
+        return $patientInsuranceModels;
+    }
+
     /**
      * @return Insurance
      */
@@ -125,23 +149,20 @@ class AthenaComponent extends Component
         if($new){
             $insuranceData['insurancepackageid'] = 0;
             $insuranceData['sequencenumber'] = 1;
-            $insuranceModelApi =
-                $this->client->postPracticeidPatientsPatientidInsurances(
-                    $this->practiceid,
-                    $patientId,
-                    $insuranceData
-                );
+            $insuranceModelApi = $this->client->postPracticeidPatientsPatientidInsurances(
+                $this->practiceid,
+                $patientId,
+                $insuranceData
+            );
             $insuranceData = new PatientInsurance;
             $insuranceData->createFromApiObject($insuranceModelApi[0]);
-
         }else{
             $insuranceData->sequencenumber = 1;
-            $insuranceModelApi =
-                $this->client->postPracticeidPatientsPatientidInsurances(
-                    $this->practiceid,
-                    $patientId,
-                    $insuranceData->toArray()
-                );
+            $insuranceModelApi = $this->client->postPracticeidPatientsPatientidInsurances(
+                $this->practiceid,
+                $patientId,
+                $insuranceData->toArray()
+            );
         }
 
         return $insuranceData->createFromApiObject($insuranceModelApi[0]);
