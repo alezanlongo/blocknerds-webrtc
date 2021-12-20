@@ -121,6 +121,7 @@ const mediaSelector = {
                 ret.video.push(e)
             }
         });
+        console.log('retorno',r, ret)
         return ret
     }
 

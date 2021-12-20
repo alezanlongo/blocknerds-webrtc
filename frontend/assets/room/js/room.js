@@ -59,12 +59,12 @@ let isToSwitch = false;
 let roomsIn = []
 
 const checkIfIsEnable = (dataSource) => {
-  if(!dataSource) return false
-  
+  if (!dataSource) return false
+
   return dataSource.isReady
 }
 
-$(document).ready(function () {
+$(document).ready(async function () {
   roomSelected = $(`#select-other-room`).find(":selected").val();
   if (!roomSelected) roomSelected = defaultUuid
   dataRoom = dataRooms.find(r => r.uuid === roomSelected)
@@ -81,8 +81,8 @@ $(document).ready(function () {
 
   if (isOwner || isAllowed) {
     const dataSource = gettingSources()
-
     $('.main-header').removeClass('d-none').show()
+
     if (checkIfIsEnable(dataSource)) {
       audioID = dataSource.audioID
       videoID = dataSource.videoID
@@ -90,13 +90,13 @@ $(document).ready(function () {
       isVideoEnabled = dataSource.isVideoEnabled
       initJanus();
     } else {
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      mediaSelector.getAllDevices(document.getElementsByName("initAudioSelect"), document.getElementsByName("initVideoSelect"), () => { })
       cleanUI()
       $(".header-nav").hide();
       $(".boxes").hide();
       const boxSwitchinSource = $('.box-switching-source')
       boxSwitchinSource.removeClass('d-none')
-      mediaSelector.getAllDevices(document.getElementsByName("initAudioSelect"), document.getElementsByName("initVideoSelect"), () => {
-      })
     }
   }
 });
@@ -262,7 +262,7 @@ const initJanus = () => {
                 $("#myvideo").removeClass("hide").show();
               }
               const dataSource = gettingSources()
-              if(!dataSource) return;
+              if (!dataSource) return;
 
               if (own_mute_audio || !dataSource.isAudioEnabled) {
                 toggleMute(true);
@@ -1270,20 +1270,20 @@ const gettingSources = () => {
   return JSON.parse(localStorage.getItem(`${LOCALSTORE_SOURCE_STATE}_${dataRoom.uuid}_${userProfileId}`))
 }
 
-const savingSources = (audioID, videoID, isAudioEnabled =null, isVideoEnabled=null, isReady = true) => {
+const savingSources = (audioID, videoID, isAudioEnabled = null, isVideoEnabled = null, isReady = true) => {
   const config = {
     audioID, videoID, isReady, profileId: userProfileId, roomUuid: dataRoom.uuid
   }
-  if(isVideoEnabled === null || isAudioEnabled === null){
+  if (isVideoEnabled === null || isAudioEnabled === null) {
     const dataSource = gettingSources()
-    if(dataSource){
+    if (dataSource) {
       config.isAudioEnabled = dataSource.isAudioEnabled
       config.isVideoEnabled = dataSource.isVideoEnabled
-    }else{
+    } else {
       config.isAudioEnabled = true
       config.isVideoEnabled = true
     }
-  }else{
+  } else {
     config.isAudioEnabled = isAudioEnabled
     config.isVideoEnabled = isVideoEnabled
   }
