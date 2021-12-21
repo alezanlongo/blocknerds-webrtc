@@ -90,8 +90,15 @@ $(document).ready(async function () {
       isVideoEnabled = dataSource.isVideoEnabled
       initJanus();
     } else {
-      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const video = document.getElementById('video-preview-started');
+      if ('srcObject' in video) {
+        video.srcObject = mediaStream;
+      } else {
+        video.src = URL.createObjectURL(mediaStream);
+      }
       mediaSelector.getAllDevices(document.getElementsByName("initAudioSelect"), document.getElementsByName("initVideoSelect"), () => { })
+
       cleanUI()
       $(".header-nav").hide();
       $(".boxes").hide();
@@ -100,6 +107,18 @@ $(document).ready(async function () {
     }
   }
 });
+let streamAux = null
+$('#videoCheck').on('change', function() {
+  const video = $('#video-preview-started');
+  const img = $('#image-preview-started');
+  if(this.checked){
+    video.removeClass('d-none').show()
+    img.addClass('d-none').hide()
+  }else{
+    video.addClass('d-none').hide()
+    img.removeClass('d-none').show()
+  }
+})
 
 $(`#select-other-room`).on('change', (e) => {
   console.log('changed from', dataRoom)

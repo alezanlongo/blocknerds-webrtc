@@ -101,6 +101,12 @@ COUNTDOWN;
 
 $this->registerJs($countdown, View::POS_END, 'countdown_script');
 
+$image = Yii::$app->user->identity->userProfile->image;
+
+if ($image === null) {
+  $image = "/img/default-user.png";
+}
+
 
 $this->title = 'The Room';
 
@@ -128,24 +134,26 @@ $this->title = 'The Room';
 
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
-            <div class="box-switching-source d-none w-25 w-xs-50  mx-auto mt-5">
+            <div class="box-switching-source d-none w-75 text-center mx-auto mt-5">
+                    <video id="video-preview-started" width="450" height="300" autoplay></video>
+                    <img src="<?= $image ?>" id="image-preview-started" width="450" height="300" class="d-none" alt="User Image">
                 <form onsubmit="return false" class="p-3">
                     <div class="form-group">
                         <select name="initAudioSelect" id="audioSelect" class="form-select">
                         </select>
                     </div>
-                    <div class="form-group mt-3" >
+                    <div class="form-group mt-3">
                         <select name="initVideoSelect" id="videoSelect" class="form-select">
                         </select>
                     </div>
                     <div class="d-flex justify-content-around pt-3">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="initAudioEnable" role="switch" id="flexSwitchCheckDefault" checked>
-                            <label class="form-check-label" for="flexSwitchCheckDefault">Audio</label>
+                            <input class="form-check-input" type="checkbox" name="initAudioEnable" role="switch" id="audioCheck" checked>
+                            <label class="form-check-label" for="audioCheck">Audio</label>
                         </div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" role="switch" name="initVideoEnable" id="flexSwitchCheckChecked" checked>
-                            <label class="form-check-label" for="flexSwitchCheckChecked">Video</label>
+                            <input class="form-check-input" type="checkbox" role="switch" name="initVideoEnable" id="videoCheck" checked>
+                            <label class="form-check-label" for="videoCheck">Video</label>
                         </div>
                     </div>
                     <div class="form-group text-center mt-3">
