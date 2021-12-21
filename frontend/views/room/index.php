@@ -128,7 +128,7 @@ $this->title = 'The Room';
 
     <div class="main-content d-flex">
         <?php if ($is_owner || $is_allowed) { ?>
-            <div class="box-switching-source d-none w-25 w-xs-50  mx-auto">
+            <div class="box-switching-source d-none w-25 w-xs-50  mx-auto mt-5">
                 <form onsubmit="return false" class="p-3">
                     <div class="form-group">
                         <select name="initAudioSelect" id="audioSelect" class="form-select">
@@ -138,7 +138,7 @@ $this->title = 'The Room';
                         <select name="initVideoSelect" id="videoSelect" class="form-select">
                         </select>
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex justify-content-around pt-3">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" name="initAudioEnable" role="switch" id="flexSwitchCheckDefault" checked>
                             <label class="form-check-label" for="flexSwitchCheckDefault">Audio</label>
