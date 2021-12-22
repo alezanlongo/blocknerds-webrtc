@@ -1393,21 +1393,5 @@ const imageCap = {
         imageCap._destroy()
       }
     })
-
-
-
-    // video = document.querySelector("#myvideo")
-    // canvas = document.querySelector("#canvas")
-    // console.log(video)
-    // width = canvas.width = video.offsetWidth;
-    // height = canvas.height = video.offsetHeight;
-    // canvas.getContext('2d').drawImage(video, 0, 0, width, height);
-    // return canvas.toDataURL('image/png');
-    //console.log(data)
-
-    // photo.setAttribute('src', data);
   }
 }
-// document.addEventListener('DOMContentLoaded', fnReady, false);
-
-
