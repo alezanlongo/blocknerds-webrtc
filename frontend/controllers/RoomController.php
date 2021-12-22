@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use Yii;
 use DateTime;
 use Carbon\Carbon;
+use Codeception\Util\HttpCode;
 use common\components\JanusApiComponent;
 use common\models\Chat;
 use yii\helpers\Html;
@@ -12,6 +13,7 @@ use yii\helpers\Json;
 use common\models\Room;
 use common\models\User;
 use common\models\Meeting;
+use common\models\RoomImageCapture;
 use common\models\RoomMember;
 use common\models\RoomRequest;
 use common\models\UserProfile;
@@ -25,10 +27,12 @@ use common\widgets\cardNextOrInProgressMeeting\cardNextOrInProgressMeetingWidget
 use Exception;
 use yii\helpers\Url;
 use yii\helpers\VarDumper;
+use yii\web\Application;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
+use yii\web\MethodNotAllowedHttpException;
 use yii\web\UnauthorizedHttpException;
 
 class RoomController extends \yii\web\Controller
@@ -60,6 +64,120 @@ class RoomController extends \yii\web\Controller
         }
     }
 
+    public function actionCaptureMemberImage(string $roomUuid,  string $profileId)
+    {
+        /** @var Application $app */
+        $app = Yii::$app;
+        $app->response->format = Response::FORMAT_JSON;
+        $app->response->statusCode = HttpCode::FORBIDDEN;
+        $app->response->data = ['error' => 'request not allowed'];
+
+        if ($roomUuid === null || $profileId === null) {
+            return $this->response;
+        }
+
+        /** @var User $user */
+        $user = Yii::$app->user->identity;
+        $owner = RoomMemberRepository::getOwnerByRoom($roomUuid);
+        if ($user->id === null || $owner->owner_id != $user->getUserProfile()->one()->id) {
+            return $this->response;
+        }
+        $room = Room::findOne(['meeting_id' => $owner->id, 'uuid' => $roomUuid]);
+        $rm = RoomMember::findOne(['room_id' => $room->id, 'user_profile_id' => $profileId]);
+
+        if ($rm === null) {
+            return $this->response;
+        }
+        
+        if (RoomImageCapture::hasPendingCatures($room->id, $rm->user_profile_id)) {
+            $this->response->statusCode = HttpCode::OK;
+            $this->response->data = 'The selected target has pending captures';
+            return $this->response;
+        }
+        $imgCap = new RoomImageCapture();
+        $imgCap->user_profile_id = $user->getUserProfile()->one()->id;
+        $imgCap->room_id = $room->id;
+        $imgCap->target_user_profile_id = $rm->user_profile_id; // <-change it
+        $imgCap->status = RoomImageCapture::STATUS_PENDING;
+        $imgCap->capture_type = RoomImageCapture::CAPTURE_TYPE_USER_CAMERA;
+        $imgCap->save(false);
+
+        $topic = "/room/{$roomUuid}";
+        $mqttResponse = [
+            'type' => 'request_capture_image',
+            'profile_id' => $profileId,
+        ];
+        Yii::$app->mqtt->sendMessage($topic, $mqttResponse);
+        $this->response->statusCode = HttpCode::OK;
+        $this->response->data = null;
+        return $this->response;
+    }
+
+    public function actionGetCaptureMemberImageParams(string $roomUuid)
+    {
+        /** @var Application $app */
+        $app = Yii::$app;
+        $app->response->format = Response::FORMAT_JSON;
+        $app->response->statusCode = HttpCode::FORBIDDEN;
+        $app->response->data = ['error' => 'request not allowed'];
+        $room = Room::getRoomByUuid($roomUuid);
+        if ($room === null) {
+            return $this->response;
+        }
+        /** @var User $user */
+        $user = Yii::$app->user->identity;
+        $ric = RoomImageCapture::getByTargetUserProfile($room->id, $user->getUserProfile()->one()->id);
+        if (null === $ric) {
+            return $this->response;
+        }
+        $this->response->statusCode = HttpCode::OK;
+        $this->response->data = ['capture_id' => $ric->capture_id];
+        return $this->response;
+    }
+
+    public function actionUploadCaptureMemberImage(string $roomUuid, string $captureId)
+    {
+        /** @var Application $app */
+        $app = Yii::$app;
+        $app->response->format = Response::FORMAT_JSON;
+        $app->response->statusCode = HttpCode::FORBIDDEN;
+        $app->response->data = ['error' => 'request not allowed'];
+        $room = Room::getRoomByUuid($roomUuid);
+        if ($room === null) {
+            return $this->response;
+        }
+        /** @var User $user */
+        $user = Yii::$app->user->identity;
+        $ric = RoomImageCapture::findOne(['room_id' => $room->id, 'capture_id' => $captureId, 'target_user_profile_id' => $user->getUserProfile()->one()->id]);
+        if (null === $ric) {
+            return $this->response;
+        }
+        if (null === $this->request->post('image', null)) {
+            return $this->response;
+        }
+        $tmpFile = tempnam(sys_get_temp_dir(), 'img');
+        \file_put_contents($tmpFile, \base64_decode(\preg_replace('#^data:image/\w+;base64,#i', '', $this->request->post('image'))));
+
+        $allowed = [\IMAGETYPE_PNG => 'png', \IMAGETYPE_JPEG => 'jpg', \IMAGETYPE_GIF => 'gif'];
+        $type = \exif_imagetype($tmpFile);
+        if (!in_array($type, array_keys($allowed))) {
+            $this->response->data = ['error' => "file format not allowed: $type"];
+            return $this->response;
+        }
+        $fileTo = Yii::getAlias('@frontend') . DIRECTORY_SEPARATOR . 'imageStorage' . DIRECTORY_SEPARATOR . "{$room->id}_$captureId." . $allowed[$type];
+        if (!\copy($tmpFile, $fileTo)) {
+            return $this->response;
+        }
+        $ric->status = RoomImageCapture::STATUS_PROCESSED;
+        $ric->filename = \basename($fileTo);
+        $ric->file_format = 1;
+        $ric->captured_at = \time();
+        $ric->save(false);
+        $this->response->statusCode = HttpCode::OK;
+        $this->response->data = null;
+        return $this->response;
+    }
+
     public function actionIndex($uuid)
     {
         $this->layout = 'main-room';
@@ -75,6 +193,7 @@ class RoomController extends \yii\web\Controller
             return throw new NotFoundHttpException("Meeting not found.");
         }
 
+        /** @var User $user */
         $user = Yii::$app->user->identity;
         $profile = $user->getUserProfile()->one();
 
@@ -223,7 +342,7 @@ class RoomController extends \yii\web\Controller
         $rooms = array_filter($rooms, function ($room) {
             return $room !== null;
         });
-        
+
         return $rooms;
     }
 
@@ -313,7 +432,7 @@ class RoomController extends \yii\web\Controller
         if (!$meeting) {
             throw new NotFoundHttpException("Meeting not found.");
         }
-
+        /** @var User $user */
         $user = Yii::$app->user->identity;
         $profile = $user->getUserProfile()->one();
         if ($profile->id != $meeting->owner_id) {
@@ -359,6 +478,7 @@ class RoomController extends \yii\web\Controller
 
     public function actionCreate()
     {
+        /** @var User $user */
         $user = Yii::$app->user->identity;
         $profile = $user->getUserProfile()->one();
 
@@ -576,6 +696,7 @@ class RoomController extends \yii\web\Controller
 
     public function actionCreateSchedule()
     {
+        /** @var User $user */
         $user = Yii::$app->user->identity;
         $profile = $user->getUserProfile()->one();
 
@@ -667,6 +788,7 @@ class RoomController extends \yii\web\Controller
 
     function actionCalendar()
     {
+        /** @var User $user */
         $user = Yii::$app->user->identity;
         $profile = $user->getUserProfile()->one();
 

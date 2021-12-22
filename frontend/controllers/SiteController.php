@@ -87,7 +87,7 @@ class SiteController extends Controller
             throw new NotFoundHttpException();
         }
 
-        Yii::$app->janusApi->videoRoomCreate($token->room_id);
+        //Yii::$app->janusApi->videoRoomCreate($token->room_id);
     }
 
 
