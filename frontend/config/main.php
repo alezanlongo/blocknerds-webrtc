@@ -99,7 +99,7 @@ return [
                 'POST chat-test/message-listener' => 'chat-test/message-listener',
                 'POST photo/add' => 'photo/add',
                 'POST janus/event' => 'janus-event/create',
-                'POST,GET room/capture-member-image/<roomUuid>/<profileId>' => 'room/capture-member-image',
+                'POST room/capture-member-image/<roomUuid>/<profileId>' => 'room/capture-member-image',
                 'GET room/capture-member-image-params/<roomUuid>' => 'room/get-capture-member-image-params',
                 'POST room/capture-member-image-upload/<roomUuid>/<captureId>' => 'room/upload-capture-member-image'
             ],
