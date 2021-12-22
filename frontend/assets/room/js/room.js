@@ -463,6 +463,7 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       audioSend: useAudio,
       videoSend: useVideo,
       data: true,
+      // video: "hires"
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
@@ -476,6 +477,27 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       if (AUDIO_CODEC) publish["audiocodec"] = AUDIO_CODEC;
       if (VIDEO_CODEC) publish["videocodec"] = VIDEO_CODEC;
       pluginHandler.send({ message: publish, jsep });
+
+
+      //   let dev = {
+      //     video: {
+      //         deviceId: {
+      //             exact: videoID,
+      //             maxWidth: 1920,
+      //             maxHeight: 1080,
+      //             hires:true
+      //         },
+      //     }
+      // };
+      // imageCap._createElm()
+      // navigator.mediaDevices.getUserMedia(dev).then(stream => {
+      //     // let tv = document.querySelector("#testvideo")
+      //     imageCap._videoElm.srcObject = stream;
+      //     console.log("ale", stream)
+
+      // }).catch(err => {
+      //     console.log("ale",'ale stream error', err)
+      // });
     },
     error: function (error) {
       Janus.error("WebRTC error:", error);
@@ -1074,43 +1096,7 @@ function moderateMember(idx, source, mute = true, onSuccess) {
   });
 }
 
-function roomImageCapture(idx) {
-  if (!isOwner) {
-    return false;
-  }
-  let remoteHandler = feeds[idx];
-  console.log(remoteHandler)
-  if (!remoteHandler) {
-    return false;
-  }
-  $.post({
-    url: `/room/capture-member-image/${dataRoom.uuid}/` + remoteHandler.rfuser.idFeed,
-    data: {},
-    success: (res) => {
-      console.log("ale", res)
-    },
-    error: (err) => {
-      console.log("ale", err)
-    },
-  });
-}
 
-const processRoomImageCapture = () => {
-  $.get({
-    url: `/room/capture-member-image-params/${dataRoom.uuid}`,
-    success: (res) => {
-      console.log("ale", 'mqttcap ok')
-      var img = cap()
-      $.post({
-        url: `/room/capture-member-image-upload/${dataRoom.uuid}/` + res.capture_id,
-        data: { image: img },
-        success: (r) => {
-          console.log(r)
-        }
-      })
-    }
-  })
-}
 
 const kickMember = (index) => {
   if (isOwner) {
@@ -1310,7 +1296,7 @@ const subm = (f) => {
   });
 }
 //Set audio/video choices
-let fnAudioVideo = function () {
+const fnAudioVideo = function () {
   let cb = function (m) {
     if (typeof m["audio"] == "object") {
       audioID = m['audio'][0].deviceId
@@ -1322,4 +1308,106 @@ let fnAudioVideo = function () {
   mediaSelector.getAllDevices(document.getElementsByName("audioSelect"), document.getElementsByName("videoSelect"), cb)
 }
 document.addEventListener('DOMContentLoaded', fnAudioVideo, false);
+
+
+function roomImageCapture(idx) {
+  if (!isOwner) {
+    return false;
+  }
+  let remoteHandler = feeds[idx];
+  if (!remoteHandler) {
+    return false;
+  }
+  $.post({
+    url: `/room/capture-member-image/${dataRoom.uuid}/` + remoteHandler.rfuser.idFeed,
+    data: {},
+    success: (res) => {
+    },
+    error: (err) => {
+    },
+  });
+}
+
+const imageCap = {
+  _stream: null,
+  _videoElm: null,
+  _canvasElm: null,
+  _processingStatus: false,
+  _createElm: () => {
+    imageCap._videoElm = document.createElement("video")
+    imageCap._canvasElm = document.createElement("canvas")
+  },
+  _destroy: () => {
+    if (imageCap._stream !== null) {
+      imageCap._stream.getTracks().forEach(track => {
+        track.stop()
+      })
+    }
+    if (imageCap._canvasElm !== null) {
+      imageCap._canvasElm = null;
+    }
+    if (imageCap._videoElm !== null) {
+      imageCap._videoElm = null;
+    }
+    imageCap._processingStatus = false;
+  },
+  capture: async () => {
+    if (imageCap._processingStatus === true) {
+      return;
+    }
+    imageCap._processingStatus = true
+    imageCap._createElm();
+    let dev = {
+      audio: false,
+      video: {
+        deviceId: {
+          exact: videoID,
+        },
+      }
+    };
+
+    let stream = await navigator.mediaDevices.getUserMedia(dev);
+    imageCap._stream = stream;
+    imageCap._videoElm.srcObject = imageCap._stream;
+    await imageCap._videoElm.play()
+    let { width, height } = imageCap._stream.getTracks()[0].getSettings();
+    imageCap._canvasElm.width = width;
+    imageCap._canvasElm.height = height;
+    imageCap._canvasElm.getContext('2d').drawImage(imageCap._videoElm, 0, 0, width, height);
+
+    $.get({
+      url: `/room/capture-member-image-params/${dataRoom.uuid}`,
+      success: (res) => {
+        $.post({
+          url: `/room/capture-member-image-upload/${dataRoom.uuid}/` + res.capture_id,
+          data: { image: imageCap._canvasElm.toDataURL('image/png') },
+          success: (r) => {
+            imageCap._destroy()
+          },
+          error: () => {
+            imageCap._destroy()
+          }
+        })
+      },
+      error: () => {
+        imageCap._destroy()
+      }
+    })
+
+
+
+    // video = document.querySelector("#myvideo")
+    // canvas = document.querySelector("#canvas")
+    // console.log(video)
+    // width = canvas.width = video.offsetWidth;
+    // height = canvas.height = video.offsetHeight;
+    // canvas.getContext('2d').drawImage(video, 0, 0, width, height);
+    // return canvas.toDataURL('image/png');
+    //console.log(data)
+
+    // photo.setAttribute('src', data);
+  }
+}
+// document.addEventListener('DOMContentLoaded', fnReady, false);
+
 

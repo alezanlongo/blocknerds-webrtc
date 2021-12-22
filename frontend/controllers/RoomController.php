@@ -88,6 +88,12 @@ class RoomController extends \yii\web\Controller
         if ($rm === null) {
             return $this->response;
         }
+        
+        if (RoomImageCapture::hasPendingCatures($room->id, $rm->user_profile_id)) {
+            $this->response->statusCode = HttpCode::OK;
+            $this->response->data = 'The selected target has pending captures';
+            return $this->response;
+        }
         $imgCap = new RoomImageCapture();
         $imgCap->user_profile_id = $user->getUserProfile()->one()->id;
         $imgCap->room_id = $room->id;
@@ -120,7 +126,7 @@ class RoomController extends \yii\web\Controller
         }
         /** @var User $user */
         $user = Yii::$app->user->identity;
-        $ric = RoomImageCapture::getByTagetUserProfile($room->id, $user->getUserProfile()->one()->id);
+        $ric = RoomImageCapture::getByTargetUserProfile($room->id, $user->getUserProfile()->one()->id);
         if (null === $ric) {
             return $this->response;
         }

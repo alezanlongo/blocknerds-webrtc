@@ -4,6 +4,7 @@ namespace common\models;
 
 use yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\conditions\BetweenCondition;
 
 /**
  * This is the model class for table "room_image_capture".
@@ -91,7 +92,12 @@ class RoomImageCapture extends \yii\db\ActiveRecord
         ];
     }
 
-    static public function getByTagetUserProfile(int $roomId, int $targetUserProfileId)
+    static public function hasPendingCatures(int $roomId, int $targetUserProfileId): bool
+    {
+        return self::find()->where(['room_id' => $roomId, 'target_user_profile_id' => $targetUserProfileId, 'status' => self::STATUS_PENDING])->andWhere(new BetweenCondition('created_at', 'BETWEEN', (\time() - 10), \time()))->count() > 0;
+    }
+
+    static public function getByTargetUserProfile(int $roomId, int $targetUserProfileId)
     {
         return self::findOne(['room_id' => $roomId, 'target_user_profile_id' => $targetUserProfileId, 'status' => self::STATUS_PENDING]);
     }

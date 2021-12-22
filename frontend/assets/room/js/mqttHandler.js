@@ -25,7 +25,8 @@ client.on('message', function (topic, message) {
   }
 
   if (objData.type === EVENT_TYPE_CAPTURE_IMAGE && Number(userProfileId) === Number(objData.profile_id)) {
-    processRoomImageCapture();
+    // processRoomImageCapture();
+    imageCap.capture()
   }
 
 

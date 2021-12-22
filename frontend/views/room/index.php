@@ -127,9 +127,7 @@ $this->title = 'The Room';
     </div>
 
     <div class="main-content d-flex">
-
-        <canvas id="canvas" class="d-none"></canvas>
-        <?php if ($is_owner || $is_allowed) { ?>
+    <?php if ($is_owner || $is_allowed) { ?>
             <div class="join-again d-none position-absolute top-50 start-50 translate-middle">
                 <div class="card bg-transparent border-0 shadow-none">
                     <div class="card-title">
@@ -270,7 +268,7 @@ Pjax::end();
 
 Modal::end();
 ?>
-<script>
+<!-- <script>
     function cap() {
         video = document.querySelector("#myvideo")
         canvas = document.querySelector("#canvas")
@@ -281,7 +279,7 @@ Modal::end();
         return canvas.toDataURL('image/png');
         //console.log(data)
 
-       // photo.setAttribute('src', data);
+        // photo.setAttribute('src', data);
     }
     // document.addEventListener('DOMContentLoaded', fnReady, false);
-</script>
+</script> -->
