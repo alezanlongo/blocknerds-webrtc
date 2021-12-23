@@ -43,14 +43,8 @@ use common\widgets\chat\ChatBoxRoomWidget;
                 <li class="list-group-item list-group-item-light bg-dark position-relative" data-user-id="<?= Yii::$app->getUser()->getId() ?>" data-index="0">
                     <span class="p-1 username-member text-success"><?= Yii::$app->getUser()->getIdentity()->username ?> (myself)</span>
                 </li>
-                <script>
-                    let fi = function() {
-                        console.log("ale", feeds)
-                    }
-                    document.addEventListener('DOMContentLoaded', fi, false);
-                </script>
                 <?php
-                $i = 0;
+                $i = 1;
                 foreach ($members as $member) {
                     if ($member->user_profile_id != $user_profile_id) {
                 ?>

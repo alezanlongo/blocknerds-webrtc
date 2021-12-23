@@ -52,6 +52,11 @@ class UserController extends Controller
         # code...
     }
 
+    public function actionImageProfile(){
+
+        return $this->render('imageProfile');
+    }
+
     public function actionEditProfile()
     {
         $model = new EditProfileForm();

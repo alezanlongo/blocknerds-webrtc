@@ -463,7 +463,6 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       audioSend: useAudio,
       videoSend: useVideo,
       data: true,
-      // video: "hires"
     },
     simulcast: DO_SIMULCAST,
     simulcast2: DO_SIMULCAST2,
@@ -478,26 +477,6 @@ const publishOwnFeed = (useAudio = true, useVideo = true) => {
       if (VIDEO_CODEC) publish["videocodec"] = VIDEO_CODEC;
       pluginHandler.send({ message: publish, jsep });
 
-
-      //   let dev = {
-      //     video: {
-      //         deviceId: {
-      //             exact: videoID,
-      //             maxWidth: 1920,
-      //             maxHeight: 1080,
-      //             hires:true
-      //         },
-      //     }
-      // };
-      // imageCap._createElm()
-      // navigator.mediaDevices.getUserMedia(dev).then(stream => {
-      //     // let tv = document.querySelector("#testvideo")
-      //     imageCap._videoElm.srcObject = stream;
-      //     console.log("ale", stream)
-
-      // }).catch(err => {
-      //     console.log("ale",'ale stream error', err)
-      // });
     },
     error: function (error) {
       Janus.error("WebRTC error:", error);
