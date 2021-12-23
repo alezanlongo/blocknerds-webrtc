@@ -294,10 +294,42 @@ class m130524_201442_init extends Migration
         ]);
         $this->createIndex('{{%idx-ice_event_log-profile_id}}', '{{%ice_event_log}}', 'profile_id');
         $this->createIndex('{{%idx-ice_event_log-room_id}}', '{{%ice_event_log}}', 'room_id');
+
+        //tree
+        $this->createTable('{{%tree}}', [
+            'id' => $this->bigPrimaryKey(),
+            'root' => $this->integer(),
+            'lft' => $this->integer()->notNull(),
+            'rgt' => $this->integer()->notNull(),
+            'lvl' => $this->smallInteger(5)->notNull(),
+            'name' => $this->string(60)->notNull(),
+            'icon' => $this->string(255),
+            'icon_type' => $this->smallInteger(1)->notNull()->defaultValue(1),
+            'active' => $this->boolean()->notNull()->defaultValue(true),
+            'selected' => $this->boolean()->notNull()->defaultValue(false),
+            'disabled' => $this->boolean()->notNull()->defaultValue(false),
+            'readonly' => $this->boolean()->notNull()->defaultValue(false),
+            'visible' => $this->boolean()->notNull()->defaultValue(true),
+            'collapsed' => $this->boolean()->notNull()->defaultValue(false),
+            'movable_u' => $this->boolean()->notNull()->defaultValue(true),
+            'movable_d' => $this->boolean()->notNull()->defaultValue(true),
+            'movable_l' => $this->boolean()->notNull()->defaultValue(true),
+            'movable_r' => $this->boolean()->notNull()->defaultValue(true),
+            'removable' => $this->boolean()->notNull()->defaultValue(true),
+            'removable_all' => $this->boolean()->notNull()->defaultValue(false)
+        ], $tableOptions);
+        $this->createIndex('tree_NK1', '{{%tree}}', 'root');
+        $this->createIndex('tree_NK2', '{{%tree}}', 'lft');
+        $this->createIndex('tree_NK3', '{{%tree}}', 'rgt');
+        $this->createIndex('tree_NK4', '{{%tree}}', 'lvl');
+        $this->createIndex('tree_NK5', '{{%tree}}', 'active');
     }
 
     public function down()
     {
+         // ice_event_log
+         $this->dropTable('{{%tree}}');
+
         // ice_event_log
         $this->dropTable('{{%ice_event_log}}');
 

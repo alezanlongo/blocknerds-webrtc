@@ -76,6 +76,17 @@ class IceEventLog extends \yii\db\ActiveRecord
         
     //     return true;
     // }
+    public function afterSave($insert, $changedAttributes)
+    {
+        // if ($insert) {
+        //     $roomMember = RoomMember::findOne(['room_id'=>$this->room_id, 'profile_id'=>$this->profile_id]);
+        //     $tree = new Tree();
+        //     $tree->root = $roomMember->room->uuid;
+    
+        //     // parent::afterSave();
+        // }
+        return parent::afterSave($insert, $changedAttributes);
+    }
 
     public function getRoomMember()
     {

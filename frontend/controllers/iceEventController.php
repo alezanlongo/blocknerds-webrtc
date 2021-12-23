@@ -2,9 +2,12 @@
 
 namespace frontend\controllers;
 
+use Carbon\Carbon;
 use common\models\IceEventLog;
+use common\models\Menu;
 use common\models\Room;
 use common\models\RoomMember;
+use common\models\Tree;
 use common\models\UserProfile;
 use Exception;
 use Yii;
@@ -100,14 +103,23 @@ class IceEventController extends \yii\web\Controller
         $dataLog = $this->request->post();
         try {
             $roomMember = $this->getRoomMember($dataLog['uuid'], intval($dataLog['userProfileId']));
-            $iceEvent = new IceEventLog();
-            $iceEvent->log = $dataLog['ice'] ?? null;
-            $iceEvent->sdp_log = $dataLog['sdp'] ?? null;
-            $iceEvent->profile_id = $roomMember->user_profile_id;
-            $iceEvent->room_id = $roomMember->room_id;
-            $iceEvent->save();
+            $rootRoomLog = new Tree(['name' => $dataLog['uuid'] . "_" . $roomMember->user->username]);
+            $rootRoomLog->makeRoot();
+            // $rootUserLog = new Tree(['name' => $roomMember->user->username]);
+            // $rootUserLog->prependTo($rootRoomLog);
 
-            return ['status' => 200] + $dataLog;
+            foreach ($dataLog['logs'] as $k => $log) {
+                $iceEvent = new IceEventLog();
+                $iceEvent->log = $log['ice'] ?? null;
+                $iceEvent->sdp_log = $log['sdp'] ?? null;
+                $iceEvent->profile_id = $roomMember->user_profile_id;
+                $iceEvent->room_id = $roomMember->room_id;
+                $iceEvent->save();
+                $log = new Tree(['name' => Carbon::createFromTimestamp($iceEvent->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s')]);
+                $log->prependTo($rootRoomLog);
+            }
+
+            return ['status' => 200];
         } catch (Exception $e) {
             throw new UnprocessableEntityHttpException($e->getMessage());
         }
@@ -118,7 +130,12 @@ class IceEventController extends \yii\web\Controller
         if (!$room) {
             throw new NotFoundHttpException("Room not found.");
         }
+        
+        $roomMember = RoomMember::findOne(['room_id' => $room->id, 'user_profile_id' => $profileId]);
+        if(!$roomMember){
+            throw new NotFoundHttpException("Member-room relationship not found.");
+        }
 
-        return RoomMember::findOne(['room_id' => $room->id, 'user_profile_id' => $profileId]);
+        return $roomMember;
     }
 }
