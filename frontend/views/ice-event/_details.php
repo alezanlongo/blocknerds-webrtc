@@ -8,6 +8,7 @@
 
 use Carbon\Carbon;
 use common\models\IceEventLog;
+use common\models\Room;
 use kartik\form\ActiveForm;
 use kartik\tree\Module;
 use kartik\tree\TreeView;
@@ -76,26 +77,40 @@ if ($node->isNewRecord) {
     $parent = $node->parents(1)->one();
     $parentKey = empty($parent) ? '' : Html::getAttributeValue($parent, $keyAttribute);
 }
-$isLvlOne = $node->lvl === 1;
+$data = null;
+switch ($node->lvl) {
+    case LEVEL_ROOM:
+        $room = Room::findOne(['uuid' => $node->name]);
+        if ($room) {
+            $data = $room->roomMembers;
+        }
+        break;
+    case LEVEL_PROFILE:
+        $data = array_map(function ($treeLog) {
+            $log = $treeLog->log;
+            $roomMember = $log->roomMember;
+            return [
+                'id' => $log->id,
+                'candidate' => $log->log['candidate'],
+                'created_at' => $log->created_at,
+                'profile' => [
+                    'id' => $log->profile_id,
+                    'username' => $roomMember->userProfile->user->username,
+                    'room_uuid' => $roomMember->room->uuid,
+                ],
+            ];
+        }, $node->children()->all());
+        break;
+    case LEVEL_LOG:
+        // $data = $node->log;
+        // $data = IceEventLog::findOne($node->ice_event_log_id) ;
+        // VarDumper::dump( $data, $depth = 10, $highlight = true);
+        // die;
+        $data = 4;
 
-if ($isLvlOne) {
-    $ids = ArrayHelper::getColumn($node->children()->all(), 'id');
-    $logs = IceEventLog::find()->where(['in', 'id', $ids])->all();
-    $data = array_map(function ($log) {
-        $roomMember = $log->roomMember;
-        return [
-            'id' => $log->id,
-            'candidate' => $log->log['candidate'],
-            'created_at' => $log->created_at,
-            'profile' => [
-                'id' => $log->profile_id,
-                'username' => $roomMember->userProfile->user->username,
-                'room_uuid' => $roomMember->room->uuid,
-            ],
-        ];
-    }, $logs);
-} else {
-    $data = [];
+        break;
+    default:
+        break;
 }
 
 /** @var Module $module */
@@ -123,24 +138,8 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
     return $this->render($nodeAddlViews[$part], $p);
 };
 
-// node identifier
-// $id = $node->isNewRecord ? null : $node->$keyAttribute;
-// // breadcrumbs
-// if (array_key_exists('depth', $breadcrumbs) && $breadcrumbs['depth'] === null) {
-//     $breadcrumbs['depth'] = '';
-// } elseif (!empty($breadcrumbs['depth'])) {
-//     $breadcrumbs['depth'] = (string)$breadcrumbs['depth'];
-// }
-// // icons list
-// $icons = is_array($iconsList) ? array_values($iconsList) : $iconsList;
 ?>
 
-<?php
-/**
- * SECTION 2: Initialize hidden attributes. In case you are extending this and creating your own view, it is mandatory
- * to set all these hidden inputs as defined below.
- */
-?>
 <?= Html::hiddenInput('nodeTitle', $nodeTitle) ?>
 <?= Html::hiddenInput('nodeTitlePlural', $nodeTitlePlural) ?>
 <?= Html::hiddenInput('treeNodeModify', $node->isNewRecord) ?>
@@ -194,75 +193,77 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
     }
     ?>
     <?php
-    switch ($node->lvl) {
-        case LEVEL_ROOM:
-            echo "room";
-            break;
-        case LEVEL_PROFILE:
-    ?>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">id</th>
-                        <th scope="col">Component</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Foundation</th>
-                        <th scope="col">Protocol</th>
-                        <th scope="col">Address</th>
-                        <th scope="col">Port</th>
-                        <th scope="col">Priority</th>
-                        <th scope="col">Mid</th>
-                        <th scope="col">MLine Index</th>
-                        <th scope="col">Username Fragment</th>
-                        <th scope="col">createdAt</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($data as $log) {
-                        $candidate = $log['candidate'];
-                    ?>
+    if (!empty($data)) {
+        switch ($node->lvl) {
+            case LEVEL_ROOM:
+                echo Html::tag('p', 'Room name: ' . $node->name);
+                echo Html::tag('p', 'List of participants: '); ?>
+                <ul class="list-group list-group-flush">
+                    <?php
+                    foreach ($data as $member) {
+                        echo Html::tag('li', $member->userProfile->user->username, ['class' => 'list-group-item']);
+                    } ?>
+                </ul>
+            <?php
+                break;
+            case LEVEL_PROFILE:  ?>
+                <table class="table">
+                    <thead>
                         <tr>
-                            <th scope="row"><?= $log['id'] ?></th>
-                            <td><?= $candidate['component'] ?></td>
-                            <td><?= $candidate['type'] ?></td>
-                            <td><?= $candidate['foundation'] ?></td>
-                            <td><?= $candidate['protocol'] ?></td>
-                            <td><?= $candidate['address'] ?></td>
-                            <td><?= $candidate['port'] ?></td>
-                            <td><?= $candidate['priority'] ?></td>
-                            <td><?= $candidate['sdpMid'] ?></td>
-                            <td><?= $candidate['sdpMLineIndex'] ?></td>
-                            <td><?= $candidate['usernameFragment'] ?></td>
-                            <td><?= Carbon::createFromTimestamp($log['created_at'])->format('Y-m-d H:i:s') ?></td>
-                            <td>
-                                <button type="button" class="btn btn-primary btn-open-detail" onclick="openModal(<?= $log['id'] ?>)">
-                                    sdp Details
-                                </button>
-                            </td>
+                            <th scope="col">id</th>
+                            <th scope="col">Component</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Foundation</th>
+                            <th scope="col">Protocol</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Port</th>
+                            <th scope="col">Priority</th>
+                            <th scope="col">Mid</th>
+                            <th scope="col">MLine Index</th>
+                            <th scope="col">Username Fragment</th>
+                            <th scope="col">createdAt</th>
+                            <th scope="col"></th>
                         </tr>
-                    <?php  } ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($data as $log) {
+                            $candidate = $log['candidate'];
+                        ?>
+                            <tr>
+                                <th scope="row"><?= $log['id'] ?></th>
+                                <td><?= $candidate['component'] ?></td>
+                                <td><?= $candidate['type'] ?></td>
+                                <td><?= $candidate['foundation'] ?></td>
+                                <td><?= $candidate['protocol'] ?></td>
+                                <td><?= $candidate['address'] ?></td>
+                                <td><?= $candidate['port'] ?></td>
+                                <td><?= $candidate['priority'] ?></td>
+                                <td><?= $candidate['sdpMid'] ?></td>
+                                <td><?= $candidate['sdpMLineIndex'] ?></td>
+                                <td><?= $candidate['usernameFragment'] ?></td>
+                                <td><?= Carbon::createFromTimestamp($log['created_at'])->format('Y-m-d H:i:s') ?></td>
+                                <td>
+                                    <button type="button" class="btn btn-primary btn-open-detail" onclick="openModal(<?= $log['id'] ?>)">
+                                        sdp Details
+                                    </button>
+                                </td>
+                            </tr>
+                        <?php  } ?>
+                    </tbody>
+                </table>
+            <?php
+                break;
+            case LEVEL_LOG:
+                // VarDumper::dump( , $depth = 10, $highlight = true);
+                // die;
+                echo Html::tag('h1', 'Get details on parent node');
+            ?>
     <?php
-            break;
-        case LEVEL_LOG:
-            echo "log";
-            # code...
-            break;
+                break;
+        }
+    } else {
+        echo Html::tag('h1', 'Nothing to show');
     }
-    ?>
-    <!-- <?php if ($isLvlOne) : ?>
-       
-    <?php else : ?>
-        <h1>Nothing to show</h1>
-    <?php endif ?> -->
-
-
-    <?php
-    /**
-     * SECTION 8: Additional views part 2 - before admin zone.
-     */
     ?>
     <? $renderContent(Module::VIEW_PART_2) ?>
 

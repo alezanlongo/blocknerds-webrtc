@@ -16,6 +16,15 @@ class Tree extends TreeKartik
     }    
 
 
+    /**
+     * Gets query for [[Log]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLog()
+    {
+        return $this->hasOne(IceEventLog::class, ['id' => 'ice_event_log_id']);
+    }
     // /**
     //  * Override isDisabled method if you need as shown in the  
     //  * example below. You can override similarly other methods

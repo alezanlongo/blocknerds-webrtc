@@ -303,6 +303,7 @@ class m130524_201442_init extends Migration
             'rgt' => $this->integer()->notNull(),
             'lvl' => $this->smallInteger(5)->notNull(),
             'name' => $this->string(60)->notNull(),
+            'ice_event_log_id' => $this->integer(),
             'icon' => $this->string(255),
             'icon_type' => $this->smallInteger(1)->notNull()->defaultValue(1),
             'active' => $this->boolean()->notNull()->defaultValue(true),
@@ -323,12 +324,25 @@ class m130524_201442_init extends Migration
         $this->createIndex('tree_NK3', '{{%tree}}', 'rgt');
         $this->createIndex('tree_NK4', '{{%tree}}', 'lvl');
         $this->createIndex('tree_NK5', '{{%tree}}', 'active');
+        $this->createIndex('{{%idx-tree-ice_event_log_id}}', '{{%tree}}', 'ice_event_log_id');
+        $this->addForeignKey(
+            '{{%fk-tree-ice_event_log_id}}',
+            '{{%tree}}',
+            'ice_event_log_id',
+            '{{%ice_event_log}}',
+            'id',
+            'CASCADE'
+        );
     }
 
     public function down()
     {
          // ice_event_log
          $this->dropTable('{{%tree}}');
+         $this->dropForeignKey(
+            '{{%fk-tree-ice_event_log_id}}',
+            '{{%tree}}'
+        );
 
         // ice_event_log
         $this->dropTable('{{%ice_event_log}}');

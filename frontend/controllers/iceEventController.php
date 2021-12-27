@@ -118,7 +118,10 @@ class IceEventController extends \yii\web\Controller
                 $iceEvent->profile_id = $roomMember->user_profile_id;
                 $iceEvent->room_id = $roomMember->room_id;
                 $iceEvent->save();
-                $log = new Tree(['name' => Carbon::createFromTimestamp($iceEvent->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s')]);
+                $log = new Tree([
+                    'name' => Carbon::createFromTimestamp($iceEvent->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s'),
+                    'ice_event_log_id' => $iceEvent->id,
+                ]);
                 $log->prependTo($rootUserLog);
             }
 
