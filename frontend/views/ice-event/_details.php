@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2015 - 2019
  * @package   yii2-tree-manager
@@ -64,8 +65,9 @@ use yii\web\View;
 <?php
 extract($params);
 $session = Yii::$app->has('session') ? Yii::$app->session : null;
-$resetTitle = Yii::t('kvtree', 'Reset');
-$submitTitle = Yii::t('kvtree', 'Save');
+const LEVEL_ROOM = 0;
+const LEVEL_PROFILE = 1;
+const LEVEL_LOG = 2;
 
 // parse parent key
 if ($node->isNewRecord) {
@@ -74,12 +76,12 @@ if ($node->isNewRecord) {
     $parent = $node->parents(1)->one();
     $parentKey = empty($parent) ? '' : Html::getAttributeValue($parent, $keyAttribute);
 }
-$isLvlOne = $node->lvl === 0;
+$isLvlOne = $node->lvl === 1;
 
-if($isLvlOne){
-    $ids = ArrayHelper::getColumn($node->children()->all(),'id');
+if ($isLvlOne) {
+    $ids = ArrayHelper::getColumn($node->children()->all(), 'id');
     $logs = IceEventLog::find()->where(['in', 'id', $ids])->all();
-    $logs = array_map(function ($log) {
+    $data = array_map(function ($log) {
         $roomMember = $log->roomMember;
         return [
             'id' => $log->id,
@@ -92,6 +94,8 @@ if($isLvlOne){
             ],
         ];
     }, $logs);
+} else {
+    $data = [];
 }
 
 /** @var Module $module */
@@ -101,7 +105,7 @@ $module = TreeView::module();
 $form = ActiveForm::begin(['action' => $formAction, 'options' => $formOptions]);
 
 // helper function to show alert
-$showAlert = function ($type, $body = '', $hide = true) use($hideCssClass) {
+$showAlert = function ($type, $body = '', $hide = true) use ($hideCssClass) {
     $class = "alert alert-{$type}";
     if ($hide) {
         $class .= ' ' . $hideCssClass;
@@ -159,7 +163,7 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
  * BEGIN VALID NODE DISPLAY
  */
 ?>
-<?php if (!$node->isNewRecord || !empty($parentKey)): ?>
+<?php if (!$node->isNewRecord || !empty($parentKey)) : ?>
     <?php
     $cbxOptions = ['custom' => true];                           // default checkbox/ radio options (useful for BS4)
     $isAdmin = ($isAdmin == true || $isAdmin === "true");       // admin mode flag
@@ -179,27 +183,6 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
         $keyField = Html::activeHiddenInput($node, $keyAttribute);
     }
 
-    /**
-     * initialize for create or update
-     */
-    // $depth = ArrayHelper::getValue($breadcrumbs, 'depth', '');
-    // $glue = ArrayHelper::getValue($breadcrumbs, 'glue', '');
-    // $activeCss = ArrayHelper::getValue($breadcrumbs, 'activeCss', '');
-    // $untitled = ArrayHelper::getValue($breadcrumbs, 'untitled', '');
-    // $name = $node->getBreadcrumbs($depth, $glue, $activeCss, $untitled);
-    // if ($node->isNewRecord && !empty($parentKey) && $parentKey !== TreeView::ROOT_KEY) {
-    //     /**
-    //      * @var Tree $modelClass
-    //      * @var Tree $parent
-    //      */
-    //     if (empty($depth)) {
-    //         $depth = null;
-    //     }
-    //     if ($depth === null || $depth > 0) {
-    //         $parent = $modelClass::findOne($parentKey);
-    //         $name = $parent->getBreadcrumbs($depth, $glue, null) . $glue . $name;
-    //     }
-    // }
     if ($node->isReadonly()) {
         $inputOpts['readonly'] = true;
     }
@@ -209,77 +192,72 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
     if ($node->isLeaf()) {
         $flagOptions['disabled'] = true;
     }
-
-    // $nameField = $showNameAttribute ? $form->field($node, $nameAttribute)->textInput($inputOpts) : '';
-    ?>
- 
-    <?php
-    /**
-     * SECTION 6: Additional views part 1 - before all form attributes.
-     */
     ?>
     <?php
-    // VarDumper::dump( $node, $depth = 10, $highlight = true);
-    // die;
-    //  $renderContent(Module::VIEW_PART_1);
+    switch ($node->lvl) {
+        case LEVEL_ROOM:
+            echo "room";
+            break;
+        case LEVEL_PROFILE:
     ?>
-
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Component</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Foundation</th>
+                        <th scope="col">Protocol</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Port</th>
+                        <th scope="col">Priority</th>
+                        <th scope="col">Mid</th>
+                        <th scope="col">MLine Index</th>
+                        <th scope="col">Username Fragment</th>
+                        <th scope="col">createdAt</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($data as $log) {
+                        $candidate = $log['candidate'];
+                    ?>
+                        <tr>
+                            <th scope="row"><?= $log['id'] ?></th>
+                            <td><?= $candidate['component'] ?></td>
+                            <td><?= $candidate['type'] ?></td>
+                            <td><?= $candidate['foundation'] ?></td>
+                            <td><?= $candidate['protocol'] ?></td>
+                            <td><?= $candidate['address'] ?></td>
+                            <td><?= $candidate['port'] ?></td>
+                            <td><?= $candidate['priority'] ?></td>
+                            <td><?= $candidate['sdpMid'] ?></td>
+                            <td><?= $candidate['sdpMLineIndex'] ?></td>
+                            <td><?= $candidate['usernameFragment'] ?></td>
+                            <td><?= Carbon::createFromTimestamp($log['created_at'])->format('Y-m-d H:i:s') ?></td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-open-detail" onclick="openModal(<?= $log['id'] ?>)">
+                                    sdp Details
+                                </button>
+                            </td>
+                        </tr>
+                    <?php  } ?>
+                </tbody>
+            </table>
     <?php
-    /**
-     * SECTION 7: Basic node attributes for editing.
-     */
+            break;
+        case LEVEL_LOG:
+            echo "log";
+            # code...
+            break;
+    }
     ?>
-
-    <?php if($isLvlOne): ?>
-        <!-- show children -->
-        <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">id</th>
-                <th scope="col">Component</th>
-                <th scope="col">Type</th>
-                <th scope="col">Foundation</th>
-                <th scope="col">Protocol</th>
-                <th scope="col">Address</th>
-                <th scope="col">Port</th>
-                <th scope="col">Priority</th>
-                <th scope="col">Mid</th>
-                <th scope="col">MLine Index</th>
-                <th scope="col">Username Fragment</th>
-                <th scope="col">createdAt</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($logs as $log) {
-                $candidate = $log['candidate'];
-            ?>
-                <tr>
-                    <th scope="row"><?= $log['id'] ?></th>
-                    <td><?= $candidate['component'] ?></td>
-                    <td><?= $candidate['type'] ?></td>
-                    <td><?= $candidate['foundation'] ?></td>
-                    <td><?= $candidate['protocol'] ?></td>
-                    <td><?= $candidate['address'] ?></td>
-                    <td><?= $candidate['port'] ?></td>
-                    <td><?= $candidate['priority'] ?></td>
-                    <td><?= $candidate['sdpMid'] ?></td>
-                    <td><?= $candidate['sdpMLineIndex'] ?></td>
-                    <td><?= $candidate['usernameFragment'] ?></td>
-                    <td><?= Carbon::createFromTimestamp($log['created_at'])->format('Y-m-d H:i:s') ?></td>
-                    <td>
-                        <button type="button" class="btn btn-primary btn-open-detail" onclick="openModal(<?= $log['id'] ?>)" >
-                            sdp Details
-                        </button>
-                    </td>
-                </tr>
-            <?php  } ?>
-        </tbody>
-    </table>
-    <?php else: ?>
+    <!-- <?php if ($isLvlOne) : ?>
+       
+    <?php else : ?>
         <h1>Nothing to show</h1>
-    <?php endif ?>
-   
+    <?php endif ?> -->
+
 
     <?php
     /**
@@ -288,14 +266,14 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
     ?>
     <? $renderContent(Module::VIEW_PART_2) ?>
 
-    
+
     <?php
     /**
      * SECTION 13: Additional views part 5 accessible by all users after admin zone.
      */
     ?>
     <? $renderContent(Module::VIEW_PART_5) ?>
-<?php else: ?>
+<?php else : ?>
     <?= $noNodesMessage ?>
 <?php endif; ?>
 <?php

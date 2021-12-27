@@ -103,10 +103,13 @@ class IceEventController extends \yii\web\Controller
         $dataLog = $this->request->post();
         try {
             $roomMember = $this->getRoomMember($dataLog['uuid'], intval($dataLog['userProfileId']));
-            $rootRoomLog = new Tree(['name' => $dataLog['uuid'] . "_" . $roomMember->user->username]);
-            $rootRoomLog->makeRoot();
-            // $rootUserLog = new Tree(['name' => $roomMember->user->username]);
-            // $rootUserLog->prependTo($rootRoomLog);
+            $rootRoomLog = Tree::findOne(['name'=>$roomMember->room->uuid]);
+            if(!$rootRoomLog){
+                $rootRoomLog = new Tree(['name' => $dataLog['uuid']]);
+                $rootRoomLog->makeRoot();
+            }
+            $rootUserLog = new Tree(['name' => $roomMember->user->username]);
+            $rootUserLog->prependTo($rootRoomLog);
 
             foreach ($dataLog['logs'] as $k => $log) {
                 $iceEvent = new IceEventLog();
@@ -116,7 +119,7 @@ class IceEventController extends \yii\web\Controller
                 $iceEvent->room_id = $roomMember->room_id;
                 $iceEvent->save();
                 $log = new Tree(['name' => Carbon::createFromTimestamp($iceEvent->created_at, $roomMember->userProfile->timezone)->format('Y-m-d H:i:s')]);
-                $log->prependTo($rootRoomLog);
+                $log->prependTo($rootUserLog);
             }
 
             return ['status' => 200];
