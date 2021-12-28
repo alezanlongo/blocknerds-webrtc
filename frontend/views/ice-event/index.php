@@ -45,6 +45,9 @@ $profile = Yii::$app->user->identity->userProfile;
             'enableCache' => true   // defaults to true
         ],
         'nodeView' => '@frontend/views/ice-event/_details',
+        'showFormButtons' => false,
+        'allowNewRoots' => false,
+        
     ]);
      ?>
      
