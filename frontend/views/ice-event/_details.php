@@ -102,11 +102,7 @@ switch ($node->lvl) {
         }, $node->children()->all());
         break;
     case LEVEL_LOG:
-        // $data = $node->log;
-        // $data = IceEventLog::findOne($node->ice_event_log_id) ;
-        // VarDumper::dump( $data, $depth = 10, $highlight = true);
-        // die;
-        $data = 4;
+        $data = $node->log;
 
         break;
     default:
@@ -222,7 +218,7 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
                             <th scope="col">MLine Index</th>
                             <th scope="col">Username Fragment</th>
                             <th scope="col">createdAt</th>
-                            <th scope="col"></th>
+                            <!-- <th scope="col"></th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -242,11 +238,11 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
                                 <td><?= $candidate['sdpMLineIndex'] ?></td>
                                 <td><?= $candidate['usernameFragment'] ?></td>
                                 <td><?= Carbon::createFromTimestamp($log['created_at'])->format('Y-m-d H:i:s') ?></td>
-                                <td>
+                                <!-- <td>
                                     <button type="button" class="btn btn-primary btn-open-detail" onclick="openModal(<?= $log['id'] ?>)">
                                         sdp Details
                                     </button>
-                                </td>
+                                </td> -->
                             </tr>
                         <?php  } ?>
                     </tbody>
@@ -254,9 +250,7 @@ $renderContent = function ($part) use ($nodeAddlViews, $params, $form) {
             <?php
                 break;
             case LEVEL_LOG:
-                // VarDumper::dump( , $depth = 10, $highlight = true);
-                // die;
-                echo Html::tag('h1', 'Get details on parent node');
+                echo Html::tag('p', $data['sdp_log']['description'], ['style' => "white-space: pre-wrap;"]);
             ?>
     <?php
                 break;
