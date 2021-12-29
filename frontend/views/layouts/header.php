@@ -4,11 +4,14 @@
 /** @var string $directoryAsset */
 
 use yii\helpers\Html;
+use yii\helpers\VarDumper;
 
 $username = Yii::$app->getUser()->getIdentity()->username;
-$image = Yii::$app->getUser()->getIdentity()->getUserProfile()->one()->image;
 
-if ($image === null) {
+$image = Yii::$app->getUser()->getIdentity()->getUserProfile()->one()->fileImageExists();
+if ($image) {
+  $image = Yii::$app->getUser()->getIdentity()->getUserProfile()->one()->getBase64Image();
+} else {
   $image = "/img/default-user.png";
 }
 ?>
@@ -28,7 +31,7 @@ if ($image === null) {
 
         <li class="nav-item dropdown user-menu">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-            <img src="<?= $image ?>" class="user-image <?= $image ?> shadow" alt="User Image">
+            <img src="<?= $image ?>" class="user-image shadow" alt="User Image">
             <span class="d-none d-md-inline"><?= $username ?></span>
           </a>
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">

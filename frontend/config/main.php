@@ -93,6 +93,7 @@ return [
                 'POST room/time/add' => 'room/add-time',
                 'POST room/join/<action:(allow|deny)>' => 'room/join',
                 'GET user/get-profile/<profile_id>' => 'user/get-profile',
+                'GET,POST user/profile-image' =>'user/profile-image',
                 'POST room/toggle-media' => 'room/toggle-media',
                 'GET chat/<channel>' => 'chat/get-chat',
                 'POST chat/request-subscribe' => 'chat/request-to-subscribe-channel',
@@ -101,6 +102,7 @@ return [
                 'POST janus/event' => 'janus-event/create',
                 'POST ice/event' => 'ice-event/create',
                 'POST,GET room/capture-member-image/<roomUuid>/<profileId>' => 'room/capture-member-image',
+                'POST room/capture-member-image/<roomUuid>/<profileId>' => 'room/capture-member-image',
                 'GET room/capture-member-image-params/<roomUuid>' => 'room/get-capture-member-image-params',
                 'POST room/capture-member-image-upload/<roomUuid>/<captureId>' => 'room/upload-capture-member-image'
             ],

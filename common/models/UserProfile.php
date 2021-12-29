@@ -23,6 +23,7 @@ use yii\behaviors\TimestampBehavior;
  */
 class UserProfile extends \yii\db\ActiveRecord
 {
+    const PROFILE_IMAGE_PATH = "@frontend".DIRECTORY_SEPARATOR."profileImageStorage";
     /**
      * {@inheritdoc}
      */
@@ -97,5 +98,19 @@ class UserProfile extends \yii\db\ActiveRecord
     public function getHashId()
     {
         return md5($this->id);
+    }
+
+    public function getBase64Image()
+    {
+        if (!$this->fileImageExists()) {
+            return false;
+        }
+        $img = Yii::getAlias(self::PROFILE_IMAGE_PATH) . DIRECTORY_SEPARATOR . $this->image; 
+        return 'data: ' . mime_content_type($img) . ';base64,'.\base64_encode(\file_get_contents(Yii::getAlias(self::PROFILE_IMAGE_PATH) . DIRECTORY_SEPARATOR . $this->image,'r'));
+    }
+
+    public function fileImageExists()
+    {
+        return (file_exists(Yii::getAlias(self::PROFILE_IMAGE_PATH) . DIRECTORY_SEPARATOR . $this->image));
     }
 }

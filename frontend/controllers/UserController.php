@@ -3,9 +3,11 @@
 
 namespace frontend\controllers;
 
+use Codeception\Util\HttpCode;
 use common\models\EditProfileForm;
 use common\models\User;
 use common\models\UserProfile;
+use common\models\UserProfileImageForm;
 use DateTimeZone;
 use Locale;
 use ResourceBundle;
@@ -52,6 +54,51 @@ class UserController extends Controller
         # code...
     }
 
+    public function actionProfileImage()
+    {
+
+        $model = new UserProfileImageForm();
+        if (!$this->request->isPjax && $this->request->isAjax) {
+            /** @var Application $app */
+            $app = Yii::$app;
+            $app->response->format = Response::FORMAT_JSON;
+            $app->response->statusCode = HttpCode::FORBIDDEN;
+            $app->response->data = ['error' => 'request not allowed'];
+            if ($model->load($this->request->post()) && $model->validate()) {
+                $allowed = [\IMAGETYPE_PNG => 'png', \IMAGETYPE_JPEG => 'jpg', \IMAGETYPE_GIF => 'gif'];
+                $profileId = $model->userProfile->id;
+                if (!empty($model->rawimage)) {
+                    $tmpFile = tempnam(sys_get_temp_dir(), $profileId . '-profile-img');
+                    \file_put_contents($tmpFile, \base64_decode(\preg_replace('#^data:image/\w+;base64,#i', '', $model->rawimage)));
+                    $type = \exif_imagetype($tmpFile);
+                    $fileExt = $allowed[$type] ?? null;
+                } else {
+                    $fu = UploadedFile::getInstance($model, 'image');
+                    $fileExt = $fu->extension;
+                    $tmpFile = $fu->tempName;
+                }
+
+                if (!in_array($fileExt, \array_values($allowed))) {
+                    $this->response->data = ['error' => "file format not allowed: $type"];
+                    return $this->response;
+                }
+
+                $fileTo = Yii::getAlias(UserProfile::PROFILE_IMAGE_PATH) . DIRECTORY_SEPARATOR . $profileId . '-img-' . date('YmdHis') . '.' . $fileExt;
+                @\unlink(Yii::getAlias(UserProfile::PROFILE_IMAGE_PATH) . DIRECTORY_SEPARATOR . $model->userProfile->image);
+                $model->userProfile->image = \basename($fileTo);
+                if (!\copy($tmpFile, $fileTo)) {
+                    return $this->response;
+                }
+                $model->userProfile->save();
+                $this->response->statusCode = HttpCode::OK;
+                $this->response->data = true;
+                return $this->response;
+            }
+            return $this->response;
+        }
+        return $this->render('profileImage', ['model' => $model, 'imageFrom' => $this->request->get('imageFrom')]);
+    }
+
     public function actionEditProfile()
     {
         $model = new EditProfileForm();
@@ -79,7 +126,7 @@ class UserController extends Controller
             } else {
                 Yii::$app->session->setFlash('error', 'Error updating profile.');
             }
-            
+
             return $this->redirect(['user/edit-profile']);
         }
 
@@ -97,9 +144,9 @@ class UserController extends Controller
     public function actionGetProfile($profile_id)
     {
         $profileInfo = UserProfile::find()
-        ->where(['id' => $profile_id])
+            ->where(['id' => $profile_id])
             ->limit(1)->one();
-            
+
         $user = $profileInfo->getUser()->one();
 
         Yii::$app->response->format = Response::FORMAT_JSON;

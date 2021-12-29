@@ -1,5 +1,6 @@
 <?php
 
+use common\models\UserProfile;
 use frontend\assets\users\UserProfileAsset;
 use yii\helpers\BaseUrl;
 use yii\helpers\Html;
@@ -19,7 +20,7 @@ $this->registerAssetBundle(UserProfileAsset::class);
         <div class="col">
             <div class="content-img text-center ">
                 <?php if ($model->image) { ?>
-                    <img src="<?= Url::home() . $model->image ?>" alt="img-profile" width="200px" height="200px" class="profile-image rounded-circle">
+                    <img src="<?= Yii::$app->getUser()->getIdentity()->getUserProfile()->one()->getBase64Image() ?>" alt="img-profile" width="200px" height="200px" class="profile-image rounded-circle">
                 <?php } else { ?>
                     <i class="fa fa-user-circle icon-profile profile-image" aria-hidden="true"></i>
                     <img src="" alt="img-profile" width="200px" height="200px" class="profile-image rounded-circle d-none">
