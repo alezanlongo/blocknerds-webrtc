@@ -58,7 +58,7 @@ class UserController extends Controller
     {
 
         $model = new UserProfileImageForm();
-        if (!$this->request->isPjax && $this->request->isAjax) {
+        if (!$this->request->isPjax && $this->request->isAjax && $this->request->isPost) {
             /** @var Application $app */
             $app = Yii::$app;
             $app->response->format = Response::FORMAT_JSON;
@@ -96,7 +96,7 @@ class UserController extends Controller
             }
             return $this->response;
         }
-        return $this->render('profileImage', ['model' => $model, 'imageFrom' => $this->request->get('imageFrom')]);
+        return $this->renderAjax('profileImage', ['model' => $model, 'imageFrom' => $this->request->get('imageFrom')]);
     }
 
     public function actionEditProfile()

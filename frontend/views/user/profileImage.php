@@ -11,10 +11,8 @@ use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
 /** @var \yii\web\View $this */
-$this->registerAssetBundle(UserProfileAsset::class);
 $this->registerJsFile("/js/mediaSelector.js");
 ?>
-<h1>Update Profile image</h1>
 <hr class="border-bottom border-white">
 
 <div class="container">
