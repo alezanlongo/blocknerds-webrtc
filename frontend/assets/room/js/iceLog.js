@@ -11,14 +11,14 @@ const isStream = true
 let LOCALSTORE_IS_TESTED;
 let iceEvents = [];
 
-$(document).ready(() => {
-    LOCALSTORE_IS_TESTED = `isTested_${dataRoom.uuid}_${userProfileId}`;
-    const isTestedLS = localStorage.getItem(LOCALSTORE_IS_TESTED)
-    const isTested = isTestedLS !== "1"
-    if (isTested) {
-        doTest()
-    }
-})
+// $(document).ready(() => {
+    // LOCALSTORE_IS_TESTED = `isTested_${dataRoom.uuid}_${userProfileId}`;
+    // const isTestedLS = localStorage.getItem(LOCALSTORE_IS_TESTED)
+    // const isTested = isTestedLS !== "1"
+    // if (isTested) {
+    //     doTest()
+    // }
+// })
 const testEnded = (state = true) => {
     localStorage.setItem(LOCALSTORE_IS_TESTED, state ? 1 : 0)
 }

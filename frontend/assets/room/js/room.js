@@ -71,6 +71,13 @@ $(document).ready(async function () {
   roomsIn = [roomSelected];
   handleCountdown(endTime);
 
+  LOCALSTORE_IS_TESTED = `isTested_${dataRoom.uuid}_${userProfileId}`;
+    const isTestedLS = localStorage.getItem(LOCALSTORE_IS_TESTED)
+    const isTested = isTestedLS !== "1"
+    if (isTested) {
+        doTest()
+    }
+
   if (!Janus.isWebrtcSupported()) {
     bootbox.alert("No WebRTC support... ");
     return;
