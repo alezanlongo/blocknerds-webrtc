@@ -74,37 +74,39 @@ const mediaSelector = {
         this._getDevices(this._filter)
     },
 
-    // setMediaDevice: function (videoElm, audioId, videoId) {
-    //     const dev =
-    //     {
-    //         audio: {
-    //             deviceId: {
-    //                 exact: audioId
-    //             }
-    //         },
-    //         video: {
-    //             deviceId: {
-    //                 exact: videoId
-    //             }
-    //         }
-    //     };
-    //     if (Janus.myStream) {
-    //         // console.log(this._stream)
-    //         console.log('ale stop track')
-    //         Janus.stopAllTracks(myStream)
-    //         myStream.getTracks().forEach(track => {
-    //             track.stop()
-    //         })
-    //     }
+    setMediaDevice: function (videoElm, audioId, videoId) {
+        const constraints =
+        {
+            audio: false,
+            video: true
+        };
 
-    //     navigator.mediaDevices.getUserMedia(dev).then(stream => {
-    //         // Janus.myStream = stream;
-    //         // // videoElm.srcObject = stream;
-    //         // Janus.attachMediaStream(videoElm, stream)
-    //         // publishOwnFeed(true, true, stream)
-    //         // console.log('ale stream', stream)
-    //     }).catch(err => { console.log('ale stream error', err) });
-    // },
+        if (typeof audioId == 'boolean') {
+            constraints.audio = audioId
+        } else {
+            constraints.audio = { deviceId: { exact: audioId } }
+        }
+
+        if (typeof videoId == 'boolean') {
+            constraints.video = videoId
+        } else {
+            constraints.video = { deviceId: { exact: videoId } }
+        }
+        mediaSelector.stopAllStream();
+        navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+            videoElm.srcObject = stream;
+            mediaSelector._stream = stream;
+            videoElm.play()
+        }).catch(err => { console.log('ale stream error', err) });
+    },
+    stopAllStream: () => {
+        if (mediaSelector._stream !== null) {
+            mediaSelector._stream.getTracks().forEach(track => {
+                track.stop()
+            })
+            mediaSelector._stream = null;
+        }
+    },
     _stream: null,
     _getDevices: async function (fn) {
         return navigator.mediaDevices.enumerateDevices().then(fn).catch(err => { console.log("mediaSelector err", err) })

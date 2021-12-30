@@ -93,6 +93,7 @@ return [
                 'POST room/time/add' => 'room/add-time',
                 'POST room/join/<action:(allow|deny)>' => 'room/join',
                 'GET user/get-profile/<profile_id>' => 'user/get-profile',
+                'GET,POST user/profile-image' =>'user/profile-image',
                 'POST room/toggle-media' => 'room/toggle-media',
                 'GET chat/<channel>' => 'chat/get-chat',
                 'POST chat/request-subscribe' => 'chat/request-to-subscribe-channel',
