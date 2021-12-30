@@ -23,7 +23,6 @@ use yii\widgets\ActiveForm;
                     <i class="fa fa-user-circle icon-profile profile-image" aria-hidden="true"></i>
                     <img src="" alt="img-profile" width="200px" height="200px" class="profile-image rounded-circle d-none">
                 <?php } ?>
-                ?>
             </div>
             <?= Html::a('change image', Url::toRoute('/user/profile-image'), ['class' => 'btn btn-primary','data-toggle'=>"modal", 'data-target' => "#profileImageModal", 'data-pjax' => "0", 'onclick' => "modalLoadContent(this)"]) ?>
         </div>

@@ -111,6 +111,6 @@ class UserProfile extends \yii\db\ActiveRecord
 
     public function fileImageExists()
     {
-        return (file_exists(Yii::getAlias(self::PROFILE_IMAGE_PATH) . DIRECTORY_SEPARATOR . $this->image));
+        return (!empty($this->image)&&file_exists(Yii::getAlias(self::PROFILE_IMAGE_PATH) . DIRECTORY_SEPARATOR . $this->image));
     }
 }
