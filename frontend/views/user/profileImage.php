@@ -117,14 +117,16 @@ $this->registerJsFile("/js/mediaSelector.js");
     }
 
     const filePreview = (elm) => {
-        let imgTypes = ["image/png", "image/jpg", "image/gif"];
+        let imgTypes = ["image/png", "image/jpeg", "image/gif"];
         let si = document.getElementById("send-image");
         if (imgTypes.includes(elm.files[0].type)) {
             ip = document.getElementById("image-preview")
             ip.innerHTML = "";
             let img = new Image();
+            img.onload = () => {
+                ip.appendChild(img)
+            }
             img.src = URL.createObjectURL(elm.files[0])
-            ip.appendChild(img)
             si.classList.remove("d-none");
         } else {
             if (!si.classList.contains("d-none")) {
