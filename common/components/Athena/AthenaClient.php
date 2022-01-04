@@ -2587,4 +2587,56 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
             return $dataResponse['message'];
         }
     }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return MedicalHistory
+     */
+    public function getPracticeidChartPatientidMedicalhistory($practiceid, $patientid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/{patientid}/medicalhistory';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\MedicalHistoryApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return PutMedicalHistory200Response
+     */
+    public function putPracticeidChartPatientidMedicalhistory($practiceid, $patientid, array $body = [])
+    {
+        $path = '/v1/{practiceid}/chart/{patientid}/medicalhistory';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutMedicalHistory200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return MedicalHistoryConfiguration
+     */
+    public function getPracticeidChartConfigurationMedicalhistory($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/chart/configuration/medicalhistory';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\MedicalHistoryConfigurationApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
 }

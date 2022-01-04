@@ -57,6 +57,10 @@ use common\components\Athena\models\TopInsurancePackages;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
+use common\components\Athena\models\MedicalHistory;
+use common\components\Athena\models\MedicalHistoryQuestion;
+use common\components\Athena\models\MedicalHistoryConfiguration;
+use common\components\Athena\models\MedicalHistoryConfigurationQuestion;
 use yii\base\Component;
 
 class AthenaComponent extends Component
@@ -1925,6 +1929,48 @@ class AthenaComponent extends Component
 
         return $otherOrderTypeModels;
 
+    }
+
+
+    public function getMedicalHistory($patientid, $departmentid)
+    {
+        $medicalHistoryModelsApi =
+            $this->client->getPracticeidChartPatientidMedicalhistory(
+                $this->practiceid,
+                $patientid,
+                ['departmentid' => $departmentid]
+            );
+
+        $medicalHistoryModels = [];
+
+        foreach ($medicalHistoryModelsApi as $medicalHistoryModelApi) {
+            $medicalHistoryModels[] = MedicalHistory::createFromApiObject(
+                $medicalHistoryModelApi
+            );
+        }
+
+        return $medicalHistoryModels;
+    }
+
+
+    public function getMedicalHistoryQuestionsConfiguration()
+    {
+        $medicalHistoryConfigurationModelsApi =
+            $this->client->getPracticeidChartConfigurationMedicalhistory(
+                $this->practiceid
+            );
+
+
+        $medicalHistoryConfigurationModel = New MedicalHistoryConfiguration();
+        if($medicalHistoryConfigurationModelsApi->totalcount > 0){
+            foreach ($medicalHistoryConfigurationModelsApi->questions as $question) {
+                $medicalHistoryConfigurationModel->questions[] = MedicalHistoryConfigurationQuestion::createFromApiObject(
+                    $question
+                );
+            }
+        }
+
+        return $medicalHistoryConfigurationModel;
     }
 
     /* ================================= Begin  Protected methods ============================================== */

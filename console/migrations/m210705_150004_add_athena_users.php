@@ -22,7 +22,7 @@ class m210705_150004_add_athena_users extends Migration
             'email'    => 'athena@example.com',
             'status' => 10,
             'verification_token' =>  Yii::$app->getSecurity()->generateRandomString(),
-            'ext_practice_id' => 195900,
+            'ext_practice_id' => 1959884,
             'ext_provider_id' => 26,
             'ext_provider_username' => 'dfenick',
         ]);

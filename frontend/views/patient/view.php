@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Chart Alert', ['patient-insurance/create-chart-alert', 'patientId' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Patient Problems', ['problem/index', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Privacy Information', ['privacy-information-verified/index', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Medical History', ['medical-history/index', 'patientid' => $model->id], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?php if ($chartAlert->notetext): ?>

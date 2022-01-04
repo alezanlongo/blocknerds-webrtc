@@ -192,7 +192,7 @@ class PatientController extends \yii\web\Controller
             'model'                 => $this->findInsuranceModel($id),
             'patientid'             => $patient->patientid,
             'departmentid'          => $patient->departmentid,
-            'insuraceCardImage'     => $insuraceCardImage->toArray()
+            'insuraceCardImage'     => (!is_null($insuraceCardImage)) ? $insuraceCardImage->toArray() : []
         ]);
     }
 

@@ -6213,6 +6213,116 @@ paths:
         required: true
       tags:
         - Privacy Information Verification
+  /v1/{practiceid}/chart/{patientid}/medicalhistory:
+    get:
+      summary: Get patient's medical history data
+      description: Retrieves medical history of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: The athenaNet department ID.
+          in: query
+          name: departmentid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalHistory'
+          description: Success
+      operationId: getPracticeidChartPatientidMedicalhistory
+      tags:
+        - Medical History
+    put:
+      summary: Update patient's medical history data
+      description: Updates the medical history of a specific patient
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: patientid
+          in: path
+          name: patientid
+          required: true
+          schema:
+            type: integer
+        - description: Content type of the payload
+          in: header
+          name: Content-Type
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PutMedicalHistory200Response'
+          description: Success
+      operationId: putPracticeidChartPatientidMedicalhistory
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutMedicalHistory'
+        required: true
+      tags:
+        - Medical History
+  /v1/{practiceid}/chart/configuration/medicalhistory:
+    get:
+      summary: Get list of medical history questions used by this practice
+      description: Retrieves the list of medical history questions
+      parameters:
+        - description: practiceid
+          in: path
+          name: practiceid
+          required: true
+          schema:
+            type: integer
+        - description: Include deleted questions
+          in: query
+          name: showdeleted
+          required: false
+          schema:
+            type: boolean
+        - description: Number of entries to return (default 1000, max 10000)Please note that this endpoint has a different default and max than normal.
+          in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+        - description: Starting point of entries; 0-indexed
+          in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicalHistoryConfiguration'
+          description: Success
+      operationId: getPracticeidChartConfigurationMedicalhistory
+      tags:
+        - Medical History
 components:
   schemas:
     Patient:
@@ -13717,3 +13827,100 @@ components:
         signerrelationshiptopatientid:
           description: If presenting an e-signature, and the signer is signing on behalf of someone else, the relationship of the patient to the signer. There is a documentation page with details.
           type: string
+    MedicalHistoryQuestion:
+      type: object
+      properties:
+        answer:
+          description: The answer given by the patient to the question
+          type: string
+        codeset:
+          description: Codeset the diagnosis code belongs to
+          type: string
+        description:
+          description: Description of the code
+          type: string
+        diagnosiscode:
+          description: Diagnosis code
+          type: string
+        note:
+          description: Any special notes
+          type: string
+        question:
+          description: Disease being inquired about
+          type: string
+        questionid:
+          description: Athena ID for the question
+          type: number
+    MedicalHistory:
+      type: object
+      properties:
+        questions:
+          description: List of questions corresponding to patient medical history
+          items:
+            $ref: '#/components/schemas/MedicalHistoryQuestion'
+          type: array
+        sectionnote:
+          description: Additional notes for the entire medical history section, if any
+          type: string
+    PutMedicalHistory200Response:
+      type: object
+      properties:
+        errormessage:
+          description: If the operation failed, this will contain any error messages.
+          type: string
+        success:
+          description: Whether the operation was successful.
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+    PutMedicalHistory:
+      required:
+        - departmentid
+      type: object
+      properties:
+        departmentid:
+          description: The athenaNet department ID.
+          type: integer
+        questions:
+          description: A complex JSON object containing the patient medical history. See the Chart documentation for more details.
+          items:
+            $ref: '#/components/schemas/MedicalHistoryQuestion'
+          type: array
+        sectionnote:
+          description: Any additional section notes
+          type: string
+    MedicalHistoryConfigurationQuestion:
+      type: object
+      properties:
+        deleted:
+          description: True if this question has been deleted
+          enum:
+            - ''
+            - false
+            - true
+          type: string
+        diagnosiscode:
+          description: Diagnosis code for the disease, if provided
+          type: string
+        ordering:
+          description: Used for re-ordering questions
+          type: number
+        question:
+          description: Disease being inquired about
+          type: string
+        questionid:
+          description: Athena ID for the question
+          type: number
+    MedicalHistoryConfiguration:
+      type: object
+      properties:
+        totalcount:
+          description: Quetion quatity
+          type: number
+        questions:
+          description: A complex JSON object containing the patient medical history. See the Chart documentation for more details.
+          items:
+            $ref: '#/components/schemas/MedicalHistoryConfigurationQuestion'
+          type: array
