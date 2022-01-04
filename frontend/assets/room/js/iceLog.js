@@ -7,17 +7,21 @@ let stream;
 let candidates;
 const allServersKey = 'servers';
 const stunGoogle = "stun:stun.l.google.com:19302"
-
-$(document).ready(() => {
-    const LOCALSTORE_IS_TESTED = `isTested_${dataRoom.uuid}_${userProfileId}`;
-    const isTestedLS = localStorage.getItem(LOCALSTORE_IS_TESTED)
-    const isTested = isTestedLS === null
-    if(isTested){
-        localStorage.setItem(LOCALSTORE_IS_TESTED, 1)
-        doTest()
-    }
-})
 const isStream = true
+let LOCALSTORE_IS_TESTED;
+let iceEvents = [];
+
+// $(document).ready(() => {
+    // LOCALSTORE_IS_TESTED = `isTested_${dataRoom.uuid}_${userProfileId}`;
+    // const isTestedLS = localStorage.getItem(LOCALSTORE_IS_TESTED)
+    // const isTested = isTestedLS !== "1"
+    // if (isTested) {
+    //     doTest()
+    // }
+// })
+const testEnded = (state = true) => {
+    localStorage.setItem(LOCALSTORE_IS_TESTED, state ? 1 : 0)
+}
 const doTest = async () => {
     if (isStream) {
         stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
@@ -26,10 +30,7 @@ const doTest = async () => {
     const iceTransportPolicy = "all"
     const iceCandidatePoolSize = "0"
     const iceServers = [];
-    iceServers.push({
-        urls: [stunGoogle]
-    });
-
+    iceServers.push({ urls: [stunGoogle] });
     const config = { iceServers, iceTransportPolicy, iceCandidatePoolSize };
     const offerOptions = { offerToReceiveAudio: 1, offerToReceiveVideo: 1 };
 
@@ -63,8 +64,6 @@ const buildObject = (evt) => {
     const { currentTarget, candidate } = evt
     const { localDescription } = currentTarget
     return {
-        userProfileId,
-        uuid: dataRoom.uuid,
         ice: {
             ...evt,
             // candidate2: evt.candidate?.toJSON(),
@@ -94,21 +93,27 @@ const buildObject = (evt) => {
         sdp: {
             type: localDescription.type,
             description: localDescription.sdp,
-          },
+        },
 
     }
 }
 
-const sendRequest = (allData) => {
-    const data = buildObject(allData)
-    // console.log('data to send', allData, data)
+const sendRequest = (events) => {
+    const dataLogs = events.map(evt => buildObject(evt))
     $.post({
         url: '/ice/event',
-        data,
+        data: {
+            userProfileId,
+            uuid: dataRoom.uuid,
+            logs: dataLogs
+        },
         success: (data) => {
             console.log(data)
+            testEnded()
         },
         error: (err) => {
+            testEnded(false)
+            console.log(err)
             return;
         },
     });
@@ -116,24 +121,26 @@ const sendRequest = (allData) => {
 
 const iceCallback = (event) => {
     const { candidate } = event
+    // console.log('icecb', event)
     if (candidate) {
-        // console.log('event',event, buildObject(event))
-        sendRequest(event)
+        iceEvents.push(event)
         candidates.push(candidate);
     } else if (!('onicegatheringstatechange' in RTCPeerConnection.prototype)) {
         resetTest()
+    } else {
+        sendRequest(iceEvents)
     }
 
 }
 
-const formatPriority = (priority) =>{
+const formatPriority = (priority) => {
     return [
-      priority >> 24,
-      (priority >> 8) & 0xFFFF,
-      priority & 0xFF
+        priority >> 24,
+        (priority >> 8) & 0xFFFF,
+        priority & 0xFF
     ].join(' | ');
-  }
-  
+}
+
 const resetTest = () => {
     pc.close();
     pc = null;
@@ -154,14 +161,3 @@ const gatheringStateChange = () => {
 const iceCandidateError = (event) => {
     console.log('iceCandidateError', event)
 }
-
-// check if we have getUserMedia permissions.
-// navigator.mediaDevices
-//   .enumerateDevices()
-//   .then(function (devices) {
-//     devices.forEach(function (device) {
-//       if (device.label !== '') {
-//         document.getElementById('getUserMediaPermissions').style.display = 'block';
-//       }
-//     });
-//   });

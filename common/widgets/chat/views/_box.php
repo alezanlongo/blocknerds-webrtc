@@ -74,7 +74,7 @@
             </select>
         <?php } ?>
         <div class="input-group">
-            <input type="text" name="message" placeholder="Type Message ..." class="form-control" autocomplete="off">
+            <input type="text" name="message" placeholder="Type Message ..." class="form-control message-onToOne" autocomplete="off">
             <span class="input-group-append">
                 <button type="button" class="btn btn-primary btn-send" onclick="initChatWithUser();">Send</button>
             </span>

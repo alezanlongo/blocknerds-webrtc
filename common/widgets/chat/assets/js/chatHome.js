@@ -1,7 +1,7 @@
 $(document).on('keypress', ".message-onToOne", function (e) {
   if (e.which == 13) {
     var channel = $(this).attr('data-channel');
-    $(`#btn-send-onToOne_${channel}`).click();
+    $(".btn-send").click();
   }
 });
 

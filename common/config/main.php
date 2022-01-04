@@ -11,6 +11,12 @@ return [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
     ],
+    'modules' => [
+        'treemanager' =>  [
+             'class' => '\kartik\tree\Module',
+             // other module settings, refer detailed documentation
+         ]
+        ],
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'components' => [
         'cache' => [
