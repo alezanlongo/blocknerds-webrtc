@@ -7,7 +7,7 @@ use Yii;
 use yii\base\Model;
 
 
-class <?= $className ?> extends \common\components\<?= $component ?>\AthenaOauth
+class <?= $className ?> extends \<?= $clientBaseClass ?> 
 {
 <?php foreach ($clientEndPoints as $clientEndPoint => $endpoint):?>
 <?php $paramMethodName = (in_array($endpoint['verb'], ['get', 'delete']))?"query":"body"; ?>
