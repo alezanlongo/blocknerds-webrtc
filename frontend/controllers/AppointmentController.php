@@ -12,6 +12,9 @@ use common\components\Athena\models\RequestCreateAppointment;
 use common\components\Athena\models\RequestUpdateAppointmentNote;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use DateTime;
+use Carbon\Carbon;
+use yii\helpers\Json;
 
 class AppointmentController extends \yii\web\Controller
 {
@@ -75,7 +78,8 @@ class AppointmentController extends \yii\web\Controller
         if ($model->load(Yii::$app->request->post())) {
             $model = $this->component->createAppointment(
                 $model,
-                $patient->externalId
+                $patient->externalId,
+                $patient->departmentid
             );
             if($model->save()){
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -189,6 +193,60 @@ class AppointmentController extends \yii\web\Controller
         ]);
     }
 
+    public function actionOpenSlots()
+    {
+        $formatter = \Yii::$app->formatter;
+        $date = Carbon::now();
+        $model = new Patient();
+        $appointmentModel = new RequestCreateAppointment();
+
+
+        return $this->render('open-slots', [
+            'initialView' => 'timeGridWeek',
+            'providers' => $this->component->getProviders(true),
+            'departments' => $this->component->getDepartments(true),
+            'model' => $model,
+            'appointmentModel' => $appointmentModel
+        ]);
+    }
+
+
+    public function actionGetSlots(){
+        $formatter = \Yii::$app->formatter;
+        $date = Carbon::now();
+
+        $slots = [];
+        if(Yii::$app->request->get('departmentid') || Yii::$app->request->get('providerid')){
+            $openSlots = $this->component->getAppointmentSlot($date->toDateString(), $date->addDays(30)->toDateString(), Yii::$app->request->get('departmentid'), Yii::$app->request->get('providerid'));
+            if(!empty($openSlots)) {
+                foreach ($openSlots as $slot){
+                    $slotTimestamp = Carbon::parse($slot['date'].$slot['starttime'])->format('Y-m-d H:i:s');
+                    $slots[] = ['id' => $slot['appointmentid'], 'start' => $slotTimestamp , 'title' => $slot['patientappointmenttypename'], 'editable' => false ];
+                }
+            }
+
+        }
+        return Json::encode($slots);
+    }
+
+    public function actionBookAppointment(){
+
+        if(Yii::$app->request->post()){
+
+            $patient = Patient::find()->where(['id'=> Yii::$app->request->post('patientId')])->one();
+
+            $appointment = $this->component->bookAppointment(Yii::$app->request->post('appointmentId'), $patient->patientid);
+
+            if(!empty($appointment['message'])){
+                throw new \yii\web\BadRequestHttpException($appointment['message']);
+            }else{
+                return json_encode($appointment);
+            }
+
+
+        }
+
+    }
 
     /**
      * Finds the Appointment model based on its primary key value.
