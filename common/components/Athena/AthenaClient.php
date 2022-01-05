@@ -226,6 +226,27 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
+     * @return AppointmentSlotResponse
+     */
+    public function getPracticeidAppointmentsOpen($practiceid, array $query = [])
+    {
+        $path = '/v1/{practiceid}/appointments/open';
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            $dataApiModel = [];
+            $responseData = (isset($dataResponse['data']['appointments'])) ? $dataResponse['data']['appointments'] : $dataResponse['data'];
+            foreach ($responseData as $key => $value){
+                array_push($dataApiModel, new  \common\components\Athena\apiModels\AppointmentSlotResponseApi($value));
+            }
+            return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
      * @return AppointmentResponse
      */
     public function postPracticeidAppointmentsOpen($practiceid, array $body = [])
