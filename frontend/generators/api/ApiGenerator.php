@@ -32,6 +32,8 @@ class ApiGenerator extends ParentApiGenerator
      */
     public $generateApiModels = true;
     public $folderPath = 'common\\components';
+    public $clientBaseClass = '';
+    
     /**
      * @inheritDoc
      */
@@ -191,6 +193,7 @@ class ApiGenerator extends ParentApiGenerator
                 'className'         => $component.'Client',
                 'namespace'         => $this->folderPath,
                 'clientEndPoints'   => $clientEndPoints,
+                'clientBaseClass'   => $this->clientBaseClass,
             ])
         );
 
@@ -203,7 +206,7 @@ class ApiGenerator extends ParentApiGenerator
     public function rules()
     {
         return array_merge(parent::rules(), [
-            ['folderPath', 'required'],
+            [['folderPath','clientBaseClass'], 'required'],
         ]);
     }
 
