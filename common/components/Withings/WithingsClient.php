@@ -6,14 +6,14 @@ use Yii;
 use yii\base\Model;
 
 
-class WithingsClient extends \common\components\Withings\AthenaOauth
+class WithingsClient extends \common\components\Withings\WithingsOauth 
 {
     /**
      * @return inline_response_200
      */
     public function oauth2-getaccesstoken(array $body = [])
     {
-        $path = '/v2/oauth2';
+        $path = trim('/v2/oauth2');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -27,7 +27,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function oauth2-refreshaccesstoken(array $body = [])
     {
-        $path = '/v2/oauth2  ';
+        $path = trim('/v2/oauth2  ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -41,7 +41,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function oauth2-recoverauthorizationcode(array $body = [])
     {
-        $path = '/v2/oauth2 ';
+        $path = trim('/v2/oauth2 ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -55,7 +55,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function measure-getmeas(array $body = [])
     {
-        $path = '/measure';
+        $path = trim('/measure');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -69,7 +69,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function notify-get(array $body = [])
     {
-        $path = '/notify ';
+        $path = trim('/notify ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -83,7 +83,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function notify-list(array $body = [])
     {
-        $path = '/notify  ';
+        $path = trim('/notify  ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -97,7 +97,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function notify-revoke(array $body = [])
     {
-        $path = '/notify    ';
+        $path = trim('/notify    ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -111,7 +111,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function notify-subscribe(array $body = [])
     {
-        $path = '/notify';
+        $path = trim('/notify');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -125,7 +125,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function notify-update(array $body = [])
     {
-        $path = '/notify   ';
+        $path = trim('/notify   ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -139,7 +139,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function dropshipmentv2-createorder(array $body = [])
     {
-        $path = '/v2/dropshipment';
+        $path = trim('/v2/dropshipment');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -153,7 +153,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function dropshipmentv2-createuserorder(array $body = [])
     {
-        $path = '/v2/dropshipment ';
+        $path = trim('/v2/dropshipment ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -167,7 +167,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function dropshipmentv2-delete(array $body = [])
     {
-        $path = '/v2/dropshipment   ';
+        $path = trim('/v2/dropshipment   ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -181,7 +181,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function dropshipmentv2-getorderstatus(array $body = [])
     {
-        $path = '/v2/dropshipment  ';
+        $path = trim('/v2/dropshipment  ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -195,7 +195,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function dropshipmentv2-update(array $body = [])
     {
-        $path = '/v2/dropshipment    ';
+        $path = trim('/v2/dropshipment    ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -209,7 +209,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function heartv2-get(array $body = [])
     {
-        $path = '/v2/heart ';
+        $path = trim('/v2/heart ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -223,7 +223,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function heartv2-list(array $body = [])
     {
-        $path = '/v2/heart';
+        $path = trim('/v2/heart');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -237,7 +237,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function measurev2-getactivity(array $body = [])
     {
-        $path = '/v2/measure';
+        $path = trim('/v2/measure');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -251,7 +251,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function measurev2-getintradayactivity(array $body = [])
     {
-        $path = '/v2/measure  ';
+        $path = trim('/v2/measure  ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -265,7 +265,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function measurev2-getworkouts(array $body = [])
     {
-        $path = '/v2/measure ';
+        $path = trim('/v2/measure ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -279,7 +279,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function signaturev2-getnonce(array $body = [])
     {
-        $path = '/v2/signature';
+        $path = trim('/v2/signature');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -293,7 +293,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function sleepv2-get(array $body = [])
     {
-        $path = '/v2/sleep';
+        $path = trim('/v2/sleep');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -307,7 +307,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function sleepv2-getsummary(array $body = [])
     {
-        $path = '/v2/sleep ';
+        $path = trim('/v2/sleep ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -321,7 +321,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function userv2-activate(array $body = [])
     {
-        $path = '/v2/user ';
+        $path = trim('/v2/user ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -335,7 +335,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function userv2-get(array $body = [])
     {
-        $path = '/v2/user';
+        $path = trim('/v2/user');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -349,7 +349,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function userv2-getdevice(array $body = [])
     {
-        $path = '/v2/user   ';
+        $path = trim('/v2/user   ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -363,7 +363,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function userv2-getgoals(array $body = [])
     {
-        $path = '/v2/user     ';
+        $path = trim('/v2/user     ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -377,7 +377,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function userv2-link(array $body = [])
     {
-        $path = '/v2/user  ';
+        $path = trim('/v2/user  ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){
@@ -391,7 +391,7 @@ class WithingsClient extends \common\components\Withings\AthenaOauth
      */
     public function userv2-unlink(array $body = [])
     {
-        $path = '/v2/user    ';
+        $path = trim('/v2/user    ');
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($dataResponse['success']){

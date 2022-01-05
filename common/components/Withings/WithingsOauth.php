@@ -1,5 +1,5 @@
 <?php
-namespace common\components\Athena;
+namespace common\components\Withings;
 
 use Yii;
 use yii\base\Component;
@@ -15,7 +15,7 @@ class WithingsOauth
     const URL_SERVICE_AUTH = "oauth2/v1/token";
 
     /**
-     * AthenaOauth constructor.
+     * WithingsOauth constructor.
      */
     public function Authenticate($expired = FALSE)
     {
