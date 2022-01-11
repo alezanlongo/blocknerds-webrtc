@@ -18,6 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'create',
             'patientid' => $patientid
         ], ['class' => 'btn btn-success']) ?>
+
+        <?= Html::a('Create Medical History', [
+            'create',
+            'patientid' => $patientid
+        ], ['class' => 'btn btn-warning']) ?>
     </p>
 
 

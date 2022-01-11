@@ -1960,17 +1960,37 @@ class AthenaComponent extends Component
                 $this->practiceid
             );
 
-
+        $questions = [];
         $medicalHistoryConfigurationModel = New MedicalHistoryConfiguration();
         if($medicalHistoryConfigurationModelsApi->totalcount > 0){
             foreach ($medicalHistoryConfigurationModelsApi->questions as $question) {
-                $medicalHistoryConfigurationModel->questions[] = MedicalHistoryConfigurationQuestion::createFromApiObject(
+                $questions[] = MedicalHistoryConfigurationQuestion::createFromApiObject(
                     $question
                 );
             }
         }
 
-        return $medicalHistoryConfigurationModel;
+        return $questions;
+    }
+
+
+    public function getMedicalHistoryForAPatient($patientid, $departmentid)
+    {
+        $medicalHistoryModelsApi =
+            $this->client->getPracticeidChartPatientidMedicalhistory(
+                $this->practiceid,
+                $patientid,
+                ['departmentid'  => $departmentid]
+            );
+
+        $questions = [];
+        foreach ($medicalHistoryModelsApi->questions as $question) {
+            $questions[] = MedicalHistoryQuestion::createFromApiObject(
+                $question
+            );
+        }
+
+        return $questions;
     }
 
     /* ================================= Begin  Protected methods ============================================== */

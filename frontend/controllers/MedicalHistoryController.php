@@ -64,6 +64,25 @@ class MedicalHistoryController extends Controller
         ]);
     }
 
+
+    public function importIndex($patientid)
+    {
+        $patient = $this->findPatientModel($patientid);
+        $medicalHistoryQuestions = $this->component->getMedicalHistoryForAPatient($patient->patientid, $patient->departmentid);
+        foreach ($medicalHistoryQuestions as $key => $value){
+            $value->save();
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => MedicalHistory::find(),
+        ]);
+
+        return $this->render('index', [
+            'dataProvider'  => $dataProvider,
+            'patientid'     => $patientid
+        ]);
+    }
+
     /**
      * Displays a single MedicalHistory model.
      * @param integer $id
@@ -85,8 +104,8 @@ class MedicalHistoryController extends Controller
     public function actionCreate($patientid)
     {
         $patient = $this->findPatientModel($patientid);
-        $medicalHistoryConfiguration = $this->component->getMedicalHistoryQuestionsConfiguration();
-        echo '<pre>'; var_dump($medicalHistoryConfiguration); exit();
+        $questions = $this->component->getMedicalHistoryQuestionsConfiguration();
+
         $model = new MedicalHistory();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
