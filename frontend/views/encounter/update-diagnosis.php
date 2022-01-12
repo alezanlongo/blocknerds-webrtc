@@ -4,6 +4,7 @@
 /* @var $form yii\bootstrap4\ActiveForm */
 /* @var $model \common\models\LoginForm */
 
+use frontend\widgets\snomedAutocomplete\SnomedAutocomplete;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
@@ -19,7 +20,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'update-diagnosis-form']); ?>
 
-                <?= $form->field($model, 'snomedcode')->textInput(['value'=> $diagnosis->snomedcode]) ?>
+                <?= SnomedAutocomplete::widget([
+                        'name' => 'snomedcode',
+                        'form' => $form,
+                        'model' => $model,
+                    ]
+                ); ?>
 
                 <div class="form-group">
                     <?= Html::submitButton('Update Diagnosis', ['class' => 'btn btn-primary', 'name' => 'update-diagnosis-button']) ?>

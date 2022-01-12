@@ -13827,9 +13827,24 @@ components:
         signerrelationshiptopatientid:
           description: If presenting an e-signature, and the signer is signing on behalf of someone else, the relationship of the patient to the signer. There is a documentation page with details.
           type: string
+    MedicalHistory:
+      type: object
+      properties:
+        patient:
+          $ref: '#/components/schemas/Patient'
+        questions:
+          description: List of questions corresponding to patient medical history
+          items:
+            $ref: '#/components/schemas/MedicalHistoryQuestion'
+          type: array
+        sectionnote:
+          description: Additional notes for the entire medical history section, if any
+          type: string
     MedicalHistoryQuestion:
       type: object
       properties:
+        medicalHistory:
+          $ref: '#/components/schemas/MedicalHistory'
         answer:
           description: The answer given by the patient to the question
           type: string
@@ -13851,17 +13866,6 @@ components:
         questionid:
           description: Athena ID for the question
           type: number
-    MedicalHistory:
-      type: object
-      properties:
-        questions:
-          description: List of questions corresponding to patient medical history
-          items:
-            $ref: '#/components/schemas/MedicalHistoryQuestion'
-          type: array
-        sectionnote:
-          description: Additional notes for the entire medical history section, if any
-          type: string
     PutMedicalHistory200Response:
       type: object
       properties:
@@ -13913,6 +13917,9 @@ components:
         questionid:
           description: Athena ID for the question
           type: number
+        answer:
+          description: The answer given by the patient to the question (added for the aplication)
+          type: string
     MedicalHistoryConfiguration:
       type: object
       properties:

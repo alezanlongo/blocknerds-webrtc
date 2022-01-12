@@ -5,6 +5,8 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property integer $medicalHistory_id
+ * @property MedicalHistory $medicalHistory
  * @property string $answer The answer given by the patient to the question
  * @property string $codeset Codeset the diagnosis code belongs to
  * @property string $description Description of the code
@@ -28,9 +30,14 @@ class MedicalHistoryQuestion extends \yii\db\ActiveRecord
         return [
             [['answer', 'codeset', 'description', 'diagnosiscode', 'note', 'question'], 'trim'],
             [['answer', 'codeset', 'description', 'diagnosiscode', 'note', 'question'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['medicalHistory_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getMedicalHistory()
+    {
+        return $this->hasOne(MedicalHistory::class, ['id' => 'medicalHistory_id']);
     }
 
 
@@ -38,6 +45,12 @@ class MedicalHistoryQuestion extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($medicalHistory_id = ArrayHelper::getValue($apiObject, 'medicalHistory_id')) {
+            $this->medicalHistory_id = $medicalHistory_id;
+        }
+        if($medicalHistory = ArrayHelper::getValue($apiObject, 'medicalHistory')) {
+            $this->medicalHistory = $medicalHistory;
+        }
         if($answer = ArrayHelper::getValue($apiObject, 'answer')) {
             $this->answer = $answer;
         }

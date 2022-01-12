@@ -6,6 +6,7 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
+use yii\db\Query;
 
 use common\components\AthenaComponent;
 use common\components\Athena\models\InsuranceCardImage;
@@ -317,6 +318,29 @@ class PatientController extends \yii\web\Controller
         }
 
         return $this->redirect(['view', 'id' => $patient->id]);
+    }
+
+    public function actionPatients($q = null)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $out = ['results'];
+
+        if (!is_null($q)) {
+
+            $patient = (new Query())
+                ->select(
+                    ["CONCAT(firstname,' ', lastname) as fullname, id as id"]
+                )
+                ->andWhere(['LIKE', 'firstname', $q])
+                ->andWhere(['LIKE', 'lastname', $q])
+                ->orWhere(['LIKE', 'lower(firstname)', $q])
+                ->orWhere(['LIKE', 'lower(lastname)', $q])
+                ->from('patients')->limit(10);
+            $out['results'] = array_values($patient->all());
+        }
+
+        return $out;
     }
 
     /**

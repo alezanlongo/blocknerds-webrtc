@@ -2,7 +2,9 @@
 
 namespace frontend\controllers;
 
+use common\components\Athena\models\MedicalHistoryQuestion;
 use common\components\Athena\models\Patient;
+use common\components\Athena\models\PutMedicalHistory;
 use common\components\AthenaComponent;
 use Yii;
 use common\components\Athena\models\MedicalHistory;
@@ -65,11 +67,13 @@ class MedicalHistoryController extends Controller
     }
 
 
-    public function importIndex($patientid)
+    public function actionImport($patientid)
     {
         $patient = $this->findPatientModel($patientid);
-        $medicalHistoryQuestions = $this->component->getMedicalHistoryForAPatient($patient->patientid, $patient->departmentid);
-        foreach ($medicalHistoryQuestions as $key => $value){
+        $medicalHistory = $this->component->getMedicalHistory($patientid, $patient->patientid, $patient->departmentid);
+        $medicalHistory->save();
+        $questions = $this->component->getMedicalHistoryQuestions($medicalHistory, $patient->patientid, $patient->departmentid);
+        foreach ($questions as $key => $value){
             $value->save();
         }
 
@@ -103,9 +107,6 @@ class MedicalHistoryController extends Controller
      */
     public function actionCreate($patientid)
     {
-        $patient = $this->findPatientModel($patientid);
-        $questions = $this->component->getMedicalHistoryQuestionsConfiguration();
-
         $model = new MedicalHistory();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -121,19 +122,57 @@ class MedicalHistoryController extends Controller
      * Updates an existing MedicalHistory model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
+     * @param integer $patientid
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $patientid)
     {
+        $patient = $this->findPatientModel($patientid);
+        $questions = $this->component->getMedicalHistoryQuestionsConfiguration();
         $model = $this->findModel($id);
+        $medicalHistoryQuestions = $this->findQuestionsModel($id);
+        $data = Yii::$app->request->post();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        foreach ($questions as $keyQuesition => $valueQuestion){
+            foreach ($medicalHistoryQuestions as $key => $value){
+                if($valueQuestion->questionid == $value->questionid){
+                    $questions[$keyQuesition]->answer = $value->answer;
+                }
+            }
+        }
+
+        if (count($data) > 0) {
+            $jsonQUestion = [];
+            foreach ($data['response'] as $key => $value){
+                if($value != ''){
+                    array_push($jsonQUestion, [
+                        'questionid'    => $key,
+                        'answer'        => $value
+                    ]);
+                }
+            }
+            $putMedicalHistory = $this->component->putMedicalHistory([
+                'departmentid'  => $patient->departmentid,
+                'sectionnote'   => $data['MedicalHistory']['sectionnote'],
+                'questions'     => json_encode($jsonQUestion),
+            ], $patient->patientid);
+
+
+            $medicalHistory = $this->component->getMedicalHistory($patientid, $patient->patientid, $patient->departmentid);
+            $medicalHistory->save();
+            $questions = $this->component->getMedicalHistoryQuestions($medicalHistory, $patient->patientid, $patient->departmentid);
+            foreach ($questions as $key => $value){
+                $value->save();
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'model'                     => $model,
+            'questions'                 => $questions,
+            'medicalHistoryQuestions'   => $medicalHistoryQuestions
         ]);
     }
 
@@ -165,6 +204,13 @@ class MedicalHistoryController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    protected function findQuestionsModel($id)
+    {
+        $questions = MedicalHistoryQuestion::find()->where(['medicalHistory_id' => $id]);
+        return $questions->all();
     }
 
 

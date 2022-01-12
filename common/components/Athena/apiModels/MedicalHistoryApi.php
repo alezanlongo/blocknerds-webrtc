@@ -8,12 +8,14 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property Patient $patient
  * @property MedicalHistoryQuestion[] $questions List of questions corresponding to patient medical history
  * @property string $sectionnote Additional notes for the entire medical history section, if any
  */
 class MedicalHistoryApi extends BaseApiModel
 {
 
+    public $patient;
     public $questions;
  
     protected $_questionsAr;

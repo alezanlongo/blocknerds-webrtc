@@ -5,6 +5,8 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property integer $patient_id
+ * @property Patient $patient
  * @property MedicalHistoryQuestion[] $questions List of questions corresponding to patient medical history
  * @property string $sectionnote Additional notes for the entire medical history section, if any
  * @property integer $externalId API Primary Key
@@ -25,9 +27,14 @@ class MedicalHistory extends \yii\db\ActiveRecord
         return [
             [['sectionnote'], 'trim'],
             [['sectionnote'], 'string'],
-            [['externalId', 'id'], 'integer'],
+            [['patient_id', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getPatient()
+    {
+        return $this->hasOne(Patient::class, ['id' => 'patient_id']);
     }
 
     public function getQuestions()
@@ -40,6 +47,12 @@ class MedicalHistory extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($patient_id = ArrayHelper::getValue($apiObject, 'patient_id')) {
+            $this->patient_id = $patient_id;
+        }
+        if($patient = ArrayHelper::getValue($apiObject, 'patient')) {
+            $this->patient = $patient;
+        }
         if($questions = ArrayHelper::getValue($apiObject, 'questions')) {
             $this->_questionsAr = $questions;
         }

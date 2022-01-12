@@ -7,7 +7,7 @@ use Yii;
 use yii\base\Model;
 
 
-class <?= $className ?> extends \common\components\<?= $component ?>\AthenaOauth
+class <?= $className ?> extends \<?= $clientBaseClass ?> 
 {
 <?php foreach ($clientEndPoints as $clientEndPoint => $endpoint):?>
 <?php $paramMethodName = (in_array($endpoint['verb'], ['get', 'delete']))?"query":"body"; ?>
@@ -28,7 +28,7 @@ endforeach;?>array $<?= $paramMethodName; ?> = [])
 $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
 //$path = str_replace('{practiceid}', Yii::$app->params['practiceID'], $path);
 ?>
-        $path = '<?= $path ?>';
+        $path = trim('<?= $path ?>');
 <?php foreach ($endpoint['parameters'] as $parameter): ?>
         $path = str_replace('{<?= $parameter ?>}', $<?= $parameter ?>, $path);
 <?php endforeach;?>
