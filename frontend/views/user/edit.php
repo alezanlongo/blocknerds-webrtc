@@ -2,7 +2,7 @@
 
 use common\models\UserProfile;
 use frontend\assets\users\UserProfileAsset;
-use yii\bootstrap4\Modal;
+use yii\bootstrap5\Modal;
 use yii\helpers\BaseUrl;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -24,7 +24,7 @@ use yii\widgets\ActiveForm;
                     <img src="" alt="img-profile" width="200px" height="200px" class="profile-image rounded-circle d-none">
                 <?php } ?>
             </div>
-            <?= Html::a('change image', Url::toRoute('/user/profile-image'), ['class' => 'btn btn-primary','data-toggle'=>"modal", 'data-target' => "#profileImageModal", 'data-pjax' => "0", 'onclick' => "modalLoadContent(this)"]) ?>
+            <?= Html::a('change image', Url::toRoute('/user/profile-image'), ['class' => 'btn btn-primary','data-toggle'=>"modal", 'data-bs-toggle'=>"modal", 'data-bs-target'=>"#profileImageModal", 'data-pjax' => "0", 'onclick' => "modalLoadContent(this)"]) ?>
         </div>
         <div class="col">
             <!-- <?= $form->field($model, 'username')->textInput(['autofocus' => true, 'placeholder' => "Username", 'readOnly' => true]) ?> -->
@@ -52,13 +52,13 @@ use yii\widgets\ActiveForm;
 Modal::begin([
     "id" => "profileImageModal",
     "title" => "Update Profile image",
-    "size" => Modal::SIZE_DEFAULT
+    "size" => 'modal-lg'
 ]);
 Modal::end();
 ?>
 
 <script>
     function modalLoadContent(elm) {
-        $(".modal-body", $(elm).attr('data-target')).load($(elm).attr('href'));
+        $(".modal-body", $(elm).attr('data-bs-target')).load($(elm).attr('href'));
     }
 </script>
