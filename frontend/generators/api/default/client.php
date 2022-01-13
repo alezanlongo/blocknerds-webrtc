@@ -19,7 +19,7 @@ class <?= $className ?> extends \<?= $clientBaseClass ?>
      * @return <?= $endpoint['schema']; ?>
 
      */
-    public function <?= $endpoint['operationId'] ?>(<?php
+    public function <?= \yii\helpers\Inflector::variablize($endpoint['operationId']) ?>(<?php
 foreach ($endpoint['parameters'] as $parameter):
     echo "\$".$parameter.", ";
 endforeach;?>array $<?= $paramMethodName; ?> = [])
@@ -34,20 +34,20 @@ $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
 <?php endforeach;?>
 
         $dataResponse = $this->callMethod($path, '<?= $endpoint['verb'] ?>' , $<?= $paramMethodName; ?>);
-        if($dataResponse['success']){
+        if($this->isSuccess($dataResponse)){
 <?php $apiModel = $endpoint['apiModel'] ?? $endpoint['schema'].'Api'; ?>
 <?php if($endpoint['flagList'] === TRUE): ?>
             $dataApiModel = [];
-            $responseData = (isset($dataResponse['data']['<?= ($endpoint['listKey']) ? $endpoint['listKey'] : $endpoint['finalPathName'] ?>'])) ? $dataResponse['data']['<?= ($endpoint['listKey']) ? $endpoint['listKey'] : $endpoint['finalPathName'] ?>'] : $dataResponse['data'];
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['<?= ($endpoint['listKey']) ? $endpoint['listKey'] : $endpoint['finalPathName'] ?>'])) ? $dataResponse[$this->getResponseDataKey()]['<?= ($endpoint['listKey']) ? $endpoint['listKey'] : $endpoint['finalPathName'] ?>'] : $dataResponse[$this->getResponseDataKey()];
             foreach ($responseData as $key => $value){
                 array_push($dataApiModel, new  \common\components\<?= $component ?>\apiModels\<?= $apiModel ?>($value));
             }
             return $dataApiModel;
 <?php elseif($endpoint['flagList'] === FALSE): ?>
-            return new \common\components\<?= $component ?>\apiModels\<?= $apiModel ?>($dataResponse['data']);
+            return new \common\components\<?= $component ?>\apiModels\<?= $apiModel ?>($dataResponse[$this->getResponseDataKey()]);
 <?php endif; ?>
         }else{
-            return $dataResponse['message'];
+            return $dataResponse[$this->getResponseMessageKey()];
         }
     }
 <?php endforeach; ?>

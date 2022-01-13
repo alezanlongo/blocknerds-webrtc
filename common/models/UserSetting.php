@@ -26,6 +26,7 @@ class UserSetting extends \yii\db\ActiveRecord
 {
     const GROUP_NAME_CALENDAR = 'calendar';
     const GROUP_NAME_ROOM = 'room';
+    const GROUP_NAME_WITHINGS = 'withings';
     const SUPPORTED_DATA_TYPE = [
         "boolean",
         "integer",

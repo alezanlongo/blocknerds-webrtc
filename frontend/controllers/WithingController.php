@@ -2,10 +2,15 @@
 
 namespace frontend\controllers;
 
+use common\components\Withings\WithingsClient;
 use Yii;
 use yii\helpers\VarDumper;
 use yii\httpclient\Client;
-
+use common\components\Withings\WithingsOauth;
+use yii\filters\AccessControl;
+use yii\filters\auth\CompositeAuth;
+use yii\filters\VerbFilter;
+use yii\web\UnprocessableEntityHttpException;
 
 class WithingController extends \yii\web\Controller
 {
@@ -13,12 +18,17 @@ class WithingController extends \yii\web\Controller
     public $clientId;
     public $customerSecret;
 
-    const RESPONSE_TYPE_CODE = "code";
-    const REQUEST_TYPE_ACTION = "requesttoken";
-    const SCOPE_USER_ACTIVITY = "user.activity";
-    const SCOPE_USER_METRICS = "user.metrics";
-    const SCOPE_USER_INFO = "user.info";
-    const GRANT_TYPE_AUTH_CODE = "authorization_code";
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if ($action->id == 'callback') {
+            $this->enableCsrfValidation = false;
+        }
+
+        return parent::beforeAction($action);
+    }
 
     public function init()
     {
@@ -29,48 +39,39 @@ class WithingController extends \yii\web\Controller
 
     public function actionIndex()
     {
-        $source = "oauth2_user/authorize2";
-        $redirect_uri = Yii::$app->params['withings.redirect_uri'];
+        $url = (new WithingsOauth)->getAuthenticationCode();
 
-        // $client = new Client(['baseUrl' => $basePath]);
-        $state = "something";
-        $scopes = self::SCOPE_USER_INFO . ',' . self::SCOPE_USER_METRICS . ',' . self::SCOPE_USER_ACTIVITY;
-
-        $params = [
-            'response_type' => self::RESPONSE_TYPE_CODE,
-            'client_id' => $this->clientId,
-            'state' => $state,
-            'scope' => $scopes,
-            'redirect_uri' => $redirect_uri,
-        ];
-        $url = $this->baseUrl . $source . '?' . urldecode(http_build_query($params));
         return $this->redirect($url);
     }
-    public function actionCallback(string $code, string $state)
+
+    public function actionCallback(string $code = null, string $state = null)
     {
-        $source = "v2/oauth2";
-        $nonce = "nonce";
-        $signature = "";
-        $params = [
-            'action' => self::REQUEST_TYPE_ACTION,
-            'client_id' => $this->clientId,
-            // 'nonce' => $nonce,
-            // 'signature' => $signature,
-            'client_secret' => $this->customerSecret,
-            'grant_type' => self::GRANT_TYPE_AUTH_CODE,
-            'code' => $code,
-            'redirect_uri' => "https://www.google.com/?hl=es",
-        ];
-        VarDumper::dump($params, $depth = 10, $highlight = true);
-        die;
-        $client = new Client(['baseUrl' => $this->baseUrl]);
-        $response = $client->post($source, $params)->send();
-        if ($response->isOk) {
-            VarDumper::dump(['OK', $response->data], $depth = 10, $highlight = true);
-            die;
-        }
-        VarDumper::dump(['KO', $response], $depth = 10, $highlight = true);
-        die;
+        $response = (new WithingsOauth)->requestToken($code);
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return $this->redirect('/');
+    }
+
+    public function actionRefreshToken()
+    {
+        $response = (new WithingsOauth)->requestRefreshToken();
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return $response;
+
+        // VarDumper::dump($response, $depth = 10, $highlight = true);
+        // die;
+    }
+
+    public function actionMeasureGetmeas()
+    {
+        $client = new WithingsClient();
+
+        return $client->measureGetmeas([
+            'action' => 'getmeas',
+        ]);
     }
 
     // public function actionGetDataHashed()
@@ -94,25 +95,25 @@ class WithingController extends \yii\web\Controller
     //     ];
     // }
 
-    public function actionGetDataHashed()
-    {
-        $nonce = $this->getNonce();
-        //Yii::$app->security->generateRandomString(12);
+    // public function actionGetDataHashed()
+    // {
+    //     $nonce = $this->getNonce();
+    //     //Yii::$app->security->generateRandomString(12);
 
-    }
+    // }
 
-    private function buildSignature(string $action, int $time)
-    {
-        $signed_params = array(
-            'action'     => $action,
-            'client_id'  => $this->clientId,
-            'timestamp'      => $time,
-        );
-        ksort($signed_params);
-        $data = implode(",", $signed_params);
+    // private function buildSignature(string $action, int $time)
+    // {
+    //     $signed_params = array(
+    //         'action'     => $action,
+    //         'client_id'  => $this->clientId,
+    //         'timestamp'      => $time,
+    //     );
+    //     ksort($signed_params);
+    //     $data = implode(",", $signed_params);
 
-        return hash_hmac('sha256', $data, $this->customerSecret);
-    }
+    //     return hash_hmac('sha256', $data, $this->customerSecret);
+    // }
 
     // public function actionGetSignature($action)
     // {
@@ -122,49 +123,49 @@ class WithingController extends \yii\web\Controller
     //     return ['signature' => $signature];
     // }
 
-    public function actionGetNonce()
-    {
-        $action = 'getnonce';
-        $time = time();
-        $signature = $this->buildSignature($action, $time);
-        $params = [
-            'action' => $action,
-            'client_id' => $this->clientId,
-            'timestamp' => $time,
-            'signature' => $signature,
-        ];
-        $response  = $this->doRequest('v2/signature', $params);
+    // public function actionGetNonce()
+    // {
+    //     $action = 'getnonce';
+    //     $time = time();
+    //     $signature = $this->buildSignature($action, $time);
+    //     $params = [
+    //         'action' => $action,
+    //         'client_id' => $this->clientId,
+    //         'timestamp' => $time,
+    //         'signature' => $signature,
+    //     ];
+    //     $response  = $this->doRequest('v2/signature', $params);
 
-        VarDumper::dump($response, $depth = 10, $highlight = true);
-        die;
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    //     VarDumper::dump($response, $depth = 10, $highlight = true);
+    //     die;
+    //     Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        return [
-            'data' => $response,
+    //     return [
+    //         'data' => $response,
 
-        ];
-    }
+    //     ];
+    // }
 
-    private function doRequest(string $resource, array $params = [], string $method = 'POST')
-    {
-        $client = new Client(['baseUrl' => $this->baseUrl]);
-        $response = $client->post($resource, $params)->send();
-        if ($response->isOk) {
+    // private function doRequest(string $resource, array $params = [], string $method = 'POST')
+    // {
+    //     $client = new Client(['baseUrl' => $this->baseUrl]);
+    //     $response = $client->post($resource, $params)->send();
+    //     if ($response->isOk) {
 
-            VarDumper::dump("seems good", $depth = 10, $highlight = true);
-            VarDumper::dump($response, $depth = 10, $highlight = true);
-            die;
-            return $response->data;
-        }
+    //         VarDumper::dump("seems good", $depth = 10, $highlight = true);
+    //         VarDumper::dump($response, $depth = 10, $highlight = true);
+    //         die;
+    //         return $response->data;
+    //     }
 
 
-        // VarDumper::dump("bad request", $depth = 10, $highlight = true);
+    //     // VarDumper::dump("bad request", $depth = 10, $highlight = true);
 
-        // VarDumper::dump($client, $depth = 10, $highlight = true);
-        // VarDumper::dump($response, $depth = 10, $highlight = true);
-        // die;
-        return null;
-    }
+    //     // VarDumper::dump($client, $depth = 10, $highlight = true);
+    //     // VarDumper::dump($response, $depth = 10, $highlight = true);
+    //     // die;
+    //     return null;
+    // }
 }
 
 // GET SIGNATURE

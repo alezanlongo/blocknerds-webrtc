@@ -1,4 +1,5 @@
 <?php
+
 namespace common\components\Withings;
 
 use Yii;
@@ -9,152 +10,294 @@ use yii\httpclient\Client;
 use yii\httpclient\Exception as HttpClientException;
 
 use common\models\Configuration;
+use common\models\UserSetting;
+use yii\helpers\VarDumper;
+use yii\web\UnprocessableEntityHttpException;
 
 class WithingsOauth
 {
-    const URL_SERVICE_AUTH = "oauth2/v1/token";
+    public $clientId;
+    public $customerSecret;
 
-    /**
-     * WithingsOauth constructor.
-     */
-    public function Authenticate($expired = FALSE)
+    private $responseDataKey;
+    private $responseMessageKey;
+
+    const CONFIGURATION_TYPE = "WithingsToken";
+    const RESPONSE_TYPE_CODE = "code";
+    const REQUEST_TYPE_ACTION = "requesttoken";
+    const GRANT_TYPE_AUTH_CODE = "authorization_code";
+    const GRANT_TYPE_REF_TOKEN = "refresh_token";
+    const SCOPE_USER_ACTIVITY = "user.activity";
+    const SCOPE_USER_METRICS = "user.metrics";
+    const SCOPE_USER_INFO = "user.info";
+    const SCOPE_DEVICE_INFO = "device.info";
+    const SCOPE_DEVICE_ENVIRONMENT = "device.environment";
+
+    public function __construct()
     {
-        //REFACTORIZAR ESTE VALOR DEL PRACTICE ID
-        $data = [];
-        $success =  FALSE;
-
-        $configurationModel = Configuration::find()->where([
-            'type'          => 'AthenaToken',
-            'practiceId' => Yii::$app->params['practiceID'],
-        ])->one();
-        if(!is_null($configurationModel)){
-            if($expired){
-                $configurationModel->content = json_encode($this->callAuthenticateAthena());
-                $configurationModel->save();
-            }
-        }else{
-            $configurationModel = new Configuration;
-            $configurationModel->type = "AthenaToken";
-            $configurationModel->content = json_encode($this->callAuthenticateAthena());
-            $configurationModel->practiceId = Yii::$app->params['practiceID'];
-            $configurationModel->save();
-        }
-
-        return $configurationModel->content;
+        $this->clientId = Yii::$app->params['withings.clientId'];
+        $this->customerSecret = Yii::$app->params['withings.consumerSecret'];
+        $this->responseDataKey = 'body';
+        $this->responseMessageKey = 'error';
     }
 
+    public function getResponseDataKey()
+    {
+        return $this->responseDataKey;
+    }
+
+    public function getResponseMessageKey()
+    {
+        return $this->responseMessageKey;
+    }
+
+    public function isSuccess($dataResponse)
+    {
+        if (intval($dataResponse['status']) !== 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public function getAuthenticationCode()
+    {
+        $state = "webartc";
+        $scopes = self::SCOPE_USER_INFO . ',' . self::SCOPE_USER_METRICS . ',' . self::SCOPE_USER_ACTIVITY . ',' . self::SCOPE_DEVICE_INFO . ',' . self::SCOPE_DEVICE_ENVIRONMENT;
+
+        $params = [
+            'response_type' => self::RESPONSE_TYPE_CODE,
+            'client_id' => $this->clientId,
+            'state' => $state,
+            'scope' => $scopes,
+            'redirect_uri' => Yii::$app->params['withings.redirect_uri'],
+        ];
+
+        $path = "oauth2_user/authorize2";
+        $url = 'https://account.withings.com/' . $path . '?' . http_build_query($params);
+
+        return $url;
+    }
+
+    public function requestToken(string $code = null)
+    {
+        $params = [
+            'action' => self::REQUEST_TYPE_ACTION,
+            'grant_type' => self::GRANT_TYPE_AUTH_CODE,
+            'client_id' => $this->clientId,
+            'client_secret' => $this->customerSecret,
+            'code' => $code,
+            'redirect_uri' => Yii::$app->params['withings.redirect_uri'],
+        ];
+
+        $path = "v2/oauth2";
+        $client = new Client(['baseUrl' =>  Yii::$app->params['withings.api_url']]);
+
+        $response = $client->post($path, $params)->send();
+
+        if (!$response->isOk) {
+            throw new UnprocessableEntityHttpException("Unprocessable Entity.");
+        }
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $dataResponse = json_decode($response->getContent(), TRUE);
+
+        if ($dataResponse['status'] != 0) {
+            throw new \yii\web\BadRequestHttpException($dataResponse['error'], $dataResponse['status']);
+        }
+
+        $configurationModel = Configuration::find()->where([
+            'type'          => self::CONFIGURATION_TYPE,
+            'practiceId'    => $dataResponse['body']['userid']
+        ])->one();
+
+        if (!is_null($configurationModel)) {
+            $configurationModel->content = json_encode($dataResponse);
+            $configurationModel->save();
+        } else {
+            $configurationModel = new Configuration;
+            $configurationModel->type = self::CONFIGURATION_TYPE;
+            $configurationModel->content = json_encode($dataResponse);
+            $configurationModel->practiceId = $dataResponse['body']['userid'];
+            $configurationModel->save();
+
+            UserSetting::setValue(
+                Yii::$app->user->identity->id,
+                'userid',
+                UserSetting::GROUP_NAME_WITHINGS,
+                $dataResponse['body']['userid']
+            );
+        }
+
+        return json_decode($configurationModel->content);
+    }
+
+    public function requestRefreshToken()
+    {
+        // $nonce = $this->getNonce();
+
+        $user = Yii::$app->user->identity;
+
+        $configurationModel = $this->getUserConfiguration($user->id);
+        $withingsConfiguration = json_decode($configurationModel->content);
+
+        $params = [
+            'action' => self::REQUEST_TYPE_ACTION,
+            'grant_type' => self::GRANT_TYPE_REF_TOKEN,
+            'client_id' => $this->clientId,
+            'client_secret' => $this->customerSecret,
+            'refresh_token' => $withingsConfiguration->body->refresh_token
+        ];
+
+        $path = "v2/oauth2";
+        $client = new Client(['baseUrl' =>  Yii::$app->params['withings.api_url']]);
+
+        $response = $client->post($path, $params)->send();
+
+        if (!$response->isOk) {
+            throw new UnprocessableEntityHttpException("Unprocessable Entity.");
+        }
+
+        $dataResponse = json_decode($response->getContent(), TRUE);
+
+        if ($dataResponse['status'] != 0) {
+            throw new \yii\web\BadRequestHttpException($dataResponse['error'], $dataResponse['status']);
+        }
+
+        $configurationModel->content = json_encode($dataResponse);
+        $configurationModel->save();
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        return json_decode($configurationModel->content);
+    }
+
+    public function callSignedMethod()
+    {
+        throw new UnprocessableEntityHttpException("Unprocessable Entity, method pending of implementation.");
+    }
 
     public function callMethod($path, $action, array $params = [])
     {
-        $data = [];
-        $success =  FALSE;
+        $user = Yii::$app->user->identity;
 
-        $dataSession = json_decode($this->Authenticate(), TRUE);
-        if((int)$dataSession['expirationTime'] < (int)time()){
-            $dataSession = json_decode($this->Authenticate(TRUE), TRUE);
-        }
+        $configurationModel = $this->getUserConfiguration($user->id);
+        $withingsConfiguration = json_decode($configurationModel->content);
 
-        $link = Yii::$app->params['athena_url'].$path;
-        $client = new Client([
-            'transport' => 'yii\httpclient\CurlTransport'
-        ]);
-        $request = $client->createRequest();
-        $requestOptions = [];
-        if(!empty(Yii::$app->params['http_client_timeout'])){
-            $requestOptions[CURLOPT_TIMEOUT] = Yii::$app->params['http_client_timeout']; // set timeout to 5 seconds for the case server is not responding
-        }
-        if(!empty($requestOptions)){
-            $request->setOptions($requestOptions);
-        }
-        $request->setMethod($action)
-            ->setUrl($link)
-            ->setHeaders([
-                'Authorization' => 'Bearer ' . $dataSession['access_token'],
-            ]);
-        if(count($params) > 0){
-            $request->setData($params);
-        }
+        $link = Yii::$app->params['withings.api_url'] . $path;
 
-        try {
-            $response = $request->send();
-        }catch(\Exception $e){
-            throw new \yii\web\ServerErrorHttpException($this->handleError($e->getMessage()));
-        }
+        $link = str_replace("//", "/", $link);
+
+        $client = new Client(['baseUrl' =>  Yii::$app->params['withings.api_url']]);
+
+        $response = $this->createRequest($client, $link, $action, $withingsConfiguration->body->access_token, $params);
 
         $dataResponse = json_decode($response->getContent(), TRUE);
-        $dataStatusCodeRespose =  $response->getStatusCode();
+
         if ($response->isOk) {
-            $success = TRUE;
-            $data = [
-                'message'       => "",
-                'data'          => $dataResponse,
-                'success'       => $success,
-                'statusCode'    => $dataStatusCodeRespose
-            ];
-        }else{
-            $error = '';
-            if(isset($dataResponse['error'])){
-                $error = $dataResponse['error'];
-                $error = (isset($dataResponse['detailedmessage'])) ? $error." ".$dataResponse['detailedmessage'] : $error;
+            if (in_array($dataResponse['status'], [100, 101, 102, 200, 401])) {
+                $refreshToken = $this->requestRefreshToken();
+
+                $response = $this->createRequest($client, $link, $action, $refreshToken->body->access_token, $params);
+
+                $dataResponse = json_decode($response, TRUE);
             }
-            throw new \yii\web\BadRequestHttpException($error);
-        }
 
-
-        return $data;
-    }
-
-
-    private function callAuthenticateAthena()
-    {
-        $link = Yii::$app->params['athena_url'].self::URL_SERVICE_AUTH;
-        $client = new Client();
-        $request = $client->createRequest();
-        $request->setMethod('POST')
-            ->setUrl($link)
-            ->setHeaders([
-                'Content-type' => 'application/x-www-form-urlencoded',
-                'Authorization' => 'Basic ' . base64_encode(Yii::$app->params['athena_key'] . ':' . Yii::$app->params['athena_secret']),
-            ])
-            ->setData([
-                'grant_type'    => 'client_credentials',
-                'scope'         => 'athena/service/Athenanet.MDP.*',
-            ]);
-
-        try {
-            $response = $request->send();
-        } catch (\Exception $e) {
-            throw new \yii\web\ServerErrorHttpException($e->getMessage());
-        }
-
-        $dataResponse = json_decode($response->getContent(), TRUE);
-        $dataStatusCodeRespose =  $response->getStatusCode();
-        if ($response->isOk) {
-            $success = TRUE;
-            $dataResponse['expirationTime'] = (time() + $dataResponse['expires_in']) - 60;
-        }else{
             $error = '';
-            if(isset($dataResponse['error'])){
-                $error = $dataResponse['error'];
-                $error = (isset($dataResponse['detailedmessage'])) ? $error." ".$dataResponse['detailedmessage'] : $error;
+            if (isset($dataResponse['error'])) {
+                $error = $dataResponse['error'] . ' (' . $dataResponse['status'] . ')';
+                throw new \yii\web\BadRequestHttpException($error);
             }
-            throw new \yii\web\BadRequestHttpException($error);
+        } else {
+            throw new \yii\web\BadRequestHttpException();
         }
+
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         return $dataResponse;
     }
 
-    private function handleError($errorMessage)
+    private function createRequest($client, $link, $action, $access_token, $params)
     {
-        $transportError = 'Curl error: #';//yiisoft\yii2-httpclient\src\CurlTransport.php
-        switch (true){
-            case stristr($errorMessage,$transportError.CURLE_OPERATION_TIMEDOUT):
-                $humanized = 'Communication Error';
-               break;
-            default:
-                $humanized = 'Internal Error';
-         }
+        $request = $client->createRequest()
+            ->setUrl($link)
+            ->setMethod(strtoupper(trim($action)))
+            ->setHeaders([
+                'Authorization' => 'Bearer ' . $access_token,
+            ])
+            ->setData($params);
 
-         return $humanized;
+        try {
+            $response = $request->send();
+        } catch (\Exception $e) {
+            throw new \yii\web\BadRequestHttpException();
+        }
+
+        return $response;
+    }
+
+    private function getUserConfiguration($user_id)
+    {
+        $withingsUserId = UserSetting::getSetting($user_id, 'userid', UserSetting::GROUP_NAME_WITHINGS);
+
+        if (is_null($withingsUserId)) {
+            throw new UnprocessableEntityHttpException("Unprocessable Entity, Withings user id does not exist in our database.");
+        }
+
+        $configurationModel = Configuration::find()->where([
+            'type'          => self::CONFIGURATION_TYPE,
+            'practiceId'    => $withingsUserId->value
+        ])->one();
+
+        if (is_null($configurationModel)) {
+            throw new UnprocessableEntityHttpException("Unprocessable Entity, Withings user configuration does not exist in our database.");
+        }
+
+        return $configurationModel;
+    }
+
+    private function getNonce()
+    {
+        $action = 'getnonce';
+        $time = time();
+        $signature = $this->buildSignature($action, $time);
+        $params = [
+            'action' => $action,
+            'client_id' => $this->clientId,
+            'timestamp' => $time,
+            'signature' => $signature,
+        ];
+
+        $path = "v2/signature";
+        $client = new Client(['baseUrl' =>  Yii::$app->params['withings.api_url']]);
+
+        $response = $client->post($path, $params)->send();
+
+        if (!$response->isOk) {
+            throw new UnprocessableEntityHttpException("Unprocessable Entity");
+        }
+
+        $dataResponse = json_decode($response->getContent(), TRUE);
+
+        if ($dataResponse['status'] != 0) {
+            throw new \yii\web\BadRequestHttpException($dataResponse['error'], $dataResponse['status']);
+        }
+
+        return $dataResponse['body']['nonce'];
+    }
+
+    private function buildSignature(string $action, int $time)
+    {
+        $signed_params = array(
+            'action'     => $action,
+            'client_id'  => $this->clientId,
+            'timestamp'      => $time,
+        );
+
+        ksort($signed_params);
+
+        $data = implode(",", $signed_params);
+
+        return hash_hmac('sha256', $data, $this->customerSecret);
     }
 }
