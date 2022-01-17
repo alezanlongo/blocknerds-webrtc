@@ -4,6 +4,7 @@
 /* @var $form yii\bootstrap4\ActiveForm */
 /* @var $model \common\models\LoginForm */
 
+use frontend\widgets\snomedAutocomplete\SnomedAutocomplete;
 use kartik\select2\Select2;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;

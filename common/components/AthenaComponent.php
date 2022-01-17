@@ -57,6 +57,10 @@ use common\components\Athena\models\TopInsurancePackages;
 use common\components\Athena\models\Vaccine;
 use common\components\Athena\models\Vitals;
 use common\components\Athena\models\VitalsConfiguration;
+use common\components\Athena\models\MedicalHistory;
+use common\components\Athena\models\MedicalHistoryQuestion;
+use common\components\Athena\models\MedicalHistoryConfiguration;
+use common\components\Athena\models\MedicalHistoryConfigurationQuestion;
 use common\components\Athena\models\AppointmentSlotResponse;
 use yii\base\Component;
 
@@ -1934,6 +1938,110 @@ class AthenaComponent extends Component
 
         return $otherOrderTypeModels;
 
+    }
+
+
+    public function getMedicalHistory($patient_id, $patientid, $departmentid)
+    {
+        $medicalHistoryModelApi =
+            $this->client->getPracticeidChartPatientidMedicalhistory(
+                $this->practiceid,
+                $patientid,
+                ['departmentid' => $departmentid]
+            );
+        $medicalHistory = MedicalHistory::find()->where(['patient_id' => $patient_id])->one();
+
+        if(!$medicalHistory){
+            $medicalHistory = MedicalHistory::createFromApiObject(
+                $medicalHistoryModelApi
+            );
+            $medicalHistory->patient_id = $patient_id; //this is the internal ID from our data base
+        }else{
+            $medicalHistory->loadApiObject($medicalHistoryModelApi);
+        }
+
+        return $medicalHistory;
+    }
+
+
+    public function getMedicalHistoryQuestions($medicalHistory, $patientid, $departmentid)
+    {
+        $medicalHistoryModelsApi =
+            $this->client->getPracticeidChartPatientidMedicalhistory(
+                $this->practiceid,
+                $patientid,
+                ['departmentid'  => $departmentid]
+            );
+        $medicalHistoryQuestions = MedicalHistoryQuestion::find()->where([
+            'medicalHistory_id' => $medicalHistory->id,
+        ])->all();
+
+        $questions = [];
+        if(count($medicalHistoryQuestions) == 0){
+            foreach ($medicalHistoryModelsApi->questions as $questionApi) {
+                $question = MedicalHistoryQuestion::createFromApiObject(
+                    $questionApi
+                );
+                $question->link("medicalHistory", $medicalHistory);
+                $questions[] = $question;
+            }
+        }else{
+            foreach ($medicalHistoryModelsApi->questions as $keyQ => $questionApi) {
+                foreach ($medicalHistoryQuestions as $key => $value){
+                    if($questionApi->questionid == $value->questionid){
+                        $question = $value;
+                        $question->loadApiObject($questionApi);
+                        $question->link("medicalHistory", $medicalHistory);
+                        $questions[] = $question;
+                        unset($medicalHistoryModelsApi->questions[$keyQ]);
+                    }
+                }
+            }
+
+            foreach ($medicalHistoryModelsApi->questions as $questionApi) {
+                $question = MedicalHistoryQuestion::createFromApiObject(
+                    $questionApi
+                );
+                $question->link("medicalHistory", $medicalHistory);
+                $questions[] = $question;
+            }
+        }
+
+        return $questions;
+    }
+
+
+    public function putMedicalHistory($putMedicalHistory, $patientid)
+    {
+        $putMedicalHistoryApi = $this->client->putPracticeidChartPatientidMedicalhistory(
+            $this->practiceid,
+            $patientid,
+            $putMedicalHistory
+        );
+
+        return $putMedicalHistoryApi;
+    }
+
+
+    public function getMedicalHistoryQuestionsConfiguration()
+    {
+        $medicalHistoryConfigurationModelsApi =
+            $this->client->getPracticeidChartConfigurationMedicalhistory(
+                $this->practiceid
+            );
+
+        $questions = [];
+        if($medicalHistoryConfigurationModelsApi->totalcount > 0){
+            foreach ($medicalHistoryConfigurationModelsApi->questions as $question) {
+                $question->answer = 'none';
+                $configurationQuestion = MedicalHistoryConfigurationQuestion::createFromApiObject(
+                    $question
+                );
+                $questions[] = $configurationQuestion;
+            }
+        }
+
+        return $questions;
     }
 
     /* ================================= Begin  Protected methods ============================================== */

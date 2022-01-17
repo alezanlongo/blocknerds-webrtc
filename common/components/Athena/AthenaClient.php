@@ -14,7 +14,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatients($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients';
+        $path = trim('/v1/{practiceid}/patients');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -36,7 +36,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientid($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -59,7 +59,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientid($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -81,7 +81,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidDepartments($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/departments';
+        $path = trim('/v1/{practiceid}/departments');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -103,7 +103,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidInsurances($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/insurances';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/insurances');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -126,7 +126,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsPatientidInsurances($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/insurances';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/insurances');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -150,7 +150,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientidInsurancesInsuranceid($practiceid, $patientid, $insuranceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{insuranceid}', $insuranceid, $path);
@@ -170,7 +170,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidPatientsPatientidInsurancesInsuranceid($practiceid, $patientid, $insuranceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{insuranceid}', $insuranceid, $path);
@@ -188,7 +188,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidMiscTopinsurancepackages($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/misc/topinsurancepackages';
+        $path = trim('/v1/{practiceid}/misc/topinsurancepackages');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -209,7 +209,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidProviders($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/providers';
+        $path = trim('/v1/{practiceid}/providers');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -226,32 +226,11 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
     }
     /**
      * @param practiceid
-     * @return AppointmentSlotResponse
-     */
-    public function getPracticeidAppointmentsOpen($practiceid, array $query = [])
-    {
-        $path = '/v1/{practiceid}/appointments/open';
-        $path = str_replace('{practiceid}', $practiceid, $path);
-
-        $dataResponse = $this->callMethod($path, 'get' , $query);
-        if($dataResponse['success']){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse['data']['appointments'])) ? $dataResponse['data']['appointments'] : $dataResponse['data'];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Athena\apiModels\AppointmentSlotResponseApi($value));
-            }
-            return $dataApiModel;
-        }else{
-            return $dataResponse['message'];
-        }
-    }
-    /**
-     * @param practiceid
      * @return AppointmentResponse
      */
     public function postPracticeidAppointmentsOpen($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/appointments/open';
+        $path = trim('/v1/{practiceid}/appointments/open');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -268,7 +247,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidAppointmentsAppointmentidCheckin($practiceid, $appointmentid, array $body = [])
     {
-        $path = '/v1/{practiceid}/appointments/{appointmentid}/checkin';
+        $path = trim('/v1/{practiceid}/appointments/{appointmentid}/checkin');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
 
@@ -286,7 +265,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidAppointmentsAppointmentidStartcheckin($practiceid, $appointmentid, array $body = [])
     {
-        $path = '/v1/{practiceid}/appointments/{appointmentid}/startcheckin';
+        $path = trim('/v1/{practiceid}/appointments/{appointmentid}/startcheckin');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
 
@@ -304,7 +283,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidAppointmentsAppointmentidCancelcheckin($practiceid, $appointmentid, array $body = [])
     {
-        $path = '/v1/{practiceid}/appointments/{appointmentid}/cancelcheckin';
+        $path = trim('/v1/{practiceid}/appointments/{appointmentid}/cancelcheckin');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
 
@@ -322,7 +301,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartPatientidEncounters($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/{patientid}/encounters';
+        $path = trim('/v1/{practiceid}/chart/{patientid}/encounters');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -345,7 +324,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartEncounterEncounterid($practiceid, $encounterid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -368,7 +347,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidChartEncounterEncounterid($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -385,7 +364,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartConfigurationPatientlocations($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/configuration/patientlocations';
+        $path = trim('/v1/{practiceid}/chart/configuration/patientlocations');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -406,7 +385,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartConfigurationPatientstatuses($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/configuration/patientstatuses';
+        $path = trim('/v1/{practiceid}/chart/configuration/patientstatuses');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -428,7 +407,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidAppointmentsAppointmentid($practiceid, $appointmentid, array $query = [])
     {
-        $path = '/v1/{practiceid}/appointments/{appointmentid}';
+        $path = trim('/v1/{practiceid}/appointments/{appointmentid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
 
@@ -451,7 +430,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidAppointmentsAppointmentid($practiceid, $appointmentid, array $body = [])
     {
-        $path = '/v1/{practiceid}/appointments/{appointmentid}';
+        $path = trim('/v1/{practiceid}/appointments/{appointmentid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
 
@@ -469,7 +448,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsPatientcase($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/patientcase');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -492,7 +471,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsPatientidDocumentsPatientcase($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/patientcase');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -511,7 +490,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid($patientcaseid, $practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}');
         $path = str_replace('{patientcaseid}', $patientcaseid, $path);
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -536,7 +515,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseid($patientcaseid, $practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}');
         $path = str_replace('{patientcaseid}', $patientcaseid, $path);
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -554,7 +533,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/changed/subscription';
+        $path = trim('/v1/{practiceid}/patients/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -570,7 +549,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/changed/subscription';
+        $path = trim('/v1/{practiceid}/patients/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -586,7 +565,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidPatientsChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/changed/subscription';
+        $path = trim('/v1/{practiceid}/patients/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -602,7 +581,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/changed';
+        $path = trim('/v1/{practiceid}/patients/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -618,7 +597,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidAppointmentsChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/appointments/changed';
+        $path = trim('/v1/{practiceid}/appointments/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -634,7 +613,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidAppointmentsChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/appointments/changed/subscription';
+        $path = trim('/v1/{practiceid}/appointments/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -650,7 +629,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidAppointmentsChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/appointments/changed/subscription';
+        $path = trim('/v1/{practiceid}/appointments/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -666,7 +645,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidAppointmentsChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/appointments/changed/subscription';
+        $path = trim('/v1/{practiceid}/appointments/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -682,7 +661,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidDocumentsPatientcaseChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/documents/patientcase/changed/subscription';
+        $path = trim('/v1/{practiceid}/documents/patientcase/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -698,7 +677,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidDocumentsPatientcaseChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/documents/patientcase/changed/subscription';
+        $path = trim('/v1/{practiceid}/documents/patientcase/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -714,7 +693,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidDocumentsPatientcaseChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/documents/patientcase/changed/subscription';
+        $path = trim('/v1/{practiceid}/documents/patientcase/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -730,7 +709,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidDocumentsPatientcaseChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/documents/patientcase/changed';
+        $path = trim('/v1/{practiceid}/documents/patientcase/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -747,7 +726,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidDocumentsPatientcasePatientcaseidActions($patientcaseid, $practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/documents/patientcase/{patientcaseid}/actions';
+        $path = trim('/v1/{practiceid}/documents/patientcase/{patientcaseid}/actions');
         $path = str_replace('{patientcaseid}', $patientcaseid, $path);
         $path = str_replace('{practiceid}', $practiceid, $path);
 
@@ -770,7 +749,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidDocumentsPatientcasePatientcaseidActions($patientcaseid, $practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/documents/patientcase/{patientcaseid}/actions';
+        $path = trim('/v1/{practiceid}/documents/patientcase/{patientcaseid}/actions');
         $path = str_replace('{patientcaseid}', $patientcaseid, $path);
         $path = str_replace('{practiceid}', $practiceid, $path);
 
@@ -789,7 +768,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidAssign($patientcaseid, $practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/assign';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/assign');
         $path = str_replace('{patientcaseid}', $patientcaseid, $path);
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -809,7 +788,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientidDocumentsPatientcasePatientcaseidClose($patientcaseid, $practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/close';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/patientcase/{patientcaseid}/close');
         $path = str_replace('{patientcaseid}', $patientcaseid, $path);
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -827,7 +806,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceDocumentsPatientcaseClosereasons($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/documents/patientcase/closereasons';
+        $path = trim('/v1/{practiceid}/reference/documents/patientcase/closereasons');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -849,7 +828,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidChartalert($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/chartalert';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/chartalert');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -867,7 +846,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsPatientidChartalert($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/chartalert';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/chartalert');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -884,7 +863,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryMedicationChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/medication/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/medication/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -900,7 +879,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartHealthhistoryMedicationChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/medication/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/medication/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -916,7 +895,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidChartHealthhistoryMedicationChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/medication/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/medication/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -932,7 +911,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryMedicationChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/medication/changed';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/medication/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -948,7 +927,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryProblemsChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/problems/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/problems/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -964,7 +943,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartHealthhistoryProblemsChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/problems/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/problems/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -980,7 +959,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidChartHealthhistoryProblemsChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/problems/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/problems/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -996,7 +975,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryProblemsChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/problems/changed';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/problems/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1013,7 +992,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsClinicaldocument($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -1036,7 +1015,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsPatientidDocumentsClinicaldocument($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -1055,7 +1034,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid($practiceid, $patientid, $clinicaldocumentid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{clinicaldocumentid}', $clinicaldocumentid, $path);
@@ -1080,7 +1059,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid($practiceid, $patientid, $clinicaldocumentid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{clinicaldocumentid}', $clinicaldocumentid, $path);
@@ -1100,7 +1079,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentid($practiceid, $patientid, $clinicaldocumentid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{clinicaldocumentid}', $clinicaldocumentid, $path);
@@ -1121,7 +1100,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsClinicaldocumentClinicaldocumentidPagesPageid($practiceid, $pageid, $patientid, $clinicaldocumentid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}/pages/{pageid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/clinicaldocument/{clinicaldocumentid}/pages/{pageid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{pageid}', $pageid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -1140,7 +1119,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryAllergiesChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/allergies/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/allergies/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1156,7 +1135,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartHealthhistoryAllergiesChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/allergies/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/allergies/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -1172,7 +1151,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidChartHealthhistoryAllergiesChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/allergies/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/allergies/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -1188,7 +1167,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryAllergiesChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/allergies/changed';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/allergies/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1205,7 +1184,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartEncounterEncounteridVitals($practiceid, $encounterid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/vitals';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/vitals');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -1228,7 +1207,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridVitals($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/vitals';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/vitals');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -1247,7 +1226,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidChartEncounterEncounteridVitalsVitalid($practiceid, $encounterid, $vitalid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/vitals/{vitalid}';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/vitals/{vitalid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
         $path = str_replace('{vitalid}', $vitalid, $path);
@@ -1265,7 +1244,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartConfigurationVitals($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/configuration/vitals';
+        $path = trim('/v1/{practiceid}/chart/configuration/vitals');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1286,7 +1265,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryVaccineChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1302,7 +1281,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartHealthhistoryVaccineChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -1318,7 +1297,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidChartHealthhistoryVaccineChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/vaccine/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -1334,7 +1313,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryVaccineChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/vaccine/changed';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/vaccine/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1350,7 +1329,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1366,7 +1345,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartHealthhistoryFamilyhistoryChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -1382,7 +1361,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidChartHealthhistoryFamilyhistoryChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/familyhistory/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -1398,7 +1377,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartHealthhistoryFamilyhistoryChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/healthhistory/familyhistory/changed';
+        $path = trim('/v1/{practiceid}/chart/healthhistory/familyhistory/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1415,7 +1394,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartPatientidMedications($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/{patientid}/medications';
+        $path = trim('/v1/{practiceid}/chart/{patientid}/medications');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -1433,7 +1412,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartPatientidMedications($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/{patientid}/medications';
+        $path = trim('/v1/{practiceid}/chart/{patientid}/medications');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -1450,7 +1429,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceMedications($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/medications';
+        $path = trim('/v1/{practiceid}/reference/medications');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1473,7 +1452,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidChartPatientidMedicationsMedicationentryid($practiceid, $medicationentryid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/{patientid}/medications/{medicationentryid}';
+        $path = trim('/v1/{practiceid}/chart/{patientid}/medications/{medicationentryid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{medicationentryid}', $medicationentryid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -1492,7 +1471,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidAppointmentsAppointmentidNotes($practiceid, $appointmentid, array $query = [])
     {
-        $path = '/v1/{practiceid}/appointments/{appointmentid}/notes';
+        $path = trim('/v1/{practiceid}/appointments/{appointmentid}/notes');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
 
@@ -1515,7 +1494,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidAppointmentsAppointmentidNotes($practiceid, $appointmentid, array $body = [])
     {
-        $path = '/v1/{practiceid}/appointments/{appointmentid}/notes';
+        $path = trim('/v1/{practiceid}/appointments/{appointmentid}/notes');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
 
@@ -1534,7 +1513,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidAppointmentsAppointmentidNotesNoteid($practiceid, $appointmentid, $noteid, array $body = [])
     {
-        $path = '/v1/{practiceid}/appointments/{appointmentid}/notes/{noteid}';
+        $path = trim('/v1/{practiceid}/appointments/{appointmentid}/notes/{noteid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{appointmentid}', $appointmentid, $path);
         $path = str_replace('{noteid}', $noteid, $path);
@@ -1553,7 +1532,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartPatientidProblems($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/{patientid}/problems';
+        $path = trim('/v1/{practiceid}/chart/{patientid}/problems');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -1571,7 +1550,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartPatientidProblems($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/{patientid}/problems';
+        $path = trim('/v1/{practiceid}/chart/{patientid}/problems');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -1590,7 +1569,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidChartPatientidProblemsProblemid($practiceid, $patientid, $problemid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/{patientid}/problems/{problemid}';
+        $path = trim('/v1/{practiceid}/chart/{patientid}/problems/{problemid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{problemid}', $problemid, $path);
@@ -1609,7 +1588,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsLabresult($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/labresult';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/labresult');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -1632,7 +1611,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsPatientidDocumentsLabresult($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/labresult';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/labresult');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -1651,7 +1630,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsLabresultLabresultid($practiceid, $patientid, $labresultid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{labresultid}', $labresultid, $path);
@@ -1671,7 +1650,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientidDocumentsLabresultLabresultid($practiceid, $patientid, $labresultid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{labresultid}', $labresultid, $path);
@@ -1691,7 +1670,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidPatientsPatientidDocumentsLabresultLabresultid($practiceid, $patientid, $labresultid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{labresultid}', $labresultid, $path);
@@ -1712,7 +1691,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsLabresultLabresultidPagesPageid($practiceid, $pageid, $patientid, $labresultid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}/pages/{pageid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/labresult/{labresultid}/pages/{pageid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{pageid}', $pageid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -1732,7 +1711,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidDocumentsLabresultDocumentidDataentrycompleted($practiceid, $documentid, array $body = [])
     {
-        $path = '/v1/{practiceid}/documents/labresult/{documentid}/dataentrycompleted';
+        $path = trim('/v1/{practiceid}/documents/labresult/{documentid}/dataentrycompleted');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{documentid}', $documentid, $path);
 
@@ -1750,7 +1729,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidDocumentsLabresultLabresultidClose($practiceid, $labresultid, array $body = [])
     {
-        $path = '/v1/{practiceid}/documents/labresult/{labresultid}/close';
+        $path = trim('/v1/{practiceid}/documents/labresult/{labresultid}/close');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{labresultid}', $labresultid, $path);
 
@@ -1767,7 +1746,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidLabresultsChangedSubscriptionEvents($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/labresults/changed/subscription/events';
+        $path = trim('/v1/{practiceid}/labresults/changed/subscription/events');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1783,7 +1762,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidLabresultsChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/labresults/changed/subscription';
+        $path = trim('/v1/{practiceid}/labresults/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1799,7 +1778,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidLabresultsChangedSubscription($practiceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/labresults/changed/subscription';
+        $path = trim('/v1/{practiceid}/labresults/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
@@ -1815,7 +1794,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidLabresultsChangedSubscription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/labresults/changed/subscription';
+        $path = trim('/v1/{practiceid}/labresults/changed/subscription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'delete' , $query);
@@ -1831,7 +1810,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidLabresultsChanged($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/labresults/changed';
+        $path = trim('/v1/{practiceid}/labresults/changed');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1848,7 +1827,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartEncounterEncounteridDiagnoses($practiceid, $encounterid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/diagnoses';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/diagnoses');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -1871,7 +1850,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridDiagnoses($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/diagnoses';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/diagnoses');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -1890,7 +1869,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidChartEncounterEncounteridDiagnosesDiagnosisid($practiceid, $encounterid, $diagnosisid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/diagnoses/{diagnosisid}';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/diagnoses/{diagnosisid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
         $path = str_replace('{diagnosisid}', $diagnosisid, $path);
@@ -1909,7 +1888,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridOrdersPrescription($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/prescription';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/prescription');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -1928,7 +1907,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidChartEncounterEncounteridOrdersOrderid($practiceid, $encounterid, $orderid, array $query = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/{orderid}';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/{orderid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
         $path = str_replace('{orderid}', $orderid, $path);
@@ -1946,7 +1925,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderPrescriptionDosagequantityunits($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/prescription/dosagequantityunits';
+        $path = trim('/v1/{practiceid}/reference/order/prescription/dosagequantityunits');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1967,7 +1946,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderPrescriptionFrequencies($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/prescription/frequencies';
+        $path = trim('/v1/{practiceid}/reference/order/prescription/frequencies');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -1988,7 +1967,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderPrescription($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/prescription';
+        $path = trim('/v1/{practiceid}/reference/order/prescription');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2009,7 +1988,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderPrescriptionTotalquantityunits($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/prescription/totalquantityunits';
+        $path = trim('/v1/{practiceid}/reference/order/prescription/totalquantityunits');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2031,7 +2010,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsAdmin($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/admin');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -2054,7 +2033,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsPatientidDocumentsAdmin($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/admin');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -2073,7 +2052,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsAdminAdminid($practiceid, $adminid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{adminid}', $adminid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -2098,7 +2077,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientidDocumentsAdminAdminid($practiceid, $adminid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{adminid}', $adminid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -2118,7 +2097,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidPatientsPatientidDocumentsAdminAdminid($practiceid, $adminid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{adminid}', $adminid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -2139,7 +2118,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsAdminAdminidPagesPageid($practiceid, $pageid, $adminid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}/pages/{pageid}';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}/pages/{pageid}');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{pageid}', $pageid, $path);
         $path = str_replace('{adminid}', $adminid, $path);
@@ -2160,7 +2139,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidDocumentsAdminAdminidOriginaldocument($practiceid, $adminid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}/originaldocument';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/documents/admin/{adminid}/originaldocument');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{adminid}', $adminid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
@@ -2179,7 +2158,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridOrdersImaging($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/imaging';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/imaging');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -2196,7 +2175,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderImaging($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/imaging';
+        $path = trim('/v1/{practiceid}/reference/order/imaging');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2218,7 +2197,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridOrdersLab($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/lab';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/lab');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -2235,7 +2214,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderLab($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/lab';
+        $path = trim('/v1/{practiceid}/reference/order/lab');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2258,7 +2237,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidInsurancesInsuranceidImage($practiceid, $patientid, $insuranceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{insuranceid}', $insuranceid, $path);
@@ -2278,7 +2257,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function putPracticeidPatientsPatientidInsurancesInsuranceidImage($practiceid, $patientid, $insuranceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{insuranceid}', $insuranceid, $path);
@@ -2298,7 +2277,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsPatientidInsurancesInsuranceidImage($practiceid, $patientid, $insuranceid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{insuranceid}', $insuranceid, $path);
@@ -2318,7 +2297,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function deletePracticeidPatientsPatientidInsurancesInsuranceidImage($practiceid, $patientid, $insuranceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/insurances/{insuranceid}/image');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
         $path = str_replace('{insuranceid}', $insuranceid, $path);
@@ -2336,7 +2315,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsEnhancedbestmatch($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/enhancedbestmatch';
+        $path = trim('/v1/{practiceid}/patients/enhancedbestmatch');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2358,7 +2337,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridOrdersDme($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/dme';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/dme');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -2375,7 +2354,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderDme($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/dme';
+        $path = trim('/v1/{practiceid}/reference/order/dme');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2397,7 +2376,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridOrdersVaccine($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/vaccine';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/vaccine');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -2414,7 +2393,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderVaccine($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/vaccine';
+        $path = trim('/v1/{practiceid}/reference/order/vaccine');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2435,7 +2414,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderVaccineDeclinedreasons($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/vaccine/declinedreasons';
+        $path = trim('/v1/{practiceid}/reference/order/vaccine/declinedreasons');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2457,7 +2436,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridOrdersPatientinfo($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/patientinfo';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/patientinfo');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -2474,7 +2453,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderPatientinfo($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/patientinfo';
+        $path = trim('/v1/{practiceid}/reference/order/patientinfo');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2496,7 +2475,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridOrdersReferral($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/referral';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/referral');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -2513,7 +2492,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderReferral($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/referral';
+        $path = trim('/v1/{practiceid}/reference/order/referral');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2535,7 +2514,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidChartEncounterEncounteridOrdersOther($practiceid, $encounterid, array $body = [])
     {
-        $path = '/v1/{practiceid}/chart/encounter/{encounterid}/orders/other';
+        $path = trim('/v1/{practiceid}/chart/encounter/{encounterid}/orders/other');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{encounterid}', $encounterid, $path);
 
@@ -2552,7 +2531,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidReferenceOrderOther($practiceid, array $query = [])
     {
-        $path = '/v1/{practiceid}/reference/order/other';
+        $path = trim('/v1/{practiceid}/reference/order/other');
         $path = str_replace('{practiceid}', $practiceid, $path);
 
         $dataResponse = $this->callMethod($path, 'get' , $query);
@@ -2574,7 +2553,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function getPracticeidPatientsPatientidPrivacyinformationverified($practiceid, $patientid, array $query = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/privacyinformationverified';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/privacyinformationverified');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -2592,7 +2571,7 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
      */
     public function postPracticeidPatientsPatientidPrivacyinformationverified($practiceid, $patientid, array $body = [])
     {
-        $path = '/v1/{practiceid}/patients/{patientid}/privacyinformationverified';
+        $path = trim('/v1/{practiceid}/patients/{patientid}/privacyinformationverified');
         $path = str_replace('{practiceid}', $practiceid, $path);
         $path = str_replace('{patientid}', $patientid, $path);
 
@@ -2604,6 +2583,58 @@ class AthenaClient extends \common\components\Athena\AthenaOauth
                 array_push($dataApiModel, new  \common\components\Athena\apiModels\PrivacyInformationVerified200ResponseApi($value));
             }
             return $dataApiModel;
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return MedicalHistory
+     */
+    public function getPracticeidChartPatientidMedicalhistory($practiceid, $patientid, array $query = [])
+    {
+        $path = trim('/v1/{practiceid}/chart/{patientid}/medicalhistory');
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\MedicalHistoryApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @param patientid
+     * @return PutMedicalHistory200Response
+     */
+    public function putPracticeidChartPatientidMedicalhistory($practiceid, $patientid, array $body = [])
+    {
+        $path = trim('/v1/{practiceid}/chart/{patientid}/medicalhistory');
+        $path = str_replace('{practiceid}', $practiceid, $path);
+        $path = str_replace('{patientid}', $patientid, $path);
+
+        $dataResponse = $this->callMethod($path, 'put' , $body);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\PutMedicalHistory200ResponseApi($dataResponse['data']);
+        }else{
+            return $dataResponse['message'];
+        }
+    }
+    /**
+     * @param practiceid
+     * @return MedicalHistoryConfiguration
+     */
+    public function getPracticeidChartConfigurationMedicalhistory($practiceid, array $query = [])
+    {
+        $path = trim('/v1/{practiceid}/chart/configuration/medicalhistory');
+        $path = str_replace('{practiceid}', $practiceid, $path);
+
+        $dataResponse = $this->callMethod($path, 'get' , $query);
+        if($dataResponse['success']){
+            return new \common\components\Athena\apiModels\MedicalHistoryConfigurationApi($dataResponse['data']);
         }else{
             return $dataResponse['message'];
         }

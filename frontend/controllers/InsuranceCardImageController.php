@@ -97,7 +97,7 @@ class InsuranceCardImageController extends Controller
             $response = $this->component->createInsuranceImageCard($patientid, $insuranceid, $model);
             if($response->success){
                 $insuraceCardImage = $this->findInsuranceCardImage($patientInsurance_id);
-                if(count($insuraceCardImage->toArray()) == 0){
+                if(is_null($insuraceCardImage)){
                     $insuraceCardImage = new InsuranceCardImage();
                 }
                 $insuraceCardImage->image = substr($model->image, 0, 10);

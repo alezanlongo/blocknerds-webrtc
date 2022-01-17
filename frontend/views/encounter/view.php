@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'closeddate',
             'closeduser',
             'departmentid',
-            'diagnoses',
+            /*'diagnoses',
             'encounterdate',
             'encounterid',
             'encountertype',
@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'providerfirstname',
             'providerid',
             'providerlastname',
-            'providerphone',
+            'providerphone',*/
             'stage',
             'status',
             'externalId',
