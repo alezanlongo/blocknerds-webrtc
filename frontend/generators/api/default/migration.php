@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Inflector;
+use yii\helpers\StringHelper;
 ?>
 <?= '<?php' ?>
 
@@ -34,7 +35,7 @@ class <?= $className ?> extends \yii\db\Migration
             'fk-<?= $relationName ?>-<?= $relation['link']['id'] ?>',
             '<?= $tableName ?>',
             '<?= $relation['link']['id'] ?>',
-            '<?= Inflector::tableize($relationName) ?>',
+            '<?= Inflector::camel2id(StringHelper::basename(Inflector::pluralize($relation['class'])), '_') ?>',
             'id',
             'CASCADE'
         );
