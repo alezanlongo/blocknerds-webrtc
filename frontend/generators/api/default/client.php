@@ -44,7 +44,8 @@ $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
             }
             return $dataApiModel;
 <?php elseif($endpoint['flagList'] === FALSE): ?>
-            return new \common\components\<?= $component ?>\apiModels\<?= $apiModel ?>($dataResponse[$this->getResponseDataKey()]);
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['<?= $endpoint['listKey'] ?>']) ? $dataResponse[$this->getResponseDataKey()]['<?= $endpoint['listKey'] ?>'] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\<?= $component ?>\apiModels\<?= $apiModel ?>($responseData);
 <?php endif; ?>
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
