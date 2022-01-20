@@ -12,7 +12,7 @@ echo $form->field($generator, 'ignoreSpecErrors')->checkbox();
 <?= $form->field($generator, 'generateControllers')->hiddenInput(['value'=> 0])->label(false)?>
 <?= $form->field($generator, 'folderPath') ?>
 <?= $form->field($generator, 'clientBaseClass') ?>
-
+<?= $form->field($generator, 'tablesPrefix') ?>
 
 <?php
 

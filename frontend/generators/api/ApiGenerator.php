@@ -33,6 +33,7 @@ class ApiGenerator extends ParentApiGenerator
     public $generateApiModels = true;
     public $folderPath = 'common\\components';
     public $clientBaseClass = '';
+    public $tablesPrefix = '';
     
     /**
      * @inheritDoc
@@ -145,6 +146,7 @@ class ApiGenerator extends ParentApiGenerator
                         'attributes' => $model['attributes'],
                         'relations' => $model['relations'],
                         'description' => 'Table for ' . $modelName,
+                        'tablesPrefix' => $this->tablesPrefix,
                     ])
                 );
             }
@@ -207,6 +209,7 @@ class ApiGenerator extends ParentApiGenerator
     {
         return array_merge(parent::rules(), [
             [['folderPath','clientBaseClass'], 'required'],
+            [['tablesPrefix'], 'string'],
         ]);
     }
 
