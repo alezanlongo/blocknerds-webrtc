@@ -40,12 +40,12 @@ $path = str_replace('v1', Yii::$app->params['version'], $endpoint['pathname']);
             $dataApiModel = [];
             $responseData = (isset($dataResponse[$this->getResponseDataKey()]['<?= ($endpoint['listKey']) ? $endpoint['listKey'] : $endpoint['finalPathName'] ?>'])) ? $dataResponse[$this->getResponseDataKey()]['<?= ($endpoint['listKey']) ? $endpoint['listKey'] : $endpoint['finalPathName'] ?>'] : $dataResponse[$this->getResponseDataKey()];
             foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\<?= $component ?>\apiModels\<?= $apiModel ?>($value));
+                array_push($dataApiModel, new  \common\components\<?= $component ?>\apiModels\<?= $endpoint['schema'].'Api' ?>($value));
             }
             return $dataApiModel;
 <?php elseif($endpoint['flagList'] === FALSE): ?>
             $responseData = (isset($dataResponse[$this->getResponseDataKey()]['<?= $endpoint['listKey'] ?>']) ? $dataResponse[$this->getResponseDataKey()]['<?= $endpoint['listKey'] ?>'] : $dataResponse[$this->getResponseDataKey()];
-            return new \common\components\<?= $component ?>\apiModels\<?= $apiModel ?>($responseData);
+            return new \common\components\<?= $component ?>\apiModels\<?= $endpoint['schema'].'Api' ?>($responseData);
 <?php endif; ?>
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
