@@ -389,7 +389,7 @@ class ApiGenerator extends ParentApiGenerator
                 }
 
                 $listKey = ( array_key_exists('x-list-key', $operation->getExtensions()) ) ? $operation->getExtensions()['x-list-key'] : null;
-                $apiModel = ( array_key_exists('x-api-model', $operation->getExtensions()) ) ? $operation->getExtensions()['x-api-model'] : null;
+                $schema = $apiModel = ( array_key_exists('x-api-model', $operation->getExtensions()) ) ? $operation->getExtensions()['x-api-model'] : null;
 
                 foreach ($operation->responses->getResponses() as $responseCode => $response){
                     foreach ($response->content as $responseType => $responseItem){
@@ -403,17 +403,21 @@ class ApiGenerator extends ParentApiGenerator
                                 $arrSchema = explode("/", $responseItem->schema->items->getReference());
                             }
                         }
+                        if(!empty($arrSchema)){
+                            $schema = $arrSchema[(count($arrSchema) - 1)];
+                        }
 
+//var_dump($responseItem->schema);die;
                         array_push($arrayClient, [
                             'pathname'      => $pathName,
                             'finalPathName' => $finalPathName,
                             'verb'          => $verb,
                             'parameters'    => $arrPath,
                             'operationId'   => $operation->operationId,
-                            'schema'        => $arrSchema[(count($arrSchema) - 1)],
+                            'schema'        => $schema,
                             'flagList'      => $flagList,
                             'listKey'       => $listKey,
-                            'apiModel'      => $apiModel,
+                            //'apiModel'      => $apiModel,
                         ]);
                     }
                 }

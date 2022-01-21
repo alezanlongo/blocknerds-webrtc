@@ -3050,7 +3050,7 @@ paths:
       tags:
         - Vitals (Encounters)
     get:
-      x-api-model: VitalsCustomApi
+      x-api-model: VitalsCustom
       summary: Get list of vitals for given encounter
       description: Retrieves a patient's vitals reading for a specific encounter
       parameters:
