@@ -129,7 +129,7 @@ class workout_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%workout_objects}}';
+        return '{{%wth_workout_objects}}';
     }
 
     public function rules()

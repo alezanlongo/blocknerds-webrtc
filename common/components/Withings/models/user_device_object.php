@@ -108,7 +108,7 @@ class user_device_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%user_device_objects}}';
+        return '{{%wth_user_device_objects}}';
     }
 
     public function rules()

@@ -35,7 +35,7 @@ class activity_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%activity_objects}}';
+        return '{{%wth_activity_objects}}';
     }
 
     public function rules()

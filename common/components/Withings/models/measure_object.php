@@ -19,7 +19,7 @@ class measure_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%measure_objects}}';
+        return '{{%wth_measure_objects}}';
     }
 
     public function rules()

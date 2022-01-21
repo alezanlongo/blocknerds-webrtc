@@ -14,7 +14,7 @@ class lastupdate_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%lastupdate_objects}}';
+        return '{{%wth_lastupdate_objects}}';
     }
 
     public function rules()

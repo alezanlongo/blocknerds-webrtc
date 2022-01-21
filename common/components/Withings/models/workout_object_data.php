@@ -33,7 +33,7 @@ class workout_object_data extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%workout_object_datas}}';
+        return '{{%wth_workout_object_datas}}';
     }
 
     public function rules()

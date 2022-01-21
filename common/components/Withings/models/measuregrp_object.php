@@ -34,7 +34,7 @@ class measuregrp_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%measuregrp_objects}}';
+        return '{{%wth_measuregrp_objects}}';
     }
 
     public function rules()

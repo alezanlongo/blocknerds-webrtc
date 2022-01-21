@@ -22,7 +22,7 @@ class heart_measurement_object_ecg extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%heart_measurement_object_ecgs}}';
+        return '{{%wth_heart_measurement_object_ecgs}}';
     }
 
     public function rules()

@@ -15,7 +15,7 @@ class heart_measurement_object_bloodpressure extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%heart_measurement_object_bloodpressures}}';
+        return '{{%wth_heart_measurement_object_bloodpressures}}';
     }
 
     public function rules()

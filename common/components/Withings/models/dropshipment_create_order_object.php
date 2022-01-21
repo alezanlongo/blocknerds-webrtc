@@ -33,7 +33,7 @@ class dropshipment_create_order_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%dropshipment_create_order_objects}}';
+        return '{{%wth_dropshipment_create_order_objects}}';
     }
 
     public function rules()

@@ -17,7 +17,7 @@ class notify_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%notify_objects}}';
+        return '{{%wth_notify_objects}}';
     }
 
     public function rules()

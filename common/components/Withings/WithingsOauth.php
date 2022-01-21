@@ -53,7 +53,7 @@ class WithingsOauth
 
     public function isSuccess($dataResponse)
     {
-        if (intval($dataResponse['status']) !== 0) {
+        if (!isset($dataResponse['status']) || intval($dataResponse['status']) !== 0) {
             return false;
         }
         return true;

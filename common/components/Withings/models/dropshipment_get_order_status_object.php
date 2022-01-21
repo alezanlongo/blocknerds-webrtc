@@ -51,7 +51,7 @@ class dropshipment_get_order_status_object extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%dropshipment_get_order_status_objects}}';
+        return '{{%wth_dropshipment_get_order_status_objects}}';
     }
 
     public function rules()

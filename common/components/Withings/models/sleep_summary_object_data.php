@@ -41,7 +41,7 @@ class sleep_summary_object_data extends \yii\db\ActiveRecord
 
     public static function tableName()
     {
-        return '{{%sleep_summary_object_datas}}';
+        return '{{%wth_sleep_summary_object_datas}}';
     }
 
     public function rules()

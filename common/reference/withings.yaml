@@ -189,7 +189,23 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            description: Authorization Code that must be used to retrieve access_token and refresh_token. (Cf. [Token Reception](/developer-guide/logistics-api/authentication#token-reception) section)
+                            example: 490ed603fe9bd2ce10027bdba0c932069cd27085
+                    description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/oauth2\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'requesttoken',\n\t'grant_type' => 'authorization_code',\n\t'client_id' => '7573fd4a4c421ddd102dac406dc6e0e0e22f683c4a5e81ff0a5caf8b65abed67',\n\t'client_secret' => 'd9286311451fc6ed71b372a075c58c5058be158f56a77865e43ab3783255424f',\n\t'code' => 'mtwsikawoqleuroqcluggflrqilrnqbgqvqeuhhh',\n\t'redirect_uri' => 'https://www.withings.com'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -273,7 +289,43 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      userid:
+                        type: string
+                        description: The id of the user.
+                        example: "363"
+                      access_token:
+                        type: string
+                        description: Your new Access Token.
+                        example: a075f8c14fb8df40b08ebc8508533dc332a6910a
+                      refresh_token:
+                        type: string
+                        description: Your Refresh Token.
+                        example: f631236f02b991810feb774765b6ae8e6c6839ca
+                      expires_in:
+                        type: integer
+                        description: Access token expiry delay in seconds.
+                        example: 10800
+                      scope:
+                        type: string
+                        description: You can get only the scope that the user accepted with the Token you have. Scopes can be 'user.info' 'user.metrics' 'user.activity' 'user.sleepevents'  and must be separated by a coma.
+                        example: user.info,user.metrics
+                      csrf_token:
+                        type: string
+                        example: PACnnxwHTaBQOzF7bQqwFUUotIuvtzSM
+                      token_type:
+                        type: string
+                        description: 'HTTP Authorization Header format: Bearer'
+                        example: Bearer
+                    description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/oauth2\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'requesttoken',\n\t'grant_type' => 'refresh_token',\n\t'client_id' => '7573fd4a4c421ddd102dac406dc6e0e0e22f683c4a5e81ff0a5caf8b65abed67',\n\t'client_secret' => 'd9286311451fc6ed71b372a075c58c5058be158f56a77865e43ab3783255424f',\n\t'refresh_token' => '9697c3d06ccfd1ca302f5a527d345a9f99ea88a2'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -338,7 +390,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_1'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                            description: Authorization Code that must be used to retrieve access_token and refresh_token. (Cf. [Token Reception](/developer-guide/logistics-api/authentication#token-reception) section)
+                            example: 490ed603fe9bd2ce10027bdba0c932069cd27085
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/oauth2\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'recoverauthorizationcode',\n\t'client_id' => '7573fd4a4c421ddd102dac406dc6e0e0e22f683c4a5e81ff0a5caf8b65abed67',\n\t'signature' => '58c0c4ad271fb20df9b96c63dc68d6c550c0b7896f743262fc4c5b9261f32ab2',\n\t'nonce' => 'c455541b8f9111689adb647d32fac07a6ffe462d',\n\t'email' => 'recoverauthorizationcode@withings.com'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -461,7 +528,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_2'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      updatetime:
+                        type: string
+                        description: Server time at which the answer was generated.
+                      timezone:
+                        type: string
+                        description: Timezone for the date.
+                      measuregrps:
+                        type: array
+                        description: Measures are returned in groups.
+                        items:
+                          $ref: '#/components/schemas/measuregrp_object'
+                      more:
+                        type: integer
+                        description: To know if there is more data to fetch or not.
+                      offset:
+                        type: integer
+                        description: Offset to use to retrieve the next data.
+                    description: Response data.
+      x-api-model: measuregrp_object
+      x-list-key: measuregrps
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/measure\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getmeas',\n\t'meastype' => 'meastype',\n\t'meastypes' => 'meastypes',\n\t'category' => 'category',\n\t'startdate' => 'startdate',\n\t'enddate' => 'enddate',\n\t'offset' => 'offset',\n\t'lastupdate' => 'int'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -515,7 +609,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_3'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      appli:
+                        type: integer
+                        description: |
+                          Refer to the [Notifications](/developer-guide/data-api/how-to-use-data-api) section to know the meaning of each values.
+                        example: 4
+                      callbackurl:
+                        type: string
+                        description: Callback url of the notification.
+                        example: https://www.withings.com
+                      comment:
+                        type: string
+                        description: Comment entered when creating the notification configuration.
+                        example: My notification subcription comment
+                    description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/notify \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'get',\n\t'callbackurl' => 'callbackurl',\n\t'appli' => 'appli'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -561,7 +677,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_4'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      profiles:
+                        type: array
+                        description: List of notification configurations for this user.
+                        items:
+                          $ref: '#/components/schemas/notify_object'
+                    description: Response data.
+      x-api-model: notify_object
+      x-list-key: profiles
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/notify  \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'list',\n\t'appli' => 'appli'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -615,7 +746,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties: {}
+                    description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/notify    \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'revoke',\n\t'callbackurl' => 'callbackurl',\n\t'appli' => 'appli'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -712,7 +852,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties: {}
+                    description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/notify\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'subscribe',\n\t'callbackurl' => 'callbackurl',\n\t'appli' => 'appli',\n\t'signature' => 'signature',\n\t'nonce' => 'string',\n\t'client_id' => 'client_id',\n\t'comment' => 'comment'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -790,7 +939,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties: {}
+                    description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/notify   \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'update',\n\t'callbackurl' => 'callbackurl',\n\t'appli' => 'appli',\n\t'new_callbackurl' => 'new_callbackurl',\n\t'new_appli' => 'new_appli',\n\t'comment' => 'comment'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -872,7 +1030,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_6'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      orders:
+                        type: array
+                        description: List of created orders. *(Only if orders were successfully created)*
+                        items:
+                          $ref: '#/components/schemas/dropshipment_create_order_object'
+                      invalid_address_customer_ref_ids:
+                        type: array
+                        description: References of the orders with invalid address. *(Only if at least one order has an invalid address)*
+                        items:
+                          type: string
+                    description: Response data.
               examples:
                 OK:
                   value:
@@ -891,6 +1067,8 @@ paths:
                     body:
                       invalid_address_customer_ref_ids:
                       - MOUVEMENTREFERENCE12345678
+      x-api-model: dropshipment_create_order_object
+      x-list-key: orders
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/dropshipment\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'createorder',\n\t'client_id' => 'client_id',\n\t'nonce' => 'string',\n\t'signature' => 'signature',\n\t'order' => 'order',\n\t'customerid' => 'customerid',\n\t'testmode' => 0\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1085,7 +1263,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_7'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/dropshipment_createuserorder'
               examples:
                 OK:
                   value:
@@ -1107,6 +1291,7 @@ paths:
                     body:
                       invalid_address_customer_ref_ids:
                       - MOUVEMENTREFERENCE12345678
+      x-api-model: dropshipment_createuserorder
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/dropshipment \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'createuserorder',\n\t'client_id' => 'client_id',\n\t'nonce' => 'string',\n\t'signature' => 'signature',\n\t'mailingpref' => 'mailingpref',\n\t'birthdate' => 1563746400,\n\t'measures' => 'measures',\n\t'gender' => 'int',\n\t'preflang' => 'en_EN',\n\t'unit_pref' => 'unit_pref',\n\t'email' => 'email',\n\t'timezone' => 'Europe/Paris',\n\t'shortname' => 'shortname',\n\t'external_id' => 'external_id',\n\t'order' => 'order',\n\t'firstname' => 'firstname',\n\t'lastname' => 'lastname',\n\t'phonenumber' => 'string',\n\t'recovery_code' => 'string',\n\t'goals' => 'json',\n\t'testmode' => 0\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1168,7 +1353,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties: {}
+                    description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/dropshipment   \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'delete',\n\t'client_id' => 'client_id',\n\t'signature' => 'signature',\n\t'nonce' => 'string',\n\t'order_id' => 'string'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1248,7 +1442,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_8'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/dropshipment_getorderstatus'
+      x-api-model: dropshipment_getorderstatus
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/dropshipment  \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getorderstatus',\n\t'client_id' => 'client_id',\n\t'signature' => 'signature',\n\t'nonce' => 'string',\n\t'order_ids' => 'json',\n\t'customer_ref_ids' => 'json',\n\t'customerid' => 'customerid'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1319,7 +1520,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_9'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/dropshipment_update'
+      x-api-model: dropshipment_update
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/dropshipment    \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'update',\n\t'client_id' => 'client_id',\n\t'signature' => 'signature',\n\t'nonce' => 'string',\n\t'order_id' => 'string',\n\t'order' => 'order'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1365,7 +1573,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_10'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/heart_get'
+      x-api-model: heart_get
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/heart \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'get',\n\t'signalid' => 'signalid'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1427,7 +1642,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_11'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      series:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/heart_measurement_object'
+                      more:
+                        type: boolean
+                        description: To know if there is more data to fetch or not.
+                      offset:
+                        type: integer
+                        description: Offset to use to retrieve the next data.
+                    description: Response data.
+      x-api-model: heart_measurement_object
+      x-list-key: series
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/heart\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'list',\n\t'startdate' => 'startdate',\n\t'enddate' => 'enddate',\n\t'offset' => 'offset'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1507,7 +1742,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_12'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      activities:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/activity_object'
+                      more:
+                        type: boolean
+                        description: To know if there is more data to fetch or not.
+                      offset:
+                        type: integer
+                        description: Offset to use to retrieve the next data.
+                    description: Response data.
+      x-api-model: activity_object
+      x-list-key: activities
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/measure\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getactivity',\n\t'startdateymd' => '2020-07-01',\n\t'enddateymd' => '2020-07-02'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1575,7 +1830,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_13'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/measure_getintradayactivity'
+      x-api-model: measure_getintradayactivity
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/measure  \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getintradayactivity',\n\t'startdate' => 'startdate',\n\t'enddate' => 'enddate',\n\t'data_fields' => 'data_fields'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1658,7 +1920,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_14'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      series:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/workout_object'
+                      more:
+                        type: boolean
+                        description: To know if there is more data to fetch or not.
+                      offset:
+                        type: integer
+                        description: Offset to use to retrieve the next data.
+                    description: Response data.
+      x-api-model: workout_object
+      x-list-key: series
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/measure \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getworkouts',\n\t'startdateymd' => '2020-07-01',\n\t'enddateymd' => '2020-07-02'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1712,7 +1994,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_15'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      nonce:
+                        type: string
+                        description: A random timestamp based token to be used once in requiring signature API services to avoid replay attack
+                        example: aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d
+                    description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/signature\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getnonce',\n\t'client_id' => 'client_id',\n\t'timestamp' => 'timestamp',\n\t'signature' => 'signature'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1777,7 +2072,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_16'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/sleep_get'
+      x-api-model: sleep_get
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/sleep\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'get',\n\t'startdate' => 'startdate',\n\t'enddate' => 'enddate',\n\t'data_fields' => 'data_fields'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -1849,7 +2151,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_17'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    type: object
+                    properties:
+                      series:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/sleep_summary_object'
+                      more:
+                        type: boolean
+                        description: To know if there is more data to fetch or not.
+                      offset:
+                        type: integer
+                        description: Offset to use to retrieve the next data.
+                    description: Response data.
+      x-api-model: sleep_summary_object
+      x-list-key: series
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/sleep \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getsummary',\n\t'startdateymd' => '2020-07-01',\n\t'enddateymd' => '2020-07-02'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2045,7 +2367,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_18'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/user_activate'
+      x-api-model: user_activate
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/user \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'activate',\n\t'client_id' => 'client_id',\n\t'nonce' => 'string',\n\t'signature' => 'signature',\n\t'mailingpref' => 'mailingpref',\n\t'birthdate' => 1563746400,\n\t'measures' => 'measures',\n\t'gender' => 'int',\n\t'preflang' => 'en_EN',\n\t'unit_pref' => 'unit_pref',\n\t'email' => 'email',\n\t'timezone' => 'Europe/Paris',\n\t'shortname' => 'shortname',\n\t'external_id' => 'external_id',\n\t'mac_addresses' => '[\"00:24:e4:xx:xx:xx\",\"00:24:e4:xx:xx:xx\"]',\n\t'firstname' => 'firstname',\n\t'lastname' => 'lastname',\n\t'phonenumber' => 'string',\n\t'recovery_code' => 'string',\n\t'goals' => 'json'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2113,7 +2442,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_19'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/user_get'
+      x-api-model: user_get
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/user\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'get',\n\t'client_id' => 'client_id',\n\t'nonce' => 'string',\n\t'signature' => 'signature',\n\t'email' => 'email'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2151,7 +2487,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_20'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/user_getdevice'
+      x-api-model: user_getdevice
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/user   \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getdevice'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2189,7 +2532,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_21'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                    $ref: '#/components/schemas/user_getgoals'
+      x-api-model: user_getgoals
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/user     \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getgoals'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2240,7 +2590,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_22'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                  body:
+                     $ref: '#/components/schemas/user_link'
+      x-api-model: user_link
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/user  \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'link',\n\t'mac_addresses' => '[\"00:24:e4:xx:xx:xx\",\"00:24:e4:xx:xx:xx\"]'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2286,7 +2643,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_5'
+                type: object
+                properties:
+                    status:
+                      type: integer
+                      description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
+                    body:
+                      type: object
+                      properties: {}
+                      description: Response data.
+      x-api-model: emptyApi
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/user    \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'unlink',\n\t'mac_address' => 'macaddress'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2464,6 +2830,96 @@ components:
           type: integer
           description: Deprecated.
           example: 1000
+    sleep_summary_object_data:
+      type: object
+      properties:
+        apnea_hypopnea_index:
+          type: integer
+          description: Medical grade AHI. Only available for devices purchased in Europe and Australia, with the sleep apnea detection feature activated. Average number of hypopnea and apnea episodes per hour, that occured during sleep time.
+        asleepduration:
+          type: integer
+          description: Duration of sleep when night comes from external source (light, deep and rem sleep durations are null in this case). *(Use 'data_fields' to request this data.)*
+        breathing_disturbances_intensity:
+          type: integer
+          description: Wellness metric, available for all Sleep and Sleep Analyzer devices. Intensity of <a href='/api-reference/#section/Glossary'>breathing disturbances</a>
+        deepsleepduration:
+          type: integer
+          description: Duration in state deep sleep (in seconds). *(Use 'data_fields' to request this data.)*
+        durationtosleep:
+          type: integer
+          description: Time to sleep (in seconds). (deprecated) *(Use 'data_fields' to request this data.)*
+        durationtowakeup:
+          type: integer
+          description: Time to wake up (in seconds). (deprecated) *(Use 'data_fields' to request this data.)*
+        hr_average:
+          type: integer
+          description: Average heart rate. *(Use 'data_fields' to request this data.)*
+        hr_max:
+          type: integer
+          description: Maximal heart rate. *(Use 'data_fields' to request this data.)*
+        hr_min:
+          type: integer
+          description: Minimal heart rate. *(Use 'data_fields' to request this data.)*
+        lightsleepduration:
+          type: integer
+          description: Duration in state light sleep (in seconds). *(Use 'data_fields' to request this data.)*
+        nb_rem_episodes:
+          type: integer
+          description: Count of the REM sleep phases. *(Use 'data_fields' to request this data.)*
+        night_events:
+          type: array
+          description: Events list happened during the night
+          items:
+            type: string
+        out_of_bed_count:
+          type: integer
+          description: Number of times the user got out of bed during the night. *(Use 'data_fields' to request this data.)*
+        remsleepduration:
+          type: integer
+          description: Duration in state REM sleep (in seconds). *(Use 'data_fields' to request this data.)*
+        rr_average:
+          type: integer
+          description: Average respiration rate. *(Use 'data_fields' to request this data.)*
+        rr_max:
+          type: integer
+          description: Maximal respiration rate. *(Use 'data_fields' to request this data.)*
+        rr_min:
+          type: integer
+          description: Minimal respiration rate. *(Use 'data_fields' to request this data.)*
+        sleep_efficiency:
+          type: number
+          description: Ratio of the total sleep time over the time spent in bed. *(Use 'data_fields' to request this data.)*
+        sleep_latency:
+          type: integer
+          description: Time spent in bed before falling asleep. *(Use 'data_fields' to request this data.)*
+        sleep_score:
+          type: integer
+          description: Sleep score
+        snoring:
+          type: integer
+          description: Total snoring time
+        snoringepisodecount:
+          type: integer
+          description: Numbers of snoring episodes of at least one minute
+        total_sleep_time:
+          type: integer
+          description: Total time spent asleep. Sum of light, deep and rem durations. *(Use 'data_fields' to request this data.)*
+        total_timeinbed:
+          type: integer
+          description: Total time spent in bed. *(Use 'data_fields' to request this data.)*
+        wakeup_latency:
+          type: integer
+          description: Time spent in bed after waking up. *(Use 'data_fields' to request this data.)*
+        wakeupcount:
+          type: integer
+          description: Number of times the user woke up while in bed. Does not include the number of times the user got out of bed. *(Use 'data_fields' to request this data.)*
+        wakeupduration:
+          type: integer
+          description: Time spent awake (in seconds). *(Use 'data_fields' to request this data.)*
+        waso:
+          type: integer
+          description: Time spent awake in bed after falling asleep for the 1st time during the night. *(Use 'data_fields' to request this data.)*
+      description: Details of sleep.
     sleep_summary_object:
       type: object
       properties:
@@ -2522,6 +2978,70 @@ components:
           example: 1594257200
         data:
           $ref: '#/components/schemas/sleep_summary_object_data'
+    workout_object_data:
+      type: object
+      properties:
+        algo_pause_duration:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Total pause time in seconds detected by Withings device (swim only)'
+        calories:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Active calories burned (in Kcal). *(Use ''data_fields'' to request this data.)*'
+        distance:
+          type: integer
+          description: '*Available for all categories except Swimming, Multi-sport*<br><br>Distance travelled (in meters). *(Use ''data_fields'' to request this data.)*'
+        elevation:
+          type: integer
+          description: '*Available for all categories except Swimming, Multi-sport*<br><br>Number of floors climbed. *(Use ''data_fields'' to request this data.)*'
+        hr_average:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Average heart rate. *(Use ''data_fields'' to request this data.)*'
+        hr_max:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Maximal heart rate. *(Use ''data_fields'' to request this data.)*'
+        hr_min:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Minimal heart rate. *(Use ''data_fields'' to request this data.)*'
+        hr_zone_0:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in a light zone (cf. <a href=''/api-reference/#section/Glossary''>Glossary</a>). *(Use ''data_fields'' to request this data.)*'
+        hr_zone_1:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in a moderate zone (cf. <a href=''/api-reference/#section/Glossary''>Glossary</a>). *(Use ''data_fields'' to request this data.)*'
+        hr_zone_2:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in an intense zone (cf. <a href=''/api-reference/#section/Glossary''>Glossary</a>). *(Use ''data_fields'' to request this data.)*'
+        hr_zone_3:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in maximal zone (cf. <a href=''/api-reference/#section/Glossary''>Glossary</a>). *(Use ''data_fields'' to request this data.)*'
+        intensity:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Intensity.'
+        manual_calories:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Active calories burned manually entered by user (in Kcal). *(Use ''data_fields'' to request this data.)*'
+        manual_distance:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Distance travelled manually entered by user (in meters). *(Use ''data_fields'' to request this data.)*'
+        pause_duration:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Total pause time in second filled by user'
+        pool_laps:
+          type: integer
+          description: '*Available only for Swimming*<br><br>Number of pool laps. *(Use ''data_fields'' to request this data.)*'
+        pool_length:
+          type: integer
+          description: '*Available only for Swimming*<br><br>Length of the pool. *(Use ''data_fields'' to request this data.)*'
+        spo2_average:
+          type: integer
+          description: '*Available for all categories except Multi-sport*<br><br>Average percent of SpO2 percent value during a workout'
+        steps:
+          type: integer
+          description: '*Available for all categories except Swimming, Multi-sport*<br><br>Number of steps. *(Use ''data_fields'' to request this data.)*'
+        strokes:
+          type: integer
+          description: '*Available only for Swimming*<br><br>Number of strokes. *(Use ''data_fields'' to request this data.)*'
+      description: Details of workout.
     workout_object:
       type: object
       properties:
@@ -2892,6 +3412,36 @@ components:
           description: The timestamp of the last server connection of the device
           format: timestamp
           example: 1594159644
+    heart_measurement_object_ecg:
+      type: object
+      properties:
+        signalid:
+          type: integer
+          description: Id of the signal.
+          example: 48
+        afib:
+          type: integer
+          description: |
+            Atrial fibrillation classification.
+
+
+            | Value | Description|
+            |---|---|
+            |0 | Negative|
+            |1 | Positive|
+            |2 | Inconclusive|
+          example: 1
+    heart_measurement_object_bloodpressure:
+      type: object
+      properties:
+        diastole:
+          type: integer
+          description: Diastole value.
+          example: 100
+        systole:
+          type: integer
+          description: Systole value.
+          example: 101
     heart_measurement_object:
       type: object
       properties:
@@ -3065,482 +3615,7 @@ components:
           description: Most recent modified date of user measures
           format: timestamp
           example: 1594159644
-    inline_response_200:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_body'
-    inline_response_200_1:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_1_body'
-    inline_response_200_2:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_2_body'
-    inline_response_200_3:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_3_body'
-    inline_response_200_4:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_4_body'
-    inline_response_200_5:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          type: object
-          properties: {}
-          description: Response data.
-    inline_response_200_6:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_6_body'
-    inline_response_200_7:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_7_body'
-    inline_response_200_8:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_8_body'
-    inline_response_200_9:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_9_body'
-    inline_response_200_10:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_10_body'
-    inline_response_200_11:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_11_body'
-    inline_response_200_12:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_12_body'
-    inline_response_200_13:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_13_body'
-    inline_response_200_14:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_14_body'
-    inline_response_200_15:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_15_body'
-    inline_response_200_16:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_16_body'
-    inline_response_200_17:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_17_body'
-    inline_response_200_18:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_18_body'
-    inline_response_200_19:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_19_body'
-    inline_response_200_20:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_20_body'
-    inline_response_200_21:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_21_body'
-    inline_response_200_22:
-      type: object
-      properties:
-        status:
-          type: integer
-          description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
-        body:
-          $ref: '#/components/schemas/inline_response_200_22_body'
-    sleep_summary_object_data:
-      type: object
-      properties:
-        apnea_hypopnea_index:
-          type: integer
-          description: Medical grade AHI. Only available for devices purchased in Europe and Australia, with the sleep apnea detection feature activated. Average number of hypopnea and apnea episodes per hour, that occured during sleep time.
-        asleepduration:
-          type: integer
-          description: Duration of sleep when night comes from external source (light, deep and rem sleep durations are null in this case). *(Use 'data_fields' to request this data.)*
-        breathing_disturbances_intensity:
-          type: integer
-          description: Wellness metric, available for all Sleep and Sleep Analyzer devices. Intensity of <a href='/api-reference/#section/Glossary'>breathing disturbances</a>
-        deepsleepduration:
-          type: integer
-          description: Duration in state deep sleep (in seconds). *(Use 'data_fields' to request this data.)*
-        durationtosleep:
-          type: integer
-          description: Time to sleep (in seconds). (deprecated) *(Use 'data_fields' to request this data.)*
-        durationtowakeup:
-          type: integer
-          description: Time to wake up (in seconds). (deprecated) *(Use 'data_fields' to request this data.)*
-        hr_average:
-          type: integer
-          description: Average heart rate. *(Use 'data_fields' to request this data.)*
-        hr_max:
-          type: integer
-          description: Maximal heart rate. *(Use 'data_fields' to request this data.)*
-        hr_min:
-          type: integer
-          description: Minimal heart rate. *(Use 'data_fields' to request this data.)*
-        lightsleepduration:
-          type: integer
-          description: Duration in state light sleep (in seconds). *(Use 'data_fields' to request this data.)*
-        nb_rem_episodes:
-          type: integer
-          description: Count of the REM sleep phases. *(Use 'data_fields' to request this data.)*
-        night_events:
-          type: array
-          description: Events list happened during the night
-          items:
-            type: string
-        out_of_bed_count:
-          type: integer
-          description: Number of times the user got out of bed during the night. *(Use 'data_fields' to request this data.)*
-        remsleepduration:
-          type: integer
-          description: Duration in state REM sleep (in seconds). *(Use 'data_fields' to request this data.)*
-        rr_average:
-          type: integer
-          description: Average respiration rate. *(Use 'data_fields' to request this data.)*
-        rr_max:
-          type: integer
-          description: Maximal respiration rate. *(Use 'data_fields' to request this data.)*
-        rr_min:
-          type: integer
-          description: Minimal respiration rate. *(Use 'data_fields' to request this data.)*
-        sleep_efficiency:
-          type: number
-          description: Ratio of the total sleep time over the time spent in bed. *(Use 'data_fields' to request this data.)*
-        sleep_latency:
-          type: integer
-          description: Time spent in bed before falling asleep. *(Use 'data_fields' to request this data.)*
-        sleep_score:
-          type: integer
-          description: Sleep score
-        snoring:
-          type: integer
-          description: Total snoring time
-        snoringepisodecount:
-          type: integer
-          description: Numbers of snoring episodes of at least one minute
-        total_sleep_time:
-          type: integer
-          description: Total time spent asleep. Sum of light, deep and rem durations. *(Use 'data_fields' to request this data.)*
-        total_timeinbed:
-          type: integer
-          description: Total time spent in bed. *(Use 'data_fields' to request this data.)*
-        wakeup_latency:
-          type: integer
-          description: Time spent in bed after waking up. *(Use 'data_fields' to request this data.)*
-        wakeupcount:
-          type: integer
-          description: Number of times the user woke up while in bed. Does not include the number of times the user got out of bed. *(Use 'data_fields' to request this data.)*
-        wakeupduration:
-          type: integer
-          description: Time spent awake (in seconds). *(Use 'data_fields' to request this data.)*
-        waso:
-          type: integer
-          description: Time spent awake in bed after falling asleep for the 1st time during the night. *(Use 'data_fields' to request this data.)*
-      description: Details of sleep.
-    workout_object_data:
-      type: object
-      properties:
-        algo_pause_duration:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Total pause time in seconds detected by Withings device (swim only)'
-        calories:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Active calories burned (in Kcal). *(Use ''data_fields'' to request this data.)*'
-        distance:
-          type: integer
-          description: '*Available for all categories except Swimming, Multi-sport*<br><br>Distance travelled (in meters). *(Use ''data_fields'' to request this data.)*'
-        elevation:
-          type: integer
-          description: '*Available for all categories except Swimming, Multi-sport*<br><br>Number of floors climbed. *(Use ''data_fields'' to request this data.)*'
-        hr_average:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Average heart rate. *(Use ''data_fields'' to request this data.)*'
-        hr_max:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Maximal heart rate. *(Use ''data_fields'' to request this data.)*'
-        hr_min:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Minimal heart rate. *(Use ''data_fields'' to request this data.)*'
-        hr_zone_0:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in a light zone (cf. <a href=''/api-reference/#section/Glossary''>Glossary</a>). *(Use ''data_fields'' to request this data.)*'
-        hr_zone_1:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in a moderate zone (cf. <a href=''/api-reference/#section/Glossary''>Glossary</a>). *(Use ''data_fields'' to request this data.)*'
-        hr_zone_2:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in an intense zone (cf. <a href=''/api-reference/#section/Glossary''>Glossary</a>). *(Use ''data_fields'' to request this data.)*'
-        hr_zone_3:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in maximal zone (cf. <a href=''/api-reference/#section/Glossary''>Glossary</a>). *(Use ''data_fields'' to request this data.)*'
-        intensity:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Intensity.'
-        manual_calories:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Active calories burned manually entered by user (in Kcal). *(Use ''data_fields'' to request this data.)*'
-        manual_distance:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Distance travelled manually entered by user (in meters). *(Use ''data_fields'' to request this data.)*'
-        pause_duration:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Total pause time in second filled by user'
-        pool_laps:
-          type: integer
-          description: '*Available only for Swimming*<br><br>Number of pool laps. *(Use ''data_fields'' to request this data.)*'
-        pool_length:
-          type: integer
-          description: '*Available only for Swimming*<br><br>Length of the pool. *(Use ''data_fields'' to request this data.)*'
-        spo2_average:
-          type: integer
-          description: '*Available for all categories except Multi-sport*<br><br>Average percent of SpO2 percent value during a workout'
-        steps:
-          type: integer
-          description: '*Available for all categories except Swimming, Multi-sport*<br><br>Number of steps. *(Use ''data_fields'' to request this data.)*'
-        strokes:
-          type: integer
-          description: '*Available only for Swimming*<br><br>Number of strokes. *(Use ''data_fields'' to request this data.)*'
-      description: Details of workout.
-    heart_measurement_object_ecg:
-      type: object
-      properties:
-        signalid:
-          type: integer
-          description: Id of the signal.
-          example: 48
-        afib:
-          type: integer
-          description: |
-            Atrial fibrillation classification.
-
-
-            | Value | Description|
-            |---|---|
-            |0 | Negative|
-            |1 | Positive|
-            |2 | Inconclusive|
-          example: 1
-    heart_measurement_object_bloodpressure:
-      type: object
-      properties:
-        diastole:
-          type: integer
-          description: Diastole value.
-          example: 100
-        systole:
-          type: integer
-          description: Systole value.
-          example: 101
-    inline_response_200_body:
-      type: object
-      properties:
-        userid:
-          type: string
-          description: The id of the user.
-          example: "363"
-        access_token:
-          type: string
-          description: Your new Access Token.
-          example: a075f8c14fb8df40b08ebc8508533dc332a6910a
-        refresh_token:
-          type: string
-          description: Your Refresh Token.
-          example: f631236f02b991810feb774765b6ae8e6c6839ca
-        expires_in:
-          type: integer
-          description: Access token expiry delay in seconds.
-          example: 10800
-        scope:
-          type: string
-          description: You can get only the scope that the user accepted with the Token you have. Scopes can be 'user.info' 'user.metrics' 'user.activity' 'user.sleepevents'  and must be separated by a coma.
-          example: user.info,user.metrics
-        csrf_token:
-          type: string
-          example: PACnnxwHTaBQOzF7bQqwFUUotIuvtzSM
-        token_type:
-          type: string
-          description: 'HTTP Authorization Header format: Bearer'
-          example: Bearer
-      description: Response data.
-    inline_response_200_1_body_user:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Authorization Code that must be used to retrieve access_token and refresh_token. (Cf. [Token Reception](/developer-guide/logistics-api/authentication#token-reception) section)
-          example: 490ed603fe9bd2ce10027bdba0c932069cd27085
-    inline_response_200_1_body:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/inline_response_200_1_body_user'
-      description: Response data.
-    inline_response_200_2_body:
-      type: object
-      properties:
-        updatetime:
-          type: string
-          description: Server time at which the answer was generated.
-        timezone:
-          type: string
-          description: Timezone for the date.
-        measuregrps:
-          type: array
-          description: Measures are returned in groups.
-          items:
-            $ref: '#/components/schemas/measuregrp_object'
-        more:
-          type: integer
-          description: To know if there is more data to fetch or not.
-        offset:
-          type: integer
-          description: Offset to use to retrieve the next data.
-      description: Response data.
-    inline_response_200_3_body:
-      type: object
-      properties:
-        appli:
-          type: integer
-          description: |
-            Refer to the [Notifications](/developer-guide/data-api/how-to-use-data-api) section to know the meaning of each values.
-          example: 4
-        callbackurl:
-          type: string
-          description: Callback url of the notification.
-          example: https://www.withings.com
-        comment:
-          type: string
-          description: Comment entered when creating the notification configuration.
-          example: My notification subcription comment
-      description: Response data.
-    inline_response_200_4_body:
-      type: object
-      properties:
-        profiles:
-          type: array
-          description: List of notification configurations for this user.
-          items:
-            $ref: '#/components/schemas/notify_object'
-      description: Response data.
-    inline_response_200_6_body:
-      type: object
-      properties:
-        orders:
-          type: array
-          description: List of created orders. *(Only if orders were successfully created)*
-          items:
-            $ref: '#/components/schemas/dropshipment_create_order_object'
-        invalid_address_customer_ref_ids:
-          type: array
-          description: References of the orders with invalid address. *(Only if at least one order has an invalid address)*
-          items:
-            type: string
-      description: Response data.
-    inline_response_200_7_body_user:
+    dropshipment_user:
       type: object
       properties:
         code:
@@ -3551,11 +3626,11 @@ components:
           type: string
           description: Partner end-user unique identifier (Cf. [Token Reception](/developer-guide/logistics-api/authentication#token-reception) section)
           example: 3b7a6db0-ec7e-479b-9675-2a3d8d6a7e51
-    inline_response_200_7_body:
+    dropshipment_createuserorder:
       type: object
       properties:
         user:
-          $ref: '#/components/schemas/inline_response_200_7_body_user'
+          $ref: '#/components/schemas/dropshipment_user'
         orders:
           type: array
           description: List of created orders. *(Only if orders were successfully created)*
@@ -3569,7 +3644,7 @@ components:
           items:
             type: string
       description: Response data.
-    inline_response_200_8_body:
+    dropshipment_getorderstatus:
       type: object
       properties:
         orders:
@@ -3577,7 +3652,7 @@ components:
           items:
             $ref: '#/components/schemas/dropshipment_get_order_status_object'
       description: Response data.
-    inline_response_200_9_body:
+    dropshipment_update:
       type: object
       properties:
         orders:
@@ -3585,7 +3660,7 @@ components:
           items:
             $ref: '#/components/schemas/dropshipment_create_order_object'
       description: Response data.
-    inline_response_200_10_body:
+    heart_get:
       type: object
       properties:
         signal:
@@ -3615,247 +3690,179 @@ components:
             |6 | Between Legs|
           example: 1
       description: Response data.
-    inline_response_200_11_body:
+    measure_getintradayactivity:
       type: object
       properties:
         series:
-          type: array
-          items:
-            $ref: '#/components/schemas/heart_measurement_object'
-        more:
-          type: boolean
-          description: To know if there is more data to fetch or not.
-        offset:
-          type: integer
-          description: Offset to use to retrieve the next data.
+          type: object
+          properties:
+            $timestamp:
+              type: object
+              properties:
+                deviceid:
+                  type: string
+                  description: 'ID of device that tracked the data. To retrieve information about this device, refer to : <a href=''/api-reference/#operation/userv2-getdevice''>User v2 - Getdevice</a>.'
+                  example: 892359876fd8805ac45bab078c4828692f0276b1
+                model:
+                  type: string
+                  description: |
+                    Device model. Value can be:
+                    | Value | Description|
+                    |---|---|
+                    |Withings WBS01 | Scale|
+                    |WS30 | Scale|
+                    |Kid Scale | Scale|
+                    |Smart Body Analyzer | Scale|
+                    |Body+ | Scale|
+                    |Body Cardio | Scale|
+                    |Body | Scale|
+                    |WBS08 | Scale|
+                    |Body Pro | Scale|
+                    |WBS10 | Scale|
+                    |WBS11 | Scale|
+                    |Smart Baby Monitor | Babyphone|
+                    |Withings Home | Babyphone|
+                    |Withings Blood Pressure Monitor V1 | Blood Pressure Monitor|
+                    |Withings Blood Pressure Monitor V2 | Blood Pressure Monitor|
+                    |Withings Blood Pressure Monitor V3 | Blood Pressure Monitor|
+                    |BPM Core | Blood Pressure Monitor|
+                    |BPM Connect | Blood Pressure Monitor|
+                    |BPM Connect Pro | Blood Pressure Monitor|
+                    |Pulse | Activity Tracker|
+                    |Activite | Activity Tracker|
+                    |Activite (Pop, Steel) | Activity Tracker|
+                    |Withings Go | Activity Tracker|
+                    |Activite Steel HR | Activity Tracker|
+                    |Activite Steel HR Sport Edition | Activity Tracker|
+                    |Pulse HR | Activity Tracker|
+                    |Move | Activity Tracker|
+                    |Move ECG | Activity Tracker|
+                    |ScanWatch | Activity Tracker|
+                    |Aura Dock | Sleep Monitor|
+                    |Aura Sensor | Sleep Monitor|
+                    |Aura Sensor V2 | Sleep Monitor|
+                    |Thermo | Smart Connected Thermometer|
+                    |WUP01 | Gateway|
+                  example: Pulse
+                model_id:
+                  type: integer
+                  description: |2
+                    | Value | Description|
+                    |---|---|
+                    |1 | Withings WBS01|
+                    |2 | WS30|
+                    |3 | Kid Scale|
+                    |4 | Smart Body Analyzer|
+                    |5 | Body+|
+                    |6 | Body Cardio|
+                    |7 | Body|
+                    |10 | WBS08|
+                    |9 | Body Pro|
+                    |11 | WBS10|
+                    |12 | WBS11|
+                    |21 | Smart Baby Monitor|
+                    |22 | Withings Home|
+                    |41 | Withings Blood Pressure Monitor V1|
+                    |42 | Withings Blood Pressure Monitor V2|
+                    |43 | Withings Blood Pressure Monitor V3|
+                    |44 | BPM Core|
+                    |45 | BPM Connect|
+                    |46 | BPM Connect Pro|
+                    |51 | Pulse|
+                    |52 | Activite|
+                    |53 | Activite (Pop, Steel)|
+                    |54 | Withings Go|
+                    |55 | Activite Steel HR|
+                    |59 | Activite Steel HR Sport Edition|
+                    |58 | Pulse HR|
+                    |90 | Move|
+                    |91 | Move ECG|
+                    |92 | Move ECG|
+                    |93 | ScanWatch|
+                    |60 | Aura Dock|
+                    |61 | Aura Sensor|
+                    |63 | Aura Sensor V2|
+                    |70 | Thermo|
+                    |100 | WUP01|
+                  example: 51
+                steps:
+                  type: integer
+                  description: Number of steps. *(Use 'data_fields' to request this data.)*
+                elevation:
+                  type: number
+                  description: Number of floors climbed. *(Use 'data_fields' to request this data.)*
+                calories:
+                  type: number
+                  description: Estimation of active calories burned (in Kcal). *(Use 'data_fields' to request this data.)*
+                distance:
+                  type: number
+                  description: Distance travelled (in meters). *(Use 'data_fields' to request this data.)*
+                stroke:
+                  type: integer
+                  description: Number of strokes performed. *(Use 'data_fields' to request this data.)*
+                pool_lap:
+                  type: integer
+                  description: Number of pool_lap performed. *(Use 'data_fields' to request this data.)*
+                duration:
+                  type: integer
+                  description: Duration of the activity (in seconds). *(Use 'data_fields' to request this data.)*
+                heart_rate:
+                  type: integer
+                  description: Measured heart rate. *(Use 'data_fields' to request this data.)*
+                spo2_auto:
+                  type: number
+                  description: SpO2 measurement automatically tracked by a device tracker
+              description: $timestamp represents the epoch value of the intraday data
       description: Response data.
-    inline_response_200_12_body:
-      type: object
-      properties:
-        activities:
-          type: array
-          items:
-            $ref: '#/components/schemas/activity_object'
-        more:
-          type: boolean
-          description: To know if there is more data to fetch or not.
-        offset:
-          type: integer
-          description: Offset to use to retrieve the next data.
-      description: Response data.
-    inline_response_200_13_body_series_timestamp:
-      type: object
-      properties:
-        deviceid:
-          type: string
-          description: 'ID of device that tracked the data. To retrieve information about this device, refer to : <a href=''/api-reference/#operation/userv2-getdevice''>User v2 - Getdevice</a>.'
-          example: 892359876fd8805ac45bab078c4828692f0276b1
-        model:
-          type: string
-          description: |
-            Device model. Value can be:
-
-
-            | Value | Description|
-            |---|---|
-            |Withings WBS01 | Scale|
-            |WS30 | Scale|
-            |Kid Scale | Scale|
-            |Smart Body Analyzer | Scale|
-            |Body+ | Scale|
-            |Body Cardio | Scale|
-            |Body | Scale|
-            |WBS08 | Scale|
-            |Body Pro | Scale|
-            |WBS10 | Scale|
-            |WBS11 | Scale|
-            |Smart Baby Monitor | Babyphone|
-            |Withings Home | Babyphone|
-            |Withings Blood Pressure Monitor V1 | Blood Pressure Monitor|
-            |Withings Blood Pressure Monitor V2 | Blood Pressure Monitor|
-            |Withings Blood Pressure Monitor V3 | Blood Pressure Monitor|
-            |BPM Core | Blood Pressure Monitor|
-            |BPM Connect | Blood Pressure Monitor|
-            |BPM Connect Pro | Blood Pressure Monitor|
-            |Pulse | Activity Tracker|
-            |Activite | Activity Tracker|
-            |Activite (Pop, Steel) | Activity Tracker|
-            |Withings Go | Activity Tracker|
-            |Activite Steel HR | Activity Tracker|
-            |Activite Steel HR Sport Edition | Activity Tracker|
-            |Pulse HR | Activity Tracker|
-            |Move | Activity Tracker|
-            |Move ECG | Activity Tracker|
-            |ScanWatch | Activity Tracker|
-            |Aura Dock | Sleep Monitor|
-            |Aura Sensor | Sleep Monitor|
-            |Aura Sensor V2 | Sleep Monitor|
-            |Thermo | Smart Connected Thermometer|
-            |WUP01 | Gateway|
-          example: Pulse
-        model_id:
-          type: integer
-          description: |2
-
-
-            | Value | Description|
-            |---|---|
-            |1 | Withings WBS01|
-            |2 | WS30|
-            |3 | Kid Scale|
-            |4 | Smart Body Analyzer|
-            |5 | Body+|
-            |6 | Body Cardio|
-            |7 | Body|
-            |10 | WBS08|
-            |9 | Body Pro|
-            |11 | WBS10|
-            |12 | WBS11|
-            |21 | Smart Baby Monitor|
-            |22 | Withings Home|
-            |41 | Withings Blood Pressure Monitor V1|
-            |42 | Withings Blood Pressure Monitor V2|
-            |43 | Withings Blood Pressure Monitor V3|
-            |44 | BPM Core|
-            |45 | BPM Connect|
-            |46 | BPM Connect Pro|
-            |51 | Pulse|
-            |52 | Activite|
-            |53 | Activite (Pop, Steel)|
-            |54 | Withings Go|
-            |55 | Activite Steel HR|
-            |59 | Activite Steel HR Sport Edition|
-            |58 | Pulse HR|
-            |90 | Move|
-            |91 | Move ECG|
-            |92 | Move ECG|
-            |93 | ScanWatch|
-            |60 | Aura Dock|
-            |61 | Aura Sensor|
-            |63 | Aura Sensor V2|
-            |70 | Thermo|
-            |100 | WUP01|
-          example: 51
-        steps:
-          type: integer
-          description: Number of steps. *(Use 'data_fields' to request this data.)*
-        elevation:
-          type: number
-          description: Number of floors climbed. *(Use 'data_fields' to request this data.)*
-        calories:
-          type: number
-          description: Estimation of active calories burned (in Kcal). *(Use 'data_fields' to request this data.)*
-        distance:
-          type: number
-          description: Distance travelled (in meters). *(Use 'data_fields' to request this data.)*
-        stroke:
-          type: integer
-          description: Number of strokes performed. *(Use 'data_fields' to request this data.)*
-        pool_lap:
-          type: integer
-          description: Number of pool_lap performed. *(Use 'data_fields' to request this data.)*
-        duration:
-          type: integer
-          description: Duration of the activity (in seconds). *(Use 'data_fields' to request this data.)*
-        heart_rate:
-          type: integer
-          description: Measured heart rate. *(Use 'data_fields' to request this data.)*
-        spo2_auto:
-          type: number
-          description: SpO2 measurement automatically tracked by a device tracker
-      description: $timestamp represents the epoch value of the intraday data
-    inline_response_200_13_body_series:
-      type: object
-      properties:
-        $timestamp:
-          $ref: '#/components/schemas/inline_response_200_13_body_series_timestamp'
-    inline_response_200_13_body:
+    sleep_get:
       type: object
       properties:
         series:
-          $ref: '#/components/schemas/inline_response_200_13_body_series'
-      description: Response data.
-    inline_response_200_14_body:
-      type: object
-      properties:
-        series:
-          type: array
-          items:
-            $ref: '#/components/schemas/workout_object'
-        more:
-          type: boolean
-          description: To know if there is more data to fetch or not.
-        offset:
-          type: integer
-          description: Offset to use to retrieve the next data.
-      description: Response data.
-    inline_response_200_15_body:
-      type: object
-      properties:
-        nonce:
-          type: string
-          description: A random timestamp based token to be used once in requiring signature API services to avoid replay attack
-          example: aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d
-      description: Response data.
-    inline_response_200_16_body_series_hr:
-      type: object
-      properties:
-        $timestamp:
-          type: integer
-          description: $timestamp represents the epoch value of the heart rate data, value of this key will be the heart rate data
-      description: Heart Rate. *(Use 'data_fields' to request this data.)*
-    inline_response_200_16_body_series_rr:
-      type: object
-      properties:
-        $timestamp:
-          type: integer
-          description: $timestamp represents the epoch value of the respiration rate data, value of this key will be the respiration rate data
-      description: Respiration Rate. *(Use 'data_fields' to request this data.)*
-    inline_response_200_16_body_series_snoring:
-      type: object
-      properties:
-        $timestamp:
-          type: integer
-      description: Total snoring time
-    inline_response_200_16_body_series:
-      type: object
-      properties:
-        startdate:
-          type: integer
-          description: The starting datetime for the sleep state data.
-          format: timestamp
-          example: 1594159200
-        enddate:
-          type: integer
-          description: The end datetime for the sleep data. A single call can span up to 7 days maximum. To cover a wider time range, you will need to perform multiple calls.
-          format: timestamp
-          example: 1594202400
-        state:
-          type: integer
-          description: |
-            The state of sleeping. Values can be:
-
-
-            | Value | Description|
-            |---|---|
-            |0 | Sleep state awake|
-            |1 | Sleep state light|
-            |2 | Sleep state deep|
-            |3 | Sleep state rem|
-            |4 | Sleep manual|
-            |5 | Sleep unspecified|
-          example: 1
-        hr:
-          $ref: '#/components/schemas/inline_response_200_16_body_series_hr'
-        rr:
-          $ref: '#/components/schemas/inline_response_200_16_body_series_rr'
-        snoring:
-          $ref: '#/components/schemas/inline_response_200_16_body_series_snoring'
-    inline_response_200_16_body:
-      type: object
-      properties:
-        series:
-          $ref: '#/components/schemas/inline_response_200_16_body_series'
+          type: object
+          properties:
+            startdate:
+              type: integer
+              description: The starting datetime for the sleep state data.
+              format: timestamp
+              example: 1594159200
+            enddate:
+              type: integer
+              description: The end datetime for the sleep data. A single call can span up to 7 days maximum. To cover a wider time range, you will need to perform multiple calls.
+              format: timestamp
+              example: 1594202400
+            state:
+              type: integer
+              description: |
+                The state of sleeping. Values can be:
+                | Value | Description|
+                |---|---|
+                |0 | Sleep state awake|
+                |1 | Sleep state light|
+                |2 | Sleep state deep|
+                |3 | Sleep state rem|
+                |4 | Sleep manual|
+                |5 | Sleep unspecified|
+              example: 1
+            hr:
+              type: object
+              properties:
+                $timestamp:
+                  type: integer
+                  description: $timestamp represents the epoch value of the heart rate data, value of this key will be the heart rate data
+              description: Heart Rate. *(Use 'data_fields' to request this data.)*
+            rr:
+              type: object
+              properties:
+                $timestamp:
+                  type: integer
+                  description: $timestamp represents the epoch value of the respiration rate data, value of this key will be the respiration rate data
+              description: Respiration Rate. *(Use 'data_fields' to request this data.)*
+            snoring:
+              type: object
+              properties:
+                $timestamp:
+                  type: integer
+              description: Total snoring time
         model:
           type: string
           description: |
@@ -3901,97 +3908,79 @@ components:
             |93 | ScanWatch|
           example: 63
       description: Response data.
-    inline_response_200_17_body:
-      type: object
-      properties:
-        series:
-          type: array
-          items:
-            $ref: '#/components/schemas/sleep_summary_object'
-        more:
-          type: boolean
-          description: To know if there is more data to fetch or not.
-        offset:
-          type: integer
-          description: Offset to use to retrieve the next data.
-      description: Response data.
-    inline_response_200_18_body:
+    user_activate:
       type: object
       properties:
         user:
-          $ref: '#/components/schemas/inline_response_200_7_body_user'
+          $ref: '#/components/schemas/dropshipment_user'
         devices:
           type: array
           items:
             $ref: '#/components/schemas/user_device_mac_object'
       description: Response data.
-    inline_response_200_19_body_user_unit_pref:
-      type: object
-      properties:
-        weight:
-          type: integer
-          example: 1
-        height:
-          type: integer
-          example: 6
-        temperature:
-          type: integer
-          example: 11
-        distance:
-          type: integer
-          example: 6
-      description: User's unit preferences (cf. [Unit preferences](#section/Models/Unit-preferences) model).
-    inline_response_200_19_body_user:
-      type: object
-      properties:
-        email:
-          type: string
-          description: User's email address
-          example: john.doe@my.email
-        firstname:
-          type: string
-          description: User's firstname
-          example: John
-        lastname:
-          type: string
-          description: User's lastname
-          example: Doe
-        shortname:
-          type: string
-          description: User's shortname
-          example: JDO
-        gender:
-          type: integer
-          description: 'User''s gender (0: man, 1: woman)'
-        birthdate:
-          type: integer
-          description: Unix timestamp of user's birthdate
-          example: 1577829600
-        preflang:
-          type: string
-          description: 'User''s language preference. Examples: en_EN / en_US / de_DE / es_ES / fr_FR / it_IT / ja_JA / ko_KR / nl_NL / pt_PT / ru_RU / zh_CN'
-          example: fr_FR
-        timezone:
-          type: string
-          description: 'User''s timezone. Examples: "Europe/Paris" / "America/New_York". A complete list of all possible timezones can be found on the "TZ database name" column of this page : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
-          example: Europe/Paris
-        mailingpref:
-          type: boolean
-          description: Specifies if user accepted Withings commercial contacts.
-          example: true
-        unit_pref:
-          $ref: '#/components/schemas/inline_response_200_19_body_user_unit_pref'
-        phonenumber:
-          type: string
-          description: User's phone number. *(Only if set)*
-          example: +33612345678
-    inline_response_200_19_body:
+    user_get:
       type: object
       properties:
         user:
-          $ref: '#/components/schemas/inline_response_200_19_body_user'
+          type: object
+          properties:
+            email:
+              type: string
+              description: User's email address
+              example: john.doe@my.email
+            firstname:
+              type: string
+              description: User's firstname
+              example: John
+            lastname:
+              type: string
+              description: User's lastname
+              example: Doe
+            shortname:
+              type: string
+              description: User's shortname
+              example: JDO
+            gender:
+              type: integer
+              description: 'User''s gender (0: man, 1: woman)'
+            birthdate:
+              type: integer
+              description: Unix timestamp of user's birthdate
+              example: 1577829600
+            preflang:
+              type: string
+              description: 'User''s language preference. Examples: en_EN / en_US / de_DE / es_ES / fr_FR / it_IT / ja_JA / ko_KR / nl_NL / pt_PT / ru_RU / zh_CN'
+              example: fr_FR
+            timezone:
+              type: string
+              description: 'User''s timezone. Examples: "Europe/Paris" / "America/New_York". A complete list of all possible timezones can be found on the "TZ database name" column of this page : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
+              example: Europe/Paris
+            mailingpref:
+              type: boolean
+              description: Specifies if user accepted Withings commercial contacts.
+              example: true
+            unit_pref:
+              type: object
+              properties:
+                weight:
+                  type: integer
+                  example: 1
+                height:
+                  type: integer
+                  example: 6
+                temperature:
+                  type: integer
+                  example: 11
+                distance:
+                  type: integer
+                  example: 6
+              description: User's unit preferences (cf. [Unit preferences](#section/Models/Unit-preferences) model).
+            phonenumber:
+              type: string
+              description: User's phone number. *(Only if set)*
+              example: +33612345678
       description: Response data.
-    inline_response_200_20_body:
+    user_getdevice:
       type: object
       properties:
         devices:
@@ -3999,38 +3988,34 @@ components:
           items:
             $ref: '#/components/schemas/user_device_object'
       description: Response data.
-    inline_response_200_21_body_goals_weight:
-      type: object
-      properties:
-        value:
-          type: integer
-          description: Value for the measure in S.I. units (kilograms, meters etc...). Value should be multiplied by 10 to the power of ```units``` to get the real value.
-          example: 70500
-        unit:
-          type: integer
-          description: 'Power of ten to multiply the ```value``` field to get the real value.<br>Formula: ```value * 10^unit = real value```.<br>Eg: ```value = 20 and unit = -1 => real value = 2```.'
-          example: -3
-      description: Weight.
-    inline_response_200_21_body_goals:
-      type: object
-      properties:
-        steps:
-          type: integer
-          description: Number of steps per day.
-          example: 10000
-        sleep:
-          type: integer
-          description: Sleep duration (in seconds).
-          example: 28800
-        weight:
-          $ref: '#/components/schemas/inline_response_200_21_body_goals_weight'
-    inline_response_200_21_body:
+    user_getgoals:
       type: object
       properties:
         goals:
-          $ref: '#/components/schemas/inline_response_200_21_body_goals'
+          type: object
+          properties:
+            steps:
+              type: integer
+              description: Number of steps per day.
+              example: 10000
+            sleep:
+              type: integer
+              description: Sleep duration (in seconds).
+              example: 28800
+            weight:
+              type: object
+              properties:
+                value:
+                  type: integer
+                  description: Value for the measure in S.I. units (kilograms, meters etc...). Value should be multiplied by 10 to the power of ```units``` to get the real value.
+                  example: 70500
+                unit:
+                  type: integer
+                  description: 'Power of ten to multiply the ```value``` field to get the real value.<br>Formula: ```value * 10^unit = real value```.<br>Eg: ```value = 20 and unit = -1 => real value = 2```.'
+                  example: -3
+              description: Weight.
       description: Response data.
-    inline_response_200_22_body:
+    user_link:
       type: object
       properties:
         devices:
