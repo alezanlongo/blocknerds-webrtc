@@ -359,7 +359,7 @@ class ApiGenerator extends ParentApiGenerator
             }
             $models[$schemaName] = [
                 'name' => $schemaName,
-                'tableName' => '{{%' . Inflector::camel2id(StringHelper::basename(Inflector::pluralize($schemaName)), '_') . '}}',
+                'tableName' => '{{%' . $this->tablesPrefix . Inflector::camel2id(StringHelper::basename(Inflector::pluralize($schemaName)), '_') . '}}',
                 'description' => $schema->description,
                 'attributes' => $attributes,
                 'relations' => $relations,
@@ -501,7 +501,7 @@ class ApiGenerator extends ParentApiGenerator
 
             $models[$schemaName.'Api'] = [
                 'name' => $schemaName,
-                'tableName' => '{{%' . Inflector::camel2id(StringHelper::basename(Inflector::pluralize($schemaName)), '_') . '}}',
+                'tableName' => '{{%' . $this->tablesPrefix . Inflector::camel2id(StringHelper::basename(Inflector::pluralize($schemaName)), '_') . '}}',
                 'description' => $schema->description,
                 'attributes' => $attributes,
                 'relations' => $relations,
