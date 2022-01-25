@@ -770,6 +770,9 @@ class ApiGenerator extends ParentApiGenerator
                 }
                 return '$this->string()';
             case 'integer':
+                if (isset($schema->format) && in_array($schema->format, ['int32', 'int64'])) {
+                    return '$this->bigInteger()';
+                }
                 return '$this->integer()';
             case 'boolean':
                 return '$this->boolean()';
