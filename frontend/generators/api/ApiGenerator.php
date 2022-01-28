@@ -9,6 +9,7 @@ use cebe\yii2openapi\generator\ApiGenerator as ParentApiGenerator;
 use yii\gii\CodeFile;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
+use yii\helpers\VarDumper;
 
 class ApiGenerator extends ParentApiGenerator
 {
@@ -393,13 +394,12 @@ class ApiGenerator extends ParentApiGenerator
 
                 foreach ($operation->responses->getResponses() as $responseCode => $response){
                     foreach ($response->content as $responseType => $responseItem){
-                        $flagList = NULL;
+                        $flagList = false;
                         if(get_class($responseItem->schema) == Reference::class){
-                            $flagList = FALSE;
                             $arrSchema = explode("/", $responseItem->schema->getReference());
                         }else if(get_class($responseItem->schema) == Schema::class){
-                            $flagList = TRUE;
                             if(!empty($responseItem->schema->items)) {
+                                $flagList = TRUE;
                                 $arrSchema = explode("/", $responseItem->schema->items->getReference());
                             }
                         }
