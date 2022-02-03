@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property int $profile_id
  * @property string $date Date of the aggregated data.
  * @property string $timezone Timezone for the date.
  * @property string $deviceid ID of device that tracked the data. To retrieve information about this device, refer to : <a href='/api-reference/#operation/userv2-getdevice'>User v2 - Getdevice</a>.
@@ -34,6 +35,7 @@ use common\models\ApiModel as BaseApiModel;
 class activity_objectApi extends BaseApiModel
 {
 
+    public $profile_id;
     public $date;
     public $timezone;
     public $deviceid;

@@ -1,5 +1,7 @@
 <?php
 use yii\helpers\Inflector;
+use yii\helpers\VarDumper;
+
 ?>
 <?= '<?php' ?>
 
@@ -108,7 +110,7 @@ class <?= $className ?> extends \yii\db\ActiveRecord
             return null;
 
 <?php foreach ($attributes as $attribute): ?>
-        if($<?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['name']) ?>')) {
+        if($<?= $attribute['name'] ?> = ArrayHelper::getValue($apiObject, '<?= str_replace('__', '.', $attribute['flattenedField'] ?? $attribute['name']) ?>')) {
 <?php 
         $fieldName = $attribute['name'];
         if ( strpos($attribute['type'], '[]') !== false ) {

@@ -16,7 +16,7 @@ use yii\helpers\ArrayHelper;
  * @property int $hr_min Minimal heart rate. *(Use 'data_fields' to request this data.)*
  * @property int $lightsleepduration Duration in state light sleep (in seconds). *(Use 'data_fields' to request this data.)*
  * @property int $nb_rem_episodes Count of the REM sleep phases. *(Use 'data_fields' to request this data.)*
- * @property array $night_events Events list happened during the night
+ * @property string $night_events Events list happened during the night
  * @property int $out_of_bed_count Number of times the user got out of bed during the night. *(Use 'data_fields' to request this data.)*
  * @property int $remsleepduration Duration in state REM sleep (in seconds). *(Use 'data_fields' to request this data.)*
  * @property int $rr_average Average respiration rate. *(Use 'data_fields' to request this data.)*
@@ -47,6 +47,8 @@ class sleep_summary_object_data extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['night_events'], 'trim'],
+            [['night_events'], 'string'],
             [['apnea_hypopnea_index', 'asleepduration', 'breathing_disturbances_intensity', 'deepsleepduration', 'durationtosleep', 'durationtowakeup', 'hr_average', 'hr_max', 'hr_min', 'lightsleepduration', 'nb_rem_episodes', 'out_of_bed_count', 'remsleepduration', 'rr_average', 'rr_max', 'rr_min', 'sleep_latency', 'sleep_score', 'snoring', 'snoringepisodecount', 'total_sleep_time', 'total_timeinbed', 'wakeup_latency', 'wakeupcount', 'wakeupduration', 'waso', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];

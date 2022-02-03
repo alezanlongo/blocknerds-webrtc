@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property int $profile_id
  * @property string $date Date of the aggregated data.
  * @property string $timezone Timezone for the date.
  * @property string $deviceid ID of device that tracked the data. To retrieve information about this device, refer to : <a href='/api-reference/#operation/userv2-getdevice'>User v2 - Getdevice</a>.
@@ -43,7 +44,7 @@ class activity_object extends \yii\db\ActiveRecord
         return [
             [['date', 'timezone', 'deviceid', 'hash_deviceid'], 'trim'],
             [['date', 'timezone', 'deviceid', 'hash_deviceid'], 'string'],
-            [['brand', 'steps', 'soft', 'moderate', 'intense', 'active', 'hr_average', 'hr_min', 'hr_max', 'hr_zone_0', 'hr_zone_1', 'hr_zone_2', 'hr_zone_3', 'externalId', 'id'], 'integer'],
+            [['profile_id', 'brand', 'steps', 'soft', 'moderate', 'intense', 'active', 'hr_average', 'hr_min', 'hr_max', 'hr_zone_0', 'hr_zone_1', 'hr_zone_2', 'hr_zone_3', 'externalId', 'id'], 'integer'],
             [['is_tracker'], 'boolean'],
             // TODO define more concreate validation rules!
         ];
@@ -54,6 +55,9 @@ class activity_object extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($profile_id = ArrayHelper::getValue($apiObject, 'profile_id')) {
+            $this->profile_id = $profile_id;
+        }
         if($date = ArrayHelper::getValue($apiObject, 'date')) {
             $this->date = $date;
         }

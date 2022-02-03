@@ -1836,8 +1836,14 @@ paths:
                     type: integer
                     description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
                   body:
-                     $ref: '#/components/schemas/measure_getintradayactivity'
-      x-api-model: measure_getintradayactivity
+                    type: object
+                    properties:
+                      series:
+                        type: array
+                        items: 
+                          $ref: '#/components/schemas/measure_getintradayactivity'
+      x-api-model: measure_getintradayactivity_custom
+      x-list-key: false
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/measure  \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getintradayactivity',\n\t'startdate' => 'startdate',\n\t'enddate' => 'enddate',\n\t'data_fields' => 'data_fields'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2079,7 +2085,8 @@ paths:
                     description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
                   body:
                      $ref: '#/components/schemas/sleep_get'
-      x-api-model: sleep_get
+      x-api-model: sleep_get_custom
+      x-list-key: false
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/sleep\");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'get',\n\t'startdate' => 'startdate',\n\t'enddate' => 'enddate',\n\t'data_fields' => 'data_fields'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2493,8 +2500,15 @@ paths:
                     type: integer
                     description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
                   body:
-                     $ref: '#/components/schemas/user_getdevice'
-      x-api-model: user_getdevice
+                    type: object
+                    properties:
+                      devices:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/user_device_object'
+                    description: Response data.
+      x-api-model: user_device_object
+      x-list-key: devices
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/user   \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'getdevice'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2596,8 +2610,15 @@ paths:
                     type: integer
                     description: Response status. See <a href='#section/Response-status'>Status</a> section for details.
                   body:
-                     $ref: '#/components/schemas/user_link'
-      x-api-model: user_link
+                    type: object
+                    properties:
+                      devices:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/user_device_mac_object'
+                    description: Response data.
+      x-api-model: user_device_mac_object
+      x-list-key: devices
       x-codeSamples:
       - lang: PHP
         source: "<?php\n\n$ch = curl_init();\n\ncurl_setopt($ch, CURLOPT_URL, \"https://wbsapi.withings.net/v2/user  \");\n\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);\n\ncurl_setopt($ch, CURLOPT_HTTPHEADER, [\n\t'Authorization: Bearer YOUR_ACCESS_TOKEN'\n]);\n\ncurl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ \n\t'action' => 'link',\n\t'mac_addresses' => '[\"00:24:e4:xx:xx:xx\",\"00:24:e4:xx:xx:xx\"]'\n]));\n\n$rsp = curl_exec($ch);\ncurl_close($ch);\n\nvar_dump($rsp);\n\n?>"
@@ -2665,6 +2686,8 @@ components:
     activity_object:
       type: object
       properties:
+        profile_id:
+          type: integer
         date:
           type: string
           description: Date of the aggregated data.
@@ -2755,6 +2778,8 @@ components:
     measuregrp_object:
       type: object
       properties:
+        profile_id:
+          type: integer
         grpid:
           type: integer
           description: Id of the measure group.
@@ -2830,6 +2855,261 @@ components:
           type: integer
           description: Deprecated.
           example: 1000
+        measuregrp_object:
+          $ref: '#/components/schemas/measuregrp_object'
+    measure_getintradayactivity:
+      type: object
+      properties:
+        profile_id:
+          type: integer
+        timestamp:
+          type: integer
+          description: $timestamp represents the epoch value of the intraday data
+        deviceid:
+          type: string
+          description: 'ID of device that tracked the data. To retrieve information about this device, refer to : <a href=''/api-reference/#operation/userv2-getdevice''>User v2 - Getdevice</a>.'
+          example: 892359876fd8805ac45bab078c4828692f0276b1
+        model:
+          type: string
+          description: |
+            Device model. Value can be:
+            | Value | Description|
+            |---|---|
+            |Withings WBS01 | Scale|
+            |WS30 | Scale|
+            |Kid Scale | Scale|
+            |Smart Body Analyzer | Scale|
+            |Body+ | Scale|
+            |Body Cardio | Scale|
+            |Body | Scale|
+            |WBS08 | Scale|
+            |Body Pro | Scale|
+            |WBS10 | Scale|
+            |WBS11 | Scale|
+            |Smart Baby Monitor | Babyphone|
+            |Withings Home | Babyphone|
+            |Withings Blood Pressure Monitor V1 | Blood Pressure Monitor|
+            |Withings Blood Pressure Monitor V2 | Blood Pressure Monitor|
+            |Withings Blood Pressure Monitor V3 | Blood Pressure Monitor|
+            |BPM Core | Blood Pressure Monitor|
+            |BPM Connect | Blood Pressure Monitor|
+            |BPM Connect Pro | Blood Pressure Monitor|
+            |Pulse | Activity Tracker|
+            |Activite | Activity Tracker|
+            |Activite (Pop, Steel) | Activity Tracker|
+            |Withings Go | Activity Tracker|
+            |Activite Steel HR | Activity Tracker|
+            |Activite Steel HR Sport Edition | Activity Tracker|
+            |Pulse HR | Activity Tracker|
+            |Move | Activity Tracker|
+            |Move ECG | Activity Tracker|
+            |ScanWatch | Activity Tracker|
+            |Aura Dock | Sleep Monitor|
+            |Aura Sensor | Sleep Monitor|
+            |Aura Sensor V2 | Sleep Monitor|
+            |Thermo | Smart Connected Thermometer|
+            |WUP01 | Gateway|
+          example: Pulse
+        model_id:
+          type: integer
+          description: |2
+            | Value | Description|
+            |---|---|
+            |1 | Withings WBS01|
+            |2 | WS30|
+            |3 | Kid Scale|
+            |4 | Smart Body Analyzer|
+            |5 | Body+|
+            |6 | Body Cardio|
+            |7 | Body|
+            |10 | WBS08|
+            |9 | Body Pro|
+            |11 | WBS10|
+            |12 | WBS11|
+            |21 | Smart Baby Monitor|
+            |22 | Withings Home|
+            |41 | Withings Blood Pressure Monitor V1|
+            |42 | Withings Blood Pressure Monitor V2|
+            |43 | Withings Blood Pressure Monitor V3|
+            |44 | BPM Core|
+            |45 | BPM Connect|
+            |46 | BPM Connect Pro|
+            |51 | Pulse|
+            |52 | Activite|
+            |53 | Activite (Pop, Steel)|
+            |54 | Withings Go|
+            |55 | Activite Steel HR|
+            |59 | Activite Steel HR Sport Edition|
+            |58 | Pulse HR|
+            |90 | Move|
+            |91 | Move ECG|
+            |92 | Move ECG|
+            |93 | ScanWatch|
+            |60 | Aura Dock|
+            |61 | Aura Sensor|
+            |63 | Aura Sensor V2|
+            |70 | Thermo|
+            |100 | WUP01|
+          example: 51
+        steps:
+          type: integer
+          description: Number of steps. *(Use 'data_fields' to request this data.)*
+        elevation:
+          type: number
+          description: Number of floors climbed. *(Use 'data_fields' to request this data.)*
+        calories:
+          type: number
+          description: Estimation of active calories burned (in Kcal). *(Use 'data_fields' to request this data.)*
+        distance:
+          type: number
+          description: Distance travelled (in meters). *(Use 'data_fields' to request this data.)*
+        stroke:
+          type: integer
+          description: Number of strokes performed. *(Use 'data_fields' to request this data.)*
+        pool_lap:
+          type: integer
+          description: Number of pool_lap performed. *(Use 'data_fields' to request this data.)*
+        duration:
+          type: integer
+          description: Duration of the activity (in seconds). *(Use 'data_fields' to request this data.)*
+        heart_rate:
+          type: integer
+          description: Measured heart rate. *(Use 'data_fields' to request this data.)*
+        spo2_auto:
+          type: number
+          description: SpO2 measurement automatically tracked by a device tracker
+      x-flatten: null
+    sleep_get:
+      type: object
+      properties:
+        profile_id:
+          type: integer
+        model:
+          type: integer
+        series:
+          type: array
+          items:
+            $ref: '#/components/schemas/sleep_get_series'
+      description: Response data.
+    sleep_get_series:
+      type: object
+      properties:
+        startdate:
+          type: integer
+          description: The starting datetime for the sleep state data.
+          format: timestamp
+          example: 1594159200
+        enddate:
+          type: integer
+          description: The end datetime for the sleep data. A single call can span up to 7 days maximum. To cover a wider time range, you will need to perform multiple calls.
+          format: timestamp
+          example: 1594202400
+        state:
+          type: integer
+          description: |
+            The state of sleeping. Values can be:
+            | Value | Description|
+            |---|---|
+            |0 | Sleep state awake|
+            |1 | Sleep state light|
+            |2 | Sleep state deep|
+            |3 | Sleep state rem|
+            |4 | Sleep manual|
+            |5 | Sleep unspecified|
+          example: 1
+        model:
+          type: string
+          description: |
+            Device model. Value can be:
+
+
+            | Value | Description|
+            |---|---|
+            |Aura Dock | Sleep Monitor|
+            |Aura Sensor | Sleep Monitor|
+            |Aura Sensor V2 | Sleep Monitor|
+            |Pulse | Activity Tracker|
+            |Activite | Activity Tracker|
+            |Activite (Pop, Steel) | Activity Tracker|
+            |Withings Go | Activity Tracker|
+            |Activite Steel HR | Activity Tracker|
+            |Activite Steel HR Sport Edition | Activity Tracker|
+            |Pulse HR | Activity Tracker|
+            |Move | Activity Tracker|
+            |Move ECG | Activity Tracker|
+            |ScanWatch | Activity Tracker|
+          example: Aura Sensor V2
+        model_id:
+          type: integer
+          description: |2
+
+
+            | Value | Description|
+            |---|---|
+            |60 | Aura Dock|
+            |61 | Aura Sensor|
+            |63 | Aura Sensor V2|
+            |51 | Pulse|
+            |52 | Activite|
+            |53 | Activite (Pop, Steel)|
+            |54 | Withings Go|
+            |55 | Activite Steel HR|
+            |59 | Activite Steel HR Sport Edition|
+            |58 | Pulse HR|
+            |90 | Move|
+            |91 | Move ECG|
+            |92 | Move ECG|
+            |93 | ScanWatch|
+          example: 63
+        hash_deviceid:
+          type: integer
+        hr:
+          type: array
+          items:
+            $ref: '#/components/schemas/sleep_get_series_hr'
+          description: Heart Rate. *(Use 'data_fields' to request this data.)*
+        rr:
+          type: array
+          items:
+            $ref: '#/components/schemas/sleep_get_series_rr'
+          description: Respiration Rate. *(Use 'data_fields' to request this data.)*
+        snoring:
+          type: array
+          items:
+            $ref: '#/components/schemas/sleep_get_series_snoring'
+          description: Total snoring time
+        sleep_get:
+          $ref: '#/components/schemas/sleep_get'
+    sleep_get_series_hr:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          description: $timestamp represents the epoch value of the respiration rate data, value of this key will be the respiration rate data
+        value:
+          type: integer
+        sleep_get_series:
+          $ref: '#/components/schemas/sleep_get_series'
+    sleep_get_series_rr:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          description: $timestamp represents the epoch value of the respiration rate data, value of this key will be the respiration rate data
+        value:
+          type: integer
+        sleep_get_series:
+          $ref: '#/components/schemas/sleep_get_series'
+    sleep_get_series_snoring:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+          description: $timestamp represents the epoch value of the respiration rate data, value of this key will be the respiration rate data
+        value:
+          type: integer
+        sleep_get_series:
+          $ref: '#/components/schemas/sleep_get_series'
     sleep_summary_object_data:
       type: object
       properties:
@@ -2867,10 +3147,8 @@ components:
           type: integer
           description: Count of the REM sleep phases. *(Use 'data_fields' to request this data.)*
         night_events:
-          type: array
+          type: string
           description: Events list happened during the night
-          items:
-            type: string
         out_of_bed_count:
           type: integer
           description: Number of times the user got out of bed during the night. *(Use 'data_fields' to request this data.)*
@@ -2923,6 +3201,8 @@ components:
     sleep_summary_object:
       type: object
       properties:
+        profile_id:
+          type: integer
         timezone:
           type: string
           description: Timezone for the date.
@@ -2978,6 +3258,7 @@ components:
           example: 1594257200
         data:
           $ref: '#/components/schemas/sleep_summary_object_data'
+      x-flatten: null
     workout_object_data:
       type: object
       properties:
@@ -3045,6 +3326,8 @@ components:
     workout_object:
       type: object
       properties:
+        profile_id:
+          type: integer
         category:
           type: integer
           description: "Category of workout: \n\n\n| Value | Description|\n|---|---|\n|1 | Walk|\n|2 | Run|\n|3 | Hiking|\n|4 | Skating|\n|5 | BMX|\n|6 | Bicycling|\n|7 | Swimming|\n|8 | Surfing|\n|9 | Kitesurfing|\n|10 | Windsurfing|\n|11 | Bodyboard|\n|12 | Tennis|\n|13 | Table tennis|\n|14 | Squash|\n|15 | Badminton|\n|16 | Lift weights|\n|17 | Calisthenics|\n|18 | Elliptical|\n|19 | Pilates|\n|20 | Basket-ball|\n|21 | Soccer|\n|22 | Football|\n|23 | Rugby|\n|24 | Volley-ball|\n|25 | Waterpolo|\n|26 | Horse riding|\n|27 | Golf|\n|28 | Yoga|\n|29 | Dancing|\n|30 | Boxing|\n|31 | Fencing|\n|32 | Wrestling|\n|33 | Martial arts|\n|34 | Skiing|\n|35 | Snowboarding|\n|36 | Other|\n|128 | No activity|\n|187 | Rowing|\n|188 | Zumba|\n|191 | Baseball|\n|192 | Handball|\n|193 | Hockey|\n|194 | Ice hockey|\n|195 | Climbing|\n|196 | Ice skating|\n|272 | Multi-sport|\n|306 | Indoor walk|\n|307 | Indoor running|\n|308 | Indoor cycling|\n"
@@ -3139,6 +3422,7 @@ components:
           example: 892359876fd8805ac45bab078c4828692f0276b1
         data:
           $ref: '#/components/schemas/workout_object_data'
+      x-flatten: null
     notify_object:
       type: object
       properties:
@@ -3160,6 +3444,383 @@ components:
           type: string
           description: Comment entered when creating the notification configuration.
           example: My notification subscription
+    heart_measurement_object_ecg:
+      type: object
+      properties:
+        signalid:
+          type: integer
+          description: Id of the signal.
+          example: 48
+        afib:
+          type: integer
+          description: |
+            Atrial fibrillation classification.
+
+
+            | Value | Description|
+            |---|---|
+            |0 | Negative|
+            |1 | Positive|
+            |2 | Inconclusive|
+          example: 1
+    heart_measurement_object_bloodpressure:
+      type: object
+      properties:
+        diastole:
+          type: integer
+          description: Diastole value.
+          example: 100
+        systole:
+          type: integer
+          description: Systole value.
+          example: 101
+    heart_measurement_object:
+      type: object
+      properties:
+        deviceid:
+          type: string
+          description: 'ID of device that tracked the data. To retrieve information about this device, refer to : <a href=''/api-reference/#operation/userv2-getdevice''>User v2 - Getdevice</a>.'
+          example: 892359876fd8805ac45bab078c4828692f0276b1
+        model:
+          type: integer
+          description: |
+            The source of the recording.
+
+
+            | Value | Description|
+            |---|---|
+            |44 | BPM Core|
+            |91 | Move ECG|
+          example: 44
+        ecg:
+          $ref: '#/components/schemas/heart_measurement_object_ecg'
+        bloodpressure:
+          $ref: '#/components/schemas/heart_measurement_object_bloodpressure'
+        heart_rate:
+          type: integer
+          description: Average recorded heart rate.
+          example: 82
+        timestamp:
+          type: integer
+          description: Timestamp of the recording.
+          format: timestamp
+          example: 1594159644
+    heart_get:
+      type: object
+      properties:
+        signal:
+          type: array
+          description: Signal value in micro-volt (μV).
+          example: '[1,2,3,4,5,6,7,8,9]'
+          items:
+            type: integer
+        sampling_frequency:
+          type: integer
+          description: Signal Sampling Frequency (Hz).
+          example: 500
+        wearposition:
+          type: integer
+          description: |
+            Where the user is wearing the device.
+
+
+            | Value | Description|
+            |---|---|
+            |0 | Right Wrist|
+            |1 | Left Wrist|
+            |2 | Right Arm|
+            |3 | Left Arm|
+            |4 | Right Foot|
+            |5 | Left Foot|
+            |6 | Between Legs|
+          example: 1
+      description: Response data.
+    dropshipment_create_order_object:
+      type: object
+      properties:
+        order_id:
+          type: string
+          description: Withings generated identifier used to track your order.
+          example: D12345678
+        customer_ref_id:
+          type: string
+          description: Random identifier you must provide in input parameters. It is used to track your order and must be unique.
+          example: MOUVEMENTREFERENCE12345678
+        status:
+          type: string
+          description: |
+            Status of the order. Value can be:
+
+
+            | Value|
+            |---|
+            |CREATED|
+            |ADDRESS VERIFICATION|
+            |ADDRESS ERROR|
+            |VERIFIED|
+            |PROCESSING|
+            |FAILED|
+            |OPEN|
+            |SHIPPED|
+            |TRASHED|
+            |BACKHOLD|
+          example: ADDRESS VERIFICATION
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/dropshipment_create_order_product_object'
+    dropshipment_get_order_status_object:
+      type: object
+      properties:
+        order_id:
+          type: string
+          description: Withings generated identifier used to track your order.
+          example: D12345678
+        customer_ref_id:
+          type: string
+          description: Random identifier you must provide in input parameters. It is used to track your order and must be unique.
+          example: MOUVEMENTREFERENCE12345678
+        status:
+          type: string
+          description: |
+            Status of the order. Value can be:
+
+
+            | Value|
+            |---|
+            |CREATED|
+            |ADDRESS VERIFICATION|
+            |ADDRESS ERROR|
+            |VERIFIED|
+            |PROCESSING|
+            |FAILED|
+            |OPEN|
+            |SHIPPED|
+            |TRASHED|
+            |BACKHOLD|
+          example: SHIPPED
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/dropshipment_get_order_status_product_object'
+        carrier:
+          type: string
+          description: Carrier. *(Only if order has been shipped)*
+          example: UPS Parcel
+        carrier_service:
+          type: string
+          description: Carrier service. *(Only if order has been shipped)*
+          example: Next Day Air
+        tracking_number:
+          type: string
+          description: Tracking number. *(Only if order has been shipped)*
+          example: 1ZY1111111
+        parcel_status:
+          type: string
+          description: |
+            Status of the parcel. *(Only if order has been shipped)* Value can be:
+
+
+            | Value|
+            |---|
+            |pending|
+            |info_received|
+            |in_transit|
+            |failed_attempt|
+            |exception|
+            |delayed|
+            |pickup|
+            |delivered|
+            |return|
+            |expired|
+          example: in_transit
+    dropshipment_create_order_product_object:
+      type: object
+      properties:
+        ean:
+          type: string
+          description: EAN of the product.
+          example: "3700546702518"
+        quantity:
+          type: integer
+          description: Quantity of products.
+          example: 3
+    dropshipment_get_order_status_product_object:
+      type: object
+      properties:
+        ean:
+          type: string
+          description: EAN of the product.
+          example: "3700546702518"
+        quantity:
+          type: integer
+          description: Quantity of products.
+          example: 3
+        mac_addresses:
+          type: array
+          description: List of device MAC addresses. *(Only if order has been shipped)*
+          example:
+          - 00:24:e4:xx:xx:xx
+          - 00:24:e4:xx:xx:xx
+          - 00:24:e4:xx:xx:xx
+          items:
+            type: string
+    dropshipment_user:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Authorization Code that must be used to retrieve access_token and refresh_token. (Cf. [Token Reception](/developer-guide/logistics-api/authentication#token-reception) section)
+          example: 490ed603fe9bd2ce10027bdba0c932069cd27085
+        external_id:
+          type: string
+          description: Partner end-user unique identifier (Cf. [Token Reception](/developer-guide/logistics-api/authentication#token-reception) section)
+          example: 3b7a6db0-ec7e-479b-9675-2a3d8d6a7e51
+    dropshipment_createuserorder:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/dropshipment_user'
+        orders:
+          type: array
+          description: List of created orders. *(Only if orders were successfully created)*
+          items:
+            $ref: '#/components/schemas/dropshipment_create_order_object'
+        invalid_address_customer_ref_ids:
+          type: array
+          description: References of the orders with invalid address. *(Only if at least one order has an invalid address)*
+          example:
+          - MOUVEMENTREFERENCE12345678
+          items:
+            type: string
+      description: Response data.
+    dropshipment_getorderstatus:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/dropshipment_get_order_status_object'
+      description: Response data.
+    dropshipment_update:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/dropshipment_create_order_object'
+      description: Response data.
+    lastupdate_object:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id of the user
+          example: 1234
+        measure:
+          type: integer
+          description: Most recent modified date of user measures
+          format: timestamp
+          example: 1594159644
+    user_activate:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/dropshipment_user'
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/user_device_mac_object'
+      description: Response data.
+    user_get:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            email:
+              type: string
+              description: User's email address
+              example: john.doe@my.email
+            firstname:
+              type: string
+              description: User's firstname
+              example: John
+            lastname:
+              type: string
+              description: User's lastname
+              example: Doe
+            shortname:
+              type: string
+              description: User's shortname
+              example: JDO
+            gender:
+              type: integer
+              description: 'User''s gender (0: man, 1: woman)'
+            birthdate:
+              type: integer
+              description: Unix timestamp of user's birthdate
+              example: 1577829600
+            preflang:
+              type: string
+              description: 'User''s language preference. Examples: en_EN / en_US / de_DE / es_ES / fr_FR / it_IT / ja_JA / ko_KR / nl_NL / pt_PT / ru_RU / zh_CN'
+              example: fr_FR
+            timezone:
+              type: string
+              description: 'User''s timezone. Examples: "Europe/Paris" / "America/New_York". A complete list of all possible timezones can be found on the "TZ database name" column of this page : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
+              example: Europe/Paris
+            mailingpref:
+              type: boolean
+              description: Specifies if user accepted Withings commercial contacts.
+              example: true
+            unit_pref:
+              type: object
+              properties:
+                weight:
+                  type: integer
+                  example: 1
+                height:
+                  type: integer
+                  example: 6
+                temperature:
+                  type: integer
+                  example: 11
+                distance:
+                  type: integer
+                  example: 6
+              description: User's unit preferences (cf. [Unit preferences](#section/Models/Unit-preferences) model).
+            phonenumber:
+              type: string
+              description: User's phone number. *(Only if set)*
+              example: +33612345678
+      description: Response data.
+    user_getgoals:
+      type: object
+      properties:
+        goals:
+          type: object
+          properties:
+            steps:
+              type: integer
+              description: Number of steps per day.
+              example: 10000
+            sleep:
+              type: integer
+              description: Sleep duration (in seconds).
+              example: 28800
+            weight:
+              type: object
+              properties:
+                value:
+                  type: integer
+                  description: Value for the measure in S.I. units (kilograms, meters etc...). Value should be multiplied by 10 to the power of ```units``` to get the real value.
+                  example: 70500
+                unit:
+                  type: integer
+                  description: 'Power of ten to multiply the ```value``` field to get the real value.<br>Formula: ```value * 10^unit = real value```.<br>Eg: ```value = 20 and unit = -1 => real value = 2```.'
+                  example: -3
+              description: Weight.
+      description: Response data.
     user_device_object:
       type: object
       properties:
@@ -3412,617 +4073,6 @@ components:
           description: The timestamp of the last server connection of the device
           format: timestamp
           example: 1594159644
-    heart_measurement_object_ecg:
-      type: object
-      properties:
-        signalid:
-          type: integer
-          description: Id of the signal.
-          example: 48
-        afib:
-          type: integer
-          description: |
-            Atrial fibrillation classification.
-
-
-            | Value | Description|
-            |---|---|
-            |0 | Negative|
-            |1 | Positive|
-            |2 | Inconclusive|
-          example: 1
-    heart_measurement_object_bloodpressure:
-      type: object
-      properties:
-        diastole:
-          type: integer
-          description: Diastole value.
-          example: 100
-        systole:
-          type: integer
-          description: Systole value.
-          example: 101
-    heart_measurement_object:
-      type: object
-      properties:
-        deviceid:
-          type: string
-          description: 'ID of device that tracked the data. To retrieve information about this device, refer to : <a href=''/api-reference/#operation/userv2-getdevice''>User v2 - Getdevice</a>.'
-          example: 892359876fd8805ac45bab078c4828692f0276b1
-        model:
-          type: integer
-          description: |
-            The source of the recording.
-
-
-            | Value | Description|
-            |---|---|
-            |44 | BPM Core|
-            |91 | Move ECG|
-          example: 44
-        ecg:
-          $ref: '#/components/schemas/heart_measurement_object_ecg'
-        bloodpressure:
-          $ref: '#/components/schemas/heart_measurement_object_bloodpressure'
-        heart_rate:
-          type: integer
-          description: Average recorded heart rate.
-          example: 82
-        timestamp:
-          type: integer
-          description: Timestamp of the recording.
-          format: timestamp
-          example: 1594159644
-    dropshipment_create_order_object:
-      type: object
-      properties:
-        order_id:
-          type: string
-          description: Withings generated identifier used to track your order.
-          example: D12345678
-        customer_ref_id:
-          type: string
-          description: Random identifier you must provide in input parameters. It is used to track your order and must be unique.
-          example: MOUVEMENTREFERENCE12345678
-        status:
-          type: string
-          description: |
-            Status of the order. Value can be:
-
-
-            | Value|
-            |---|
-            |CREATED|
-            |ADDRESS VERIFICATION|
-            |ADDRESS ERROR|
-            |VERIFIED|
-            |PROCESSING|
-            |FAILED|
-            |OPEN|
-            |SHIPPED|
-            |TRASHED|
-            |BACKHOLD|
-          example: ADDRESS VERIFICATION
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/dropshipment_create_order_product_object'
-    dropshipment_get_order_status_object:
-      type: object
-      properties:
-        order_id:
-          type: string
-          description: Withings generated identifier used to track your order.
-          example: D12345678
-        customer_ref_id:
-          type: string
-          description: Random identifier you must provide in input parameters. It is used to track your order and must be unique.
-          example: MOUVEMENTREFERENCE12345678
-        status:
-          type: string
-          description: |
-            Status of the order. Value can be:
-
-
-            | Value|
-            |---|
-            |CREATED|
-            |ADDRESS VERIFICATION|
-            |ADDRESS ERROR|
-            |VERIFIED|
-            |PROCESSING|
-            |FAILED|
-            |OPEN|
-            |SHIPPED|
-            |TRASHED|
-            |BACKHOLD|
-          example: SHIPPED
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/dropshipment_get_order_status_product_object'
-        carrier:
-          type: string
-          description: Carrier. *(Only if order has been shipped)*
-          example: UPS Parcel
-        carrier_service:
-          type: string
-          description: Carrier service. *(Only if order has been shipped)*
-          example: Next Day Air
-        tracking_number:
-          type: string
-          description: Tracking number. *(Only if order has been shipped)*
-          example: 1ZY1111111
-        parcel_status:
-          type: string
-          description: |
-            Status of the parcel. *(Only if order has been shipped)* Value can be:
-
-
-            | Value|
-            |---|
-            |pending|
-            |info_received|
-            |in_transit|
-            |failed_attempt|
-            |exception|
-            |delayed|
-            |pickup|
-            |delivered|
-            |return|
-            |expired|
-          example: in_transit
-    dropshipment_create_order_product_object:
-      type: object
-      properties:
-        ean:
-          type: string
-          description: EAN of the product.
-          example: "3700546702518"
-        quantity:
-          type: integer
-          description: Quantity of products.
-          example: 3
-    dropshipment_get_order_status_product_object:
-      type: object
-      properties:
-        ean:
-          type: string
-          description: EAN of the product.
-          example: "3700546702518"
-        quantity:
-          type: integer
-          description: Quantity of products.
-          example: 3
-        mac_addresses:
-          type: array
-          description: List of device MAC addresses. *(Only if order has been shipped)*
-          example:
-          - 00:24:e4:xx:xx:xx
-          - 00:24:e4:xx:xx:xx
-          - 00:24:e4:xx:xx:xx
-          items:
-            type: string
-    lastupdate_object:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Id of the user
-          example: 1234
-        measure:
-          type: integer
-          description: Most recent modified date of user measures
-          format: timestamp
-          example: 1594159644
-    dropshipment_user:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Authorization Code that must be used to retrieve access_token and refresh_token. (Cf. [Token Reception](/developer-guide/logistics-api/authentication#token-reception) section)
-          example: 490ed603fe9bd2ce10027bdba0c932069cd27085
-        external_id:
-          type: string
-          description: Partner end-user unique identifier (Cf. [Token Reception](/developer-guide/logistics-api/authentication#token-reception) section)
-          example: 3b7a6db0-ec7e-479b-9675-2a3d8d6a7e51
-    dropshipment_createuserorder:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/dropshipment_user'
-        orders:
-          type: array
-          description: List of created orders. *(Only if orders were successfully created)*
-          items:
-            $ref: '#/components/schemas/dropshipment_create_order_object'
-        invalid_address_customer_ref_ids:
-          type: array
-          description: References of the orders with invalid address. *(Only if at least one order has an invalid address)*
-          example:
-          - MOUVEMENTREFERENCE12345678
-          items:
-            type: string
-      description: Response data.
-    dropshipment_getorderstatus:
-      type: object
-      properties:
-        orders:
-          type: array
-          items:
-            $ref: '#/components/schemas/dropshipment_get_order_status_object'
-      description: Response data.
-    dropshipment_update:
-      type: object
-      properties:
-        orders:
-          type: array
-          items:
-            $ref: '#/components/schemas/dropshipment_create_order_object'
-      description: Response data.
-    heart_get:
-      type: object
-      properties:
-        signal:
-          type: array
-          description: Signal value in micro-volt (μV).
-          example: '[1,2,3,4,5,6,7,8,9]'
-          items:
-            type: integer
-        sampling_frequency:
-          type: integer
-          description: Signal Sampling Frequency (Hz).
-          example: 500
-        wearposition:
-          type: integer
-          description: |
-            Where the user is wearing the device.
-
-
-            | Value | Description|
-            |---|---|
-            |0 | Right Wrist|
-            |1 | Left Wrist|
-            |2 | Right Arm|
-            |3 | Left Arm|
-            |4 | Right Foot|
-            |5 | Left Foot|
-            |6 | Between Legs|
-          example: 1
-      description: Response data.
-    measure_getintradayactivity:
-      type: object
-      properties:
-        series:
-          type: object
-          properties:
-            $timestamp:
-              type: object
-              properties:
-                deviceid:
-                  type: string
-                  description: 'ID of device that tracked the data. To retrieve information about this device, refer to : <a href=''/api-reference/#operation/userv2-getdevice''>User v2 - Getdevice</a>.'
-                  example: 892359876fd8805ac45bab078c4828692f0276b1
-                model:
-                  type: string
-                  description: |
-                    Device model. Value can be:
-                    | Value | Description|
-                    |---|---|
-                    |Withings WBS01 | Scale|
-                    |WS30 | Scale|
-                    |Kid Scale | Scale|
-                    |Smart Body Analyzer | Scale|
-                    |Body+ | Scale|
-                    |Body Cardio | Scale|
-                    |Body | Scale|
-                    |WBS08 | Scale|
-                    |Body Pro | Scale|
-                    |WBS10 | Scale|
-                    |WBS11 | Scale|
-                    |Smart Baby Monitor | Babyphone|
-                    |Withings Home | Babyphone|
-                    |Withings Blood Pressure Monitor V1 | Blood Pressure Monitor|
-                    |Withings Blood Pressure Monitor V2 | Blood Pressure Monitor|
-                    |Withings Blood Pressure Monitor V3 | Blood Pressure Monitor|
-                    |BPM Core | Blood Pressure Monitor|
-                    |BPM Connect | Blood Pressure Monitor|
-                    |BPM Connect Pro | Blood Pressure Monitor|
-                    |Pulse | Activity Tracker|
-                    |Activite | Activity Tracker|
-                    |Activite (Pop, Steel) | Activity Tracker|
-                    |Withings Go | Activity Tracker|
-                    |Activite Steel HR | Activity Tracker|
-                    |Activite Steel HR Sport Edition | Activity Tracker|
-                    |Pulse HR | Activity Tracker|
-                    |Move | Activity Tracker|
-                    |Move ECG | Activity Tracker|
-                    |ScanWatch | Activity Tracker|
-                    |Aura Dock | Sleep Monitor|
-                    |Aura Sensor | Sleep Monitor|
-                    |Aura Sensor V2 | Sleep Monitor|
-                    |Thermo | Smart Connected Thermometer|
-                    |WUP01 | Gateway|
-                  example: Pulse
-                model_id:
-                  type: integer
-                  description: |2
-                    | Value | Description|
-                    |---|---|
-                    |1 | Withings WBS01|
-                    |2 | WS30|
-                    |3 | Kid Scale|
-                    |4 | Smart Body Analyzer|
-                    |5 | Body+|
-                    |6 | Body Cardio|
-                    |7 | Body|
-                    |10 | WBS08|
-                    |9 | Body Pro|
-                    |11 | WBS10|
-                    |12 | WBS11|
-                    |21 | Smart Baby Monitor|
-                    |22 | Withings Home|
-                    |41 | Withings Blood Pressure Monitor V1|
-                    |42 | Withings Blood Pressure Monitor V2|
-                    |43 | Withings Blood Pressure Monitor V3|
-                    |44 | BPM Core|
-                    |45 | BPM Connect|
-                    |46 | BPM Connect Pro|
-                    |51 | Pulse|
-                    |52 | Activite|
-                    |53 | Activite (Pop, Steel)|
-                    |54 | Withings Go|
-                    |55 | Activite Steel HR|
-                    |59 | Activite Steel HR Sport Edition|
-                    |58 | Pulse HR|
-                    |90 | Move|
-                    |91 | Move ECG|
-                    |92 | Move ECG|
-                    |93 | ScanWatch|
-                    |60 | Aura Dock|
-                    |61 | Aura Sensor|
-                    |63 | Aura Sensor V2|
-                    |70 | Thermo|
-                    |100 | WUP01|
-                  example: 51
-                steps:
-                  type: integer
-                  description: Number of steps. *(Use 'data_fields' to request this data.)*
-                elevation:
-                  type: number
-                  description: Number of floors climbed. *(Use 'data_fields' to request this data.)*
-                calories:
-                  type: number
-                  description: Estimation of active calories burned (in Kcal). *(Use 'data_fields' to request this data.)*
-                distance:
-                  type: number
-                  description: Distance travelled (in meters). *(Use 'data_fields' to request this data.)*
-                stroke:
-                  type: integer
-                  description: Number of strokes performed. *(Use 'data_fields' to request this data.)*
-                pool_lap:
-                  type: integer
-                  description: Number of pool_lap performed. *(Use 'data_fields' to request this data.)*
-                duration:
-                  type: integer
-                  description: Duration of the activity (in seconds). *(Use 'data_fields' to request this data.)*
-                heart_rate:
-                  type: integer
-                  description: Measured heart rate. *(Use 'data_fields' to request this data.)*
-                spo2_auto:
-                  type: number
-                  description: SpO2 measurement automatically tracked by a device tracker
-              description: $timestamp represents the epoch value of the intraday data
-      description: Response data.
-    sleep_get:
-      type: object
-      properties:
-        series:
-          type: object
-          properties:
-            startdate:
-              type: integer
-              description: The starting datetime for the sleep state data.
-              format: timestamp
-              example: 1594159200
-            enddate:
-              type: integer
-              description: The end datetime for the sleep data. A single call can span up to 7 days maximum. To cover a wider time range, you will need to perform multiple calls.
-              format: timestamp
-              example: 1594202400
-            state:
-              type: integer
-              description: |
-                The state of sleeping. Values can be:
-                | Value | Description|
-                |---|---|
-                |0 | Sleep state awake|
-                |1 | Sleep state light|
-                |2 | Sleep state deep|
-                |3 | Sleep state rem|
-                |4 | Sleep manual|
-                |5 | Sleep unspecified|
-              example: 1
-            hr:
-              type: object
-              properties:
-                $timestamp:
-                  type: integer
-                  description: $timestamp represents the epoch value of the heart rate data, value of this key will be the heart rate data
-              description: Heart Rate. *(Use 'data_fields' to request this data.)*
-            rr:
-              type: object
-              properties:
-                $timestamp:
-                  type: integer
-                  description: $timestamp represents the epoch value of the respiration rate data, value of this key will be the respiration rate data
-              description: Respiration Rate. *(Use 'data_fields' to request this data.)*
-            snoring:
-              type: object
-              properties:
-                $timestamp:
-                  type: integer
-              description: Total snoring time
-        model:
-          type: string
-          description: |
-            Device model. Value can be:
-
-
-            | Value | Description|
-            |---|---|
-            |Aura Dock | Sleep Monitor|
-            |Aura Sensor | Sleep Monitor|
-            |Aura Sensor V2 | Sleep Monitor|
-            |Pulse | Activity Tracker|
-            |Activite | Activity Tracker|
-            |Activite (Pop, Steel) | Activity Tracker|
-            |Withings Go | Activity Tracker|
-            |Activite Steel HR | Activity Tracker|
-            |Activite Steel HR Sport Edition | Activity Tracker|
-            |Pulse HR | Activity Tracker|
-            |Move | Activity Tracker|
-            |Move ECG | Activity Tracker|
-            |ScanWatch | Activity Tracker|
-          example: Aura Sensor V2
-        model_id:
-          type: integer
-          description: |2
-
-
-            | Value | Description|
-            |---|---|
-            |60 | Aura Dock|
-            |61 | Aura Sensor|
-            |63 | Aura Sensor V2|
-            |51 | Pulse|
-            |52 | Activite|
-            |53 | Activite (Pop, Steel)|
-            |54 | Withings Go|
-            |55 | Activite Steel HR|
-            |59 | Activite Steel HR Sport Edition|
-            |58 | Pulse HR|
-            |90 | Move|
-            |91 | Move ECG|
-            |92 | Move ECG|
-            |93 | ScanWatch|
-          example: 63
-      description: Response data.
-    user_activate:
-      type: object
-      properties:
-        user:
-          $ref: '#/components/schemas/dropshipment_user'
-        devices:
-          type: array
-          items:
-            $ref: '#/components/schemas/user_device_mac_object'
-      description: Response data.
-    user_get:
-      type: object
-      properties:
-        user:
-          type: object
-          properties:
-            email:
-              type: string
-              description: User's email address
-              example: john.doe@my.email
-            firstname:
-              type: string
-              description: User's firstname
-              example: John
-            lastname:
-              type: string
-              description: User's lastname
-              example: Doe
-            shortname:
-              type: string
-              description: User's shortname
-              example: JDO
-            gender:
-              type: integer
-              description: 'User''s gender (0: man, 1: woman)'
-            birthdate:
-              type: integer
-              description: Unix timestamp of user's birthdate
-              example: 1577829600
-            preflang:
-              type: string
-              description: 'User''s language preference. Examples: en_EN / en_US / de_DE / es_ES / fr_FR / it_IT / ja_JA / ko_KR / nl_NL / pt_PT / ru_RU / zh_CN'
-              example: fr_FR
-            timezone:
-              type: string
-              description: 'User''s timezone. Examples: "Europe/Paris" / "America/New_York". A complete list of all possible timezones can be found on the "TZ database name" column of this page : https://en.wikipedia.org/wiki/List_of_tz_database_time_zones'
-              example: Europe/Paris
-            mailingpref:
-              type: boolean
-              description: Specifies if user accepted Withings commercial contacts.
-              example: true
-            unit_pref:
-              type: object
-              properties:
-                weight:
-                  type: integer
-                  example: 1
-                height:
-                  type: integer
-                  example: 6
-                temperature:
-                  type: integer
-                  example: 11
-                distance:
-                  type: integer
-                  example: 6
-              description: User's unit preferences (cf. [Unit preferences](#section/Models/Unit-preferences) model).
-            phonenumber:
-              type: string
-              description: User's phone number. *(Only if set)*
-              example: +33612345678
-      description: Response data.
-    user_getdevice:
-      type: object
-      properties:
-        devices:
-          type: array
-          items:
-            $ref: '#/components/schemas/user_device_object'
-      description: Response data.
-    user_getgoals:
-      type: object
-      properties:
-        goals:
-          type: object
-          properties:
-            steps:
-              type: integer
-              description: Number of steps per day.
-              example: 10000
-            sleep:
-              type: integer
-              description: Sleep duration (in seconds).
-              example: 28800
-            weight:
-              type: object
-              properties:
-                value:
-                  type: integer
-                  description: Value for the measure in S.I. units (kilograms, meters etc...). Value should be multiplied by 10 to the power of ```units``` to get the real value.
-                  example: 70500
-                unit:
-                  type: integer
-                  description: 'Power of ten to multiply the ```value``` field to get the real value.<br>Formula: ```value * 10^unit = real value```.<br>Eg: ```value = 20 and unit = -1 => real value = 2```.'
-                  example: -3
-              description: Weight.
-      description: Response data.
-    user_link:
-      type: object
-      properties:
-        devices:
-          type: array
-          items:
-            $ref: '#/components/schemas/user_device_mac_object'
-      description: Response data.
 x-tagGroups:
 - name: Api Reference Content
   tags:

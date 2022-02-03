@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property int $profile_id
  * @property int $grpid Id of the measure group.
  * @property int $attrib The way the measure was attributed to the user:
  * 
@@ -31,6 +32,7 @@ use common\models\ApiModel as BaseApiModel;
 class measuregrp_objectApi extends BaseApiModel
 {
 
+    public $profile_id;
     public $grpid;
     public $attrib;
     public $date;

@@ -11,6 +11,8 @@ use yii\helpers\ArrayHelper;
  * @property int $algo Deprecated.
  * @property int $fm Deprecated.
  * @property int $fw Deprecated.
+ * @property integer $measuregrp_object_id
+ * @property measuregrp_object $measuregrp_object
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
@@ -25,8 +27,14 @@ class measure_object extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['value', 'type', 'unit', 'algo', 'fm', 'fw', 'externalId', 'id'], 'integer'],
+            [['value', 'type', 'unit', 'algo', 'fm', 'fw', 'measuregrp_object_id', 'externalId', 'id'], 'integer'],
+            // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getMeasuregrp_object()
+    {
+        return $this->hasOne(measuregrp_object::class, ['id' => 'measuregrp_object_id']);
     }
 
 
@@ -51,6 +59,12 @@ class measure_object extends \yii\db\ActiveRecord
         }
         if($fw = ArrayHelper::getValue($apiObject, 'fw')) {
             $this->fw = $fw;
+        }
+        if($measuregrp_object_id = ArrayHelper::getValue($apiObject, 'measuregrp_object_id')) {
+            $this->measuregrp_object_id = $measuregrp_object_id;
+        }
+        if($measuregrp_object = ArrayHelper::getValue($apiObject, 'measuregrp_object')) {
+            $this->measuregrp_object = $measuregrp_object;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;

@@ -69,12 +69,13 @@ class WithingsOauth
             'client_id' => $this->clientId,
             'state' => $state,
             'scope' => $scopes,
-            'redirect_uri' => Yii::$app->params['withings.redirect_uri'],
+            'redirect_uri' => Yii::$app->params['withings.callback_uri'],
         ];
+
+        YII_ENV_DEV ? $params['mode'] = 'demo' : $params ;
 
         $path = "oauth2_user/authorize2";
         $url = 'https://account.withings.com/' . $path . '?' . http_build_query($params);
-
         return $url;
     }
 
@@ -86,7 +87,7 @@ class WithingsOauth
             'client_id' => $this->clientId,
             'client_secret' => $this->customerSecret,
             'code' => $code,
-            'redirect_uri' => Yii::$app->params['withings.redirect_uri'],
+            'redirect_uri' => Yii::$app->params['withings.callback_uri'],
         ];
 
         $path = "v2/oauth2";
@@ -184,16 +185,12 @@ class WithingsOauth
         $configurationModel = $this->getUserConfiguration($user->id);
         $withingsConfiguration = json_decode($configurationModel->content);
 
-        $link = Yii::$app->params['withings.api_url'] . $path;
-
-        $link = str_replace("//", "/", $link);
+        $link = str_replace("//", "/", $path);
 
         $client = new Client(['baseUrl' =>  Yii::$app->params['withings.api_url']]);
 
         $response = $this->createRequest($client, $link, $action, $withingsConfiguration->body->access_token, $params);
-
         $dataResponse = json_decode($response->getContent(), TRUE);
-
         if ($response->isOk) {
             if (in_array($dataResponse['status'], [100, 101, 102, 200, 401])) {
                 $refreshToken = $this->requestRefreshToken();
@@ -226,7 +223,6 @@ class WithingsOauth
                 'Authorization' => 'Bearer ' . $access_token,
             ])
             ->setData($params);
-
         try {
             $response = $request->send();
         } catch (\Exception $e) {
@@ -256,7 +252,7 @@ class WithingsOauth
         return $configurationModel;
     }
 
-    private function getNonce()
+    public function getNonce()
     {
         $action = 'getnonce';
         $time = time();
@@ -286,7 +282,7 @@ class WithingsOauth
         return $dataResponse['body']['nonce'];
     }
 
-    private function buildSignature(string $action, int $time)
+    public function buildSignature(string $action, int $time)
     {
         $signed_params = array(
             'action'     => $action,

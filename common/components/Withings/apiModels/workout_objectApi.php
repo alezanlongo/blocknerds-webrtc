@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property int $profile_id
  * @property int $category Category of workout: 
  * 
  * 
@@ -127,6 +128,7 @@ use common\models\ApiModel as BaseApiModel;
 class workout_objectApi extends BaseApiModel
 {
 
+    public $profile_id;
     public $category;
     public $timezone;
     public $model;

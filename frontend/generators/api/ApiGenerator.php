@@ -259,7 +259,7 @@ class ApiGenerator extends ParentApiGenerator
 
                         //START FLATTENING
                         if( array_key_exists('x-flatten', $schema->getExtensions()) ) {
-                            $flattenedAttributes = $this->flattenOneToOneRelation($type);
+                            $flattenedAttributes = $this->flattenOneToOneRelation($name, $type);
                             if ( $flattenedAttributes ) {
                                 $attributes = array_merge($attributes, $flattenedAttributes);
                                 continue;
@@ -394,12 +394,12 @@ class ApiGenerator extends ParentApiGenerator
 
                 foreach ($operation->responses->getResponses() as $responseCode => $response){
                     foreach ($response->content as $responseType => $responseItem){
-                        $flagList = false;
+                        $flagList = NULL;
                         if(get_class($responseItem->schema) == Reference::class){
                             $arrSchema = explode("/", $responseItem->schema->getReference());
                         }else if(get_class($responseItem->schema) == Schema::class){
+                            $flagList = (!$listKey) ? FALSE : TRUE;
                             if(!empty($responseItem->schema->items)) {
-                                $flagList = TRUE;
                                 $arrSchema = explode("/", $responseItem->schema->items->getReference());
                             }
                         }
@@ -521,7 +521,7 @@ class ApiGenerator extends ParentApiGenerator
      * @param array|null $flattenedAttributes
      * @return array
      */
-    private function flattenOneToOneRelation($referencedSchema, $prefix = '', $flattenedAttributes = [])
+    private function flattenOneToOneRelation($parentField, $referencedSchema, $prefix = '', $flattenedAttributes = [])
     {
         $prefix .= ($prefix == '') ? '' : '__';
         foreach ($this->getOpenApi()->components->schemas[$referencedSchema]->properties as $name => $property) {
@@ -536,7 +536,7 @@ class ApiGenerator extends ParentApiGenerator
                 $dbType = 'json';
                 $type = 'array';//$type[0];
             } elseif ( !in_array($type, ['int', 'bool', 'float', 'string']) ) { // type == 'object'
-                $flattenedAttributes = $this->flattenOneToOneRelation(substr($ref, 20), $prefix.strtolower($referencedSchema), $flattenedAttributes);//only when its a second level object or below
+                $flattenedAttributes = $this->flattenOneToOneRelation($parentField, substr($ref, 20), $prefix.strtolower($referencedSchema), $flattenedAttributes);//only when its a second level object or below
                 continue;
             }
             $flattenedName = $prefix.strtolower($referencedSchema).'__'.$name;
@@ -550,6 +550,7 @@ class ApiGenerator extends ParentApiGenerator
                 'description' => $property->description,
                 'faker' => $this->guessModelFaker($name, $type, $property),
                 'flattened' => true,
+                'flattenedField' => $prefix.strtolower($parentField).'__'.$name,
             ];
         }
 

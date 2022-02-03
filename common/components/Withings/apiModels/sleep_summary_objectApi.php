@@ -8,6 +8,7 @@ use common\models\ApiModel as BaseApiModel;
 /**
  * 
  *
+ * @property int $profile_id
  * @property string $timezone Timezone for the date.
  * @property int $model The source for sleep data. Value can be 16 for a tracker or 32 for a Sleep Monitor.
  * @property int $model_id 
@@ -38,6 +39,7 @@ use common\models\ApiModel as BaseApiModel;
 class sleep_summary_objectApi extends BaseApiModel
 {
 
+    public $profile_id;
     public $timezone;
     public $model;
     public $model_id;

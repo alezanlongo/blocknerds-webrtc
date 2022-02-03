@@ -17,12 +17,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['oauth2'])) ? $dataResponse[$this->getResponseDataKey()]['oauth2'] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -36,12 +32,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['oauth2  '])) ? $dataResponse[$this->getResponseDataKey()]['oauth2  '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -55,12 +47,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['oauth2 '])) ? $dataResponse[$this->getResponseDataKey()]['oauth2 '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -93,12 +81,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['notify '])) ? $dataResponse[$this->getResponseDataKey()]['notify '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -131,12 +115,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['notify    '])) ? $dataResponse[$this->getResponseDataKey()]['notify    '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -150,12 +130,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['notify'])) ? $dataResponse[$this->getResponseDataKey()]['notify'] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -169,12 +145,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['notify   '])) ? $dataResponse[$this->getResponseDataKey()]['notify   '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -207,12 +179,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['dropshipment '])) ? $dataResponse[$this->getResponseDataKey()]['dropshipment '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\dropshipment_createuserorderApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\dropshipment_createuserorderApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -226,12 +194,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['dropshipment   '])) ? $dataResponse[$this->getResponseDataKey()]['dropshipment   '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -245,12 +209,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['dropshipment  '])) ? $dataResponse[$this->getResponseDataKey()]['dropshipment  '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\dropshipment_getorderstatusApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\dropshipment_getorderstatusApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -264,12 +224,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['dropshipment    '])) ? $dataResponse[$this->getResponseDataKey()]['dropshipment    '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\dropshipment_updateApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\dropshipment_updateApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -283,12 +239,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['heart '])) ? $dataResponse[$this->getResponseDataKey()]['heart '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\heart_getApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\heart_getApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -332,7 +284,7 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
         }
     }
     /**
-     * @return measure_getintradayactivity
+     * @return measure_getintradayactivity_custom
      */
     public function measurev2Getintradayactivity(array $body = [])
     {
@@ -340,12 +292,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['measure  '])) ? $dataResponse[$this->getResponseDataKey()]['measure  '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\measure_getintradayactivityApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\measure_getintradayactivity_customApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -378,18 +326,14 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['signature'])) ? $dataResponse[$this->getResponseDataKey()]['signature'] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
     }
     /**
-     * @return sleep_get
+     * @return sleep_get_custom
      */
     public function sleepv2Get(array $body = [])
     {
@@ -397,12 +341,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['sleep'])) ? $dataResponse[$this->getResponseDataKey()]['sleep'] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\sleep_getApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\sleep_get_customApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -435,12 +375,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['user '])) ? $dataResponse[$this->getResponseDataKey()]['user '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\user_activateApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\user_activateApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
@@ -454,18 +390,14 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['user'])) ? $dataResponse[$this->getResponseDataKey()]['user'] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\user_getApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\user_getApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
     }
     /**
-     * @return user_getdevice
+     * @return user_device_object
      */
     public function userv2Getdevice(array $body = [])
     {
@@ -474,9 +406,9 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
             $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['user   '])) ? $dataResponse[$this->getResponseDataKey()]['user   '] : $dataResponse[$this->getResponseDataKey()];
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['devices'])) ? $dataResponse[$this->getResponseDataKey()]['devices'] : $dataResponse[$this->getResponseDataKey()];
             foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\user_getdeviceApi($value));
+                array_push($dataApiModel, new  \common\components\Withings\apiModels\user_device_objectApi($value));
             }
             return $dataApiModel;
         }else{
@@ -492,18 +424,14 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['user     '])) ? $dataResponse[$this->getResponseDataKey()]['user     '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\user_getgoalsApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\user_getgoalsApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }
     }
     /**
-     * @return user_link
+     * @return user_device_mac_object
      */
     public function userv2Link(array $body = [])
     {
@@ -512,9 +440,9 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
             $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['user  '])) ? $dataResponse[$this->getResponseDataKey()]['user  '] : $dataResponse[$this->getResponseDataKey()];
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['devices'])) ? $dataResponse[$this->getResponseDataKey()]['devices'] : $dataResponse[$this->getResponseDataKey()];
             foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\user_linkApi($value));
+                array_push($dataApiModel, new  \common\components\Withings\apiModels\user_device_mac_objectApi($value));
             }
             return $dataApiModel;
         }else{
@@ -530,12 +458,8 @@ class WithingsClient extends \common\components\Withings\WithingsOauth
 
         $dataResponse = $this->callMethod($path, 'post' , $body);
         if($this->isSuccess($dataResponse)){
-            $dataApiModel = [];
-            $responseData = (isset($dataResponse[$this->getResponseDataKey()]['user    '])) ? $dataResponse[$this->getResponseDataKey()]['user    '] : $dataResponse[$this->getResponseDataKey()];
-            foreach ($responseData as $key => $value){
-                array_push($dataApiModel, new  \common\components\Withings\apiModels\emptyApiApi($value));
-            }
-            return $dataApiModel;
+            $responseData = (isset($dataResponse[$this->getResponseDataKey()][''])) ? $dataResponse[$this->getResponseDataKey()][''] : $dataResponse[$this->getResponseDataKey()];
+            return new \common\components\Withings\apiModels\emptyApiApi($responseData);
         }else{
             return $dataResponse[$this->getResponseMessageKey()];
         }

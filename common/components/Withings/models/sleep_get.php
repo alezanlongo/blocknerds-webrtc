@@ -5,48 +5,16 @@ use yii\helpers\ArrayHelper;
 
 /**
  * Response data. *
- * @property object $series
- * @property string $model Device model. Value can be:
- * 
- * 
- * | Value | Description|
- * |---|---|
- * |Aura Dock | Sleep Monitor|
- * |Aura Sensor | Sleep Monitor|
- * |Aura Sensor V2 | Sleep Monitor|
- * |Pulse | Activity Tracker|
- * |Activite | Activity Tracker|
- * |Activite (Pop, Steel) | Activity Tracker|
- * |Withings Go | Activity Tracker|
- * |Activite Steel HR | Activity Tracker|
- * |Activite Steel HR Sport Edition | Activity Tracker|
- * |Pulse HR | Activity Tracker|
- * |Move | Activity Tracker|
- * |Move ECG | Activity Tracker|
- * |ScanWatch | Activity Tracker|
- * @property int $model_id 
- * 
- * | Value | Description|
- * |---|---|
- * |60 | Aura Dock|
- * |61 | Aura Sensor|
- * |63 | Aura Sensor V2|
- * |51 | Pulse|
- * |52 | Activite|
- * |53 | Activite (Pop, Steel)|
- * |54 | Withings Go|
- * |55 | Activite Steel HR|
- * |59 | Activite Steel HR Sport Edition|
- * |58 | Pulse HR|
- * |90 | Move|
- * |91 | Move ECG|
- * |92 | Move ECG|
- * |93 | ScanWatch|
+ * @property int $profile_id
+ * @property int $model
+ * @property sleep_get_series[] $series
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
 class sleep_get extends \yii\db\ActiveRecord
 {
+ 
+    protected $_seriesAr;
 
     public static function tableName()
     {
@@ -56,11 +24,14 @@ class sleep_get extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['model'], 'trim'],
-            [['model'], 'string'],
-            [['model_id', 'externalId', 'id'], 'integer'],
+            [['profile_id', 'model', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
+    }
+
+    public function getSeries()
+    {
+        return $this->hasMany(sleep_get_series::class, ['sleep_get_id' => 'id']);
     }
 
 
@@ -68,14 +39,14 @@ class sleep_get extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
-        if($series = ArrayHelper::getValue($apiObject, 'series')) {
-            $this->series = $series;
+        if($profile_id = ArrayHelper::getValue($apiObject, 'profile_id')) {
+            $this->profile_id = $profile_id;
         }
         if($model = ArrayHelper::getValue($apiObject, 'model')) {
             $this->model = $model;
         }
-        if($model_id = ArrayHelper::getValue($apiObject, 'model_id')) {
-            $this->model_id = $model_id;
+        if($series = ArrayHelper::getValue($apiObject, 'series')) {
+            $this->_seriesAr = $series;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;
@@ -95,6 +66,14 @@ class sleep_get extends \yii\db\ActiveRecord
     /* FIXME link doesn't work
     public function save($runValidation = true, $attributeNames = null) {
         $saved = parent::save($runValidation, $attributeNames);
+        if( !empty($this->_seriesAr) and is_array($this->_seriesAr) ) {
+            foreach($this->_seriesAr as $seriesApi) {
+                $sleep_get_series = new sleep_get_series();
+                $sleep_get_series->loadApiObject($seriesApi);
+                $sleep_get_series->link('sleepGet', $this);
+                $sleep_get_series->save();
+            }
+        }
 
         return $saved;
     }

@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property int $profile_id
  * @property int $category Category of workout: 
  * 
  * 
@@ -119,8 +120,26 @@ use yii\helpers\ArrayHelper;
  * @property string $date Date at which the measure was taken or entered.
  * @property int $modified The timestamp of the last modification.
  * @property string $deviceid ID of device that tracked the data. To retrieve information about this device, refer to : <a href='/api-reference/#operation/userv2-getdevice'>User v2 - Getdevice</a>.
- * @property integer $data_id Details of workout.
- * @property workout_object_data $data Details of workout.
+ * @property int $workout_object_data__algo_pause_duration *Available for all categories except Multi-sport*<br><br>Total pause time in seconds detected by Withings device (swim only)
+ * @property int $workout_object_data__calories *Available for all categories except Multi-sport*<br><br>Active calories burned (in Kcal). *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__distance *Available for all categories except Swimming, Multi-sport*<br><br>Distance travelled (in meters). *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__elevation *Available for all categories except Swimming, Multi-sport*<br><br>Number of floors climbed. *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__hr_average *Available for all categories except Multi-sport*<br><br>Average heart rate. *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__hr_max *Available for all categories except Multi-sport*<br><br>Maximal heart rate. *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__hr_min *Available for all categories except Multi-sport*<br><br>Minimal heart rate. *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__hr_zone_0 *Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in a light zone (cf. <a href='/api-reference/#section/Glossary'>Glossary</a>). *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__hr_zone_1 *Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in a moderate zone (cf. <a href='/api-reference/#section/Glossary'>Glossary</a>). *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__hr_zone_2 *Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in an intense zone (cf. <a href='/api-reference/#section/Glossary'>Glossary</a>). *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__hr_zone_3 *Available for all categories except Multi-sport*<br><br>Duration in seconds when heart rate was in maximal zone (cf. <a href='/api-reference/#section/Glossary'>Glossary</a>). *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__intensity *Available for all categories except Multi-sport*<br><br>Intensity.
+ * @property int $workout_object_data__manual_calories *Available for all categories except Multi-sport*<br><br>Active calories burned manually entered by user (in Kcal). *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__manual_distance *Available for all categories except Multi-sport*<br><br>Distance travelled manually entered by user (in meters). *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__pause_duration *Available for all categories except Multi-sport*<br><br>Total pause time in second filled by user
+ * @property int $workout_object_data__pool_laps *Available only for Swimming*<br><br>Number of pool laps. *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__pool_length *Available only for Swimming*<br><br>Length of the pool. *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__spo2_average *Available for all categories except Multi-sport*<br><br>Average percent of SpO2 percent value during a workout
+ * @property int $workout_object_data__steps *Available for all categories except Swimming, Multi-sport*<br><br>Number of steps. *(Use 'data_fields' to request this data.)*
+ * @property int $workout_object_data__strokes *Available only for Swimming*<br><br>Number of strokes. *(Use 'data_fields' to request this data.)*
  * @property integer $externalId API Primary Key
  * @property integer $id Primary Key
  */
@@ -137,14 +156,8 @@ class workout_object extends \yii\db\ActiveRecord
         return [
             [['timezone', 'date', 'deviceid'], 'trim'],
             [['timezone', 'date', 'deviceid'], 'string'],
-            [['category', 'model', 'attrib', 'startdate', 'enddate', 'modified', 'data_id', 'externalId', 'id'], 'integer'],
-            // TODO define more concreate validation rules!
+            [['profile_id', 'category', 'model', 'attrib', 'startdate', 'enddate', 'modified', 'workout_object_data__algo_pause_duration', 'workout_object_data__calories', 'workout_object_data__distance', 'workout_object_data__elevation', 'workout_object_data__hr_average', 'workout_object_data__hr_max', 'workout_object_data__hr_min', 'workout_object_data__hr_zone_0', 'workout_object_data__hr_zone_1', 'workout_object_data__hr_zone_2', 'workout_object_data__hr_zone_3', 'workout_object_data__intensity', 'workout_object_data__manual_calories', 'workout_object_data__manual_distance', 'workout_object_data__pause_duration', 'workout_object_data__pool_laps', 'workout_object_data__pool_length', 'workout_object_data__spo2_average', 'workout_object_data__steps', 'workout_object_data__strokes', 'externalId', 'id'], 'integer'],
         ];
-    }
-
-    public function getData()
-    {
-        return $this->hasOne(workout_object_data::class, ['id' => 'data_id']);
     }
 
 
@@ -152,6 +165,9 @@ class workout_object extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($profile_id = ArrayHelper::getValue($apiObject, 'profile_id')) {
+            $this->profile_id = $profile_id;
+        }
         if($category = ArrayHelper::getValue($apiObject, 'category')) {
             $this->category = $category;
         }
@@ -179,11 +195,65 @@ class workout_object extends \yii\db\ActiveRecord
         if($deviceid = ArrayHelper::getValue($apiObject, 'deviceid')) {
             $this->deviceid = $deviceid;
         }
-        if($data_id = ArrayHelper::getValue($apiObject, 'data_id')) {
-            $this->data_id = $data_id;
+        if($workout_object_data__algo_pause_duration = ArrayHelper::getValue($apiObject, 'data.algo_pause_duration')) {
+            $this->workout_object_data__algo_pause_duration = $workout_object_data__algo_pause_duration;
         }
-        if($data = ArrayHelper::getValue($apiObject, 'data')) {
-            $this->data = $data;
+        if($workout_object_data__calories = ArrayHelper::getValue($apiObject, 'data.calories')) {
+            $this->workout_object_data__calories = $workout_object_data__calories;
+        }
+        if($workout_object_data__distance = ArrayHelper::getValue($apiObject, 'data.distance')) {
+            $this->workout_object_data__distance = $workout_object_data__distance;
+        }
+        if($workout_object_data__elevation = ArrayHelper::getValue($apiObject, 'data.elevation')) {
+            $this->workout_object_data__elevation = $workout_object_data__elevation;
+        }
+        if($workout_object_data__hr_average = ArrayHelper::getValue($apiObject, 'data.hr_average')) {
+            $this->workout_object_data__hr_average = $workout_object_data__hr_average;
+        }
+        if($workout_object_data__hr_max = ArrayHelper::getValue($apiObject, 'data.hr_max')) {
+            $this->workout_object_data__hr_max = $workout_object_data__hr_max;
+        }
+        if($workout_object_data__hr_min = ArrayHelper::getValue($apiObject, 'data.hr_min')) {
+            $this->workout_object_data__hr_min = $workout_object_data__hr_min;
+        }
+        if($workout_object_data__hr_zone_0 = ArrayHelper::getValue($apiObject, 'data.hr_zone_0')) {
+            $this->workout_object_data__hr_zone_0 = $workout_object_data__hr_zone_0;
+        }
+        if($workout_object_data__hr_zone_1 = ArrayHelper::getValue($apiObject, 'data.hr_zone_1')) {
+            $this->workout_object_data__hr_zone_1 = $workout_object_data__hr_zone_1;
+        }
+        if($workout_object_data__hr_zone_2 = ArrayHelper::getValue($apiObject, 'data.hr_zone_2')) {
+            $this->workout_object_data__hr_zone_2 = $workout_object_data__hr_zone_2;
+        }
+        if($workout_object_data__hr_zone_3 = ArrayHelper::getValue($apiObject, 'data.hr_zone_3')) {
+            $this->workout_object_data__hr_zone_3 = $workout_object_data__hr_zone_3;
+        }
+        if($workout_object_data__intensity = ArrayHelper::getValue($apiObject, 'data.intensity')) {
+            $this->workout_object_data__intensity = $workout_object_data__intensity;
+        }
+        if($workout_object_data__manual_calories = ArrayHelper::getValue($apiObject, 'data.manual_calories')) {
+            $this->workout_object_data__manual_calories = $workout_object_data__manual_calories;
+        }
+        if($workout_object_data__manual_distance = ArrayHelper::getValue($apiObject, 'data.manual_distance')) {
+            $this->workout_object_data__manual_distance = $workout_object_data__manual_distance;
+        }
+        if($workout_object_data__pause_duration = ArrayHelper::getValue($apiObject, 'data.pause_duration')) {
+            $this->workout_object_data__pause_duration = $workout_object_data__pause_duration;
+        }
+        if($workout_object_data__pool_laps = ArrayHelper::getValue($apiObject, 'data.pool_laps')) {
+            $this->workout_object_data__pool_laps = $workout_object_data__pool_laps;
+        }
+        if($workout_object_data__pool_length = ArrayHelper::getValue($apiObject, 'data.pool_length')) {
+            $this->workout_object_data__pool_length = $workout_object_data__pool_length;
+        }
+        if($workout_object_data__spo2_average = ArrayHelper::getValue($apiObject, 'data.spo2_average')) {
+            $this->workout_object_data__spo2_average = $workout_object_data__spo2_average;
+        }
+        if($workout_object_data__steps = ArrayHelper::getValue($apiObject, 'data.steps')) {
+            $this->workout_object_data__steps = $workout_object_data__steps;
+        }
+        if($workout_object_data__strokes = ArrayHelper::getValue($apiObject, 'data.strokes')) {
+            $this->workout_object_data__strokes = $workout_object_data__strokes;
         }
         if($externalId = ArrayHelper::getValue($apiObject, 'externalId')) {
             $this->externalId = $externalId;

@@ -14,6 +14,7 @@ use common\models\ApiModel as BaseApiModel;
  * @property int $algo Deprecated.
  * @property int $fm Deprecated.
  * @property int $fw Deprecated.
+ * @property measuregrp_object $measuregrp_object
  */
 class measure_objectApi extends BaseApiModel
 {
@@ -24,6 +25,7 @@ class measure_objectApi extends BaseApiModel
     public $algo;
     public $fm;
     public $fw;
+    public $measuregrp_object;
 
     public function rules()
     {

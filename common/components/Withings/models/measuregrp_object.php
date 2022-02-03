@@ -5,6 +5,7 @@ use yii\helpers\ArrayHelper;
 
 /**
  *  *
+ * @property int $profile_id
  * @property int $grpid Id of the measure group.
  * @property int $attrib The way the measure was attributed to the user:
  * 
@@ -42,7 +43,7 @@ class measuregrp_object extends \yii\db\ActiveRecord
         return [
             [['deviceid', 'comment'], 'trim'],
             [['deviceid', 'comment'], 'string'],
-            [['grpid', 'attrib', 'date', 'created', 'category', 'externalId', 'id'], 'integer'],
+            [['profile_id', 'grpid', 'attrib', 'date', 'created', 'category', 'externalId', 'id'], 'integer'],
             // TODO define more concreate validation rules!
         ];
     }
@@ -57,6 +58,9 @@ class measuregrp_object extends \yii\db\ActiveRecord
         if(empty($apiObject))
             return null;
 
+        if($profile_id = ArrayHelper::getValue($apiObject, 'profile_id')) {
+            $this->profile_id = $profile_id;
+        }
         if($grpid = ArrayHelper::getValue($apiObject, 'grpid')) {
             $this->grpid = $grpid;
         }
